@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ansible 架构、配置与 Inventory - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>Ansible 架构、配置与 Inventory - Anki 预览</h1>
+    <p class="preview-meta">共 16 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看 Ansible 当前使用的配置文件，最直接看什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible --version</code> 输出中的 config file。</p><div class="extra"><p>再用 config dump 看有效差异。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>显示非默认有效配置的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible-config dump --only-changed</code></p><div class="extra"><p>用于发现配置漂移。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>以树形展示 Inventory 组关系用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible-inventory --graph</code></p><div class="extra"><p>不能证明连接。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>展开某主机最终 Inventory 变量用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible-inventory --host &lt;HOST&gt;</code></p><div class="extra"><p>观察 hostvars 合并。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Inventory 名称与 ansible_host 的区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>前者是逻辑 inventory_hostname，后者是连接地址。</p><div class="extra"><p>模板中常需区分。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>children 组的 ini 标题骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>[parent:children]</code></p><div class="extra"><p>下面列子组名。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>验证 pattern 实际匹配主机用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible &lt;PATTERN&gt; --list-hosts</code></p><div class="extra"><p>在执行前使用。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>ansible.builtin.ping 证明什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>控制端能通过连接执行 Python 模块并返回 pong。</p><div class="extra"><p>不证明 ICMP 或 become。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>验证 become 到 root 的最小 ad hoc 命令骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible &lt;PATTERN&gt; -b -m ansible.builtin.command -a 'id -u'</code></p><div class="extra"><p>预期输出 0。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>pattern 匹配 0 主机首先查什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>Inventory 路径、graph、组名和 --list-hosts。</p><div class="extra"><p>不先查 SSH。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>UNREACHABLE 首先查哪一层？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>SSH 地址、用户、密钥、主机密钥和网络。</p><div class="extra"><p>用 -vvv 与同身份 ssh。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>ping 成功但权限失败下一步是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>检查 become 配置和远端 sudo 授权。</p><div class="extra"><p>连接层已成立。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么不把口令放入 ansible.cfg/Inventory？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>会明文泄露且扩大项目暴露面。</p><div class="extra"><p>使用 Vault 或题目安全入口。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCE 项目执行前的证据链是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>配置来源 → Inventory 图/变量 → pattern → SSH/Python → become。</p><div class="extra"><p>再进入业务模块。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>配置来源先看 <code>ansible --version</code> 的 […]；主机范围先看 <code>[…]</code>。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>配置来源先看 <code>ansible --version</code> 的 config file；主机范围先看 <code>--list-hosts</code>。</p><div class="extra"><p>执行边界。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Inventory 的逻辑名是 […]，连接地址可由 […] 指定。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>Inventory 的逻辑名是 inventory_hostname，连接地址可由 ansible_host 指定。</p><div class="extra"><p>名称与地址分开。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

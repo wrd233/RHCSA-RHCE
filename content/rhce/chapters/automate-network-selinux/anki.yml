@@ -1,0 +1,198 @@
+chapter_id: RHCE-NETWORK
+deck: RedHat::RHCE-RHEL9
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCE-NETWORK-QA-001
+  type: qa
+  question: firewalld permanent 与 immediate 分别表达什么？
+  answer: 持久配置；立即应用 runtime。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::comparison
+  - priority::P0
+- id: RHCE-NETWORK-QA-002
+  type: qa
+  question: 管理 SELinux 文件规则的模块？
+  answer: '`community.general.sefcontext`（按安装版本文档）。'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::ansible
+  - priority::P0
+- id: RHCE-NETWORK-QA-003
+  type: qa
+  question: 规则建立后当前标签如何应用？
+  answer: 运行 restorecon，可用 command 补充。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::ansible
+  - priority::P0
+- id: RHCE-NETWORK-QA-004
+  type: qa
+  question: 管理 SELinux 端口类型模块？
+  answer: '`community.general.seport`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::ansible
+  - priority::P0
+- id: RHCE-NETWORK-QA-005
+  type: qa
+  question: 管理 Boolean 模块？
+  answer: '`ansible.posix.seboolean`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::ansible
+  - priority::P0
+- id: RHCE-NETWORK-QA-006
+  type: qa
+  question: 网络自动化为什么先 limit？
+  answer: 错误地址/路由会切断控制连接。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-NETWORK-QA-007
+  type: qa
+  question: firewall rule 正确能否证明服务监听？
+  answer: 不能。
+  extra: 还要 ss/协议访问。
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::verification
+  - priority::P0
+- id: RHCE-NETWORK-QA-008
+  type: qa
+  question: sefcontext changed=0 能否证明当前标签正确？
+  answer: 不能；还要 ls -Z/matchpathcon。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::verification
+  - priority::P0
+- id: RHCE-NETWORK-QA-009
+  type: qa
+  question: 网络 task 后 unreachable 首要动作？
+  answer: 停止全量，使用恢复入口检查活动 profile/route。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-NETWORK-QA-010
+  type: qa
+  question: 自定义 Web 自动化验收层？
+  answer: 网络 → 服务 → firewall 双态 → SELinux 规则/标签/端口 → 外部 HTTP。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::process
+  - priority::P0
+- id: RHCE-NETWORK-QA-011
+  type: qa
+  question: 为什么不自动 setenforce 0？
+  answer: 改变安全目标并掩盖具体策略偏差。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-NETWORK-QA-012
+  type: qa
+  question: 第二次执行仍 reload firewall 查什么？
+  answer: 无条件 command 与模块双态参数。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-NETWORK-CLOZE-X01
+  type: cloze
+  text: 'firewalld 持久配置 `permanent: {{c1::true}}`；立即应用 runtime `immediate: {{c2::true}}`。'
+  extra: 分别验收。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::cloze
+  - coverage::extra
+- id: RHCE-NETWORK-CLOZE-X02
+  type: cloze
+  text: fcontext 建立{{c1::持久规则}}，`restorecon` 应用{{c2::当前标签}}。
+  extra: 不能互替。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-network-selinux
+  - card::cloze
+  - coverage::extra

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>进程、作业、服务、日志与计划任务 - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>进程、作业、服务、日志与计划任务 - Anki 预览</h1>
+    <p class="preview-meta">共 36 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看 PID、PPID、用户、状态、nice 和完整命令的骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ps -eo pid,ppid,user,stat,ni,cmd</code></p><div class="extra"><p>可按判断需要增加 <code>--sort</code> 字段。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>按用户和进程名查 PID 与命令行，推荐什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>pgrep -a -u &lt;USER&gt; &lt;NAME&gt;</code></p><div class="extra"><p>操作前仍要核对完整命令行。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>kill &lt;PID&gt;</code> 默认发送哪个信号？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>SIGTERM（15）。</p><div class="extra"><p>它请求程序有序退出。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么 SIGKILL 不应作为终止进程的第一选择？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>程序无法捕获它或清理资源，可能留下不一致状态。</p><div class="extra"><p>先 TERM、验证，再在确认对象后 KILL。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>僵尸进程为什么不能靠继续发送信号清除？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>它已经退出，只等待父进程回收状态。</p><div class="extra"><p>应调查父进程。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>nice 值越大，CPU 调度优先级怎样变化？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>越低。</p><div class="extra"><p>nice 不是 CPU 配额或完成时间保证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>jobs</code>、<code>fg</code>、<code>bg</code> 的作用范围是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>当前 Shell 的作业表。</p><div class="extra"><p>不适合作为长期服务管理方案。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>systemctl start</code> 与 <code>enable</code> 的核心区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>start 改变当前运行；enable 建立开机启动依赖。</p><div class="extra"><p><code>enable --now</code> 同时处理两者。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>同时启用并立即启动 <code>httpd</code> 的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>systemctl enable --now httpd</code></p><div class="extra"><p>后续分别验证 active 和 enabled。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>systemctl mask</code> 比 disable 多做了什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>阻止 unit 被手工或依赖启动，通常链接到 <code>/dev/null</code>。</p><div class="extra"><p>解除使用 <code>unmask</code>。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>什么时候需要 <code>systemctl daemon-reload</code>？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>unit 文件或 drop-in 发生变化时。</p><div class="extra"><p>它不自动重启应用服务。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>应用配置文件改变后，<code>daemon-reload</code> 能否让应用读取新配置？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能；应先做应用语法检查，再 reload 或 restart 应用。</p><div class="extra"><p>unit 定义与应用配置是不同对象。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看 unit 主文件与 drop-in 合并来源，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>systemctl cat &lt;UNIT&gt;</code></p><div class="extra"><p>属性查询可用 <code>systemctl show -p</code>。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>服务 <code>active</code> 能否证明端口与业务访问正确？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能；还要检查监听、过滤层和最终功能。</p><div class="extra"><p>active 只描述 systemd 当前状态。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看当前启动中 httpd 最近 10 分钟日志的骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>journalctl -u httpd -b --since '-10 min'</code></p><div class="extra"><p><code>--no-pager</code> 适合非交互输出。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>journalctl -b -1</code> 查询什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>上一次启动轮次的日志。</p><div class="extra"><p>是否可见取决于 journal 持久存储。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>当前能看到 journal，能否证明重启后仍能看到？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能；当前日志可能只在 <code>/run/log/journal</code> 易失存储中。</p><div class="extra"><p>持久存储通常涉及 <code>/var/log/journal</code> 与 Storage 配置。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>校验 rsyslog 配置语法的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>rsyslogd -N1</code></p><div class="extra"><p>通过后再重启服务并发送测试消息。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>生成带 facility/priority 与 tag 的受控日志消息，使用什么骨架？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>logger -p local0.notice -t exam-check 'message'</code></p><div class="extra"><p>再分别查询 journal 和目标文件。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>日志时间范围查询为空时，为什么先检查 <code>timedatectl</code>？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>错误时区或时钟会让预期事件落在另一时间范围。</p><div class="extra"><p>空日志不一定表示事件未发生。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>修改时区与配置网络时间同步是同一状态吗？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不是；时区控制显示偏移，时间同步控制时钟来源与校正。</p><div class="extra"><p>两者分别验证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看 chrony 时间源和跟踪状态分别用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>chronyc sources -v</code> 与 <code>chronyc tracking</code>。</p><div class="extra"><p>服务 active 不能替代这两层。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>chrony sources 中 <code>^*</code>、<code>^+</code>、<code>^?</code> 的常见含义是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>当前选中；可接受候选；不可达或无有效测量。</p><div class="extra"><p>结合完整输出与 tracking 判断。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>用户 crontab 的五个时间字段顺序是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>分、时、日、月、星期。</p><div class="extra"><p>后面直接是命令。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>/etc/crontab</code> 或 <code>/etc/cron.d/</code> 比用户 crontab 多哪个字段？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>时间字段后多一个执行用户字段。</p><div class="extra"><p>两种格式混用会让任务错误。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>每天 02:15 运行脚本的用户 crontab 时间表达是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>15 2 * * *</code></p><div class="extra"><p>后接绝对脚本路径与重定向。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么 cron 中应使用绝对路径并显式重定向？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>cron 的 PATH、工作目录和环境有限，且无人交互读取输出。</p><div class="extra"><p>让脚本明确依赖而非复制完整交互环境。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>提交、列出、查看、删除 at 作业分别用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>at</code>、<code>atq</code>、<code>at -c &lt;JOB&gt;</code>、<code>atrm &lt;JOB&gt;</code>。</p><div class="extra"><p>还要确认 atd 和真实产物。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>cron 配置存在能否证明任务执行成功？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能；还要检查 crond、目标身份环境、日志和实际产物。</p><div class="extra"><p>手工执行成功也不能证明 cron 环境成功。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>服务启动失败的推荐证据顺序是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>status → 当前 boot 的 unit journal → 应用语法 → 端口/权限/SELinux。</p><div class="extra"><p>不要反复 restart 覆盖最近证据。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>手工运行脚本成功而 cron 失败，优先比较什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>执行用户、PATH、工作目录、环境变量、权限和错误输出。</p><div class="extra"><p>可在精简环境中复现。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>unit 为 enabled 但没有运行，下一步查什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>is-active</code>、status、本次启动 journal，以及是否 masked/条件跳过。</p><div class="extra"><p>enabled 只表示启动依赖。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>服务、日志、时间、cron 综合任务的验收骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>服务语法/状态/功能 → 日志语法/受控消息 → 时区/源/tracking → cron 配置/身份/产物。</p><div class="extra"><p>每组状态分别证明。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>systemctl […] httpd</code> 同时建立[…]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>systemctl enable --now httpd</code> 同时建立启动依赖并立即启动。</p><div class="extra"><p>后续分别查 active 与 enabled。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>用户 cron 字段顺序：[…]；系统 cron 随后还要写[…]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>用户 cron 字段顺序：分 时 日 月 星期；系统 cron 随后还要写执行用户。</p><div class="extra"><p>最后才是命令。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>chrony 验收：<code>[…]</code> 看源，<code>[…]</code> 看时钟跟踪。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>chrony 验收：<code>chronyc sources -v</code> 看源，<code>chronyc tracking</code> 看时钟跟踪。</p><div class="extra"><p>active 不等于已同步。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>网络文件系统与自动挂载 - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>网络文件系统与自动挂载 - Anki 预览</h1>
+    <p class="preview-meta">共 18 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查询 NFS 导出列表的常用命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>showmount -e &lt;SERVER&gt;</code></p><div class="extra"><p>NFSv4 环境仍需结合服务端设计。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看某目录当前 NFS 挂载源，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>findmnt &lt;MOUNT_POINT&gt;</code></p><div class="extra"><p>目录存在不代表已挂载。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>root_squash</code> 的核心效果是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>把客户端 root 映射为服务端匿名身份。</p><div class="extra"><p>不应为写入失败默认关闭。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>持久 NFS fstab 的设备字段骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>&lt;SERVER&gt;:/&lt;EXPORT&gt;</code></p><div class="extra"><p>类型通常为 nfs。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>NFS fstab 中 <code>_netdev</code> 表达什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>该挂载依赖网络可用。</p><div class="extra"><p>不保证服务器一定可达。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>怎样证明 NFS fstab 条目真实生效？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>卸载当前挂载后运行 <code>mount -a</code>，再用 <code>findmnt</code> 核对。</p><div class="extra"><p>另做读写测试。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>autofs master map 的职责是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>把挂载基目录或 direct map 标记关联到子 map。</p><div class="extra"><p>子 map 定义 key 与远端源。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>展开 autofs 有效映射的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>automount -m</code></p><div class="extra"><p>用于发现 map 解析错误。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>indirect map 中 key <code>docs</code> 挂在 <code>/shares</code> 下，最终路径是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>/shares/docs</code></p><div class="extra"><p>访问该路径触发挂载。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>autofs 触发前 <code>findmnt /shares/docs</code> 无结果是否一定失败？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不一定；按需挂载可能尚未触发。</p><div class="extra"><p>先访问 key 再查询。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>autofs wildcard map 中 <code>*</code> 与 <code>&amp;</code> 常怎样配合？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>*</code> 捕获访问 key，<code>&amp;</code> 在远端位置代入该 key。</p><div class="extra"><p>适合用户目录映射。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>NFS 报 access denied by server 时，客户端 chmod 能修复吗？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>通常不能；应核对导出路径、来源和服务端权限。</p><div class="extra"><p>问题在服务端策略层。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>NFS 当前挂载成功能否证明重启后保持？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能；还要验证 fstab 或 autofs 持久配置。</p><div class="extra"><p>生命周期不同。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看 NFS 实际挂载版本和选项，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>nfsstat -m</code></p><div class="extra"><p>与 findmnt 交叉检查。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>修改 autofs map 后的推荐验证链是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>automount -m</code> → reload autofs → 访问 key → <code>findmnt</code> → journal。</p><div class="extra"><p>不要只看服务 active。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>持久 NFS 与 autofs 的核心区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>前者常驻/启动挂载；后者访问时按需挂载并可超时卸载。</p><div class="extra"><p>按题意选择。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>挂载到非空目录时原内容发生什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>被挂载文件系统暂时遮蔽，卸载后重新可见。</p><div class="extra"><p>不是被删除。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>NFS 综合任务的最小验收层次是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>解析/路由 → 导出 → 挂载源 → 持久或触发 → 目标身份功能。</p><div class="extra"><p>每层独立取证。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

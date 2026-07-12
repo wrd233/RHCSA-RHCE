@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Podman 容器与持久运行 - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>Podman 容器与持久运行 - Anki 预览</h1>
+    <p class="preview-meta">共 12 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>image 与 container 的区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>image 是只读模板，container 是其实例。</p><div class="extra"><p>实例有独立运行状态。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>-p 8080:80</code> 的方向是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>宿主 8080 转发到容器 80。</p><div class="extra"><p>宿主端口在前。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>bind mount 的 <code>:Z</code> 与 <code>:z</code> 区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>:Z 私有重标记；:z 允许多容器共享。</p><div class="extra"><p>按共享边界选择。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看全部容器含已退出实例用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>podman ps -a</code></p><div class="extra"><p>立即退出时先查。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看容器端口发布用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>podman port &lt;CONTAINER&gt;</code></p><div class="extra"><p>再用 ss 与 curl 验证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>容器立即退出的证据入口是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>podman ps -a</code>、<code>podman logs</code>、<code>podman inspect</code>。</p><div class="extra"><p>不反复创建。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>卷 permission denied 的调查层是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>宿主 DAC、rootless UID 映射、SELinux 标签/AVC。</p><div class="extra"><p>不 chmod 777 或禁用 SELinux。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>rootless 容器为什么要以目标用户运行 podman？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>容器存储、用户命名空间和 user units 都属于该用户。</p><div class="extra"><p>root 是另一套状态。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>用户退出后仍运行 user service 的关键设置是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>loginctl enable-linger &lt;USER&gt;</code></p><div class="extra"><p>另需 user unit enabled。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>用户 unit 与系统 unit 的 systemctl 区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>用户 unit 使用 <code>systemctl --user</code> 并在对应用户上下文。</p><div class="extra"><p>管理器不同。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>容器 running 能否证明重启后运行？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能；还要验证 user unit enabled 与 linger。</p><div class="extra"><p>当前/持久分开。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>完整容器验收骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>image → ps/logs/inspect → port/ss → volume/data → user unit/linger → HTTP。</p><div class="extra"><p>分层取证。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

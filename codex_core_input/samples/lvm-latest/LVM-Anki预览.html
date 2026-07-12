@@ -1,0 +1,1382 @@
+<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>LVM Anki 预览</title><style>
+    :root { color-scheme: light dark; }
+    body { margin:0; font-family:"Noto Sans CJK SC",sans-serif; background:#eef1f4; color:#233142; }
+    main { max-width:900px; margin:0 auto; padding:32px 24px 80px; }
+    h1 { color:#173f6d; font-size:26px; margin:0 0 8px; }
+    .intro { color:#637285; margin-bottom:26px; }
+    .preview-card { position:relative; background:#fff; border:1px solid #d8e0e8; border-radius:8px; margin:0 0 22px; overflow:hidden; box-shadow:0 2px 8px rgba(25,45,65,.05); }
+    .card-index { position:absolute; top:10px; right:13px; color:#9aa7b4; font-size:12px; }
+    .face { padding:28px 32px; }
+    .face + .face { border-top:1px solid #e1e7ed; }
+    .face-label { font-size:12px; color:#8290a0; margin-bottom:12px; }
+    .front { min-height:88px; }
+    .back { background:#fbfcfd; }
+    .content, .answer { font-size:17px; line-height:1.65; }
+    .answer { color:#173f6d; }
+    .extra { margin-top:16px; padding-top:13px; border-top:1px solid #e1e7ed; color:#58697b; font-size:14px; line-height:1.6; }
+    p { margin:.2em 0 .7em; }
+    pre { white-space:pre-wrap; overflow-wrap:anywhere; background:#f1f4f7; border-left:3px solid #476f99; padding:12px 14px; border-radius:3px; font-family:"Noto Sans Mono CJK SC",monospace; font-size:14px; }
+    code { font-family:"Noto Sans Mono CJK SC",monospace; background:#eef2f5; padding:.08em .28em; border-radius:3px; }
+    pre code { background:transparent; padding:0; }
+    strong { color:#173f6d; }
+    .blank { display:inline-block; min-width:42px; border-bottom:2px solid #7189a1; color:transparent; }
+    @media (prefers-color-scheme: dark) {
+      body { background:#171b20; color:#dce3ea; }
+      .preview-card { background:#20262d; border-color:#343e48; box-shadow:none; }
+      .back { background:#1d2329; }
+      .face + .face, .extra { border-color:#35404b; }
+      .answer, h1, strong { color:#9fc1e5; }
+      .extra, .intro { color:#aab6c2; }
+      pre, code { background:#2a323a; }
+    }
+    </style></head><body><main><h1>LVM Anki 卡片预览</h1><p class='intro'>共 84 个 Note，预计生成 90 张 Card。此页面仅用于查看题面、最低合格答案与必要补充，不显示来源、标签和维护信息。</p>
+        <article class="preview-card">
+          <div class="card-index">01</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>从空闲分区到应用可用目录，LVM 相关的主要层次按顺序是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>设备或分区 → PV → VG → LV → 文件系统 → 挂载点。</p>
+</div>
+            <div class="extra"><p>每一层解决的问题不同，不能用单一查询代替完整验收。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">02</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>LVM 中的 PV 是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>被 LVM 初始化并纳入管理的物理设备或分区。</p>
+</div>
+            <div class="extra"><p><code>pvcreate</code> 会写入 LVM 标签和元数据。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">03</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>LVM 中的 VG 承担什么作用？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>把一个或多个 PV 的容量汇聚成可分配的空间池。</p>
+</div>
+            <div class="extra"><p>LV 从 VG 分配容量，而不是直接从挂载目录分配。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">04</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>LVM 中的 LV 是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>从 VG 中分配出的虚拟块设备，可在其上创建文件系统或供其他上层使用。</p>
+</div>
+            <div class="extra"><p>LV 存在并不等于已经创建文件系统或挂载。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">05</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>lvs</code> 显示 LV 已存在，能否证明应用目录已经可用？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。还要确认文件系统、当前挂载和持久挂载配置。</p>
+</div>
+            <div class="extra"><p>LV 只是块设备层。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">06</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为什么 <code>lvs</code> 的 LV 大小与 <code>df -hT</code> 显示的文件系统大小可能略有不同？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为 <code>lvs</code> 显示块设备标称容量，文件系统会占用元数据并以自己的方式报告可用空间。</p>
+</div>
+            <div class="extra"><p>小幅差异不等于扩容失败，应判断两层是否都发生预期变化。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">07</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>pvs</code>、<code>vgs</code>、<code>lvs</code> 分别主要回答什么问题？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>PV 属于哪个 VG；VG 有多大及剩余多少；LV 的名称、大小、路径和映射。</p>
+</div>
+            <div class="extra"><p>三组命令对应三个不同 LVM 层次。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">08</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>挂载点目录已经存在，能否证明文件系统已经挂载？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。目录即使未挂载也会存在，应使用 <code>findmnt</code> 或 <code>mountpoint</code> 验证。</p>
+</div>
+            <div class="extra"><p>挂载失败时把数据写进空目录，可能实际占用根文件系统。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">09</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>准备操作一块新磁盘或分区时，先用什么命令观察块设备层级、文件系统和挂载点？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS
+</code></pre>
+</div>
+            <div class="extra"><p>不要仅凭设备名猜测它是否空闲。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">10</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>怎样确认 <code>/dev/vdb1</code> 是否已经被 LVM 当作 PV 使用？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">pvs -o pv_name,vg_name,pv_size,pv_free
+</code></pre>
+</div>
+            <div class="extra"><p><code>lsblk</code> 不能完整替代 PV 查询。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">11</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>扩展 LV 前，应使用哪一层的查询判断真正可分配的剩余空间？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>查看目标 VG 的 <code>vg_free</code> 或 <code>vg_free_count</code>。</p>
+</div>
+            <div class="extra"><p>磁盘有空闲空间不等于该空间已经进入目标 VG。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">12</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>查看 LV 名称、所属 VG、大小、设备路径和底层设备的推荐命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">lvs -o lv_name,vg_name,lv_size,lv_path,devices
+</code></pre>
+</div>
+            <div class="extra"><p>优先查询 <code>lv_path</code>，不要仅凭记忆拼设备路径。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">13</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>怎样确认 <code>/srv/project</code> 当前由哪个设备提供？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">findmnt /srv/project
+</code></pre>
+</div>
+            <div class="extra"><p>它回答当前挂载关系，不等于持久配置一定正确。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">14</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>df -hT /srv/project</code> 主要验证哪一层？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>已挂载文件系统的类型、容量和使用情况。</p>
+</div>
+            <div class="extra"><p>它不显示 VG 剩余容量，也不能代替 <code>vgs</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">15</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为什么执行 <code>pvcreate</code> 或 <code>mkfs</code> 前必须重新确认设备身份？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为它们会写入元数据或重建文件系统，作用到错误设备时可能破坏原数据。</p>
+</div>
+            <div class="extra"><p>设备名称相似时尤其不能依赖记忆。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">16</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>题目要求扩展 <code>/srv/project</code>，最少应先建立哪些对象之间的对应关系？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>挂载点 → 文件系统 → LV → VG，并确认 VG 的剩余容量。</p>
+</div>
+            <div class="extra"><p>不要从目录名直接猜测 LV 名。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">17</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>Physical Extent（PE）是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>VG 中大小固定的物理容量分配单位。</p>
+</div>
+            <div class="extra"><p>PE 大小在 VG 层定义。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">18</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>普通线性 LV 中，LE 与 PE 通常是什么关系？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>一个 LE 映射到一个 PE。</p>
+</div>
+            <div class="extra"><p>因此 extent 数量乘以 PE 大小可得到 LV 标称容量。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">19</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>PE 大小属于 PV、VG 还是 LV？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>属于 VG。</p>
+</div>
+            <div class="extra"><p>应在 <code>vgcreate</code> 时设置，而不是在 <code>lvcreate</code> 时设置。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">20</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>VG 的 PE 大小为 16 MiB，LV 使用 50 个 extent，LV 标称容量是多少？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>800 MiB。</p>
+</div>
+            <div class="extra"><p>计算为 <code>50 × 16 MiB</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">21</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>lvcreate -L</code> 与 <code>lvcreate -l</code> 的核心区别是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>-L</code> 按容量分配；<code>-l</code> 按 extent 数量或百分比分配。</p>
+</div>
+            <div class="extra"><p>题目明确要求 PE/LE 数量时应优先用 <code>-l</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">22</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>怎样让新 LV 使用 VG 的全部剩余 extent？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">lvcreate -l 100%FREE -n &lt;LV&gt; &lt;VG&gt;
+</code></pre>
+</div>
+            <div class="extra"><p>只有题目确实要求使用全部剩余空间时才这样做。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">23</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>-l 70</code> 与 <code>-l +20</code> 在扩容时分别表示什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>前者把目标总数设为 70 个 extent；后者在当前基础上增加 20 个 extent。</p>
+</div>
+            <div class="extra"><p>加号决定是目标值还是增量。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">24</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>查看 VG 的 PE 大小、总 extent 和空闲 extent 的命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">vgs &lt;VG&gt; -o vg_name,vg_extent_size,vg_extent_count,vg_free_count
+</code></pre>
+</div>
+            <div class="extra"><p>处理按 extent 计数的题目时比只看 <code>VFree</code> 更直接。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">25</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>把确认空闲的 <code>/dev/vdb1</code> 初始化为 PV 的命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">pvcreate /dev/vdb1
+</code></pre>
+</div>
+            <div class="extra"><p>执行前必须确认设备中没有需要保留的数据。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">26</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>pvcreate</code> 对设备做了什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>写入 LVM 标签和元数据，使设备可以加入 VG。</p>
+</div>
+            <div class="extra"><p>它不会自动创建 VG、LV 或文件系统。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">27</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>使用 <code>/dev/vdb1</code> 创建 PE 大小为 16 MiB 的 <code>projectvg</code>，命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">vgcreate -s 16M projectvg /dev/vdb1
+</code></pre>
+</div>
+            <div class="extra"><p><code>-s</code> 设置 VG 的 PE 大小。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">28</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>创建 PV 和 VG 后，至少用哪些命令分别验证成员关系和容量？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>使用 <code>pvs</code> 验证 PV 所属 VG，使用 <code>vgs</code> 验证 VG 大小、空闲空间和 PE 大小。</p>
+</div>
+            <div class="extra"><p>两层验证不能合并成一句“命令成功”。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">29</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>PV 必须是分区吗？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不必须。PV 可以是整个块设备，也可以是分区。</p>
+</div>
+            <div class="extra"><p>应根据题目和现有磁盘布局选择，不能覆盖已有数据。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">30</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>发现 <code>/dev/vdb1</code> 已有文件系统或挂载点时，能否直接执行 <code>pvcreate</code>？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。必须先确认数据是否可丢弃以及设备是否选错。</p>
+</div>
+            <div class="extra"><p>不要用强制参数绕过调查。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">31</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>题目要求 VG 的 PE 大小为 16 MiB，但 VG 已经按其他 PE 大小创建。能否通过 <code>lvcreate</code> 修正？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。PE 大小是 VG 属性，<code>lvcreate</code> 只能从现有 VG 分配 LV。</p>
+</div>
+            <div class="extra"><p>应回到 VG 的初始状态和题目要求重新判断。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">32</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>在 <code>projectvg</code> 中创建 50 个 extent、名为 <code>projectlv</code> 的 LV，命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">lvcreate -l 50 -n projectlv projectvg
+</code></pre>
+</div>
+            <div class="extra"><p>小写 <code>-l</code> 表示 extent 数量。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">33</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>在 <code>projectvg</code> 中按容量创建 800 MiB 的 <code>projectlv</code>，命令骨架是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">lvcreate -L 800M -n projectlv projectvg
+</code></pre>
+</div>
+            <div class="extra"><p>题目按容量要求时使用大写 <code>-L</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">34</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>怎样避免凭记忆猜测新 LV 的设备路径？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>使用 <code>lvs -o lv_name,vg_name,lv_path</code> 查询 <code>lv_path</code>。</p>
+</div>
+            <div class="extra"><p>典型路径是 <code>/dev/&lt;VG&gt;/&lt;LV&gt;</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">35</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>在新 LV <code>/dev/projectvg/projectlv</code> 上创建 XFS 的命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">mkfs.xfs /dev/projectvg/projectlv
+</code></pre>
+</div>
+            <div class="extra"><p>只对确认无需保留数据的新 LV 执行。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">36</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为什么扩展现有 XFS LV 时不能再次执行 <code>mkfs.xfs</code>？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为 <code>mkfs.xfs</code> 会重新创建文件系统并破坏原有数据，它不是扩容命令。</p>
+</div>
+            <div class="extra"><p>扩容应使用 <code>lvextend --resizefs</code> 或 <code>xfs_growfs</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">37</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>获取 LV 上文件系统 UUID 的核心命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">blkid /dev/projectvg/projectlv
+</code></pre>
+</div>
+            <div class="extra"><p>也可用 <code>lsblk -f</code> 查看，但写入 fstab 前要复制真实 UUID。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">38</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>将 XFS 按 UUID 持久挂载到 <code>/srv/project</code> 的 fstab 条目骨架是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-fstab">UUID=&lt;UUID&gt; /srv/project xfs defaults 0 0
+</code></pre>
+</div>
+            <div class="extra"><p><code>&lt;UUID&gt;</code> 必须替换为当前文件系统的真实值。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">39</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>修改 <code>/etc/fstab</code> 后为什么执行 <code>systemctl daemon-reload</code>？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>让 systemd 重新生成并加载由 fstab 条目对应的 mount units。</p>
+</div>
+            <div class="extra"><p>随后仍需验证并实际挂载。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">40</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>重启前检查 <code>/etc/fstab</code> 明显问题的命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">findmnt --verify
+</code></pre>
+</div>
+            <div class="extra"><p>检查通过后仍应使用 <code>mount -a</code> 或挂载目标进行实际验证。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">41</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>修改 fstab 后，怎样在当前会话中尝试挂载所有尚未挂载的条目？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">mount -a
+</code></pre>
+</div>
+            <div class="extra"><p>出现错误时应先修正，不能直接重启碰运气。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">42</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>验证 <code>/srv/project</code> 当前确实挂载了目标文件系统，推荐看哪些结果？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>findmnt /srv/project</code>、<code>df -hT /srv/project</code>，并可结合 <code>lsblk -f</code>。</p>
+</div>
+            <div class="extra"><p>分别确认来源设备、文件系统类型和容量。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">43</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>/etc/fstab</code> 一行中的前四个核心字段分别是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>设备标识、挂载点、文件系统类型、挂载选项。</p>
+</div>
+            <div class="extra"><p>后两个字段用于 dump 和 fsck 顺序；本章示例为 <code>0 0</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">44</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为什么扩大 LV 后还必须确认文件系统是否增长？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为 LV 是底层块设备，文件系统不会因块设备变大而必然自动使用新增空间。</p>
+</div>
+            <div class="extra"><p>应分别用 <code>lvs</code> 和 <code>df -hT</code> 验证。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">45</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>在 LVM 扩容任务中，<code>--resizefs</code> 把哪两个动作连接起来？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>扩大 LV，并随后扩大其上的受支持文件系统。</p>
+</div>
+            <div class="extra"><p>它避免只完成块设备层而遗漏文件系统层。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">46</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>给 <code>projectlv</code> 增加 20 个 extent，并同时扩大文件系统的推荐命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">lvextend --extents +20 --resizefs projectvg/projectlv
+</code></pre>
+</div>
+            <div class="extra"><p>短选项可写为 <code>lvextend -l +20 -r ...</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">47</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>lvextend --resizefs</code> 中的 <code>--resizefs</code> 解决什么问题？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>在扩大 LV 后继续调整受支持的文件系统，使新增块设备空间可被文件系统使用。</p>
+</div>
+            <div class="extra"><p>没有它时，LV 与文件系统大小可能不一致。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">48</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>只执行 <code>lvextend</code> 后，<code>lvs</code> 变大但 <code>df</code> 不变，最可能说明什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>底层 LV 已扩大，但文件系统尚未扩展到新增空间。</p>
+</div>
+            <div class="extra"><p>应根据文件系统类型使用 <code>--resizefs</code> 或对应工具。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">49</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>已挂载的 XFS 文件系统需要单独扩容时，核心命令骨架是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">xfs_growfs &lt;MOUNT_POINT&gt;
+</code></pre>
+</div>
+            <div class="extra"><p>例如 <code>xfs_growfs /srv/project</code>；参数是挂载点。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">50</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为什么扩容前必须先确认文件系统类型？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为 XFS 与 ext4 使用的文件系统扩容工具和缩容边界不同。</p>
+</div>
+            <div class="extra"><p>不能把 <code>xfs_growfs</code> 与 <code>resize2fs</code> 混用。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">51</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>扩容完成后，为什么必须同时查看 <code>lvs</code> 和 <code>df -hT</code>？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>前者证明 LV 块设备容量，后者证明文件系统实际使用了新增空间。</p>
+</div>
+            <div class="extra"><p>两个结果对应不同层次。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">52</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>怎样证明扩容没有通过重新格式化或替换文件系统完成？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>扩容前后检查原文件内容或校验值保持不变。</p>
+</div>
+            <div class="extra"><p>容量正确并不能单独证明数据被保留。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">53</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>PE 为 16 MiB，给 LV 增加 20 个 extent，会增加多少标称容量？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>320 MiB。</p>
+</div>
+            <div class="extra"><p>计算为 <code>20 × 16 MiB</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">54</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>-L 1120M</code> 与 <code>-L +320M</code> 在 <code>lvextend</code> 中有何区别？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>前者设置目标总大小；后者在当前基础上增加 320 MiB。</p>
+</div>
+            <div class="extra"><p>不要遗漏增量写法中的加号。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">55</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>目标 VG 的空闲 extent 不足时，第一步应做什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>查询并确认一个可安全使用的新设备或分区。</p>
+</div>
+            <div class="extra"><p>不能通过反复执行 <code>lvextend</code> 获得不存在的 VG 空间。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">56</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>把空闲 <code>/dev/vdc1</code> 加入 <code>projectvg</code> 的核心命令序列是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">pvcreate /dev/vdc1
+vgextend projectvg /dev/vdc1
+</code></pre>
+</div>
+            <div class="extra"><p>先成为 PV，再进入 VG。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">57</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>能否把尚未属于 VG 的 <code>/dev/vdc1</code> 直接交给 <code>lvextend</code> 扩大 LV？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。设备要先初始化为 PV，再通过 <code>vgextend</code> 加入目标 VG。</p>
+</div>
+            <div class="extra"><p>LV 只能从所属 VG 的可用 extent 获得空间。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">58</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>vgextend</code> 后应重点验证什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>新 PV 已属于目标 VG，VG 总容量和空闲 extent 已增加。</p>
+</div>
+            <div class="extra"><p>使用 <code>pvs</code> 和 <code>vgs</code> 分别验证成员关系与容量。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">59</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>发现候选新设备已经属于其他 VG 时，应怎样处理？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>停止初始化，确认设备用途并重新选择可用设备。</p>
+</div>
+            <div class="extra"><p>不要用强制参数覆盖已有 LVM 元数据。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">60</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>RHEL 9 中，XFS 文件系统能否原地缩小？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。XFS 支持增长，但不支持缩小。</p>
+</div>
+            <div class="extra"><p>需要更小容量时通常要新建文件系统并迁移数据。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">61</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为什么不能把 <code>lvreduce</code> 当作 <code>lvextend</code> 的简单反向命令？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>减少 LV 可能截断仍被文件系统使用的数据块，必须先满足文件系统安全缩容条件。</p>
+</div>
+            <div class="extra"><p>对 XFS 不存在原地缩容路径。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">62</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>遇到 LVM 配置异常时，是否应通过 <code>lvremove</code>、<code>vgremove</code> 或 <code>pvremove</code> 重新开始？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不应。除非题目明确要求且已证明没有需要保留的数据。</p>
+</div>
+            <div class="extra"><p>这些都是破坏性清理命令，不是通用排错手段。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">63</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>完成 LVM 创建任务时，稳定的证据推进顺序是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>确认设备 → 确认 PV/VG/LV 现状 → 创建或调整 LVM → 创建/扩展文件系统 → 配置挂载 → 分层验证。</p>
+</div>
+            <div class="extra"><p>不是在所有环境中无条件执行同一串写命令。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">64</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>看到 <code>lvs</code> 中 LV 已扩大，但业务仍提示磁盘空间不足，下一步优先检查什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>检查目标挂载点对应的文件系统是否已经扩大，并确认业务实际写入的是该挂载点。</p>
+</div>
+            <div class="extra"><p>重点查看 <code>df -hT</code> 和 <code>findmnt</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">65</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>经典任务中，最终验收为什么要同时检查 PV、VG、LV、文件系统和挂载点？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为它们是独立层次，任一局部正确都不能证明完整目标已达到。</p>
+</div>
+            <div class="extra"><p>还要验证数据保留和持久挂载。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">66</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>projectvg</code> 的 PE 为 16 MiB，<code>projectlv</code> 最终为 70 个 extent，其标称容量是多少？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>1120 MiB。</p>
+</div>
+            <div class="extra"><p>初始 50 个 extent，再增加 20 个。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">67</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>怎样验证 <code>/etc/fstab</code> 中的 UUID 没有写错？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>比较 fstab 条目与 <code>blkid</code>/<code>lsblk -f</code> 的真实 UUID，并运行 <code>findmnt --verify</code> 与挂载测试。</p>
+</div>
+            <div class="extra"><p>不能复制讲义中的占位 UUID。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">68</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>怎样证明 <code>/srv/project</code> 当前确实由 <code>projectlv</code> 提供，而不是根文件系统中的普通目录？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>使用 <code>findmnt /srv/project</code> 查看挂载源，并结合 <code>df -hT /srv/project</code>。</p>
+</div>
+            <div class="extra"><p>目录存在本身没有证明力。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">69</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>扩展任务中 <code>vg_free_count</code> 小于 20，下一步应怎样推进？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>确认 <code>/dev/vdc1</code> 空闲后执行 <code>pvcreate</code> 和 <code>vgextend</code>，再重新验证 VG 余量。</p>
+</div>
+            <div class="extra"><p>随后才执行 LV 与文件系统扩容。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">70</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>经典任务中，标记文件在扩容前后保持相同能证明什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>证明扩容没有通过重新格式化或替换文件系统来获得结果。</p>
+</div>
+            <div class="extra"><p>它是数据保留的直接证据之一。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">71</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>从两个空闲分区完成经典任务的主要流程骨架是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>调查设备 → 创建 PV/VG → 创建 LV → 建 XFS → 按 UUID 持久挂载 → 写入数据 → 必要时扩展 VG → 扩展 LV/文件系统 → 综合验证。</p>
+</div>
+            <div class="extra"><p>每一步都应由前一层查询结果支撑。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">72</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>经典任务完成后，仅 <code>mount -a</code> 没有报错是否足以证明全部目标完成？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不足。还要检查挂载源、LV 和文件系统容量、PE 要求、数据内容与 UUID 一致性。</p>
+</div>
+            <div class="extra"><p>无报错只是持久挂载验证的一部分。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">73</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>/dev/projectvg/projectlv</code> 与 <code>/dev/mapper/projectvg-projectlv</code> 通常是什么关系？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>它们通常指向同一个 LV 设备。</p>
+</div>
+            <div class="extra"><p>优先使用 <code>lvs</code> 查询出的 <code>lv_path</code>，避免手工处理 mapper 名称转义。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">74</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为什么“磁盘还有未分区空间”不能直接证明目标 VG 可以扩容？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为未分区空间尚未成为 PV，也没有加入目标 VG。</p>
+</div>
+            <div class="extra"><p>需要完成设备/分区、PV、VG 三层转换。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">75</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>如何在本机快速查找 <code>lvextend</code> 的 extent 和文件系统扩容选项？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">man lvextend
+lvextend --help
+</code></pre>
+</div>
+            <div class="extra"><p>考试环境中应能使用本地帮助确认低频细节。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">76</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>怎样查询哪个软件包提供一个缺失的命令，例如 <code>pvcreate</code>？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">dnf provides '*/pvcreate'
+</code></pre>
+</div>
+            <div class="extra"><p>只需掌握通用反查方法，不必背完整软件包表。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">77</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>LVM 的核心层次是设备/分区 → <span class='blank'>[...]</span> → <span class='blank'>[...]</span> → LV → 文件系统 → 挂载点。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>LVM 的核心层次是设备/分区 → <strong>PV</strong> → <strong>VG</strong> → LV → 文件系统 → 挂载点。</p></div>
+            <div class="extra"><p>PV 进入 VG，LV 再从 VG 分配容量。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">78</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>PE 大小属于 <span class='blank'>[...]</span>；创建 LV 时，小写 <code>-l</code> 按 <span class='blank'>[...]</span> 分配。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>PE 大小属于 <strong>VG</strong>；创建 LV 时，小写 <code>-l</code> 按 <strong>extent 数量或百分比</strong> 分配。</p></div>
+            <div class="extra"><p>不要把 PE 大小写到 <code>lvcreate</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">79</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>vgcreate <span class='blank'>[...]</span> projectvg /dev/vdb1</code> 创建 PE 大小为 16 MiB 的 VG。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>vgcreate <strong>-s 16M</strong> projectvg /dev/vdb1</code> 创建 PE 大小为 16 MiB 的 VG。</p></div>
+            <div class="extra"><p><code>-s</code> 是 physical extent size。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">80</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>lvcreate <span class='blank'>[...]</span> -n projectlv projectvg</code> 创建 50 个 extent 的 LV。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>lvcreate <strong>-l 50</strong> -n projectlv projectvg</code> 创建 50 个 extent 的 LV。</p></div>
+            <div class="extra"><p>按容量创建则使用大写 <code>-L</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">81</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>持久挂载的 fstab 核心结构是 <code><span class='blank'>[...]</span> <span class='blank'>[...]</span></code>。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>持久挂载的 fstab 核心结构是 <code><strong>UUID=&lt;UUID&gt;</strong> <strong>/srv/project xfs defaults 0 0</strong></code>。</p></div>
+            <div class="extra"><p>UUID 必须来自当前文件系统。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">82</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>lvextend --extents <span class='blank'>[...]</span> <span class='blank'>[...]</span> projectvg/projectlv</code> 同时增加 20 个 extent 并扩展文件系统。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>lvextend --extents <strong>+20</strong> <strong>--resizefs</strong> projectvg/projectlv</code> 同时增加 20 个 extent 并扩展文件系统。</p></div>
+            <div class="extra"><p>加号表示增量。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">83</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>新设备要成为现有 LV 的可用空间，先 <code><span class='blank'>[...]</span></code>，再 <code><span class='blank'>[...]</span></code>。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>新设备要成为现有 LV 的可用空间，先 <code><strong>pvcreate</strong></code>，再 <code><strong>vgextend</strong></code>。</p></div>
+            <div class="extra"><p>LV 只能使用所属 VG 的空闲 extent。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">84</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>RHEL 9 中，XFS 支持<span class='blank'>[...]</span>，但不支持<span class='blank'>[...]</span>。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>RHEL 9 中，XFS 支持<strong>增长</strong>，但不支持<strong>缩小</strong>。</p></div>
+            <div class="extra"><p>不要对 XFS 盲目执行 <code>lvreduce</code>。</p>
+</div>
+          </section>
+        </article>
+        </main></body></html>

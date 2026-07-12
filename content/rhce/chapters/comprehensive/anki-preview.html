@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RHCE 综合任务 - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>RHCE 综合任务 - Anki 预览</h1>
+    <p class="preview-meta">共 14 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCE 综合项目执行前四类门是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>项目/依赖、Vault、Inventory/配置、连接/become。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么 recap 不能发现 Inventory 漏主机？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>未匹配主机根本不会进入执行。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>如何证明主机覆盖？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>inventory graph 与 playbook --list-hosts 对照题目。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么先 limit 代表主机？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>降低批量错误并暴露运行时问题。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>何时扩展全组？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>代表主机远端终态正确后。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>全量第一次后做什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>远端矩阵验收并再次全量检查幂等。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>秘密安全验收包含什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>Vault 保持密文、密码入口权限、no_log、输出无明文。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Role 共享变化后怎么验收？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>回归所有消费组，不复制分叉。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>系统状态映射原则？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>优先专用模块/System Role，shell 只补明确缺口。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>第二次 0 changed 能否证明正确？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能，仍需主机覆盖和远端功能。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>综合终态矩阵维度？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>每组主机的身份、软件、文件、服务、网络、安全、存储、功能。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCE 完成判据？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>全目标覆盖、远端正确、秘密安全、依赖可复现、第二次稳定。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCE 主线：静态边界 → […] → 远端终态 → 全量 → […]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>RHCE 主线：静态边界 → limit 代表主机 → 远端终态 → 全量 → 第二次执行。</p><div class="extra"><p>每阶段取证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>最终判据包含主机覆盖、远端正确、秘密安全、依赖可复现与[…]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>最终判据包含主机覆盖、远端正确、秘密安全、依赖可复现与幂等稳定。</p><div class="extra"><p>不是 recap 单项。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

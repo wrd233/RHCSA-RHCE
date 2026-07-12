@@ -1,0 +1,198 @@
+chapter_id: RHCE-VARIABLES
+deck: RedHat::RHCE-RHEL9
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCE-VARIABLES-QA-001
+  type: qa
+  question: 查看单主机最终 Inventory 变量用什么？
+  answer: '`ansible-inventory --host <HOST>`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::ansible
+  - priority::P0
+- id: RHCE-VARIABLES-QA-002
+  type: qa
+  question: debug 一个变量对象的推荐语法是什么？
+  answer: '`ansible.builtin.debug: var=myvar`'
+  extra: var 参数不写 `{{ }}`。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::ansible
+  - priority::P0
+- id: RHCE-VARIABLES-QA-003
+  type: qa
+  question: inventory_hostname 与 ansible_host 区别？
+  answer: 逻辑主机名；连接地址。
+  extra: comparison
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::ansible
+  - priority::P0
+- id: RHCE-VARIABLES-QA-004
+  type: qa
+  question: 循环任务的 register 单项结果通常在哪里？
+  answer: '`result.results`'
+  extra: 先 debug 完整结构。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::ansible
+  - priority::P0
+- id: RHCE-VARIABLES-QA-005
+  type: qa
+  question: command register 高频字段有哪些？
+  answer: rc、stdout、stderr、changed。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::ansible
+  - priority::P0
+- id: RHCE-VARIABLES-QA-006
+  type: qa
+  question: 所有模块都有 stdout 吗？
+  answer: 没有；返回字段取决于模块。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-VARIABLES-QA-007
+  type: qa
+  question: 检查变量类型用哪个过滤器？
+  answer: '`type_debug`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::ansible
+  - priority::P0
+- id: RHCE-VARIABLES-QA-008
+  type: qa
+  question: 字符串 'false' 能否等同布尔 false？
+  answer: 不能。
+  extra: when 中尤其危险。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-VARIABLES-QA-009
+  type: qa
+  question: groups['web'] 保存什么？
+  answer: web 组 inventory 主机名列表。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::ansible
+  - priority::P0
+- id: RHCE-VARIABLES-QA-010
+  type: qa
+  question: hostvars 的作用是什么？
+  answer: 按主机名访问该主机变量字典。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::ansible
+  - priority::P0
+- id: RHCE-VARIABLES-QA-011
+  type: qa
+  question: 必需变量缺失时能否无条件 default 隐藏？
+  answer: 不应；应修正数据源或显式 assert。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-VARIABLES-QA-012
+  type: qa
+  question: 变量任务验收链？
+  answer: 数据源/类型 → host 最终值 → limit → 远端差异终态。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-06-07
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::process
+  - priority::P0
+- id: RHCE-VARIABLES-CLOZE-X01
+  type: cloze
+  text: 循环 register 的逐项结果通常位于 `{{c1::results}}`；命令返回码通常位于 `{{c2::rc}}`。
+  extra: 先 debug 结构。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::cloze
+  - coverage::extra
+- id: RHCE-VARIABLES-CLOZE-X02
+  type: cloze
+  text: 逻辑主机名是 `{{c1::inventory_hostname}}`；连接地址常是 `{{c2::ansible_host}}`。
+  extra: 不要混用。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::variables-facts
+  - card::cloze
+  - coverage::extra

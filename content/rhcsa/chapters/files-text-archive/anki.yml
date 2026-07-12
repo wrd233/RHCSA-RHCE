@@ -1,0 +1,232 @@
+chapter_id: RHCSA-FILES
+deck: RedHat::RHCSA-RHEL9
+note_types: [RedHat-QA, RedHat-Cloze]
+notes:
+  - id: RHCSA-FILES-K01-QA-001
+    type: qa
+    question: 目录的 `x` 权限控制什么？
+    answer: 允许穿越目录并访问其中已知名称。
+    extra: 文件可读但父目录缺少 `x`，路径访问仍失败。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::concept, priority::P0]
+  - id: RHCSA-FILES-K01-QA-002
+    type: qa
+    question: 逐层查看路径中每个目录权限，推荐什么命令？
+    answer: '`namei -l <PATH>`'
+    extra: 比只看最终文件的 `ls -l` 更适合路径权限排错。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::command, priority::P0]
+  - id: RHCSA-FILES-K01-QA-003
+    type: qa
+    question: 硬链接的两个名称在 inode 上是什么关系？
+    answer: 指向同一个 inode 和同一份数据。
+    extra: '`stat` 可比较 inode 与链接计数。'
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::concept, priority::P0]
+  - id: RHCSA-FILES-K01-QA-004
+    type: qa
+    question: 硬链接为什么不能跨文件系统？
+    answer: inode 编号只在所属文件系统内有意义。
+    extra: 跨文件系统使用符号链接或复制。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::diagnosis, priority::P1]
+  - id: RHCSA-FILES-K01-QA-005
+    type: qa
+    question: 删除符号链接目标后，链接本身会怎样？
+    answer: 链接仍存在，但成为指向不存在路径的悬空链接。
+    extra: '`readlink` 仍可显示其保存的路径。'
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::output, priority::P0]
+  - id: RHCSA-FILES-K01-QA-006
+    type: qa
+    question: 相对符号链接的目标从哪里解释？
+    answer: 从符号链接所在目录解释。
+    extra: 不是从创建链接时的工作目录解释。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::concept, priority::P1]
+  - id: RHCSA-FILES-K01-QA-007
+    type: qa
+    question: '`sha256sum` 相同能证明什么，不能证明什么？'
+    answer: 能证明字节内容相同；不能证明所有者、权限、时间或链接关系相同。
+    extra: 元数据另用 `stat` 验证。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::verification, priority::P0]
+  - id: RHCSA-FILES-O01-QA-001
+    type: qa
+    question: 创建目录及缺失父目录的命令骨架是什么？
+    answer: '`mkdir -p <PATH>`'
+    extra: 已存在目录不会因此报错。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::command, priority::P0]
+  - id: RHCSA-FILES-O01-QA-002
+    type: qa
+    question: 一次复制文件、创建父目录并设置模式，推荐什么骨架？
+    answer: '`install -D -m <MODE> <SOURCE> <DEST>`'
+    extra: 题目还可能要求 `-o` 和 `-g` 设置身份。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::command, priority::P1]
+  - id: RHCSA-FILES-O01-QA-003
+    type: qa
+    question: '`cp -a /src/. /dest/` 中的 `/.` 表达什么？'
+    answer: 复制源目录的全部内容到目标，包括隐藏成员。
+    extra: 它避免在目标下再创建一层 `src`。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P0]
+  - id: RHCSA-FILES-O01-QA-004
+    type: qa
+    question: '`du -sh <DIR>` 与 `df -hT <PATH>` 分别观察什么？'
+    answer: '`du` 看目录内容占用；`df` 看路径所属文件系统容量与使用率。'
+    extra: 两者对象不同。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::comparison, priority::P0]
+  - id: RHCSA-FILES-O02-QA-001
+    type: qa
+    question: '`find` 的通用结构是什么？'
+    answer: '`find <START> <TESTS> <ACTIONS>`'
+    extra: 起点、筛选条件和动作应分开阅读。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::syntax, priority::P0]
+  - id: RHCSA-FILES-O02-QA-002
+    type: qa
+    question: 用 find 只选择普通文件的条件是什么？
+    answer: '`-type f`'
+    extra: 目录用 `-type d`，符号链接用 `-type l`。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P0]
+  - id: RHCSA-FILES-O02-QA-003
+    type: qa
+    question: '`find ... -size +10M` 中的加号是什么语义？'
+    answer: 大于 10 个 MiB 单位。
+    extra: 无符号为按单位取整匹配，减号表示小于。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P0]
+  - id: RHCSA-FILES-O02-QA-004
+    type: qa
+    question: '`find ... -mtime -7` 的核心语义是什么？'
+    answer: 修改时间落在最近 7 个完整 24 小时计数范围内。
+    extra: 边界有取整，精确时间用 `stat` 抽查。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P1]
+  - id: RHCSA-FILES-O02-QA-005
+    type: qa
+    question: 为什么不推荐 `for f in $(find ...)` 处理路径？
+    answer: 命令替换结果会按空白分词，破坏含空格或换行的文件名。
+    extra: 使用 `-exec ... {} +` 或 NUL 分隔。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::diagnosis, priority::P0]
+  - id: RHCSA-FILES-O02-QA-006
+    type: qa
+    question: 让 find 批量把路径作为独立参数传给命令，推荐什么动作？
+    answer: '`-exec <COMMAND> {} +`'
+    extra: '`+` 批量调用，`\;` 通常逐个调用。'
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::command, priority::P0]
+  - id: RHCSA-FILES-O02-QA-007
+    type: qa
+    question: find 与 xargs 之间安全传递任意文件名的组合是什么？
+    answer: '`find ... -print0 | xargs -0 ...`'
+    extra: 两端使用 NUL 作为记录分隔符。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::command, coverage::extra]
+  - id: RHCSA-FILES-O03-QA-001
+    type: qa
+    question: '`grep -E`、`-i`、`-n`、`-v` 分别表示什么？'
+    answer: 扩展正则、忽略大小写、显示行号、反选。
+    extra: 递归搜索常用 `-r`。
+    source: [RHCSA-Course-07]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P0]
+  - id: RHCSA-FILES-O03-QA-002
+    type: qa
+    question: 为什么 `uniq` 前通常先运行 `sort`？
+    answer: '`uniq` 只识别相邻的重复行。'
+    extra: 若需保留原顺序，应选择其他去重方法。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::process, priority::P1]
+  - id: RHCSA-FILES-O03-QA-003
+    type: qa
+    question: 验证文本筛选结果时，除了非空还应检查什么？
+    answer: 结果数量、代表性匹配和应被排除的反例。
+    extra: 防止模式过窄或过宽。
+    source: [Lecture-Standard]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::verification, priority::P0]
+  - id: RHCSA-FILES-O04-QA-001
+    type: qa
+    question: '`tar` 的 `-c`、`-t`、`-x`、`-f` 分别是什么？'
+    answer: 创建、列出成员、提取、指定归档文件。
+    extra: '`-f` 后应跟归档路径。'
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P0]
+  - id: RHCSA-FILES-O04-QA-002
+    type: qa
+    question: gzip、bzip2、xz 对应的 tar 短选项是什么？
+    answer: 分别是 `-z`、`-j`、`-J`。
+    extra: 也可根据文件名和 `file` 验证格式。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P0]
+  - id: RHCSA-FILES-O04-QA-003
+    type: qa
+    question: '`tar -C /srv -cJf out.tar.xz project` 的 `-C` 有什么作用？'
+    answer: 创建成员前切换到 `/srv`，使归档成员从 `project/` 开始。
+    extra: 它用于控制归档内路径前缀。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P0]
+  - id: RHCSA-FILES-O04-QA-004
+    type: qa
+    question: 查看 xz 压缩 tar 的成员但不解包，命令骨架是什么？
+    answer: '`tar -tJf <ARCHIVE.tar.xz>`'
+    extra: 成员存在不等于内容字节正确。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::verification, priority::P0]
+  - id: RHCSA-FILES-O04-QA-005
+    type: qa
+    question: '`rsync -a /src/ host:/dest/` 中源末尾斜线表示什么？'
+    answer: 同步 `/src` 的内容到目标，而不是在目标再创建 `src` 目录。
+    extra: 这是常见的目标层级差异来源。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::parameter, priority::P0]
+  - id: RHCSA-FILES-O04-QA-006
+    type: qa
+    question: rsync 执行前预览差异使用哪个选项？
+    answer: '`-n` 或 `--dry-run`。'
+    extra: 与 `-a` 组合可预览归档模式同步。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::command, priority::P1]
+  - id: RHCSA-FILES-O04-QA-007
+    type: qa
+    question: 为什么 `rsync --delete` 不能作为默认同步选项？
+    answer: 它会删除目标端源中不存在的额外文件，可能破坏数据。
+    extra: 只有题意明确要求镜像删除时使用。
+    source: [rsync-manual]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::diagnosis, priority::P0]
+  - id: RHCSA-FILES-C01-QA-001
+    type: qa
+    question: 需要保留 find 结果相对目录结构时，GNU cp 的关键参数是什么？
+    answer: '`cp --parents`'
+    extra: 通常先切到查找起点，以免保留不需要的绝对前缀。
+    source: [RHCSA9-Mock, coreutils]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::command, priority::P1, task::log-archive]
+  - id: RHCSA-FILES-C01-QA-002
+    type: qa
+    question: 归档并传输任务的最小验收组合是什么？
+    answer: 源/目标路径集合、`tar -t` 成员、远端 `stat`、双端校验值。
+    extra: 传输命令退出 0 不能单独证明落点正确。
+    source: [RHCSA9-Mock]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::verification, priority::P0, task::log-archive]
+  - id: RHCSA-FILES-K01-CLOZE-001
+    type: cloze
+    text: 硬链接共享{{c1::同一个 inode}}；符号链接保存{{c2::目标路径文本}}。
+    extra: 两者失效方式不同。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::cloze, priority::P0]
+  - id: RHCSA-FILES-O02-CLOZE-001
+    type: cloze
+    text: 安全路径批处理可用 `find ... {{c1::-exec command {} +}}`，NUL 管道使用 `{{c2::-print0}} | xargs -0`。
+    extra: 避免空白分词。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::cloze, priority::P0]
+  - id: RHCSA-FILES-O04-CLOZE-001
+    type: cloze
+    text: tar 压缩选项：gzip=`{{c1::-z}}`，bzip2=`{{c1::-j}}`，xz=`{{c2::-J}}`。
+    extra: 大写 J 是 xz。
+    source: [RH124]
+    tags: [exam::rhcsa, chapter::files-text-archive, card::cloze, priority::P0]

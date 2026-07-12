@@ -1,0 +1,13 @@
+:root { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans GB", sans-serif; color: #172033; background: #eef2f6; }
+body { margin: 0; }
+.preview-shell { max-width: 920px; margin: 0 auto; padding: 32px 20px 60px; }
+h1 { color: #12345b; }
+.preview-meta { color: #64748b; }
+.note-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.card-face { min-height: 170px; background: white; border: 1px solid #cbd5e1; border-top: 4px solid #315b87; border-radius: 7px; padding: 22px; line-height: 1.55; }
+.back { border-top-color: #4f766d; }
+.face-name { color: #718096; font-size: 12px; margin-bottom: 14px; }
+code { font-family: "SFMono-Regular", Menlo, "Hiragino Sans GB", "Heiti SC", monospace; background: #eef2f6; border-radius: 3px; padding: .08em .25em; }
+pre { background: #f4f6f8; border-left: 3px solid #315b87; padding: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+pre code { background: transparent; padding: 0; }
+@media (max-width: 720px) { .note-preview { grid-template-columns: 1fr; } }

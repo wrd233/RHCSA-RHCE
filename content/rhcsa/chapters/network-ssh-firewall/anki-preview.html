@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>网络、名称解析、SSH 与 firewalld - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>网络、名称解析、SSH 与 firewalld - Anki 预览</h1>
+    <p class="preview-meta">共 37 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>NetworkManager device 与 connection 的区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>device 是网卡等设备；connection 是可持久并可激活到设备的配置 profile。</p><div class="extra"><p>profile 名称不一定等于接口名。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看设备及其活动 connection 的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>nmcli device status</code></p><div class="extra"><p>所有 profile 用 <code>nmcli connection show</code>。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>只查看已激活 NetworkManager profile，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>nmcli connection show --active</code></p><div class="extra"><p>修改未激活 profile 不会立即改变内核状态。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>持久 profile 与当前内核地址分别用什么查询？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>nmcli con show &lt;CON&gt;</code> 与 <code>ip -br address</code>。</p><div class="extra"><p>两组证据可能因尚未激活而不同。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看内核为特定目的选择的出口、源地址和下一跳，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ip route get &lt;DEST&gt;</code></p><div class="extra"><p>比只看完整路由表更直接回答路径选择。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>ping 网关成功能否证明 DNS 和 TCP 服务正确？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能；只证明对应路径允许这次 ICMP 交互。</p><div class="extra"><p>解析、监听和应用协议分别验证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>静态 IPv4 profile 的关键 method 值是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ipv4.method manual</code></p><div class="extra"><p>还要设置地址/前缀、网关和 DNS。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>创建绑定 enp1s0、名为 exam-static 的以太网 profile 骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>nmcli con add type ethernet ifname enp1s0 con-name exam-static ...</code></p><div class="extra"><p>继续指定 IPv4 目标状态。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>激活 <code>exam-static</code> profile 的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>nmcli connection up exam-static</code></p><div class="extra"><p>远程操作前必须评估断连风险。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>nmcli con mod</code> 修改多值属性时，前缀 <code>+</code> 与 <code>-</code> 表示什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>追加一个值；删除指定值。</p><div class="extra"><p>不带前缀通常替换整个属性。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>profile 中静态地址正确但 <code>ip -br a</code> 仍是旧地址，优先判断什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>新 profile 尚未激活到设备，或另一 profile 仍在活动。</p><div class="extra"><p>查看 <code>nmcli con show --active</code>。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>静态网络配置的最小验收层次是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>profile 属性 → 当前地址 → 路由 → DNS → 必要连通功能。</p><div class="extra"><p>autoconnect 另证持久性。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>设置静态主机名的命令骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>hostnamectl set-hostname &lt;FQDN&gt;</code></p><div class="extra"><p>不会自动发布 DNS 记录。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>/etc/hosts</code> 条目的典型字段顺序是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>IP 地址、规范主机名、可选别名。</p><div class="extra"><p>写入前检查同名或同地址冲突。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>验证应用常用的系统名称解析入口，首选什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>getent hosts &lt;NAME&gt;</code></p><div class="extra"><p>它按 NSS 配置工作，可包含 hosts 与 DNS。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>dig</code> 成功与 <code>getent hosts</code> 成功证明的是同一件事吗？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不是；dig 直接查 DNS，getent 走系统 NSS 解析路径。</p><div class="extra"><p><code>/etc/hosts</code> 可影响后者而不影响前者。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>SSH 密钥对中，哪一部分可以安装到远端？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>公钥 <code>.pub</code>；私钥保留在客户端并严格保护。</p><div class="extra"><p>不向远端复制私钥。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>生成 ed25519 密钥对的命令骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ssh-keygen -t ed25519 -f &lt;PRIVATE_KEY_PATH&gt;</code></p><div class="extra"><p>会同时生成对应 <code>.pub</code> 文件。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>把指定公钥安装到远端 alice 账号的命令骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ssh-copy-id -i &lt;KEY&gt;.pub alice@&lt;HOST&gt;</code></p><div class="extra"><p>通常需要一次已有认证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>修改 sshd 配置后，重载前必须运行什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>sshd -t</code></p><div class="extra"><p>在密钥验证前不要关闭现有认证路径。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>SSH 公钥认证失败的双端证据入口是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>客户端 <code>ssh -v</code>，服务端 <code>journalctl -u sshd</code>。</p><div class="extra"><p>再查用户、路径权限和 SELinux 标签。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>known_hosts 报主机密钥变化时，应先做什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>通过可信渠道核对服务端指纹。</p><div class="extra"><p>确认合法变化后才用 <code>ssh-keygen -R</code> 移除旧记录。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>SSH 登录成功后，如何证明实际远端身份与主机？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>在远端运行 <code>id</code> 与 <code>hostname</code>。</p><div class="extra"><p>连接退出 0 仍需确认目标对象。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看 firewalld 当前活动 zone 与接口归属，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>firewall-cmd --get-active-zones</code></p><div class="extra"><p>规则必须添加到实际处理流量的 zone。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>firewalld service 与 port 规则的区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>service 是命名的端口/协议集合；port 直接写 <code>PORT/PROTOCOL</code>。</p><div class="extra"><p>有准确 service 定义时优先使用。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>当前立即允许 public zone 的 HTTP，命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>firewall-cmd --zone=public --add-service=http</code></p><div class="extra"><p>这是 runtime 修改。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>持久允许 public zone 的 TCP 8080，命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>firewall-cmd --zone=public --add-port=8080/tcp --permanent</code></p><div class="extra"><p>不立即改变 runtime。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>不带与带 <code>--permanent</code> 的 firewalld 修改分别作用哪里？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>runtime 当前规则；持久配置。</p><div class="extra"><p>两层都要分别查询。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>firewall-cmd --reload</code> 对 runtime 有什么影响？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>用持久配置重建 runtime，未持久的运行时变化会丢失。</p><div class="extra"><p>reload 前先理解其他 runtime-only 规则。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>分别查询 public zone HTTP 的 runtime 与 permanent 状态，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>--query-service=http</code>，持久查询再加 <code>--permanent</code>。</p><div class="extra"><p>两条查询都应显式指定 zone。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>防火墙已允许 80/tcp，能否证明 httpd 正在监听？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能；防火墙只允许流量，不创建监听。</p><div class="extra"><p>使用 <code>ss -lntp</code> 和协议请求验证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>数字 IP 可达但主机名失败，优先检查哪一层？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>系统名称解析层：NSS、DNS server/search 和 hosts 冲突。</p><div class="extra"><p>不应继续改地址或路由。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>服务 active 但远端访问失败的证据推进骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>监听 → 本机协议请求 → zone/runtime/permanent → 远端请求 → SELinux。</p><div class="extra"><p>拒绝与超时只是线索，不是绝对根因。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>静态网络、SSH、HTTP 综合任务的验收骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>profile/当前网络/DNS → SSH 远端身份 → 服务状态/监听 → 正确 zone 双态 → 外部 HTTP。</p><div class="extra"><p>每层单独取证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>NetworkManager 的 […] 是设备，[…] 是可持久激活的配置 profile。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>NetworkManager 的 device 是设备，connection 是可持久激活的配置 profile。</p><div class="extra"><p>名称不必相同。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>firewalld 不带 <code>--permanent</code> 修改[…]；带该参数修改[…]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>firewalld 不带 <code>--permanent</code> 修改runtime；带该参数修改持久配置。</p><div class="extra"><p>reload 用持久配置重建 runtime。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>SSH 密钥认证：客户端保留[…]，远端 <code>authorized_keys</code> 保存[…]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>SSH 密钥认证：客户端保留私钥，远端 <code>authorized_keys</code> 保存公钥。</p><div class="extra"><p>私钥不得分发。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

@@ -1,0 +1,198 @@
+chapter_id: RHCE-STORAGE
+deck: RedHat::RHCE-RHEL9
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCE-STORAGE-QA-001
+  type: qa
+  question: 创建 VG 常用模块？
+  answer: '`community.general.lvg`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::ansible
+  - priority::P0
+- id: RHCE-STORAGE-QA-002
+  type: qa
+  question: 创建/扩展 LV 常用模块？
+  answer: '`community.general.lvol`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::ansible
+  - priority::P0
+- id: RHCE-STORAGE-QA-003
+  type: qa
+  question: 创建文件系统模块？
+  answer: '`community.general.filesystem`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::ansible
+  - priority::P0
+- id: RHCE-STORAGE-QA-004
+  type: qa
+  question: 持久并当前挂载模块？
+  answer: '`ansible.posix.mount`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::ansible
+  - priority::P0
+- id: RHCE-STORAGE-QA-005
+  type: qa
+  question: 为什么不自动 wipefs？
+  answer: 可能破坏未知签名和数据。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-STORAGE-QA-006
+  type: qa
+  question: 为什么避免 shell `lvextend +1G`？
+  answer: 每次执行可能持续增长，非目标状态。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-STORAGE-QA-007
+  type: qa
+  question: lvs 增长 df 不变说明？
+  answer: 文件系统未扩展。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-STORAGE-QA-008
+  type: qa
+  question: 存储模块顺序？
+  answer: lvg → lvol → filesystem → mountpoint → mount。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::process
+  - priority::P0
+- id: RHCE-STORAGE-QA-009
+  type: qa
+  question: 设备差异放哪里？
+  answer: host_vars/group_vars 的结构化布局。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::ansible
+  - priority::P0
+- id: RHCE-STORAGE-QA-010
+  type: qa
+  question: mount current 与 fstab 都需验证什么？
+  answer: findmnt 与 fstab/模块 state。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::verification
+  - priority::P0
+- id: RHCE-STORAGE-QA-011
+  type: qa
+  question: 扩容保留数据怎样证明？
+  answer: 前后 checksum、lvs、df、findmnt。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::verification
+  - priority::P0
+- id: RHCE-STORAGE-QA-012
+  type: qa
+  question: 存储自动化发布前为何 limit？
+  answer: 错误设备变量会批量破坏。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-STORAGE-CLOZE-X01
+  type: cloze
+  text: 存储依赖顺序：`{{c1::lvg → lvol → filesystem}}` → mountpoint → `{{c2::mount}}`。
+  extra: 先设备证据。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::cloze
+  - coverage::extra
+- id: RHCE-STORAGE-CLOZE-X02
+  type: cloze
+  text: '`lvs` 增长而 `df` 不变，缺少{{c1::文件系统扩展}}。'
+  extra: 不要继续增加 LV。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-storage
+  - card::cloze
+  - coverage::extra

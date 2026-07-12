@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ansible 故障排除、验证与幂等性 - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>Ansible 故障排除、验证与幂等性 - Anki 预览</h1>
+    <p class="preview-meta">共 14 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>FAILED 与 UNREACHABLE 区别？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>任务执行失败；连接层未建立。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>SKIPPED 表示什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>条件不满足而未执行。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>changed 是否证明功能改变正确？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不证明。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>错误配置能否幂等？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>能；稳定错误也可能无 changed。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>0 hosts 首查什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>Inventory/pattern/--list-hosts。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>UNREACHABLE 首查什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>SSH 地址、用户、密钥、host key、网络/Python。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>become 失败首查什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>远端 sudo 与 become 配置。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>register 结构怎样检查？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>debug: var=result</code></p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么不全局 changed_when false？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>会伪造幂等并隐藏真实变化。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>verbosity 何时提高？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>需要连接、变量或模块细节证据时。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>故障修复后的回归链？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>失败层 → 远端功能 → 全组 → 第二次执行。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>最终幂等判据？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>第二次无无法解释 changed 且远端正确终态保持。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>[…] 表示连接层未建立；[…] 表示可达主机上的任务失败。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>UNREACHABLE 表示连接层未建立；FAILED 表示可达主机上的任务失败。</p><div class="extra"><p>先分层。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>第二次无 changed 证明[…]，不能单独证明[…]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>第二次无 changed 证明幂等稳定，不能单独证明目标正确。</p><div class="extra"><p>还要远端验收。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

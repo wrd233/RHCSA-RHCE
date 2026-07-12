@@ -1,0 +1,908 @@
+<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>SELinux Anki 预览</title><style>
+    :root { color-scheme: light dark; }
+    body { margin:0; font-family:"Noto Sans CJK SC",sans-serif; background:#eef1f4; color:#233142; }
+    main { max-width:900px; margin:0 auto; padding:32px 24px 80px; }
+    h1 { color:#173f6d; font-size:26px; margin:0 0 8px; }
+    .intro { color:#637285; margin-bottom:26px; }
+    .preview-card { position:relative; background:#fff; border:1px solid #d8e0e8; border-radius:8px; margin:0 0 22px; overflow:hidden; box-shadow:0 2px 8px rgba(25,45,65,.05); }
+    .card-index { position:absolute; top:10px; right:13px; color:#9aa7b4; font-size:12px; }
+    .face { padding:28px 32px; }
+    .face + .face { border-top:1px solid #e1e7ed; }
+    .face-label { font-size:12px; color:#8290a0; margin-bottom:12px; }
+    .front { min-height:88px; }
+    .back { background:#fbfcfd; }
+    .content, .answer { font-size:17px; line-height:1.65; }
+    .answer { color:#173f6d; }
+    .extra { margin-top:16px; padding-top:13px; border-top:1px solid #e1e7ed; color:#58697b; font-size:14px; line-height:1.6; }
+    p { margin:.2em 0 .7em; }
+    pre { white-space:pre-wrap; overflow-wrap:anywhere; background:#f1f4f7; border-left:3px solid #476f99; padding:12px 14px; border-radius:3px; font-family:"Noto Sans Mono CJK SC",monospace; font-size:14px; }
+    code { font-family:"Noto Sans Mono CJK SC",monospace; background:#eef2f5; padding:.08em .28em; border-radius:3px; }
+    pre code { background:transparent; padding:0; }
+    strong { color:#173f6d; }
+    .blank { display:inline-block; min-width:42px; border-bottom:2px solid #7189a1; color:transparent; }
+    @media (prefers-color-scheme: dark) {
+      body { background:#171b20; color:#dce3ea; }
+      .preview-card { background:#20262d; border-color:#343e48; box-shadow:none; }
+      .back { background:#1d2329; }
+      .face + .face, .extra { border-color:#35404b; }
+      .answer, h1, strong { color:#9fc1e5; }
+      .extra, .intro { color:#aab6c2; }
+      pre, code { background:#2a323a; }
+    }
+    </style></head><body><main><h1>SELinux Anki 卡片预览</h1><p class='intro'>共 55 个 Note，预计生成 60 张 Card。此页面仅用于查看题面、最低合格答案与必要补充，不显示来源、标签和维护信息。</p>
+        <article class="preview-card">
+          <div class="card-index">01</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>普通 Unix 权限允许一次访问时，为什么 RHEL 9 仍可能拒绝它？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为 SELinux 会在 DAC 允许之后继续按安全策略检查进程域、目标对象类型和请求行为。</p>
+</div>
+            <div class="extra"><p>DAC 拒绝时，SELinux 不会替它放行；DAC 允许也不代表 SELinux 一定允许。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">02</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>在 RHCSA 常见服务访问问题中，SELinux 安全上下文的哪个字段最需要优先关注？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>type</code> 字段。</p>
+</div>
+            <div class="extra"><p>对进程而言 type 常称为 domain；对文件而言，它描述对象用途。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">03</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>httpd_t</code> 与 <code>httpd_sys_content_t</code> 分别描述什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>httpd_t</code> 是 httpd 进程域；<code>httpd_sys_content_t</code> 是可供 Web 服务读取的内容文件类型。</p>
+</div>
+            <div class="extra"><p>策略结合进程域、目标类型和请求行为决定是否允许访问。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">04</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>SELinux 安全上下文通常由哪四部分组成？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>SELinux user、role、type 和 level。</p>
+</div>
+            <div class="extra"><p>RHCSA 服务题主要关注 type，不需要机械修改完整四字段字符串。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">05</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>如何查看 SELinux 当前运行模式？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">getenforce
+</code></pre>
+</div>
+            <div class="extra"><p>输出可能为 <code>Enforcing</code>、<code>Permissive</code> 或 <code>Disabled</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">06</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>需要同时比较 SELinux 当前模式和配置文件中的启动模式时，应优先使用什么命令？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">sestatus
+</code></pre>
+</div>
+            <div class="extra"><p>重点比较 <code>Current mode</code> 与 <code>Mode from config file</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">07</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>setenforce 0</code> 改变什么，又不改变什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>它把当前模式临时切到 Permissive，但不修改重启后的持久配置。</p>
+</div>
+            <div class="extra"><p>它也不能把 <code>Disabled</code> 的系统直接切回启用状态。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">08</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>服务在 <code>setenforce 0</code> 后恢复正常，能否认为 SELinux 问题已经修复？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。这只说明 SELinux 可能参与了拒绝，仍需查看 AVC 并修正具体策略条件。</p>
+</div>
+            <div class="extra"><p>最终应恢复题目要求的模式，并验证业务终态。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">09</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>RHEL 9 中，SELinux 持久启动模式主要记录在哪个文件？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>/etc/selinux/config</code></p>
+</div>
+            <div class="extra"><p><code>SELINUX=enforcing</code> 管理持久模式；修改该文件不会立即改变当前模式。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">10</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>题目要求 SELinux 当前和重启后都为 Enforcing，至少应分别验证哪两个状态？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>当前模式为 Enforcing；配置文件中的持久模式也为 Enforcing。</p>
+</div>
+            <div class="extra"><p>可用 <code>sestatus</code> 同时观察两个维度。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">11</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>Web 服务访问失败时，在深入 SELinux 前应先用证据确认哪些前置层？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>服务配置与状态、实际监听、普通路径权限和防火墙。</p>
+</div>
+            <div class="extra"><p>这些层次分别回答不同问题，不能由单一“服务已启动”结论代替。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">12</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>查看近期 SELinux AVC 拒绝的核心命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">ausearch -m AVC -ts recent -i
+</code></pre>
+</div>
+            <div class="extra"><p>若无结果，先重新触发问题并确认时间范围与 <code>auditd</code> 状态。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">13</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>阅读一条 AVC 拒绝时，优先提炼哪三个核心对象和一个行为？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>发起访问的进程/进程域、目标对象/目标类型、对象类别，以及被拒绝的行为。</p>
+</div>
+            <div class="extra"><p>PID、时间戳等通常不是第一轮判断的重点。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">14</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>AVC 中出现 <code>denied { name_bind }</code>、<code>comm=&quot;httpd&quot;</code> 和 <code>tclass=tcp_socket</code>，下一步优先检查什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>检查目标端口当前的 SELinux 端口类型及 <code>http_port_t</code> 映射。</p>
+</div>
+            <div class="extra"><p>不应跳过查询直接反复新增端口规则。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">15</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>ls -Z</code> 能证明什么，不能证明什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>它能显示对象当前标签，但不能证明持久文件上下文规则已经存在。</p>
+</div>
+            <div class="extra"><p>通过 <code>chcon</code> 临时修改后，<code>ls -Z</code> 同样可能看起来正确。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">16</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>chcon</code> 与 <code>semanage fcontext</code> 的核心区别是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>chcon</code> 修改当前标签；<code>semanage fcontext</code> 建立路径的持久标签规则。</p>
+</div>
+            <div class="extra"><p>最终持久配置通常还要运行 <code>restorecon</code> 应用规则。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">17</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>已经为 <code>/srv/site</code> 建立持久文件上下文规则，如何将规则应用到现有目录及其内容？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">restorecon -Rv /srv/site
+</code></pre>
+</div>
+            <div class="extra"><p><code>restorecon</code> 根据策略和 fcontext 规则恢复当前标签。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">18</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为 <code>/srv/site</code> 及其后代路径建立持久的 <code>httpd_sys_content_t</code> 规则，推荐命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">semanage fcontext -a -t httpd_sys_content_t '/srv/site(/.*)?'
+</code></pre>
+</div>
+            <div class="extra"><p>添加后仍需执行 <code>restorecon -Rv /srv/site</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">19</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>在 <code>'/srv/site(/.*)?'</code> 中，<code>(/.*)?</code> 的直观作用是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>让规则除匹配目录本身外，也匹配其下的文件和子目录。</p>
+</div>
+            <div class="extra"><p>单引号用于把整个路径表达式原样交给命令处理。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">20</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>如何检查策略认为 <code>/srv/site/index.html</code> 应具有的 SELinux 上下文？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">matchpathcon /srv/site/index.html
+</code></pre>
+</div>
+            <div class="extra"><p>它用于观察预期标签，再与 <code>ls -Z</code> 的当前标签比较。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">21</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>文件上下文配置的稳定闭环应分别确认哪三层？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>持久路径规则、策略推导出的预期标签、文件当前实际标签。</p>
+</div>
+            <div class="extra"><p>三者一致后，再验证业务访问。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">22</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>semanage fcontext -a</code> 提示同一路径规则已存在时，下一步应该做什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>先查询现有规则的表达式和类型，再根据目标决定是否修改，而不是重复新增。</p>
+</div>
+            <div class="extra"><p>确需修改时可使用 <code>semanage fcontext -m</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">23</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>semanage</code> 命令不存在时，如何从已启用仓库反查提供它的软件包？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">dnf provides '*/semanage'
+</code></pre>
+</div>
+            <div class="extra"><p>先检查拼写，再根据查询结果安装，不需要背完整工具包对照表。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">24</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>httpd_sys_content_t</code> 与 <code>httpd_sys_rw_content_t</code> 的核心差异是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>前者用于 Web 服务读取内容；后者用于确实需要由 Web 服务读写的内容。</p>
+</div>
+            <div class="extra"><p>只给需要写入的小目录可写类型，避免扩大权限范围。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">25</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>目录已标记为 <code>httpd_sys_rw_content_t</code>，能否证明 httpd 一定能写入？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。普通 Unix 所有者、组和权限位也必须允许写入。</p>
+</div>
+            <div class="extra"><p>DAC 与 SELinux 两层都需要满足。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">26</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>如何查看 SELinux 当前允许 <code>httpd</code> 使用的端口映射？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">semanage port -l | grep -w http_port_t
+</code></pre>
+</div>
+            <div class="extra"><p>先查当前状态，再决定新增或修改。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">27</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>让 SELinux 允许 httpd 绑定 TCP 82 的新增命令是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">semanage port -a -t http_port_t -p tcp 82
+</code></pre>
+</div>
+            <div class="extra"><p>若端口已存在，先查询其当前类型，可能需要 <code>-m</code> 而不是 <code>-a</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">28</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>semanage port -a</code> 与 <code>semanage port -m</code> 的选择依据是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>目标端口没有记录时新增；已有记录且确需改变类型时修改。</p>
+</div>
+            <div class="extra"><p>添加报错后应先查询，不要无条件改写已有映射。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">29</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>防火墙已经放行 TCP 82，能否证明 SELinux 允许 httpd 绑定它？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。防火墙规则与 SELinux 端口类型是独立状态。</p>
+</div>
+            <div class="extra"><p>还要检查 <code>http_port_t</code>、实际监听和最终访问。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">30</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>SELinux 端口映射正确后，至少还要验证哪三个与访问链路相关的状态？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>服务配置与实际监听、防火墙规则、最终业务访问。</p>
+</div>
+            <div class="extra"><p>端口类型只证明 SELinux 这一层允许绑定。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">31</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>SELinux Boolean 主要解决什么类型的问题？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>启用或关闭策略预先提供的可选业务行为。</p>
+</div>
+            <div class="extra"><p>它不是文件标签、端口类型或普通权限的替代品。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">32</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>如何搜索与 httpd 相关的 SELinux Boolean 当前值？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">getsebool -a | grep '^httpd_'
+</code></pre>
+</div>
+            <div class="extra"><p>还可用 <code>semanage boolean -l</code> 查看更完整说明。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">33</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>Web 应用确实需要主动连接 MariaDB 时，哪个 Boolean 是典型的策略入口？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>httpd_can_network_connect_db</code></p>
+</div>
+            <div class="extra"><p>应先确认业务行为与该 Boolean 的语义匹配。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">34</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>如何持久启用 <code>httpd_can_network_connect_db</code>？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">setsebool -P httpd_can_network_connect_db on
+</code></pre>
+</div>
+            <div class="extra"><p><code>-P</code> 使设置跨重启保持，执行可能需要一些时间。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">35</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>Boolean 已开启但服务仍失败，下一步应怎样处理？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>重新查看当前失败的证据，继续检查标签、端口、普通权限和服务配置。</p>
+</div>
+            <div class="extra"><p>不应盲目开启更多 Boolean。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">36</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>audit2why</code> 在 SELinux 排错中的合适定位是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>它是帮助解释 AVC 拒绝的辅助工具，输出是线索而不是绝对结论。</p>
+</div>
+            <div class="extra"><p>仍需结合标签、端口类型、Boolean 和业务目标判断。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">37</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为什么不应把 <code>audit2allow</code> 作为看到 AVC 后的第一修复手段？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为拒绝通常源于错误标签或非标准目录、端口、行为未配置；自动生成规则可能掩盖误配置并扩大权限。</p>
+</div>
+            <div class="extra"><p>先使用标准文件类型、端口类型和 Boolean。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">38</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>SELinux Web 服务故障的通用证据推进骨架是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>确认服务与前置层 → 重新触发并查 AVC → 识别进程、对象和行为 → 检查标准策略入口 → 持久修复 → 综合验证。</p>
+</div>
+            <div class="extra"><p>已有可靠证据时可以从中间切入，不必机械执行全部命令。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">39</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>综合处理“自定义 Web 目录 + 非标准端口 + Enforcing”任务时，应拆分哪些主要目标状态？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>SELinux 当前/持久模式、文件规则/当前标签、端口类型、服务 active/enabled、实际监听、防火墙和最终访问。</p>
+</div>
+            <div class="extra"><p>每一项都需要独立证据，不能由局部成功代替。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">40</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>systemctl is-enabled httpd</code> 返回 <code>enabled</code>，能否证明 Web 服务当前正在运行？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。<code>enabled</code> 只表示已配置开机启动，还要检查 <code>is-active</code>。</p>
+</div>
+            <div class="extra"><p>当前状态与启动配置是两个维度。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">41</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>经典任务中，为什么在最终验收前再次执行 <code>restorecon -Rv /srv/exam-site</code>？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>为了证明站点依赖的是持久 fcontext 规则，而不是一次临时标签修改。</p>
+</div>
+            <div class="extra"><p>执行后应再次检查标签和页面访问。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">42</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>在自定义 Web 服务任务中，<code>curl</code> 请求成功能否单独证明配置可跨重启保持？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>不能。还需验证 SELinux 持久模式、fcontext 规则、端口映射和服务 enabled 状态。</p>
+</div>
+            <div class="extra"><p>功能验证与持久性验证不能合并成一个结论。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">43</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>已知服务 active、防火墙允许 82/tcp，但访问自定义目录仍返回 403，系统为 Enforcing。下一步优先检查什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>检查近期 AVC、路径预期标签和当前文件标签。</p>
+</div>
+            <div class="extra"><p>重点判断目标文件是否属于 Web 服务可访问的类型。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">44</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>已知 httpd 因绑定 TCP 82 失败，AVC 显示 <code>name_bind</code>，推荐的下一步调查是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>查询 TCP 82 当前的 SELinux 端口类型和 <code>http_port_t</code> 映射。</p>
+</div>
+            <div class="extra"><p>根据已有记录决定新增或修改。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">45</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>文件从用户家目录移动到 <code>/var/www/html</code> 后仍带有 <code>user_home_t</code>，应优先使用什么操作修复？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><pre><code class="language-bash">restorecon -v /var/www/html/&lt;FILE&gt;
+</code></pre>
+</div>
+            <div class="extra"><p><code>restorecon</code> 根据目标路径的默认规则恢复正确类型。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">46</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>Permissive</code> 与 <code>Disabled</code> 的关键区别是什么？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>Permissive 仍加载策略、维护标签并记录拒绝；Disabled 不加载策略，也不能正常维护持久对象标签。</p>
+</div>
+            <div class="extra"><p>排错应优先使用 Permissive，而不是 Disabled。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">47</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>setsebool -P</code> 短时间没有输出时，为什么不应立即重复执行？</p>
+</div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>因为 <code>-P</code> 需要重建并写入持久策略配置，可能需要一些时间。</p>
+</div>
+            <div class="extra"><p>等待命令完成后再用 <code>getsebool</code> 验证。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">48</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>setenforce <span class='blank'>[...]</span></code> 临时切换到 Permissive；<code>setenforce <span class='blank'>[...]</span></code> 临时切换到 Enforcing。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>setenforce <strong>0</strong></code> 临时切换到 Permissive；<code>setenforce <strong>1</strong></code> 临时切换到 Enforcing。</p></div>
+            <div class="extra"><p>两者都不修改 <code>/etc/selinux/config</code>。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">49</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code><span class='blank'>[...]</span></code> 建立持久路径规则，<code><span class='blank'>[...]</span></code> 将规则应用到当前对象。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code><strong>semanage fcontext</strong></code> 建立持久路径规则，<code><strong>restorecon</strong></code> 将规则应用到当前对象。</p></div>
+            <div class="extra"><p><code>ls -Z</code> 只观察当前标签。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">50</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>为目录及其后代建立 fcontext 规则时，常用路径表达式是 <code>&#x27;/path<span class='blank'>[...]</span>&#x27;</code>。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>为目录及其后代建立 fcontext 规则时，常用路径表达式是 <code>&#x27;/path<strong>(/.*)?</strong>&#x27;</code>。</p></div>
+            <div class="extra"><p>它同时覆盖目录本身和其下内容。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">51</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>semanage port -a -t &lt;TYPE&gt; -p <span class='blank'>[...]</span> <span class='blank'>[...]</span></code></p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>semanage port -a -t &lt;TYPE&gt; -p <strong>&lt;PROTOCOL&gt;</strong> <strong>&lt;PORT&gt;</strong></code></p></div>
+            <div class="extra"><p>端口映射必须区分 TCP 与 UDP。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">52</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>semanage port <span class='blank'>[...]</span></code> 用于新增记录；目标端口已有记录并确需变更类型时使用 <code><span class='blank'>[...]</span></code>。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>semanage port <strong>-a</strong></code> 用于新增记录；目标端口已有记录并确需变更类型时使用 <code><strong>-m</strong></code>。</p></div>
+            <div class="extra"><p>修改前先查询现有映射。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">53</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p><code>setsebool <span class='blank'>[...]</span> &lt;BOOLEAN&gt; on</code> 使 Boolean 修改跨重启保持。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p><code>setsebool <strong>-P</strong> &lt;BOOLEAN&gt; on</code> 使 Boolean 修改跨重启保持。</p></div>
+            <div class="extra"><p>不带 <code>-P</code> 只改变当前值。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">54</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>SELinux 安全上下文通常包含 user、role、<span class='blank'>[...]</span> 和 level；RHCSA 服务题最常关注第三项。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>SELinux 安全上下文通常包含 user、role、<strong>type</strong> 和 level；RHCSA 服务题最常关注第三项。</p></div>
+            <div class="extra"><p>进程的 type 常称为 domain。</p>
+</div>
+          </section>
+        </article>
+        
+        <article class="preview-card">
+          <div class="card-index">55</div>
+          <section class="face front">
+            <div class="face-label">正面</div>
+            <div class="content"><p>服务的 <code>active</code> 描述<span class='blank'>[...]</span>，<code>enabled</code> 描述<span class='blank'>[...]</span>。</p></div>
+          </section>
+          <section class="face back">
+            <div class="face-label">答案面</div>
+            <div class="answer"><p>服务的 <code>active</code> 描述<strong>当前运行状态</strong>，<code>enabled</code> 描述<strong>开机启动配置</strong>。</p></div>
+            <div class="extra"><p>两个状态都需要分别验证。</p>
+</div>
+          </section>
+        </article>
+        </main></body></html>

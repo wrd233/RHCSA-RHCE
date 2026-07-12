@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>完成一场红帽实操考试的方法 - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>完成一场红帽实操考试的方法 - Anki 预览</h1>
+    <p class="preview-meta">共 25 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>实操题的最小读题模型包含哪四项？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>对象、当前状态、目标终态、限制条件。</p><div class="extra"><p>再为每个目标指定能够判定对错的证据。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么“配置服务”不能被理解为单一命令？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>因为它可能同时包含软件、配置、当前状态、启动状态、监听和功能访问。</p><div class="extra"><p>每个层次需要独立证据。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>题目要求“保留现有数据”时，这句话在读题模型中属于什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>限制条件。</p><div class="extra"><p>它会排除重新格式化或重建对象等路径。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>目录已经存在，能否证明目标文件系统已挂载？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能。目录可能只是根文件系统中的普通目录。</p><div class="extra"><p>使用 <code>findmnt &lt;MOUNT_POINT&gt;</code> 检查当前挂载源。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>防火墙已放行端口，能否证明服务能够被访问？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能。还要确认服务配置、当前运行、实际监听和最终请求。</p><div class="extra"><p>SELinux 端口类型也可能是独立限制。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>操作前调查命令的选择标准是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>只查询会改变下一步决策的对象和字段。</p><div class="extra"><p>调查不是无目的运行命令清单。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>systemctl is-active &lt;UNIT&gt;</code> 能证明什么，不能证明什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>证明服务当前是否 active；不能证明开机启动或最终访问。</p><div class="extra"><p>启动配置用 <code>is-enabled</code> 另查。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>findmnt --verify</code> 通过，能否单独证明持久挂载任务完成？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能。还要实际挂载，并核对挂载源、类型和功能。</p><div class="extra"><p>静态可解析不等于当前挂载已经生效。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>ansible-playbook --syntax-check</code> 能证明什么，不能证明什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>证明控制端可解析 Playbook；不能证明连接、变量运行时取值或远端终态。</p><div class="extra"><p>仍需限制范围执行和远端验收。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>同一配置命令连续失败时，推荐的下一步是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>停止重复执行，按失败层次选择一条新的证据查询。</p><div class="extra"><p>例如容量不足先查容量池，记录已存在先查现有记录。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>暂时跳过一道卡住的题，至少应记录哪些内容？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>目标对象、已成立状态、最后错误、缺失证据和共享影响。</p><div class="extra"><p>返回时从缺失证据继续。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么不应把删除、重建或全局放宽权限当作通用排错？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>它们可能破坏未知数据、掩盖真实偏差并影响其他任务。</p><div class="extra"><p>优先保留现场并使用最小修改。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCSA 服务题的最小分层验收骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>配置语法 → active/enabled → 监听 → 防火墙/SELinux → 最终访问。</p><div class="extra"><p>根据题意增减层次，不能由局部成功替代全部。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCSA 存储题的最小分层验收骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>设备/容量对象 → 文件系统 → 当前挂载 → 持久配置 → 数据状态。</p><div class="extra"><p>LVM 题还要分别检查 PV、VG、LV。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么重启不应成为持久性排错的第一步？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>错误网络或挂载配置可能让系统难以恢复；应先做静态与当前状态验证。</p><div class="extra"><p>在具备恢复路径时再决定是否重启。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCSA 最终检查中，为什么必须同时检查服务 <code>active</code> 与 <code>enabled</code>？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>前者是当前运行状态，后者是开机启动配置。</p><div class="extra"><p>两者仍不能替代功能访问。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCE 第一轮执行前，最少应确认哪些执行边界？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>当前配置来源、Inventory 匹配、连接、提权、语法和目标主机范围。</p><div class="extra"><p>必要时用 <code>--limit</code> 缩小范围。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Play recap 没有 <code>failed</code> 或 <code>unreachable</code>，能否证明自动化任务完成？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能。还要检查受管节点的真实文件、服务、端口、挂载和功能。</p><div class="extra"><p>recap 只描述本次执行结果。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>第二次 Playbook 执行没有 <code>changed</code>，能否证明目标配置正确？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能。它只说明当前表达稳定，还要验证远端终态和主机覆盖范围。</p><div class="extra"><p>错误模板也可能幂等地保持错误内容。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCE 为什么应先限制范围执行，再扩展到全部目标主机？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>先在小范围暴露语法之外的连接、变量和任务问题，降低批量错误影响。</p><div class="extra"><p>小范围成功后仍要全量执行与验收。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Vault 相关任务的最终安全边界是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>敏感内容保持加密，密码来源可用，输出和项目文件不泄露明文。</p><div class="extra"><p>Playbook 能运行不代表秘密管理合格。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>多道题共享网络、服务或路径时，开始前应增加什么记录？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>对象与题号的共享影响表。</p><div class="extra"><p>后续修改后重新检查相关题的终态。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>一条稳定的通用实操闭环是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>读题拆对象 → 最小调查 → 最小修改 → 分层验证 → 持久/幂等检查 → 综合验收。</p><div class="extra"><p>卡题时保留现场并记录缺失证据。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>实操题读题四项是：对象、[…]、[…]与[…]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>实操题读题四项是：对象、当前状态、目标终态与限制条件。</p><div class="extra"><p>为目标状态继续指定验证证据。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>RHCE 执行主线：语法与范围 → […] → 远端终态 → 全量执行 → […]。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>RHCE 执行主线：语法与范围 → 限制范围执行 → 远端终态 → 全量执行 → 第二次执行与再验收。</p><div class="extra"><p>recap 成功不是远端终态证明。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

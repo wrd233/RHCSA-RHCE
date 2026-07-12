@@ -1,0 +1,258 @@
+chapter_id: RHCSA-NFS
+deck: RedHat::RHCSA-RHEL9
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCSA-NFS-QA-001
+  type: qa
+  question: 查询 NFS 导出列表的常用命令是什么？
+  answer: '`showmount -e <SERVER>`'
+  extra: NFSv4 环境仍需结合服务端设计。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::command
+  - priority::P0
+- id: RHCSA-NFS-QA-002
+  type: qa
+  question: 查看某目录当前 NFS 挂载源，使用什么？
+  answer: '`findmnt <MOUNT_POINT>`'
+  extra: 目录存在不代表已挂载。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::verification
+  - priority::P0
+- id: RHCSA-NFS-QA-003
+  type: qa
+  question: '`root_squash` 的核心效果是什么？'
+  answer: 把客户端 root 映射为服务端匿名身份。
+  extra: 不应为写入失败默认关闭。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::concept
+  - priority::P0
+- id: RHCSA-NFS-QA-004
+  type: qa
+  question: 持久 NFS fstab 的设备字段骨架是什么？
+  answer: '`<SERVER>:/<EXPORT>`'
+  extra: 类型通常为 nfs。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::syntax
+  - priority::P0
+- id: RHCSA-NFS-QA-005
+  type: qa
+  question: NFS fstab 中 `_netdev` 表达什么？
+  answer: 该挂载依赖网络可用。
+  extra: 不保证服务器一定可达。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::parameter
+  - priority::P0
+- id: RHCSA-NFS-QA-006
+  type: qa
+  question: 怎样证明 NFS fstab 条目真实生效？
+  answer: 卸载当前挂载后运行 `mount -a`，再用 `findmnt` 核对。
+  extra: 另做读写测试。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::verification
+  - priority::P0
+- id: RHCSA-NFS-QA-007
+  type: qa
+  question: autofs master map 的职责是什么？
+  answer: 把挂载基目录或 direct map 标记关联到子 map。
+  extra: 子 map 定义 key 与远端源。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::concept
+  - priority::P0
+- id: RHCSA-NFS-QA-008
+  type: qa
+  question: 展开 autofs 有效映射的命令是什么？
+  answer: '`automount -m`'
+  extra: 用于发现 map 解析错误。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::command
+  - priority::P0
+- id: RHCSA-NFS-QA-009
+  type: qa
+  question: indirect map 中 key `docs` 挂在 `/shares` 下，最终路径是什么？
+  answer: '`/shares/docs`'
+  extra: 访问该路径触发挂载。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::calculation
+  - priority::P0
+- id: RHCSA-NFS-QA-010
+  type: qa
+  question: autofs 触发前 `findmnt /shares/docs` 无结果是否一定失败？
+  answer: 不一定；按需挂载可能尚未触发。
+  extra: 先访问 key 再查询。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-NFS-QA-011
+  type: qa
+  question: autofs wildcard map 中 `*` 与 `&` 常怎样配合？
+  answer: '`*` 捕获访问 key，`&` 在远端位置代入该 key。'
+  extra: 适合用户目录映射。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::parameter
+  - priority::P0
+- id: RHCSA-NFS-QA-012
+  type: qa
+  question: NFS 报 access denied by server 时，客户端 chmod 能修复吗？
+  answer: 通常不能；应核对导出路径、来源和服务端权限。
+  extra: 问题在服务端策略层。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-NFS-QA-013
+  type: qa
+  question: NFS 当前挂载成功能否证明重启后保持？
+  answer: 不能；还要验证 fstab 或 autofs 持久配置。
+  extra: 生命周期不同。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::verification
+  - priority::P0
+- id: RHCSA-NFS-QA-014
+  type: qa
+  question: 查看 NFS 实际挂载版本和选项，使用什么？
+  answer: '`nfsstat -m`'
+  extra: 与 findmnt 交叉检查。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::command
+  - priority::P1
+- id: RHCSA-NFS-QA-015
+  type: qa
+  question: 修改 autofs map 后的推荐验证链是什么？
+  answer: '`automount -m` → reload autofs → 访问 key → `findmnt` → journal。'
+  extra: 不要只看服务 active。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::process
+  - priority::P0
+- id: RHCSA-NFS-QA-016
+  type: qa
+  question: 持久 NFS 与 autofs 的核心区别是什么？
+  answer: 前者常驻/启动挂载；后者访问时按需挂载并可超时卸载。
+  extra: 按题意选择。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::comparison
+  - priority::P0
+- id: RHCSA-NFS-QA-017
+  type: qa
+  question: 挂载到非空目录时原内容发生什么？
+  answer: 被挂载文件系统暂时遮蔽，卸载后重新可见。
+  extra: 不是被删除。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-NFS-QA-018
+  type: qa
+  question: NFS 综合任务的最小验收层次是什么？
+  answer: 解析/路由 → 导出 → 挂载源 → 持久或触发 → 目标身份功能。
+  extra: 每层独立取证。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-autofs
+  - card::process
+  - priority::P0

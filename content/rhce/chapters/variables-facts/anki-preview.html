@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>变量、Facts、注册结果与优先级 - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>变量、Facts、注册结果与优先级 - Anki 预览</h1>
+    <p class="preview-meta">共 14 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看单主机最终 Inventory 变量用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible-inventory --host &lt;HOST&gt;</code></p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>debug 一个变量对象的推荐语法是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible.builtin.debug: var=myvar</code></p><div class="extra"><p>var 参数不写 <code>{{ }}</code>。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>inventory_hostname 与 ansible_host 区别？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>逻辑主机名；连接地址。</p><div class="extra"><p>comparison</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>循环任务的 register 单项结果通常在哪里？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>result.results</code></p><div class="extra"><p>先 debug 完整结构。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>command register 高频字段有哪些？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>rc、stdout、stderr、changed。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>所有模块都有 stdout 吗？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>没有；返回字段取决于模块。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>检查变量类型用哪个过滤器？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>type_debug</code></p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>字符串 'false' 能否等同布尔 false？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能。</p><div class="extra"><p>when 中尤其危险。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>groups['web'] 保存什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>web 组 inventory 主机名列表。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>hostvars 的作用是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>按主机名访问该主机变量字典。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>必需变量缺失时能否无条件 default 隐藏？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不应；应修正数据源或显式 assert。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>变量任务验收链？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>数据源/类型 → host 最终值 → limit → 远端差异终态。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>循环 register 的逐项结果通常位于 <code>[…]</code>；命令返回码通常位于 <code>[…]</code>。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>循环 register 的逐项结果通常位于 <code>results</code>；命令返回码通常位于 <code>rc</code>。</p><div class="extra"><p>先 debug 结构。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>逻辑主机名是 <code>[…]</code>；连接地址常是 <code>[…]</code>。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>逻辑主机名是 <code>inventory_hostname</code>；连接地址常是 <code>ansible_host</code>。</p><div class="extra"><p>不要混用。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

@@ -1,0 +1,226 @@
+chapter_id: RHCE-PLAYBOOK
+deck: RedHat::RHCE-RHEL9
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCE-PLAYBOOK-QA-001
+  type: qa
+  question: Playbook 顶层 YAML 类型是什么？
+  answer: play 的列表（sequence）。
+  extra: 每个 play 是 mapping。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::concept
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-002
+  type: qa
+  question: 一个 task 通常应调用几个模块？
+  answer: 一个。
+  extra: name/when/register 等是 task 关键字。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::concept
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-003
+  type: qa
+  question: 为什么 mode 常写 `'0644'`？
+  answer: 避免 YAML 数值类型歧义并保留权限表达。
+  extra: 模块接收明确模式。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::parameter
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-004
+  type: qa
+  question: 查询模块字段和示例用什么？
+  answer: '`ansible-doc <FQCN>`'
+  extra: 以当前安装版本为准。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::ansible
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-005
+  type: qa
+  question: syntax-check 证明什么？
+  answer: 控制端能解析 Playbook 和静态结构。
+  extra: 不证明连接或远端成功。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::verification
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-006
+  type: qa
+  question: 执行前查看目标主机用什么？
+  answer: '`ansible-playbook play.yml --list-hosts`'
+  extra: 避免错误范围。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::verification
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-007
+  type: qa
+  question: 限制第一轮到 servera 用什么？
+  answer: '`--limit servera`'
+  extra: 成功后再扩展。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::parameter
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-008
+  type: qa
+  question: command 与 shell 的关键区别是什么？
+  answer: command 不经 Shell；shell 解释管道、重定向等。
+  extra: 优先专用模块。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::comparison
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-009
+  type: qa
+  question: 为什么包安装优先 dnf 模块而不是 command？
+  answer: 模块表达 state 并能幂等判断。
+  extra: command 通常每次执行。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-010
+  type: qa
+  question: recap 无 failed 能否证明 HTTP 正确？
+  answer: 不能；还要远端服务/监听和协议验证。
+  extra: 执行结果不等于功能。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::verification
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-011
+  type: qa
+  question: 第二次仍 changed 的调查方向是什么？
+  answer: 定位具体 task 的动态输入、无条件命令或 changed_when。
+  extra: 先解释再接受。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-012
+  type: qa
+  question: unsupported parameters 下一步是什么？
+  answer: 核对 FQCN 和 ansible-doc 当前字段。
+  extra: 不猜参数。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-013
+  type: qa
+  question: YAML 报错行一定是根因行吗？
+  answer: 不一定；上一层缩进或未闭合结构可导致后续报错。
+  extra: 向上检查。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-PLAYBOOK-QA-014
+  type: qa
+  question: Playbook 完整验收链是什么？
+  answer: syntax/list → limit → 远端终态 → 全量 → 第二次执行 → 再验收。
+  extra: 幂等与正确性都要。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-03-05
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::process
+  - priority::P0
+- id: RHCE-PLAYBOOK-CLOZE-X01
+  type: cloze
+  text: Playbook 静态门：`{{c1::--syntax-check}}`、`{{c2::--list-hosts}}`、`--list-tasks`。
+  extra: 再 limit 执行。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::cloze
+  - coverage::extra
+- id: RHCE-PLAYBOOK-CLOZE-X02
+  type: cloze
+  text: '服务当前状态用 `state: {{c1::started}}`，启动持久状态用 `enabled: {{c2::true}}`。'
+  extra: 两维度。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::yaml-playbook-modules
+  - card::cloze
+  - coverage::extra

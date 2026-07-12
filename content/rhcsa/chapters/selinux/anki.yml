@@ -1,0 +1,618 @@
+chapter_id: RHCSA-SELINUX
+deck: RedHat::RHCSA-RHEL9
+note_types:
+  - RedHat-QA
+  - RedHat-Cloze
+notes:
+  - id: RHCSA-SELINUX-K01-QA-001
+    type: qa
+    question: >-
+      普通 Unix 权限允许一次访问时，为什么 RHEL 9 仍可能拒绝它？
+    answer: >-
+      因为 SELinux 会在 DAC 允许之后继续按安全策略检查进程域、目标对象类型和请求行为。
+    extra: >-
+      DAC 拒绝时，SELinux 不会替它放行；DAC 允许也不代表 SELinux 一定允许。
+    source: [RH134, RHEL9-Using-SELinux-1.1]
+    tags: [exam::rhcsa, chapter::selinux, card::concept, priority::P0]
+
+  - id: RHCSA-SELINUX-K01-QA-002
+    type: qa
+    question: >-
+      在 RHCSA 常见服务访问问题中，SELinux 安全上下文的哪个字段最需要优先关注？
+    answer: >-
+      `type` 字段。
+    extra: >-
+      对进程而言 type 常称为 domain；对文件而言，它描述对象用途。
+    source: [RH134, RHEL9-Using-SELinux-1.1]
+    tags: [exam::rhcsa, chapter::selinux, card::concept, priority::P0]
+
+  - id: RHCSA-SELINUX-K01-QA-003
+    type: qa
+    question: >-
+      `httpd_t` 与 `httpd_sys_content_t` 分别描述什么？
+    answer: >-
+      `httpd_t` 是 httpd 进程域；`httpd_sys_content_t` 是可供 Web 服务读取的内容文件类型。
+    extra: >-
+      策略结合进程域、目标类型和请求行为决定是否允许访问。
+    source: [RH134, RHEL9-Using-SELinux-1.1]
+    tags: [exam::rhcsa, chapter::selinux, card::comparison, priority::P0]
+
+  - id: RHCSA-SELINUX-K01-QA-004
+    type: qa
+    question: >-
+      SELinux 安全上下文通常由哪四部分组成？
+    answer: >-
+      SELinux user、role、type 和 level。
+    extra: >-
+      RHCSA 服务题主要关注 type，不需要机械修改完整四字段字符串。
+    source: [RHEL9-Using-SELinux-1.1]
+    tags: [exam::rhcsa, chapter::selinux, card::concept]
+
+  - id: RHCSA-SELINUX-O01-QA-001
+    type: qa
+    question: >-
+      如何查看 SELinux 当前运行模式？
+    answer: |-
+      ```bash
+      getenforce
+      ```
+    extra: >-
+      输出可能为 `Enforcing`、`Permissive` 或 `Disabled`。
+    source: [RH134, RHEL9-Using-SELinux-1.5]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P0]
+
+  - id: RHCSA-SELINUX-O01-QA-002
+    type: qa
+    question: >-
+      需要同时比较 SELinux 当前模式和配置文件中的启动模式时，应优先使用什么命令？
+    answer: |-
+      ```bash
+      sestatus
+      ```
+    extra: >-
+      重点比较 `Current mode` 与 `Mode from config file`。
+    source: [RHEL9-Using-SELinux-Chapter-2]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P0]
+
+  - id: RHCSA-SELINUX-O01-QA-003
+    type: qa
+    question: >-
+      `setenforce 0` 改变什么，又不改变什么？
+    answer: >-
+      它把当前模式临时切到 Permissive，但不修改重启后的持久配置。
+    extra: >-
+      它也不能把 `Disabled` 的系统直接切回启用状态。
+    source: [RH134, RHEL9-Using-SELinux-1.5]
+    tags: [exam::rhcsa, chapter::selinux, card::comparison, priority::P0]
+
+  - id: RHCSA-SELINUX-O01-QA-004
+    type: qa
+    question: >-
+      服务在 `setenforce 0` 后恢复正常，能否认为 SELinux 问题已经修复？
+    answer: >-
+      不能。这只说明 SELinux 可能参与了拒绝，仍需查看 AVC 并修正具体策略条件。
+    extra: >-
+      最终应恢复题目要求的模式，并验证业务终态。
+    source: [RHEL9-Using-SELinux-1.5, RHEL9-Using-SELinux-Chapter-5]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, priority::P0]
+
+  - id: RHCSA-SELINUX-O01-QA-005
+    type: qa
+    question: >-
+      RHEL 9 中，SELinux 持久启动模式主要记录在哪个文件？
+    answer: >-
+      `/etc/selinux/config`
+    extra: >-
+      `SELINUX=enforcing` 管理持久模式；修改该文件不会立即改变当前模式。
+    source: [RH134, RHEL9-Using-SELinux-Chapter-2]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P0]
+
+  - id: RHCSA-SELINUX-O01-QA-006
+    type: qa
+    question: >-
+      题目要求 SELinux 当前和重启后都为 Enforcing，至少应分别验证哪两个状态？
+    answer: >-
+      当前模式为 Enforcing；配置文件中的持久模式也为 Enforcing。
+    extra: >-
+      可用 `sestatus` 同时观察两个维度。
+    source: [RHEL9-Using-SELinux-Chapter-2]
+    tags: [exam::rhcsa, chapter::selinux, card::verification, priority::P0]
+
+  - id: RHCSA-SELINUX-K02-QA-001
+    type: qa
+    question: >-
+      Web 服务访问失败时，在深入 SELinux 前应先用证据确认哪些前置层？
+    answer: >-
+      服务配置与状态、实际监听、普通路径权限和防火墙。
+    extra: >-
+      这些层次分别回答不同问题，不能由单一“服务已启动”结论代替。
+    source: [RH134, RHEL9-Using-SELinux-Chapter-5]
+    tags: [exam::rhcsa, chapter::selinux, card::process, priority::P0]
+
+  - id: RHCSA-SELINUX-K02-QA-002
+    type: qa
+    question: >-
+      查看近期 SELinux AVC 拒绝的核心命令是什么？
+    answer: |-
+      ```bash
+      ausearch -m AVC -ts recent -i
+      ```
+    extra: >-
+      若无结果，先重新触发问题并确认时间范围与 `auditd` 状态。
+    source: [RHEL9-Using-SELinux-5.1]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P0]
+
+  - id: RHCSA-SELINUX-K02-QA-003
+    type: qa
+    question: >-
+      阅读一条 AVC 拒绝时，优先提炼哪三个核心对象和一个行为？
+    answer: >-
+      发起访问的进程/进程域、目标对象/目标类型、对象类别，以及被拒绝的行为。
+    extra: >-
+      PID、时间戳等通常不是第一轮判断的重点。
+    source: [RHEL9-Using-SELinux-5.5]
+    tags: [exam::rhcsa, chapter::selinux, card::output, priority::P0]
+
+  - id: RHCSA-SELINUX-K02-QA-004
+    type: qa
+    question: >-
+      AVC 中出现 `denied { name_bind }`、`comm="httpd"` 和 `tclass=tcp_socket`，下一步优先检查什么？
+    answer: >-
+      检查目标端口当前的 SELinux 端口类型及 `http_port_t` 映射。
+    extra: >-
+      不应跳过查询直接反复新增端口规则。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, priority::P0]
+
+  - id: RHCSA-SELINUX-O02-QA-001
+    type: qa
+    question: >-
+      `ls -Z` 能证明什么，不能证明什么？
+    answer: >-
+      它能显示对象当前标签，但不能证明持久文件上下文规则已经存在。
+    extra: >-
+      通过 `chcon` 临时修改后，`ls -Z` 同样可能看起来正确。
+    source: [RH134, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::verification, priority::P0]
+
+  - id: RHCSA-SELINUX-O02-QA-002
+    type: qa
+    question: >-
+      `chcon` 与 `semanage fcontext` 的核心区别是什么？
+    answer: >-
+      `chcon` 修改当前标签；`semanage fcontext` 建立路径的持久标签规则。
+    extra: >-
+      最终持久配置通常还要运行 `restorecon` 应用规则。
+    source: [RH134, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::comparison, priority::P0]
+
+  - id: RHCSA-SELINUX-O02-QA-003
+    type: qa
+    question: >-
+      已经为 `/srv/site` 建立持久文件上下文规则，如何将规则应用到现有目录及其内容？
+    answer: |-
+      ```bash
+      restorecon -Rv /srv/site
+      ```
+    extra: >-
+      `restorecon` 根据策略和 fcontext 规则恢复当前标签。
+    source: [RH134, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P0]
+
+  - id: RHCSA-SELINUX-O02-QA-004
+    type: qa
+    question: >-
+      为 `/srv/site` 及其后代路径建立持久的 `httpd_sys_content_t` 规则，推荐命令是什么？
+    answer: |-
+      ```bash
+      semanage fcontext -a -t httpd_sys_content_t '/srv/site(/.*)?'
+      ```
+    extra: >-
+      添加后仍需执行 `restorecon -Rv /srv/site`。
+    source: [RH134, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P0]
+
+  - id: RHCSA-SELINUX-O02-QA-005
+    type: qa
+    question: >-
+      在 `'/srv/site(/.*)?'` 中，`(/.*)?` 的直观作用是什么？
+    answer: >-
+      让规则除匹配目录本身外，也匹配其下的文件和子目录。
+    extra: >-
+      单引号用于把整个路径表达式原样交给命令处理。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::concept, priority::P1]
+
+  - id: RHCSA-SELINUX-O02-QA-006
+    type: qa
+    question: >-
+      如何检查策略认为 `/srv/site/index.html` 应具有的 SELinux 上下文？
+    answer: |-
+      ```bash
+      matchpathcon /srv/site/index.html
+      ```
+    extra: >-
+      它用于观察预期标签，再与 `ls -Z` 的当前标签比较。
+    source: [RHEL9-Using-SELinux-4.1, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P1]
+
+  - id: RHCSA-SELINUX-O02-QA-007
+    type: qa
+    question: >-
+      文件上下文配置的稳定闭环应分别确认哪三层？
+    answer: >-
+      持久路径规则、策略推导出的预期标签、文件当前实际标签。
+    extra: >-
+      三者一致后，再验证业务访问。
+    source: [RH134, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::verification, priority::P0]
+
+  - id: RHCSA-SELINUX-O02-QA-008
+    type: qa
+    question: >-
+      `semanage fcontext -a` 提示同一路径规则已存在时，下一步应该做什么？
+    answer: >-
+      先查询现有规则的表达式和类型，再根据目标决定是否修改，而不是重复新增。
+    extra: >-
+      确需修改时可使用 `semanage fcontext -m`。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, priority::P1]
+
+  - id: RHCSA-SELINUX-O02-QA-009
+    type: qa
+    question: >-
+      `semanage` 命令不存在时，如何从已启用仓库反查提供它的软件包？
+    answer: |-
+      ```bash
+      dnf provides '*/semanage'
+      ```
+    extra: >-
+      先检查拼写，再根据查询结果安装，不需要背完整工具包对照表。
+    source: [RH134, RHEL9-DNF]
+    tags: [exam::rhcsa, chapter::selinux, card::command, coverage::extra]
+
+  - id: RHCSA-SELINUX-K03-QA-001
+    type: qa
+    question: >-
+      `httpd_sys_content_t` 与 `httpd_sys_rw_content_t` 的核心差异是什么？
+    answer: >-
+      前者用于 Web 服务读取内容；后者用于确实需要由 Web 服务读写的内容。
+    extra: >-
+      只给需要写入的小目录可写类型，避免扩大权限范围。
+    source: [Red-Hat-KB-SELinux-httpd-rw-context, RH134]
+    tags: [exam::rhcsa, chapter::selinux, card::comparison, priority::P1]
+
+  - id: RHCSA-SELINUX-K03-QA-002
+    type: qa
+    question: >-
+      目录已标记为 `httpd_sys_rw_content_t`，能否证明 httpd 一定能写入？
+    answer: >-
+      不能。普通 Unix 所有者、组和权限位也必须允许写入。
+    extra: >-
+      DAC 与 SELinux 两层都需要满足。
+    source: [RHEL9-Using-SELinux-1.1, RH134]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, priority::P1]
+
+  - id: RHCSA-SELINUX-O03-QA-001
+    type: qa
+    question: >-
+      如何查看 SELinux 当前允许 `httpd` 使用的端口映射？
+    answer: |-
+      ```bash
+      semanage port -l | grep -w http_port_t
+      ```
+    extra: >-
+      先查当前状态，再决定新增或修改。
+    source: [RH134, RHEL9-Using-SELinux-4.1]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P0]
+
+  - id: RHCSA-SELINUX-O03-QA-002
+    type: qa
+    question: >-
+      让 SELinux 允许 httpd 绑定 TCP 82 的新增命令是什么？
+    answer: |-
+      ```bash
+      semanage port -a -t http_port_t -p tcp 82
+      ```
+    extra: >-
+      若端口已存在，先查询其当前类型，可能需要 `-m` 而不是 `-a`。
+    source: [RH134, RHEL9-Using-SELinux-4.1, RHCSA9-Mock-Task-3]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P0]
+
+  - id: RHCSA-SELINUX-O03-QA-003
+    type: qa
+    question: >-
+      `semanage port -a` 与 `semanage port -m` 的选择依据是什么？
+    answer: >-
+      目标端口没有记录时新增；已有记录且确需改变类型时修改。
+    extra: >-
+      添加报错后应先查询，不要无条件改写已有映射。
+    source: [RHEL9-Using-SELinux-4.1]
+    tags: [exam::rhcsa, chapter::selinux, card::comparison, priority::P0]
+
+  - id: RHCSA-SELINUX-O03-QA-004
+    type: qa
+    question: >-
+      防火墙已经放行 TCP 82，能否证明 SELinux 允许 httpd 绑定它？
+    answer: >-
+      不能。防火墙规则与 SELinux 端口类型是独立状态。
+    extra: >-
+      还要检查 `http_port_t`、实际监听和最终访问。
+    source: [RH134, RHEL9-Using-SELinux-4.1]
+    tags: [exam::rhcsa, chapter::selinux, card::comparison, priority::P0]
+
+  - id: RHCSA-SELINUX-O03-QA-005
+    type: qa
+    question: >-
+      SELinux 端口映射正确后，至少还要验证哪三个与访问链路相关的状态？
+    answer: >-
+      服务配置与实际监听、防火墙规则、最终业务访问。
+    extra: >-
+      端口类型只证明 SELinux 这一层允许绑定。
+    source: [RH134, RHEL9-Using-SELinux-4.1]
+    tags: [exam::rhcsa, chapter::selinux, card::verification, priority::P0]
+
+  - id: RHCSA-SELINUX-O04-QA-001
+    type: qa
+    question: >-
+      SELinux Boolean 主要解决什么类型的问题？
+    answer: >-
+      启用或关闭策略预先提供的可选业务行为。
+    extra: >-
+      它不是文件标签、端口类型或普通权限的替代品。
+    source: [RHEL9-Using-SELinux-4.2, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::concept, priority::P1]
+
+  - id: RHCSA-SELINUX-O04-QA-002
+    type: qa
+    question: >-
+      如何搜索与 httpd 相关的 SELinux Boolean 当前值？
+    answer: |-
+      ```bash
+      getsebool -a | grep '^httpd_'
+      ```
+    extra: >-
+      还可用 `semanage boolean -l` 查看更完整说明。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P1]
+
+  - id: RHCSA-SELINUX-O04-QA-003
+    type: qa
+    question: >-
+      Web 应用确实需要主动连接 MariaDB 时，哪个 Boolean 是典型的策略入口？
+    answer: >-
+      `httpd_can_network_connect_db`
+    extra: >-
+      应先确认业务行为与该 Boolean 的语义匹配。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::concept, priority::P1]
+
+  - id: RHCSA-SELINUX-O04-QA-004
+    type: qa
+    question: >-
+      如何持久启用 `httpd_can_network_connect_db`？
+    answer: |-
+      ```bash
+      setsebool -P httpd_can_network_connect_db on
+      ```
+    extra: >-
+      `-P` 使设置跨重启保持，执行可能需要一些时间。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::command, priority::P1]
+
+  - id: RHCSA-SELINUX-O04-QA-005
+    type: qa
+    question: >-
+      Boolean 已开启但服务仍失败，下一步应怎样处理？
+    answer: >-
+      重新查看当前失败的证据，继续检查标签、端口、普通权限和服务配置。
+    extra: >-
+      不应盲目开启更多 Boolean。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, priority::P1]
+
+  - id: RHCSA-SELINUX-K04-QA-001
+    type: qa
+    question: >-
+      `audit2why` 在 SELinux 排错中的合适定位是什么？
+    answer: >-
+      它是帮助解释 AVC 拒绝的辅助工具，输出是线索而不是绝对结论。
+    extra: >-
+      仍需结合标签、端口类型、Boolean 和业务目标判断。
+    source: [RHEL9-Using-SELinux-5.2]
+    tags: [exam::rhcsa, chapter::selinux, card::concept, coverage::extra]
+
+  - id: RHCSA-SELINUX-K04-QA-002
+    type: qa
+    question: >-
+      为什么不应把 `audit2allow` 作为看到 AVC 后的第一修复手段？
+    answer: >-
+      因为拒绝通常源于错误标签或非标准目录、端口、行为未配置；自动生成规则可能掩盖误配置并扩大权限。
+    extra: >-
+      先使用标准文件类型、端口类型和 Boolean。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, priority::P1]
+
+  - id: RHCSA-SELINUX-K04-QA-003
+    type: qa
+    question: >-
+      SELinux Web 服务故障的通用证据推进骨架是什么？
+    answer: >-
+      确认服务与前置层 → 重新触发并查 AVC → 识别进程、对象和行为 → 检查标准策略入口 → 持久修复 → 综合验证。
+    extra: >-
+      已有可靠证据时可以从中间切入，不必机械执行全部命令。
+    source: [RH134, RHEL9-Using-SELinux-Chapter-5]
+    tags: [exam::rhcsa, chapter::selinux, card::process, priority::P0]
+
+  - id: RHCSA-SELINUX-C01-QA-001
+    type: qa
+    question: >-
+      综合处理“自定义 Web 目录 + 非标准端口 + Enforcing”任务时，应拆分哪些主要目标状态？
+    answer: >-
+      SELinux 当前/持久模式、文件规则/当前标签、端口类型、服务 active/enabled、实际监听、防火墙和最终访问。
+    extra: >-
+      每一项都需要独立证据，不能由局部成功代替。
+    source: [RHCSA9-Mock-Task-3, RH134]
+    tags: [exam::rhcsa, chapter::selinux, card::process, priority::P0, task::nonstandard-web]
+
+  - id: RHCSA-SELINUX-C01-QA-002
+    type: qa
+    question: >-
+      `systemctl is-enabled httpd` 返回 `enabled`，能否证明 Web 服务当前正在运行？
+    answer: >-
+      不能。`enabled` 只表示已配置开机启动，还要检查 `is-active`。
+    extra: >-
+      当前状态与启动配置是两个维度。
+    source: [RHCSA9-Mock-Task-3, RH124]
+    tags: [exam::rhcsa, chapter::selinux, card::output, priority::P0, task::nonstandard-web]
+
+  - id: RHCSA-SELINUX-C01-QA-003
+    type: qa
+    question: >-
+      经典任务中，为什么在最终验收前再次执行 `restorecon -Rv /srv/exam-site`？
+    answer: >-
+      为了证明站点依赖的是持久 fcontext 规则，而不是一次临时标签修改。
+    extra: >-
+      执行后应再次检查标签和页面访问。
+    source: [RH134, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::verification, priority::P0, task::nonstandard-web]
+
+  - id: RHCSA-SELINUX-C01-QA-004
+    type: qa
+    question: >-
+      在自定义 Web 服务任务中，`curl` 请求成功能否单独证明配置可跨重启保持？
+    answer: >-
+      不能。还需验证 SELinux 持久模式、fcontext 规则、端口映射和服务 enabled 状态。
+    extra: >-
+      功能验证与持久性验证不能合并成一个结论。
+    source: [RH134, RHCSA9-Mock-Task-3]
+    tags: [exam::rhcsa, chapter::selinux, card::verification, priority::P0, task::nonstandard-web]
+
+  - id: RHCSA-SELINUX-C01-QA-005
+    type: qa
+    question: >-
+      已知服务 active、防火墙允许 82/tcp，但访问自定义目录仍返回 403，系统为 Enforcing。下一步优先检查什么？
+    answer: >-
+      检查近期 AVC、路径预期标签和当前文件标签。
+    extra: >-
+      重点判断目标文件是否属于 Web 服务可访问的类型。
+    source: [RH134, RHEL9-Using-SELinux-4.1]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, priority::P0, task::nonstandard-web]
+
+  - id: RHCSA-SELINUX-C01-QA-006
+    type: qa
+    question: >-
+      已知 httpd 因绑定 TCP 82 失败，AVC 显示 `name_bind`，推荐的下一步调查是什么？
+    answer: >-
+      查询 TCP 82 当前的 SELinux 端口类型和 `http_port_t` 映射。
+    extra: >-
+      根据已有记录决定新增或修改。
+    source: [RH134, RHEL9-Using-SELinux-4.1]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, priority::P0, task::nonstandard-web]
+
+  - id: RHCSA-SELINUX-EXTRA-QA-001
+    type: qa
+    question: >-
+      文件从用户家目录移动到 `/var/www/html` 后仍带有 `user_home_t`，应优先使用什么操作修复？
+    answer: |-
+      ```bash
+      restorecon -v /var/www/html/<FILE>
+      ```
+    extra: >-
+      `restorecon` 根据目标路径的默认规则恢复正确类型。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, coverage::extra]
+
+  - id: RHCSA-SELINUX-EXTRA-QA-002
+    type: qa
+    question: >-
+      `Permissive` 与 `Disabled` 的关键区别是什么？
+    answer: >-
+      Permissive 仍加载策略、维护标签并记录拒绝；Disabled 不加载策略，也不能正常维护持久对象标签。
+    extra: >-
+      排错应优先使用 Permissive，而不是 Disabled。
+    source: [RHEL9-Using-SELinux-1.5]
+    tags: [exam::rhcsa, chapter::selinux, card::comparison, coverage::extra]
+
+  - id: RHCSA-SELINUX-EXTRA-QA-003
+    type: qa
+    question: >-
+      `setsebool -P` 短时间没有输出时，为什么不应立即重复执行？
+    answer: >-
+      因为 `-P` 需要重建并写入持久策略配置，可能需要一些时间。
+    extra: >-
+      等待命令完成后再用 `getsebool` 验证。
+    source: [RHEL9-Using-SELinux-4.2]
+    tags: [exam::rhcsa, chapter::selinux, card::diagnosis, coverage::extra]
+
+  - id: RHCSA-SELINUX-O01-CLOZE-001
+    type: cloze
+    text: >-
+      `setenforce {{c1::0}}` 临时切换到 Permissive；`setenforce {{c2::1}}` 临时切换到 Enforcing。
+    extra: >-
+      两者都不修改 `/etc/selinux/config`。
+    source: [RHEL9-Using-SELinux-1.5]
+    tags: [exam::rhcsa, chapter::selinux, card::cloze]
+
+  - id: RHCSA-SELINUX-O02-CLOZE-001
+    type: cloze
+    text: >-
+      `{{c1::semanage fcontext}}` 建立持久路径规则，`{{c2::restorecon}}` 将规则应用到当前对象。
+    extra: >-
+      `ls -Z` 只观察当前标签。
+    source: [RH134, RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::cloze, priority::P0]
+
+  - id: RHCSA-SELINUX-O02-CLOZE-002
+    type: cloze
+    text: >-
+      为目录及其后代建立 fcontext 规则时，常用路径表达式是 `'/path{{c1::(/.*)?}}'`。
+    extra: >-
+      它同时覆盖目录本身和其下内容。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::cloze]
+
+  - id: RHCSA-SELINUX-O03-CLOZE-001
+    type: cloze
+    text: >-
+      `semanage port -a -t <TYPE> -p {{c1::<PROTOCOL>}} {{c2::<PORT>}}`
+    extra: >-
+      端口映射必须区分 TCP 与 UDP。
+    source: [RHEL9-Using-SELinux-4.1]
+    tags: [exam::rhcsa, chapter::selinux, card::cloze]
+
+  - id: RHCSA-SELINUX-O03-CLOZE-002
+    type: cloze
+    text: >-
+      `semanage port {{c1::-a}}` 用于新增记录；目标端口已有记录并确需变更类型时使用 `{{c2::-m}}`。
+    extra: >-
+      修改前先查询现有映射。
+    source: [RHEL9-Using-SELinux-4.1]
+    tags: [exam::rhcsa, chapter::selinux, card::cloze]
+
+  - id: RHCSA-SELINUX-O04-CLOZE-001
+    type: cloze
+    text: >-
+      `setsebool {{c1::-P}} <BOOLEAN> on` 使 Boolean 修改跨重启保持。
+    extra: >-
+      不带 `-P` 只改变当前值。
+    source: [RHEL9-Using-SELinux-5.3]
+    tags: [exam::rhcsa, chapter::selinux, card::cloze]
+
+  - id: RHCSA-SELINUX-K01-CLOZE-001
+    type: cloze
+    text: >-
+      SELinux 安全上下文通常包含 user、role、{{c1::type}} 和 level；RHCSA 服务题最常关注第三项。
+    extra: >-
+      进程的 type 常称为 domain。
+    source: [RHEL9-Using-SELinux-1.1]
+    tags: [exam::rhcsa, chapter::selinux, card::cloze]
+
+  - id: RHCSA-SELINUX-C01-CLOZE-001
+    type: cloze
+    text: >-
+      服务的 `active` 描述{{c1::当前运行状态}}，`enabled` 描述{{c2::开机启动配置}}。
+    extra: >-
+      两个状态都需要分别验证。
+    source: [RH124, RHCSA9-Mock-Task-3]
+    tags: [exam::rhcsa, chapter::selinux, card::cloze, bridge::rhce]

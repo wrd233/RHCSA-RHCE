@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Include、Import、Role 与 Collection - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>Include、Import、Role 与 Collection - Anki 预览</h1>
+    <p class="preview-meta">共 14 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>include_tasks 与 import_tasks 核心区别？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>运行时动态包含；解析期静态导入。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>import_playbook 可放在 tasks 内吗？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不能，位于 playbook 顶层。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Role tasks 默认入口？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>roles/&lt;role&gt;/tasks/main.yml</code></p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Role 可覆盖默认变量放哪里？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>defaults/main.yml</code></p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么不把接口变量放 vars/main.yml？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>优先级较高，调用者难覆盖。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>创建 Role 骨架命令？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible-galaxy role init &lt;ROLE&gt;</code></p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>按 requirements 安装 Collection？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>ansible-galaxy collection install -r requirements.yml</code></p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>FQCN 的价值？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>明确 collection 与模块，避免名称冲突。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>找不到 Role 首查什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>roles_path、项目目录和实际安装位置。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Role 重构验收链？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>syntax/list → limit → 远端等价 → 全量 → 第二次执行。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>System Role 变量从哪里确认？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>Role README、defaults 和官方文档。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>requirements 的价值？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>让依赖来源和版本可复现。</p></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Role 可覆盖默认值位于 <code>[…]</code>；任务入口是 <code>[…]</code>。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>Role 可覆盖默认值位于 <code>defaults/main.yml</code>；任务入口是 <code>tasks/main.yml</code>。</p><div class="extra"><p>接口与实现。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>动态包含用 <code>[…]</code>；静态导入用 <code>[…]</code>。</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>动态包含用 <code>include_tasks</code>；静态导入用 <code>import_tasks</code>。</p><div class="extra"><p>时点语义。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

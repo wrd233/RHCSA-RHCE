@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>分区、文件系统、Swap 与持久挂载 - Anki 预览</title>
+  <link rel="stylesheet" href="file:///Users/wangrundong/work/redhat/styles/anki.css">
+</head>
+<body>
+  <main class="preview-shell">
+    <h1>分区、文件系统、Swap 与持久挂载 - Anki 预览</h1>
+    <p class="preview-meta">共 23 条有效 Note；本页面不显示来源、稳定 ID 与标签。</p>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>写操作前查看块设备拓扑、类型、UUID 与挂载点的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>lsblk -o NAME,PATH,SIZE,TYPE,FSTYPE,UUID,MOUNTPOINTS</code></p><div class="extra"><p>设备名相似时必须重查。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>wipefs /dev/vdb</code> 与 <code>wipefs -a /dev/vdb</code> 的区别是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>前者列签名；后者擦除签名。</p><div class="extra"><p>调查时不得加 -a。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么 FSTYPE 为空不能充分证明设备安全空闲？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>设备仍可能有未识别数据、分区表或上层归属。</p><div class="extra"><p>继续查挂载、LVM/RAID 和题意。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>在新磁盘建立 GPT 的 parted 命令骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>parted -s &lt;DISK&gt; mklabel gpt</code></p><div class="extra"><p>会重写分区布局。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>创建约 2 GiB 分区并预留对齐空间的骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>parted -s &lt;DISK&gt; mkpart data xfs 1MiB 2049MiB</code></p><div class="extra"><p>mkpart 不创建 XFS。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>请求内核重读分区表并等待设备事件，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>partprobe &lt;DISK&gt;</code>；<code>udevadm settle</code>。</p><div class="extra"><p>再用 lsblk 验证。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>mkfs.xfs</code> 的作用与风险是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>在块设备上新建 XFS，会覆盖原文件系统结构。</p><div class="extra"><p>只对确认无需保留数据的新对象使用。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>XFS 与 ext4 的缩小边界是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>XFS 不支持原地缩小；ext4 可在满足条件时缩小。</p><div class="extra"><p>创建题按指定类型。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>读取文件系统或 Swap UUID 的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>blkid &lt;DEVICE&gt;</code></p><div class="extra"><p>UUID 必须来自当前签名。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>fstab 六字段顺序是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>设备、挂载点、类型、选项、dump、fsck pass。</p><div class="extra"><p>各字段共同描述持久策略。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>为什么不应默认给 fstab 添加 <code>nofail</code>？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>它改变启动失败处理，可能掩盖本应修复的错误。</p><div class="extra"><p>仅按题意使用。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>修改 fstab 后的重启前验证链是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>daemon-reload</code> → <code>findmnt --verify</code> → <code>mount -a</code> → <code>findmnt</code>。</p><div class="extra"><p>静态检查不替代实际挂载。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p><code>findmnt /srv/data</code> 与 <code>df -hT /srv/data</code> 分别证明什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>挂载源/类型/选项；文件系统容量与使用率。</p><div class="extra"><p>两个层次。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Swap 的三层状态是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>mkswap 签名、swapon 当前启用、fstab 持久条目。</p><div class="extra"><p>任一层不能替代其余。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>创建 Swap 签名并当前启用的命令是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>mkswap &lt;DEV&gt;</code>；<code>swapon &lt;DEV&gt;</code>。</p><div class="extra"><p>先确认设备空闲。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Swap fstab 条目骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>UUID=&lt;UUID&gt; none swap defaults 0 0</code></p><div class="extra"><p>使用真实 UUID。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>查看具体 Swap 设备、大小和优先级，使用什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p><code>swapon --show</code></p><div class="extra"><p>free -h 不直接列设备。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>Swap USED=0 是否表示没有启用？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>不是；可能已启用但当前无需换出页面。</p><div class="extra"><p>看 swapon --show。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>umount 报 target is busy 的下一步是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>查嵌套挂载和 <code>fuser -vm &lt;MOUNT&gt;</code>/lsof。</p><div class="extra"><p>不先 force/lazy。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>挂载到非空目录后原内容怎样？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>被新挂载暂时遮蔽，卸载后重新出现。</p><div class="extra"><p>不是自动删除。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>fstab 报 UUID 不存在时怎样处理？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>用 blkid/lsblk -f 核对当前 UUID，修正条目后重新 verify/mount。</p><div class="extra"><p>不要重新格式化。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>目录存在但 findmnt 无结果，数据可能写到哪里？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>根文件系统中的普通目录。</p><div class="extra"><p>停止写入并恢复挂载。</p></div></section>
+    </article>
+    
+    <article class="note-preview">
+      <section class="card-face front"><div class="face-name">正面</div><p>分区、文件系统与 Swap 综合任务的验收骨架是什么？</p></section>
+      <section class="card-face back"><div class="face-name">背面</div><p>布局 → 签名/UUID → 当前 mount/swapon → fstab → 容量/写入。</p><div class="extra"><p>逐层验证。</p></div></section>
+    </article>
+    
+  </main>
+</body>
+</html>

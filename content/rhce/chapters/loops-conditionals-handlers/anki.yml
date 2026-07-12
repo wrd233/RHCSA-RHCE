@@ -1,0 +1,212 @@
+chapter_id: RHCE-CONTROL
+deck: RedHat::RHCE-RHEL9
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCE-CONTROL-QA-001
+  type: qa
+  question: when 表达式是否写 `{{ }}`？
+  answer: 不写。
+  extra: when 本身解析表达式。
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::ansible
+  - priority::P0
+- id: RHCE-CONTROL-QA-002
+  type: qa
+  question: 多个 when 列表项通常是什么关系？
+  answer: AND。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::ansible
+  - priority::P0
+- id: RHCE-CONTROL-QA-003
+  type: qa
+  question: Handler 何时被通知？
+  answer: notify 所在 task 返回 changed 时。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::ansible
+  - priority::P0
+- id: RHCE-CONTROL-QA-004
+  type: qa
+  question: 同一 Handler 多次通知通常运行几次？
+  answer: 一次。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::ansible
+  - priority::P0
+- id: RHCE-CONTROL-QA-005
+  type: qa
+  question: 提前执行已通知 Handler 用什么？
+  answer: '`ansible.builtin.meta: flush_handlers`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::ansible
+  - priority::P0
+- id: RHCE-CONTROL-QA-006
+  type: qa
+  question: 探测 command 怎样避免虚假 changed？
+  answer: '`changed_when: false`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::ansible
+  - priority::P0
+- id: RHCE-CONTROL-QA-007
+  type: qa
+  question: ignore_errors 的主要风险？
+  answer: 掩盖必须失败的状态并让后续基于坏数据继续。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-CONTROL-QA-008
+  type: qa
+  question: block/rescue/always 分别作用？
+  answer: 主任务、失败恢复、无论结果都执行的清理。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::comparison
+  - priority::P0
+- id: RHCE-CONTROL-QA-009
+  type: qa
+  question: 循环 register 的结果在哪里？
+  answer: '`registered.results`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::ansible
+  - priority::P0
+- id: RHCE-CONTROL-QA-010
+  type: qa
+  question: 嵌套 include 避免 item 冲突用什么？
+  answer: '`loop_control.loop_var`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::ansible
+  - priority::P0
+- id: RHCE-CONTROL-QA-011
+  type: qa
+  question: 每轮都 changed 首先查什么？
+  answer: 具体 task 的命令、动态内容和 changed_when。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-CONTROL-QA-012
+  type: qa
+  question: Handler 未运行查什么？
+  answer: 通知 task changed、notify 名称和失败时点。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-CONTROL-QA-013
+  type: qa
+  question: 控制结构幂等验收？
+  answer: 第一轮合理 changed/handler；第二轮无无解释 changed；远端服务正确。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE-Course-05-09
+  - RHCE9-Mock
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::process
+  - priority::P0
+- id: RHCE-CONTROL-CLOZE-X01
+  type: cloze
+  text: Handler 只有在通知 task 返回 {{c1::changed}} 时被 `{{c2::notify}}` 排队。
+  extra: 默认 play 后部执行。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::cloze
+  - coverage::extra
+- id: RHCE-CONTROL-CLOZE-X02
+  type: cloze
+  text: '提前运行已通知 Handler：`ansible.builtin.meta: {{c1::flush_handlers}}`。'
+  extra: 之后再验证依赖功能。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::loops-conditionals-handlers
+  - card::cloze
+  - coverage::extra

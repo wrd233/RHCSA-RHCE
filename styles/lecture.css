@@ -1,0 +1,38 @@
+@page {
+  size: A4 portrait;
+  margin: 18mm 17mm 18mm 19mm;
+  @bottom-center { content: counter(page); color: #6b7280; font-size: 8.5pt; }
+}
+@page:first { @bottom-center { content: none; } }
+:root { color: #172033; font-family: "Songti SC", "STSong", serif; font-size: 10.6pt; line-height: 1.66; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+h1, h2, h3 { color: #12345b; font-family: "Hiragino Sans GB", "Heiti SC", sans-serif; break-after: avoid; }
+h1 { font-size: 24pt; line-height: 1.25; margin: 0 0 8mm; padding-top: 4mm; break-before: page; }
+body > h1:first-child, .book-title h1 { break-before: auto; }
+h2 { font-size: 15.5pt; margin: 9mm 0 4mm; border-bottom: .6pt solid #b9c6d6; padding-bottom: 2mm; }
+h3 { font-size: 11.5pt; margin: 5mm 0 2mm; }
+p { margin: 0 0 3.2mm; text-align: justify; }
+ul, ol { margin: 2mm 0 4mm 6mm; padding-left: 5mm; }
+li { margin: 1mm 0; }
+code { font-family: "SFMono-Regular", Menlo, "Hiragino Sans GB", "Heiti SC", monospace; font-size: .9em; background: #eef2f6; border-radius: 2px; padding: .08em .25em; }
+pre { background: #f4f6f8; border-left: 3px solid #315b87; padding: 3.5mm 4mm; margin: 3mm 0 5mm; white-space: pre-wrap; overflow-wrap: anywhere; break-inside: avoid; line-height: 1.48; font-size: 8.8pt; }
+pre code { background: transparent; padding: 0; font-family: "SFMono-Regular", Menlo, "Hiragino Sans GB", "Heiti SC", monospace; }
+blockquote { border-left: 3px solid #7c94ad; margin: 4mm 0; padding: 1mm 4mm; color: #334155; background: #f8fafc; }
+table { width: 100%; border-collapse: collapse; margin: 4mm 0; font-size: 9.3pt; break-inside: avoid; }
+th, td { border: .5pt solid #bac4cf; padding: 2mm 2.4mm; vertical-align: top; }
+th { background: #e9eff5; text-align: left; }
+.topic-label { color: #123f6d; font-weight: 700; }
+.point-label { color: #425f7d; font-weight: 600; }
+.task-page, .solution-page { break-before: page; }
+.book-title { min-height: 210mm; display: flex; flex-direction: column; justify-content: center; text-align: center; break-after: page; }
+.book-title h1 { font-size: 30pt; }
+.book-title p { text-align: center; color: #64748b; }
+.toc { break-after: page; }
+.toc h1 { break-before: auto; }
+.toc ol { list-style: none; padding: 0; margin: 0; }
+.toc li { border-bottom: .5pt dotted #9aa8b8; padding: 2mm 0; }
+.relationship-diagram, .evidence-flow, .lvm-layer-flow { margin: 4mm 0; padding: 4mm; background: #f4f7fa; border: .6pt solid #c7d2df; text-align: center; break-inside: avoid; }
+.diagram-node, .flow-item, .lvm-layer { border: .6pt solid #7890aa; background: white; padding: 2.4mm; margin: 1.2mm auto; max-width: 85%; }
+.diagram-arrow, .flow-down, .lvm-down { color: #496781; margin: 1mm; }
+.final { background: #e8f0f7; font-weight: 600; }

@@ -1,0 +1,198 @@
+chapter_id: RHCE-SYSTEM
+deck: RedHat::RHCE-RHEL9
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCE-SYSTEM-QA-001
+  type: qa
+  question: user.groups 如何追加而非替换？
+  answer: '设置 `append: true`。'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::ansible
+  - priority::P0
+- id: RHCE-SYSTEM-QA-002
+  type: qa
+  question: user.password 需要什么形式？
+  answer: 目标系统支持的密码哈希。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::ansible
+  - priority::P0
+- id: RHCE-SYSTEM-QA-003
+  type: qa
+  question: 管理 SSH 公钥模块？
+  answer: '`ansible.posix.authorized_key`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::ansible
+  - priority::P0
+- id: RHCE-SYSTEM-QA-004
+  type: qa
+  question: authorized_key exclusive 在 loop 中的风险？
+  answer: 每项可能删除上一项未包含的 key。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-SYSTEM-QA-005
+  type: qa
+  question: 创建 yum repo 模块？
+  answer: '`ansible.builtin.yum_repository`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::ansible
+  - priority::P0
+- id: RHCE-SYSTEM-QA-006
+  type: qa
+  question: 导入 RPM key 模块？
+  answer: '`ansible.builtin.rpm_key`'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::ansible
+  - priority::P0
+- id: RHCE-SYSTEM-QA-007
+  type: qa
+  question: 服务当前与持久参数？
+  answer: '`state: started` 与 `enabled: true`。'
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::ansible
+  - priority::P0
+- id: RHCE-SYSTEM-QA-008
+  type: qa
+  question: 配置变化才重启如何表达？
+  answer: template/copy notify Handler。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::ansible
+  - priority::P0
+- id: RHCE-SYSTEM-QA-009
+  type: qa
+  question: cron 模块关键字段？
+  answer: name、user、minute/hour/day/month/weekday、job。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::ansible
+  - priority::P0
+- id: RHCE-SYSTEM-QA-010
+  type: qa
+  question: cron changed=0 能否证明执行成功？
+  answer: 不能；还要 crond 日志与产物。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::verification
+  - priority::P0
+- id: RHCE-SYSTEM-QA-011
+  type: qa
+  question: 用户附加组丢失首查？
+  answer: groups 与 append 语义。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::diagnosis
+  - priority::P0
+- id: RHCE-SYSTEM-QA-012
+  type: qa
+  question: 系统自动化验收链？
+  answer: 变量/秘密 → 模块 state → 远端对象/功能 → 第二次执行。
+  extra: ''
+  source:
+  - RH294-RHEL9
+  - RHCE9-Mock
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::process
+  - priority::P0
+- id: RHCE-SYSTEM-CLOZE-X01
+  type: cloze
+  text: 'user 附加组追加需要 `append: {{c1::true}}`；否则 groups 常表达{{c2::完整目标列表}}。'
+  extra: 避免丢组。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::cloze
+  - coverage::extra
+- id: RHCE-SYSTEM-CLOZE-X02
+  type: cloze
+  text: '服务当前启动 `state: {{c1::started}}`；开机启动 `enabled: {{c2::true}}`。'
+  extra: 双态。
+  source:
+  - RH294-RHEL9
+  - Ansible-Documentation
+  tags:
+  - exam::rhce
+  - chapter::automate-system-services
+  - card::cloze
+  - coverage::extra
