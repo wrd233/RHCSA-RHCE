@@ -21,6 +21,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-NETWORK-O03-QA-002
   type: qa
   question: 在非 FIPS 的 RHEL 9 环境中，为当前用户生成名为 `~/.ssh/rhcsa20_operator` 的 Ed25519 密钥对，命令骨架是什么？
@@ -41,6 +43,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-NETWORK-O03-QA-003
   type: qa
   question: 把 `~/.ssh/rhcsa20_operator.pub` 追加授权给远端 `operator@servera`，优先使用什么命令？
@@ -61,6 +65,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-NETWORK-O03-QA-004
   type: qa
   question: 修改 OpenSSH 服务端配置后，在 reload 前用于检查配置能否解析的命令是什么？
@@ -81,6 +87,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-NETWORK-O03-QA-005
   type: qa
   question: 客户端已无法用公钥登录。应组合哪两侧的核心证据，而不是只看一侧？
@@ -97,6 +105,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-NETWORK-O03-QA-006
   type: qa
   question: 出现 `REMOTE HOST IDENTIFICATION HAS CHANGED` 时，为什么不能立即删除记录并重连？
@@ -113,6 +123,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-NETWORK-O03-QA-007
   type: qa
   question: SSH 登录成功后，怎样用远程命令证明连接到了正确用户和主机？
@@ -133,6 +145,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-NETWORK-O03-CLOZE-001
   type: cloze
   text: SSH 用户公钥认证中，{{c1::客户端持有私钥}}，{{c2::服务端目标账号保存公钥}}。
@@ -148,6 +162,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-K01-QA-001
   type: qa
   question: '`Connection refused` 与 `Permission denied (publickey)` 分别说明 SSH 失败停在哪一层？'
@@ -164,6 +180,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-K01-QA-002
   type: qa
   question: SSH 为什么要在用户认证之前验证服务器主机密钥？
@@ -180,6 +198,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-20-K01-QA-003
   type: qa
   question: '`ssh -vvv` 中出现 `Authenticated ... using "password"` 说明什么？'
@@ -196,6 +216,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-20-K01-QA-004
   type: qa
   question: SSH 端口已经能连接，为什么仍不能宣告任务完成？
@@ -212,6 +234,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-K01-QA-005
   type: qa
   question: 不进入交互 Shell，远程验证用户和主机的命令骨架是什么？
@@ -232,6 +256,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-K01-CLOZE-001
   type: cloze
   text: SSH 典型链路是：{{c1::TCP 连接}} → {{c2::主机身份验证}} → {{c3::用户身份验证}} → {{c4::会话或远程命令}}。
@@ -247,6 +273,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-K02-QA-001
   type: qa
   question: SSH 双向信任中，`known_hosts` 与 `authorized_keys` 分别信任什么对象？
@@ -263,6 +291,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-K02-QA-002
   type: qa
   question: 在服务器控制台列出 Ed25519 主机公钥指纹的命令是什么？
@@ -283,6 +313,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-K02-QA-003
   type: qa
   question: 查询当前用户 `known_hosts` 中与 `servera` 匹配的记录，使用什么命令？
@@ -303,6 +335,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-K02-QA-004
   type: qa
   question: 确认主机密钥合法轮换后，删除 `servera` 的旧记录使用什么命令？
@@ -323,6 +357,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-K02-QA-005
   type: qa
   question: 非默认端口 2222 的 known_hosts 目标通常怎样表示？
@@ -339,6 +375,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-20-K02-QA-006
   type: qa
   question: 为什么 `ssh-keyscan servera` 的输出不能单独作为首次主机身份验证？
@@ -355,6 +393,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-K02-QA-007
   type: qa
   question: 处理主机密钥变化时，最小安全流程是什么？
@@ -371,6 +411,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-20-K02-CLOZE-001
   type: cloze
   text: 主机密钥的{{c1::私钥留在服务端}}，客户端保存核验过的{{c2::主机公钥记录}}。
@@ -386,6 +428,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-O01-QA-001
   type: qa
   question: '`ssh-keygen` 的 `-f` 参数解决什么问题？'
@@ -402,6 +446,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-20-O01-QA-002
   type: qa
   question: '`ssh-keygen -C` 写入的注释是否参与公钥认证？'
@@ -418,6 +464,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-20-O01-QA-003
   type: qa
   question: 私钥密语与文件 mode 分别防护什么风险？
@@ -434,6 +482,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-O01-QA-004
   type: qa
   question: 把专用私钥设为仅所有者可读写，命令是什么？
@@ -454,6 +504,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-O01-QA-005
   type: qa
   question: 列出公钥文件 SHA256 指纹的命令是什么？
@@ -474,6 +526,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-O01-QA-006
   type: qa
   question: '`ssh-keygen -p` 与生成新密钥对的区别是什么？'
@@ -490,6 +544,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-O01-QA-007
   type: qa
   question: 私钥疑似泄露时，为什么只修改密语不够？
@@ -506,6 +562,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-O01-CLOZE-001
   type: cloze
   text: '`ssh-keygen` 中，{{c1::-t}} 选择算法，{{c2::-f}} 指定文件，{{c3::-C}} 写入注释。'
@@ -521,6 +579,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-O02-QA-001
   type: qa
   question: '`authorized_keys` 普通记录的核心字段顺序是什么？'
@@ -537,6 +597,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-20-O02-QA-002
   type: qa
   question: 手工写入 `authorized_keys` 时为什么应使用 `>>` 而不是 `>`？
@@ -553,6 +615,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-O02-QA-003
   type: qa
   question: '`ssh-copy-id` 需要什么前提，而它不会自动完成什么？'
@@ -569,6 +633,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-O02-QA-004
   type: qa
   question: 怎样只用指定私钥测试公钥认证，并禁止 password 与 keyboard-interactive 回退？
@@ -586,6 +652,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-O02-QA-005
   type: qa
   question: 为什么“进入远端 Shell 且没有先输入账号密码”仍不应替代 `ssh -vvv` 验证？
@@ -602,6 +670,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-20-O02-QA-006
   type: qa
   question: 公钥已在 `authorized_keys` 中但仍被拒绝，下一条证据应优先看什么？
@@ -618,6 +688,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-20-O02-CLOZE-001
   type: cloze
   text: '`ssh-copy-id -i` 应指向{{c1::公钥文件（通常以 `.pub` 结尾）}}，而不是私钥。'
@@ -633,6 +705,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-O03-QA-001
   type: qa
   question: OpenSSH 客户端主要配置来源的优先顺序是什么？
@@ -649,6 +723,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-O03-QA-002
   type: qa
   question: 为什么具体 `Host servera` 应放在通用 `Host *` 前面？
@@ -665,6 +741,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-O03-QA-003
   type: qa
   question: '`Host` 与 `HostName` 的区别是什么？'
@@ -681,6 +759,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-O03-QA-004
   type: qa
   question: '`IdentitiesOnly yes` 在多密钥环境中的作用是什么？'
@@ -697,6 +777,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-20-O03-QA-005
   type: qa
   question: 查看别名 `servera-operator` 匹配后的有效客户端配置，命令是什么？
@@ -717,6 +799,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-O03-QA-006
   type: qa
   question: '`ssh -G servera-operator` 的输出能证明什么，不能证明什么？'
@@ -733,6 +817,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-O03-QA-007
   type: qa
   question: 用户级 `~/.ssh/config` 为什么也应限制为 600？
@@ -749,6 +835,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-20-O03-CLOZE-001
   type: cloze
   text: 客户端排错中，{{c1::`ssh -G`}}回答“最终选择了什么”，{{c2::`ssh -vvv`}}回答“连接时实际发生了什么”。
@@ -764,6 +852,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-O04-QA-001
   type: qa
   question: '`ssh-agent` 是否把私钥复制到远端服务器？'
@@ -780,6 +870,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-20-O04-QA-002
   type: qa
   question: 在当前 Bourne 风格 Shell 中启动 agent 并导入环境的常用命令是什么？
@@ -800,6 +892,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-O04-QA-003
   type: qa
   question: 哪个环境变量指向当前 Shell 使用的 agent socket？
@@ -816,6 +910,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-20-O04-QA-004
   type: qa
   question: 列出 agent 中身份指纹的命令是什么？
@@ -836,6 +932,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-O04-QA-005
   type: qa
   question: '`ssh-add -D` 会删除磁盘上的私钥文件吗？'
@@ -852,6 +950,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-O04-QA-006
   type: qa
   question: '`ssh-add -t 1h key` 的作用是什么？'
@@ -868,6 +968,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-20-O04-QA-007
   type: qa
   question: 为什么 RHCSA 普通直连任务不应默认开启 agent forwarding？
@@ -884,6 +986,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-20-O04-CLOZE-001
   type: cloze
   text: 从 agent 删除身份{{c1::不等于}}删除私钥文件，也{{c2::不等于}}撤销服务器上的公钥授权。
@@ -899,6 +1003,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-K03-QA-001
   type: qa
   question: 为什么不能假设 `99-local.conf` 一定覆盖更早的 sshd 配置？
@@ -915,6 +1021,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-20-K03-QA-002
   type: qa
   question: 输出 sshd 全局有效配置的命令是什么？
@@ -935,6 +1043,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-K03-QA-003
   type: qa
   question: 要考虑目标用户和来源地址的 `Match` 结果，应使用什么命令骨架？
@@ -955,6 +1065,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-K03-QA-004
   type: qa
   question: '`sshd -t`、`sshd -T` 与 `sshd -T -C ...` 分别回答什么？'
@@ -971,6 +1083,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-K03-QA-005
   type: qa
   question: '`PasswordAuthentication` 与 `KbdInteractiveAuthentication` 为什么要分别检查？'
@@ -987,6 +1101,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-K03-QA-006
   type: qa
   question: 完全禁止 root 通过 SSH 直接登录，核心指令是什么？
@@ -1003,6 +1119,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-20-K03-QA-007
   type: qa
   question: drop-in 文本写了目标值，但 `sshd -T` 显示不同值，下一步查什么？
@@ -1019,6 +1137,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-20-K03-CLOZE-001
   type: cloze
   text: 服务端配置核对顺序：{{c1::`sshd -t`}}查可解析，{{c2::`sshd -T`}}查全局有效值，{{c3::`sshd -T -C`}}查特定连接。
@@ -1034,6 +1154,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-O05-QA-001
   type: qa
   question: 远程修改 sshd 前，为什么要保留当前会话并准备第二个客户端终端？
@@ -1050,6 +1172,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-20-O05-QA-002
   type: qa
   question: 安全应用 sshd 认证策略的核心顺序是什么？
@@ -1066,6 +1190,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-20-O05-QA-003
   type: qa
   question: 修改 sshd 配置后，为什么通常优先 reload 而不是 restart？
@@ -1082,6 +1208,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-O05-QA-004
   type: qa
   question: '`systemctl is-active sshd` 和 `ss -lntp` 通过后，还缺哪一层验收？'
@@ -1098,6 +1226,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-20-O05-QA-005
   type: qa
   question: 关闭密码认证前必须先满足什么条件？
@@ -1114,6 +1244,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-O05-QA-006
   type: qa
   question: '`systemctl reload sshd` 失败时，第一步应看什么？'
@@ -1130,6 +1262,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-20-O05-CLOZE-001
   type: cloze
   text: SSH 变更的功能终态必须由{{c1::独立的新连接}}证明，而不是由{{c2::服务仍为 active}}代替。
@@ -1145,6 +1279,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-K04-QA-001
   type: qa
   question: 逐层查看 `/home/operator/.ssh/authorized_keys` 路径 owner 和 mode，使用什么命令？
@@ -1165,6 +1301,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-K04-QA-002
   type: qa
   question: 服务端用户 `.ssh` 和 `authorized_keys` 的常用保守 mode 分别是什么？
@@ -1181,6 +1319,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-20-K04-QA-003
   type: qa
   question: 为什么不应通过关闭 `StrictModes` 修复公钥认证？
@@ -1197,6 +1337,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-K04-QA-004
   type: qa
   question: 在默认本地 home 场景恢复 `.ssh` 路径 SELinux 标签，命令是什么？
@@ -1217,6 +1359,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-20-K04-QA-005
   type: qa
   question: '`authorized_keys` 内容和 Unix mode 都正确，能否据此排除路径安全与 SELinux 问题？'
@@ -1233,6 +1377,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-20-K04-QA-006
   type: qa
   question: 非标准 home 路径为什么不能只反复运行 `restorecon`？
@@ -1249,6 +1395,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-K04-QA-007
   type: qa
   question: 服务端日志提示 authorization file ownership or modes 错误，最小调查链是什么？
@@ -1265,6 +1413,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-20-K04-CLOZE-001
   type: cloze
   text: 公钥认证路径要同时满足{{c1::正确所有权和 mode}}与{{c2::正确 SELinux 标签}}。
@@ -1280,6 +1430,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-D01-QA-001
   type: qa
   question: '`ssh -vvv` 没有出现目标密钥的 `Offering public key`，下一条最有区分度的证据是什么？'
@@ -1296,6 +1448,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-20-D01-QA-002
   type: qa
   question: '`ssh -vvv` 已出现目标密钥的 `Offering public key`，但服务端未接受，诊断应转向哪里？'
@@ -1312,6 +1466,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-20-D01-QA-003
   type: qa
   question: '`Server accepts key` 能否单独证明已经登录完成？'
@@ -1328,6 +1484,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-20-D01-QA-004
   type: qa
   question: '`Authentications that can continue` 一行回答什么？'
@@ -1344,6 +1502,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-20-D01-QA-005
   type: qa
   question: SSH 诊断为什么要保持“同一个最小测试”反复验证？
@@ -1360,6 +1520,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-20-D01-QA-006
   type: qa
   question: 登录成功但连接到了错误账号，下一条最有区分度的客户端证据是什么？
@@ -1376,6 +1538,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-20-D01-QA-007
   type: qa
   question: 登录失败时，为什么不应同时删除 known_hosts、重建密钥、放宽权限并关闭 SELinux？
@@ -1392,6 +1556,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-20-D01-CLOZE-001
   type: cloze
   text: 客户端{{c1::没有 offer}}目标密钥时先查客户端；客户端{{c2::已经 offer 但未被接受}}时再重点查服务端。
@@ -1407,6 +1573,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-K05-QA-001
   type: qa
   question: 用户密钥轮换的安全顺序是什么？
@@ -1423,6 +1591,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-20-K05-QA-002
   type: qa
   question: 为什么不能先删除旧公钥再部署新公钥？
@@ -1439,6 +1609,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-K05-QA-003
   type: qa
   question: 批量生成 `/etc/ssh/ssh_known_hosts` 时，最关键的信任边界是什么？
@@ -1455,6 +1627,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-20-K05-QA-004
   type: qa
   question: 为 Ansible 准备 SSH 时，私钥和公钥分别应放在哪里？
@@ -1471,6 +1645,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-20-K05-QA-005
   type: qa
   question: 真实工作中如何记录一把用户密钥的稳定身份，避免只靠文件名？
@@ -1487,6 +1663,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-20-K05-CLOZE-001
   type: cloze
   text: 密钥轮换遵循{{c1::先加新并验证}}，再{{c2::删除旧授权}}。
@@ -1502,6 +1680,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-20-T01-QA-001
   type: qa
   question: 你已为 `operator1` 安装公钥。怎样用一条测试命令证明指定私钥成功且没有回退到密码？
@@ -1520,6 +1700,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-20-T01-QA-002
   type: qa
   question: 专用密钥由 agent 使用时，怎样证明 agent 中身份就是预期公钥？
@@ -1536,6 +1718,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-20-T02-QA-001
   type: qa
   question: 远程关闭 SSH 密码认证时，新连接验证前必须保留什么？
@@ -1552,6 +1736,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-20-T02-QA-002
   type: qa
   question: 目标要求 root 直登和口令式认证禁止，验收时应分别测试哪些路径？
@@ -1568,6 +1754,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-20-T02-QA-003
   type: qa
   question: 为什么 `sshd -t`、服务 active、端口监听三项全部通过仍不能关闭旧会话？
@@ -1584,3 +1772,5 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary

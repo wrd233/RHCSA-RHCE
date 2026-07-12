@@ -21,6 +21,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-SELINUX-K01-QA-002
   type: qa
   question: 在 RHCSA 常见服务访问问题中，SELinux 安全上下文的哪个字段最需要优先关注？
@@ -37,6 +39,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-SELINUX-K01-QA-003
   type: qa
   question: '`httpd_t` 与 `httpd_sys_content_t` 分别描述什么？'
@@ -53,6 +57,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-SELINUX-K01-QA-004
   type: qa
   question: SELinux 安全上下文通常由哪四部分组成？
@@ -68,6 +74,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-SELINUX-O01-QA-001
   type: qa
   question: 如何查看 SELinux 当前运行模式？
@@ -89,6 +97,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SELINUX-O01-QA-002
   type: qa
   question: 需要同时比较 SELinux 当前模式和配置文件中的启动模式时，应优先使用什么命令？
@@ -109,6 +119,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SELINUX-O01-QA-003
   type: qa
   question: '`setenforce 0` 改变什么，又不改变什么？'
@@ -126,6 +138,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-SELINUX-O01-QA-004
   type: qa
   question: 服务在 `setenforce 0` 后恢复正常，能否认为 SELinux 问题已经修复？
@@ -142,6 +156,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-SELINUX-O01-QA-005
   type: qa
   question: RHEL 9 中，SELinux 持久启动模式主要记录在哪个文件？
@@ -158,6 +174,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-SELINUX-O01-QA-006
   type: qa
   question: 题目要求 SELinux 当前和重启后都为 Enforcing，至少应分别验证哪两个状态？
@@ -173,6 +191,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-SELINUX-K02-QA-001
   type: qa
   question: Web 服务访问失败时，在深入 SELinux 前应先用证据确认哪些前置层？
@@ -189,6 +209,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-SELINUX-K02-QA-002
   type: qa
   question: 查看近期 SELinux AVC 拒绝的核心命令是什么？
@@ -209,6 +231,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SELINUX-K02-QA-003
   type: qa
   question: 阅读一条 AVC 拒绝时，优先提炼哪三个核心对象和一个行为？
@@ -224,6 +248,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-SELINUX-O02-QA-001
   type: qa
   question: '`ls -Z` 能证明什么，不能证明什么？'
@@ -241,6 +267,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-SELINUX-K04-QA-001
   type: qa
   question: '`audit2why` 在 SELinux 排错中的合适定位是什么？'
@@ -257,6 +285,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-SELINUX-K04-QA-002
   type: qa
   question: 为什么不应把 `audit2allow` 作为看到 AVC 后的第一修复手段？
@@ -273,6 +303,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-SELINUX-K04-QA-003
   type: qa
   question: SELinux 服务故障的通用证据推进骨架是什么？
@@ -289,6 +321,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-SELINUX-EXTRA-QA-002
   type: qa
   question: '`Permissive` 与 `Disabled` 的关键区别是什么？'
@@ -304,6 +338,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-SELINUX-O01-CLOZE-001
   type: cloze
   text: '`setenforce {{c1::0}}` 临时切换到 Permissive；`setenforce {{c2::1}}` 临时切换到 Enforcing。'
@@ -319,6 +355,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-SELINUX-K01-CLOZE-001
   type: cloze
   text: SELinux 安全上下文通常包含 user、role、{{c1::type}} 和 level；进程的 type 常称为 {{c2::domain}}。
@@ -333,6 +371,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-28-K01-QA-001
   type: qa
   question: DAC、SELinux MAC 和应用自身授权分别回答什么问题？
@@ -350,6 +390,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-28-K01-QA-002
   type: qa
   question: 把一次 SELinux 访问判断压缩成最小四元组，应写出哪四项？
@@ -365,6 +407,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-28-K01-QA-003
   type: qa
   question: 将“`httpd_t` 对 `var_t:file` 请求 `read` 被拒绝”拆解时，`file` 属于哪个维度？
@@ -380,6 +424,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K01-QA-004
   type: qa
   question: '`chmod 777` 为什么不是 SELinux 拒绝的通用修复？'
@@ -396,6 +442,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-28-K01-QA-005
   type: qa
   question: 已确认 SELinux policy 允许目标访问，能否直接宣布业务终态正确？
@@ -411,6 +459,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-28-K01-QA-006
   type: qa
   question: RHEL 常见 `targeted` policy 的名称能否证明所有进程都受到相同强度的限制？
@@ -427,6 +477,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-28-K02-QA-001
   type: qa
   question: SELinux user 与 Linux 登录用户是同一个身份字段吗？
@@ -443,6 +495,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-28-K02-QA-002
   type: qa
   question: 上下文 `system_u:system_r:httpd_t:s0` 中，httpd 的策略身份是哪一段？
@@ -459,6 +513,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K02-QA-003
   type: qa
   question: 文件上下文 `system_u:object_r:httpd_sys_content_t:s0` 中，哪一段描述对象用途？
@@ -475,6 +531,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K02-QA-004
   type: qa
   question: 看到 level 为 `s0:c123,c456` 时，为什么不能把冒号后的类别误认为新的上下文字段？
@@ -490,6 +548,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-28-K02-QA-005
   type: qa
   question: 进程命令名是 `httpd`，能否直接认定它运行在 `httpd_t`？
@@ -506,6 +566,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-28-K02-QA-006
   type: qa
   question: 看到管理员 Shell 为 `unconfined_t`，能否认为 SELinux 已关闭？
@@ -521,6 +583,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-28-K02-CLOZE-001
   type: cloze
   text: 对进程而言安全上下文第三段通常称为 {{c1::domain}}；对文件等目标对象而言通常称为 {{c2::type}}。
@@ -536,6 +600,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-28-O01-QA-001
   type: qa
   question: '`sestatus` 显示 `Current mode: permissive`、`Mode from config file: enforcing`，应怎样解读？'
@@ -552,6 +618,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-O01-QA-002
   type: qa
   question: 系统为 `Disabled` 时，为什么 `setenforce 1` 不能直接启用 SELinux？
@@ -568,6 +636,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-28-O01-QA-003
   type: qa
   question: Enforcing 与 Permissive 都会记录 AVC，它们的关键差异是什么？
@@ -583,6 +653,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-28-O01-QA-004
   type: qa
   question: 为什么不应把 `SELINUX=disabled` 当作服务题的最终解法？
@@ -599,6 +671,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-28-O01-QA-005
   type: qa
   question: 切到 Permissive 后同一业务错误仍存在，最稳妥的结论是什么？
@@ -614,6 +688,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-28-O01-CLOZE-001
   type: cloze
   text: '`sestatus` 中 {{c1::Current mode}} 描述当前执行状态，{{c2::Mode from config file}} 描述配置文件中的启动计划。'
@@ -629,6 +705,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-28-O02-QA-001
   type: qa
   question: 如何浏览系统当前进程及其 SELinux 上下文？
@@ -649,6 +727,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-28-O02-QA-002
   type: qa
   question: 已精确确认 PID 1842 是目标进程，怎样查看它的 SELinux domain？
@@ -668,6 +748,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-28-O02-QA-003
   type: qa
   question: 查看 `/srv/exam-site` 目录对象本身的上下文时，为什么使用 `ls -Zd`？
@@ -683,6 +765,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-28-O02-QA-004
   type: qa
   question: 如何查看 `/srv/exam-site/index.html` 当前完整上下文？
@@ -703,6 +787,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-28-O02-QA-005
   type: qa
   question: '`ls -Zd /srv/exam-site` 与 `ls -lZ /srv/exam-site` 分别查看什么？'
@@ -718,6 +804,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-28-O02-QA-006
   type: qa
   question: 如何查看当前 Shell 进程的 SELinux 上下文？
@@ -738,6 +826,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-28-O02-QA-007
   type: qa
   question: '`ps -Z` 显示 httpd 为 `httpd_t`，这一证据不能单独证明哪些终态？'
@@ -754,6 +844,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-28-K03-QA-001
   type: qa
   question: 'AVC 中 `avc: denied { open read }` 的花括号表示什么？'
@@ -769,6 +861,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K03-QA-002
   type: qa
   question: AVC 的 `scontext` 和 `tcontext` 分别指向什么？
@@ -784,6 +878,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K03-QA-003
   type: qa
   question: '`tclass=file` 与 `tclass=dir` 为什么不能忽略？'
@@ -799,6 +895,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K03-QA-004
   type: qa
   question: AVC 中 `denied { name_bind }` 且 `tclass=tcp_socket`，应把拒绝分类到哪一类入口？
@@ -815,6 +913,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K03-QA-005
   type: qa
   question: '`comm="httpd"` 能否单独证明 source domain 是 `httpd_t`？'
@@ -831,6 +931,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K03-QA-006
   type: qa
   question: AVC 中 PID 与 source domain 哪一个更适合作为长期策略身份？
@@ -846,6 +948,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-28-K03-QA-007
   type: qa
   question: AVC 字段 `permissive=1` 表示什么？
@@ -862,6 +966,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K03-QA-008
   type: qa
   question: 为什么同一次访问的路径和可执行文件信息可能不全在单独一条 AVC 行中？
@@ -878,6 +984,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-K03-QA-009
   type: qa
   question: 怎样把一条长 AVC 翻译成一句可操作的判断？
@@ -893,6 +1001,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-28-K03-CLOZE-001
   type: cloze
   text: AVC 中 {{c1::scontext}} 表示主体上下文，{{c2::tcontext}} 表示目标上下文，{{c3::tclass}} 表示目标对象类别。
@@ -907,6 +1017,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-28-O03-QA-001
   type: qa
   question: '`ausearch` 中 `-m AVC,USER_AVC` 的作用是什么？'
@@ -923,6 +1035,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-28-O03-QA-002
   type: qa
   question: '`ausearch -ts recent` 解决什么问题？'
@@ -938,6 +1052,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-28-O03-QA-003
   type: qa
   question: '`ausearch -i` 与 `ausearch --raw` 的主要用途分别是什么？'
@@ -954,6 +1070,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-28-O03-QA-004
   type: qa
   question: 如何把近期原始 AVC 交给 `audit2why` 辅助解释？
@@ -974,6 +1092,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-28-O03-QA-005
   type: qa
   question: Audit 查询无结果且系统安装了 setroubleshoot 组件时，可用哪个 Journal 入口辅助检查？
@@ -994,6 +1114,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-28-O03-QA-006
   type: qa
   question: '`ausearch` 没有结果时，第一轮应检查哪些条件？'
@@ -1009,6 +1131,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-28-O03-QA-007
   type: qa
   question: 为什么不建议第一轮直接用很多 PID、命令名和路径条件过度过滤 `ausearch`？
@@ -1024,6 +1148,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-28-O03-QA-008
   type: qa
   question: 临时使用 `semodule -DB` 让 dontaudit 拒绝可见后，调查结束必须执行什么？
@@ -1043,6 +1169,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-28-O03-QA-009
   type: qa
   question: '`audit2why` 建议可能需要允许规则时，下一步为什么仍要检查标准策略入口？'
@@ -1059,6 +1187,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-28-D01-QA-001
   type: qa
   question: 系统为 Enforcing，服务请求失败，但近期没有相关 AVC。下一条最有区分度的证据是什么？
@@ -1074,6 +1204,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-28-D01-QA-002
   type: qa
   question: Permissive 下页面成功且 AVC 显示 `httpd_t` 对 `var_t:file` 的 read 被拒绝，下一步应分类到哪里？
@@ -1091,6 +1223,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-28-D01-QA-003
   type: qa
   question: AVC 显示 `name_bind`、`tclass=tcp_socket`，为什么不应先改文件标签？
@@ -1107,6 +1241,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-28-D01-QA-004
   type: qa
   question: 目标文件 type 看似正确，但业务需要 httpd 主动连接数据库，AVC 指向网络连接行为。应考虑哪类标准入口？
@@ -1123,6 +1259,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-28-D01-QA-005
   type: qa
   question: 一个可审计的 Permissive 诊断窗口至少应记录哪些内容？
@@ -1139,6 +1277,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-28-D01-QA-006
   type: qa
   question: 完成 AVC 分类后，为什么还要再次执行 `getenforce` 和 `sestatus`？
@@ -1154,6 +1294,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-28-D01-QA-007
   type: qa
   question: 本章完成“文件上下文问题”的分类后，为什么不能直接声称页面已经修复？
@@ -1169,6 +1311,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-28-D01-QA-008
   type: qa
   question: 真实变更单中，SELinux 拒绝的最小证据包应包含哪些核心内容？
@@ -1184,6 +1328,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-28-T01-QA-001
   type: qa
   question: 经典任务中，当前为 Permissive、配置文件为 Enforcing。页面访问成功能证明什么？
@@ -1200,6 +1346,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-28-T01-QA-002
   type: qa
   question: 经典任务中，怎样取得 httpd 主 PID 并查看其 SELinux 上下文？
@@ -1223,6 +1371,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-28-T01-QA-003
   type: qa
   question: 经典任务中，为什么要同时执行 `ls -Zd /srv/exam-site` 和 `ls -lZ /srv/exam-site/index.html`？
@@ -1239,6 +1389,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-28-T01-QA-004
   type: qa
   question: 经典任务的 AVC 显示 `httpd_t`、`var_t`、`tclass=file`、`denied { open read }`。一句话结论是什么？
@@ -1255,6 +1407,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-28-T01-QA-005
   type: qa
   question: 经典任务为什么禁止使用 `chcon`，即使它可能让页面暂时可访问？
@@ -1271,6 +1425,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-28-T01-QA-006
   type: qa
   question: 经典任务的最终模式验收命令组是什么？
@@ -1298,3 +1454,5 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification

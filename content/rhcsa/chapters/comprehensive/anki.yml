@@ -21,6 +21,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-COMPREHENSIVE-QA-002
   type: qa
   question: 哪些关系应被标记为综合任务中的硬依赖？
@@ -37,6 +39,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-COMPREHENSIVE-QA-003
   type: qa
   question: 为什么修改共享对象后需要执行回归集合？
@@ -53,6 +57,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-COMPREHENSIVE-QA-004
   type: qa
   question: 综合验收中“当前状态”和“持久状态”分别回答什么？
@@ -69,6 +75,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-COMPREHENSIVE-QA-005
   type: qa
   question: 为什么功能证据不能总由 root 执行？
@@ -85,6 +93,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-COMPREHENSIVE-QA-006
   type: qa
   question: 局部闭环的基本顺序是什么？
@@ -101,6 +111,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-COMPREHENSIVE-QA-007
   type: qa
   question: 存储写操作前的最低证据门包括哪些内容？
@@ -117,6 +129,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-COMPREHENSIVE-QA-008
   type: qa
   question: 为什么重启不应作为首轮排错手段？
@@ -133,6 +147,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-COMPREHENSIVE-QA-009
   type: qa
   question: 服务显示 active 能否证明远端客户端可以访问？
@@ -149,6 +165,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-COMPREHENSIVE-QA-010
   type: qa
   question: 一个任务缺少远端功能证据时，应写成什么状态？
@@ -165,6 +183,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-COMPREHENSIVE-QA-011
   type: qa
   question: 最终检查为什么必须从原题重新开始？
@@ -181,6 +201,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-COMPREHENSIVE-QA-012
   type: qa
   question: 综合任务的最终完成标准是什么？
@@ -197,6 +219,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-33-K01-QA-001
   type: qa
   question: 题目写“确保 httpd 在 8082 端口提供内容”。拆解时至少应形成哪几类验收对象？
@@ -214,6 +238,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-K01-QA-002
   type: qa
   question: 题目参数与环境事实有什么区别？
@@ -231,6 +257,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-K01-QA-003
   type: qa
   question: “不得删除目录中已有文件”应放在任务账本的哪个位置？
@@ -248,6 +276,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-K01-QA-004
   type: qa
   question: 一个大题中用户已创建，但默认 ACL 未生效。为什么不能把整题标记为完成？
@@ -265,6 +295,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-K01-QA-005
   type: qa
   question: 执行命令退出码为 0 能证明什么？
@@ -282,6 +314,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-33-K01-QA-006
   type: qa
   question: 把“配置仓库”改写为可验证终态时，应包含哪些要素？
@@ -299,6 +333,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-K01-QA-007
   type: qa
   question: 为什么不应把模拟题答案中的设备名或 UUID直接写入自己的操作？
@@ -316,6 +352,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-K01-QA-008
   type: qa
   question: 一道题要求“开机自动启动”，只执行 `systemctl start` 后还缺哪类证据？
@@ -333,6 +371,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-K02-QA-001
   type: qa
   question: 硬依赖与顺序优化有什么区别？
@@ -350,6 +390,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-K02-QA-002
   type: qa
   question: 修改用户 `svcweb` 的 home 后，哪些对象应进入回归集合？
@@ -367,6 +409,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-K02-QA-003
   type: qa
   question: 修改服务端口后，最小跨层回归顺序是什么？
@@ -384,6 +428,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-K02-QA-004
   type: qa
   question: 把文件系统挂载到已有目录前必须调查什么？
@@ -401,6 +447,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-K02-QA-005
   type: qa
   question: NFS 名称无法解析时，继续调整 autofs map 有什么问题？
@@ -418,6 +466,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-K02-QA-006
   type: qa
   question: 本机 curl 成功而远端 curl 失败，哪些层的优先级下降？
@@ -435,6 +485,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-K02-QA-007
   type: qa
   question: 修改 `/srv/web` 的挂载或标签后，最小回归集合是什么？
@@ -452,6 +504,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-K02-QA-008
   type: qa
   question: 为什么同一个端口会同时属于应用和安全对象？
@@ -469,6 +523,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-33-K03-QA-001
   type: qa
   question: R0 只读调查与 R4 启动关键操作的策略差异是什么？
@@ -486,6 +542,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-K03-QA-002
   type: qa
   question: 通过 SSH 修改当前 NetworkManager profile 时，最重要的恢复边界是什么？
@@ -503,6 +561,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-K03-QA-003
   type: qa
   question: 写入 `/etc/fstab` 后，进入重启前至少应执行哪些验证？
@@ -520,6 +580,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-K03-QA-004
   type: qa
   question: 为什么配置文件备份不能撤销误格式化？
@@ -537,6 +599,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-K03-QA-005
   type: qa
   question: 网络切换后 SSH 断开，首先应从哪里恢复？
@@ -554,6 +618,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-K03-QA-006
   type: qa
   question: 何时应把高风险任务标记为 blocked？
@@ -571,6 +637,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-K03-QA-007
   type: qa
   question: 为什么 `--force`、`--nodeps` 或 `--allowerasing` 不能作为综合题默认答案？
@@ -588,6 +656,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-K03-QA-008
   type: qa
   question: 重启门的核心问题是什么？
@@ -605,6 +675,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-O01-QA-001
   type: qa
   question: 查看路径每一级目录所有者和权限的命令是什么？
@@ -622,6 +694,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-O01-QA-002
   type: qa
   question: 确认某路径实际属于哪个挂载对象，用什么命令？
@@ -639,6 +713,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-O01-QA-003
   type: qa
   question: 同时查看 NetworkManager 连接名、UUID、设备和 autoconnect 的命令骨架是什么？
@@ -656,6 +732,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-O01-QA-004
   type: qa
   question: 构建存储宽基线的核心命令组合是什么？
@@ -673,6 +751,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-O01-QA-005
   type: qa
   question: 为什么 root 的 `podman ps` 不能作为 `svcweb` rootless 容器证据？
@@ -690,6 +770,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-O01-QA-006
   type: qa
   question: 任务账本中的“缺失证据”字段有什么作用？
@@ -707,6 +789,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-O01-QA-007
   type: qa
   question: '`systemctl --failed` 没有输出能证明所有服务健康吗？'
@@ -724,6 +808,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-33-O01-QA-008
   type: qa
   question: 为何要同时保存初始状态和修改后状态？
@@ -741,6 +827,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-O02-QA-001
   type: qa
   question: 静态证据和当前证据分别回答什么？
@@ -758,6 +846,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-O02-QA-002
   type: qa
   question: '`httpd -t` 通过不能证明哪些状态？'
@@ -775,6 +865,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-O02-QA-003
   type: qa
   question: '`findmnt /srv/data` 通过不能证明什么？'
@@ -792,6 +884,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-O02-QA-004
   type: qa
   question: '`crontab -l` 或 cron 文件存在不能证明什么？'
@@ -809,6 +903,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-O02-QA-005
   type: qa
   question: 验证 ACL 未来继承的最佳方式是什么？
@@ -826,6 +922,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-O02-QA-006
   type: qa
   question: 验证 firewalld 持久性为什么要查询两次？
@@ -843,6 +941,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-O02-QA-007
   type: qa
   question: 一项任务何时可以标记 verified？
@@ -860,6 +960,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-O02-QA-008
   type: qa
   question: '`systemctl is-enabled` 可能返回 enabled 以外的哪些有意义状态？'
@@ -877,6 +979,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-33-T01-QA-001
   type: qa
   question: 创建 GID 3100 的 `opsadmins` 组命令是什么？
@@ -894,6 +998,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T01-QA-002
   type: qa
   question: 创建 UID 2201、附加组为 opsadmins 的 deploy 用户命令是什么？
@@ -911,6 +1017,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T01-QA-003
   type: qa
   question: 把 `/srv/project` 设置为 root:opsadmins 且目录模式 2770 的命令是什么？
@@ -928,6 +1036,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T01-QA-004
   type: qa
   question: 目录模式 2770 中前导 2 表示什么？
@@ -945,6 +1055,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-33-T01-QA-005
   type: qa
   question: 验证 sudoers 全局语法的命令是什么？
@@ -962,6 +1074,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T01-QA-006
   type: qa
   question: 仅允许 deploy 重启 httpd 的 sudoers 行是什么？
@@ -979,6 +1093,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T01-QA-007
   type: qa
   question: 验证附加组时为什么必须使用新登录会话？
@@ -996,6 +1112,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T01-QA-008
   type: qa
   question: ACL 条目存在但 auditor 仍无法读取，下一步最有区分度的证据是什么？
@@ -1013,6 +1131,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-T01-QA-009
   type: qa
   question: 为什么不能用 root 的 `cat` 验证 auditor 只读？
@@ -1030,6 +1150,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-T01-QA-010
   type: qa
   question: 如何验证默认 ACL 对新对象生效？
@@ -1047,6 +1169,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T02-QA-001
   type: qa
   question: 创建静态 profile `exam-static` 的核心 nmcli 骨架是什么？
@@ -1065,6 +1189,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T02-QA-002
   type: qa
   question: 为什么不建议先删除 `Wired connection 1`？
@@ -1082,6 +1208,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-T02-QA-003
   type: qa
   question: 静态网络完成后至少验证哪三个不同层面？
@@ -1099,6 +1227,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T02-QA-004
   type: qa
   question: 训练 repo 文件中每个仓库最低需要哪些字段？
@@ -1116,6 +1246,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T02-QA-005
   type: qa
   question: 只刷新两个指定 repo 元数据的命令骨架是什么？
@@ -1133,6 +1265,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T02-QA-006
   type: qa
   question: 为 `/srv/web` 建立持久 httpd 内容标签的命令组合是什么？
@@ -1150,6 +1284,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T02-QA-007
   type: qa
   question: 为尚未登记的 8082/tcp 添加 httpd 端口类型的命令是什么？
@@ -1167,6 +1303,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T02-QA-008
   type: qa
   question: 非标准 HTTP 端口当前状态的直接证据是什么？
@@ -1184,6 +1322,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T02-QA-009
   type: qa
   question: firewall-cmd 普通 `--add-port` 与带 `--permanent` 的区别是什么？
@@ -1201,6 +1341,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-T02-QA-010
   type: qa
   question: 本机 curl 8082 失败时，下一条证据优先看什么？
@@ -1218,6 +1360,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-T02-QA-011
   type: qa
   question: httpd 日志没有明显错误但启动失败，怀疑 SELinux 时用什么证据？
@@ -1235,6 +1379,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-T02-QA-012
   type: qa
   question: 为什么远端 curl 是最终功能证据的一部分？
@@ -1252,6 +1398,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-T03-QA-001
   type: qa
   question: 确认 `/dev/vdb` 是否被挂载或属于 LVM 的核心命令是什么？
@@ -1269,6 +1417,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T03-QA-002
   type: qa
   question: 发现 `/dev/vdb` 有未知签名时应如何处理？
@@ -1286,6 +1436,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-T03-QA-003
   type: qa
   question: 创建 GPT 全盘分区的命令骨架是什么？
@@ -1303,6 +1455,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T03-QA-004
   type: qa
   question: 创建 vgexam、1G lvdata 和 256M lvswap 的命令顺序是什么？
@@ -1320,6 +1474,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T03-QA-005
   type: qa
   question: '`mkfs.xfs` 与 `lvcreate` 分别改变什么对象？'
@@ -1337,6 +1493,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-T03-QA-006
   type: qa
   question: 查询 LV 文件系统 UUID 的命令是什么？
@@ -1354,6 +1512,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T03-QA-007
   type: qa
   question: 数据文件系统使用 UUID 的 fstab 行骨架是什么？
@@ -1371,6 +1531,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T03-QA-008
   type: qa
   question: Swap 使用 UUID 的 fstab 行骨架是什么？
@@ -1388,6 +1550,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T03-QA-009
   type: qa
   question: 为什么要先卸载 `/srv/data` 再执行 `mount -a`？
@@ -1405,6 +1569,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T03-QA-010
   type: qa
   question: '`findmnt --verify --verbose` 在重启门中的作用是什么？'
@@ -1422,6 +1588,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T03-QA-011
   type: qa
   question: '`lvs` 显示 1G，但 `df` 没有目标挂载，下一条证据是什么？'
@@ -1439,6 +1607,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-T03-QA-012
   type: qa
   question: XFS 文件系统能否通过常规 RHCSA 操作缩小？
@@ -1456,6 +1626,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-T04-QA-001
   type: qa
   question: autofs 间接 master map 的一行是什么？
@@ -1473,6 +1645,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T04-QA-002
   type: qa
   question: 使用通配符把 `/rhome/remote1` 映射到 NFS home 的 map 行骨架是什么？
@@ -1490,6 +1664,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T04-QA-003
   type: qa
   question: 为什么 autofs 验收要先访问具体 key？
@@ -1507,6 +1683,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T04-QA-004
   type: qa
   question: 静态查看 autofs 合并映射的命令是什么？
@@ -1524,6 +1702,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T04-QA-005
   type: qa
   question: chronyd active 与时间同步有效有什么区别？
@@ -1541,6 +1721,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-T04-QA-006
   type: qa
   question: '`chronyc sources -v` 中指定源持续显示 `^?` 通常意味着什么？'
@@ -1558,6 +1740,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-33-T04-QA-007
   type: qa
   question: '`/etc/cron.d` 条目与用户 crontab 的关键语法差异是什么？'
@@ -1575,6 +1759,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T04-QA-008
   type: qa
   question: 每周三 15:30 由 root 运行脚本的 cron 行是什么？
@@ -1592,6 +1778,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T04-QA-009
   type: qa
   question: 为什么计划脚本应显式设置 PATH？
@@ -1609,6 +1797,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-T04-QA-010
   type: qa
   question: 手工在 `env -i` 下运行脚本能证明什么？
@@ -1626,6 +1816,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T04-QA-011
   type: qa
   question: 按日志 tag 查询健康检查事件的命令是什么？
@@ -1643,6 +1835,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T04-QA-012
   type: qa
   question: cron 文件存在但没有产物，下一条高区分度证据是什么？
@@ -1660,6 +1854,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-T05-QA-001
   type: qa
   question: rootless 容器操作前如何确认当前确实是目标用户上下文？
@@ -1677,6 +1873,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-T05-QA-002
   type: qa
   question: 为什么先运行临时手工容器再写 Quadlet？
@@ -1694,6 +1892,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-T05-QA-003
   type: qa
   question: Podman 卷选项 `:Z` 的语义是什么？
@@ -1711,6 +1911,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-33-T05-QA-004
   type: qa
   question: Quadlet 中发布 8088 到容器 8080 的字段是什么？
@@ -1728,6 +1930,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T05-QA-005
   type: qa
   question: Quadlet 持久绑定 `/home/svcweb/site` 的字段是什么？
@@ -1745,6 +1949,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T05-QA-006
   type: qa
   question: 用户 Quadlet 开机关联 default target 的配置是什么？
@@ -1762,6 +1968,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-33-T05-QA-007
   type: qa
   question: 写入 Quadlet 后让用户 manager 重新读取的命令是什么？
@@ -1779,6 +1987,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T05-QA-008
   type: qa
   question: 为什么 Quadlet 生成 unit 的 `is-enabled` 结果不能只按 enabled/disabled 判断？
@@ -1796,6 +2006,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-33-T05-QA-009
   type: qa
   question: 允许 `svcweb` 未登录时保留用户 manager 的命令是什么？
@@ -1813,6 +2025,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-33-T05-QA-010
   type: qa
   question: linger 完成后应进行什么功能验证？
@@ -1830,6 +2044,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T05-QA-011
   type: qa
   question: 用户 unit 启动失败时最直接的日志入口是什么？
@@ -1847,6 +2063,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-T05-QA-012
   type: qa
   question: 如何区分容器持久运行与数据持久化？
@@ -1864,6 +2082,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-D01-QA-001
   type: qa
   question: 证据式诊断的六步链路是什么？
@@ -1881,6 +2101,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-D01-QA-002
   type: qa
   question: 服务 active、本机监听存在，但远端超时。下一条证据优先是什么？
@@ -1898,6 +2120,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-D01-QA-003
   type: qa
   question: fstab 修正后当前挂载仍正确，为什么不能立即重启？
@@ -1915,6 +2139,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-D01-QA-004
   type: qa
   question: 新建 ACL 后 auditor 读取失败，最小修复前先看什么？
@@ -1932,6 +2158,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-D01-QA-005
   type: qa
   question: Quadlet 指向错误目录时，最小修复是什么？
@@ -1949,6 +2177,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-33-D01-QA-006
   type: qa
   question: 看到 SELinux AVC 后为什么不能直接 `setenforce 0`？
@@ -1966,6 +2196,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-D01-QA-007
   type: qa
   question: 修复共享网络 profile 后应回归哪些典型任务？
@@ -1983,6 +2215,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-D01-QA-008
   type: qa
   question: 最终矩阵中的 pending 与 blocked 有什么区别？
@@ -2000,6 +2234,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-33-T06-QA-001
   type: qa
   question: 最终检查的第一项是什么？
@@ -2017,6 +2253,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-T06-QA-002
   type: qa
   question: 进入重启前，网络对象至少应满足哪些状态？
@@ -2034,6 +2272,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T06-QA-003
   type: qa
   question: 进入重启前，存储对象至少应满足哪些状态？
@@ -2051,6 +2291,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-33-T06-QA-004
   type: qa
   question: 重启后为什么应按矩阵复查而不是重新执行配置命令？
@@ -2068,6 +2310,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-T06-QA-005
   type: qa
   question: 系统重启后 httpd 未启动，直接再次 `systemctl start` 会掩盖什么？
@@ -2085,6 +2329,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-33-T06-QA-006
   type: qa
   question: 考试结束前如何处理无法完成远端验证的任务？
@@ -2102,6 +2348,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-33-T06-QA-007
   type: qa
   question: 最终证据矩阵对真实工作有什么迁移价值？
@@ -2119,6 +2367,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-33-K01-CLOZE-001
   type: cloze
   text: 题目要求应改写为 {{c1::对象}}、{{c2::精确参数}}、{{c3::终态}} 和 {{c4::限制条件}}。
@@ -2134,6 +2384,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-K02-CLOZE-001
   type: cloze
   text: 修改 {{c1::共享对象}} 后，应执行与其相关的 {{c2::回归集合}}。
@@ -2149,6 +2401,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-K03-CLOZE-001
   type: cloze
   text: 高风险存储写入前必须通过 {{c1::设备身份与用途}} 的证据门；证据不清楚时状态应为 {{c2::blocked}}。
@@ -2164,6 +2418,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-O02-CLOZE-001
   type: cloze
   text: 四层证据是 {{c1::静态配置}}、{{c2::当前状态}}、{{c3::真实功能}}、{{c4::持久或重启状态}}。
@@ -2179,6 +2435,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-O03-CLOZE-001
   type: cloze
   text: 局部闭环为 {{c1::调查}} → {{c2::最小修改}} → {{c3::最小验证}} → {{c4::记录证据}}。
@@ -2194,6 +2452,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-D01-CLOZE-001
   type: cloze
   text: 诊断链路是症状 → 当前证据 → 假设 → {{c1::下一条高区分度证据}} → {{c2::最小修复}} → 再验证。
@@ -2209,6 +2469,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T01-CLOZE-001
   type: cloze
   text: 目录模式 `2770` 中，{{c1::2}} 是 setgid，{{c2::770}} 是 owner/group/other 权限。
@@ -2224,6 +2486,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T01-CLOZE-002
   type: cloze
   text: sudoers 精确规则应使用 {{c1::完整命令路径}} 和 {{c2::固定参数}}，避免通配符扩大授权。
@@ -2239,6 +2503,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T02-CLOZE-001
   type: cloze
   text: HTTP 远端访问链：配置 → 进程 → {{c1::监听}} → {{c2::SELinux}} → {{c3::firewalld}} → 客户端。
@@ -2254,6 +2520,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T02-CLOZE-002
   type: cloze
   text: firewalld 的 {{c1::runtime}} 状态与 {{c2::permanent}} 状态必须分别查询。
@@ -2269,6 +2537,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T03-CLOZE-001
   type: cloze
   text: LVM 对象顺序为 {{c1::PV}} → {{c2::VG}} → {{c3::LV}} → 文件系统/Swap → 挂载或激活。
@@ -2284,6 +2554,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T03-CLOZE-002
   type: cloze
   text: 写入 fstab 后，重启前先运行 {{c1::findmnt --verify --verbose}}，再验证 {{c2::mount -a / swapon -a}}。
@@ -2299,6 +2571,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T04-CLOZE-001
   type: cloze
   text: '`/etc/cron.d` 的五个时间字段后还必须有 {{c1::执行用户}} 字段。'
@@ -2314,6 +2588,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T04-CLOZE-002
   type: cloze
   text: autofs 间接映射按 {{c1::访问具体 key}} 触发，未触发时没有 NFS 挂载可能是正常状态。
@@ -2329,6 +2605,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T05-CLOZE-001
   type: cloze
   text: rootless 容器的三个关键上下文是 {{c1::目标用户}}、{{c2::用户 systemd manager}} 和 {{c3::用户容器存储}}。
@@ -2344,6 +2622,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T05-CLOZE-002
   type: cloze
   text: Quadlet 生成 unit 可能显示为 {{c1::generated}}；持久启动关系来自 `.container` 的 {{c2::WantedBy=default.target}}。
@@ -2359,6 +2639,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T06-CLOZE-001
   type: cloze
   text: 重启用于证明 {{c1::持久性}}，而不是用于 {{c2::首轮猜故障}}。
@@ -2374,6 +2656,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-33-T06-CLOZE-002
   type: cloze
   text: 最终检查必须从 {{c1::原始题目}} 逐项映射到 {{c2::证据矩阵}}。
@@ -2389,3 +2673,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

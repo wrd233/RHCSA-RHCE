@@ -292,6 +292,8 @@ def normalize_anki(root: Path, packages: list[Package]) -> dict:
             priority = "P2" if semantic in {"boundary", "calculation"} else "P0" if semantic in {"command", "parameter", "syntax", "configuration", "output", "verification", "security", "task", "comprehensive"} else "P1"
             note["model"] = "RedHat-Cloze" if note.get("type") == "cloze" else "RedHat-QA"
             note["priority"] = priority
+            note["semantic_type"] = semantic
+            note["disabled"] = False
             note["tags"] = [tag for tag in tags if not str(tag).startswith("priority::")] + [f"priority::{priority}"]
             note.pop("disabled", None)
             for field in ("question", "answer", "text", "extra"):

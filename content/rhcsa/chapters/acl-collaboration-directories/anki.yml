@@ -21,6 +21,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-09-K01-QA-002
   type: qa
   question: '`user::rwx` 与 `user:alice:rwx` 的主体有何区别？'
@@ -37,6 +39,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-09-K01-QA-003
   type: qa
   question: '`group::rwx` 与 `group:qa:rwx` 的主体有何区别？'
@@ -52,6 +56,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-09-K01-QA-004
   type: qa
   question: 哪些 ACL 条目构成基础 ACL？
@@ -68,6 +74,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-09-K01-QA-005
   type: qa
   question: 一个 ACL 出现 named user 或 named group 时，还必须存在什么条目？
@@ -84,6 +92,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-09-K01-QA-006
   type: qa
   question: 目录上存在 `default:user:auditor:r-x`，能否据此证明 auditor 现在能进入该目录？
@@ -100,6 +110,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-K01-QA-007
   type: qa
   question: ACL 条目中的目录 `r` 与 `x` 分别允许什么？
@@ -116,6 +128,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-09-K01-QA-008
   type: qa
   question: ACL 检查通过是否能证明最终文件操作一定成功？
@@ -132,6 +146,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-K01-CLOZE-001
   type: cloze
   text: 普通文件只能有 {{c1::access ACL}}；目录还可以有用于新对象初始化的 {{c2::default ACL}}。
@@ -146,6 +162,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-K02-QA-001
   type: qa
   question: ACL 访问匹配的主要顺序是什么？
@@ -161,6 +179,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-09-K02-QA-002
   type: qa
   question: 文件所有者的 `user::` 缺少写权限，但他同时属于具有写权限的文件组，权限会相加吗？
@@ -177,6 +197,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-K02-QA-003
   type: qa
   question: '`user:analyst:rw- #effective:r--` 表示什么？'
@@ -193,6 +215,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-09-K02-QA-004
   type: qa
   question: ACL mask 限制哪些条目？
@@ -209,6 +233,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-09-K02-QA-005
   type: qa
   question: named user 的 effective 权限如何计算？
@@ -224,6 +250,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-09-K02-QA-006
   type: qa
   question: 用户匹配多个组 ACL 条目时，组阶段如何判断？
@@ -239,6 +267,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-09-K02-QA-007
   type: qa
   question: named user 条目已匹配但缺少写权限，该用户能否再依靠自己所属的 named group 获得写权限？
@@ -254,6 +284,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-K02-QA-008
   type: qa
   question: 对象具有扩展 ACL 和 mask 时，`ls -l` 的 group 三位通常对应哪个条目？
@@ -269,6 +301,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-09-K02-QA-009
   type: qa
   question: 为什么对带扩展 ACL 的文件执行 `chmod g=r` 可能让 named user 失去写权限？
@@ -285,6 +319,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-K02-QA-010
   type: qa
   question: 为什么不应无条件执行 `setfacl -m m::rwx <PATH>`？
@@ -301,6 +337,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-09-K02-CLOZE-001
   type: cloze
   text: named user 的有效权限 = {{c1::该 user 条目}} 与 {{c2::mask}} 的交集。
@@ -315,6 +353,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-K02-CLOZE-002
   type: cloze
   text: 扩展 ACL 存在时，传统 group mode bits 对应 {{c1::ACL mask}}；因此 `chmod g=...` 可能改变多个条目的 {{c2::effective 权限}}。
@@ -329,6 +369,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-O01-QA-001
   type: qa
   question: '`ls -l` 权限字符串末尾的 `+` 能证明什么？'
@@ -345,6 +387,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-09-O01-QA-002
   type: qa
   question: 保留绝对路径显示完整 ACL 的命令骨架是什么？
@@ -360,6 +404,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O01-QA-003
   type: qa
   question: '`getfacl -a` 与 `getfacl -d` 分别显示什么？'
@@ -375,6 +421,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-09-O01-QA-004
   type: qa
   question: '`getfacl -e` 的诊断价值是什么？'
@@ -390,6 +438,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-09-O01-QA-005
   type: qa
   question: 用户或组名称解析有疑问时，怎样让 `getfacl` 显示数值 ID？
@@ -405,6 +455,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-09-O01-QA-006
   type: qa
   question: 物理递归查看 `/srv/atlas` 的 ACL，避免沿目录符号链接越界，命令是什么？
@@ -420,6 +472,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O01-QA-007
   type: qa
   question: '`getfacl -s` 适合什么查询？'
@@ -435,6 +489,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-09-O01-QA-008
   type: qa
   question: '`getfacl` 输出中的 `# flags: -s-` 表示什么？'
@@ -451,6 +507,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-09-O01-QA-009
   type: qa
   question: '`getfacl` 输出正确能否证明 bob 当前会话可以写文件？'
@@ -467,6 +525,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-O01-CLOZE-001
   type: cloze
   text: 只看当前对象使用 `getfacl {{c1::-a}}`；只看未来模板使用 `getfacl {{c2::-d}}`；强制显示 effective 使用 `{{c3::-e}}`。
@@ -481,6 +541,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-USERS-O02-QA-001
   type: qa
   question: 访问 ACL 与目录默认 ACL 的核心区别是什么？
@@ -497,6 +559,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-USERS-O02-QA-002
   type: qa
   question: 给 alice 增加当前对象 `rw` ACL 的命令骨架是什么？
@@ -513,6 +577,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-USERS-O02-QA-003
   type: qa
   question: 给目录设置 alice 的默认 `rwx` ACL，命令骨架是什么？
@@ -529,6 +595,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-USERS-O02-QA-004
   type: qa
   question: '`getfacl` 中出现 `#effective:r--` 表示什么？'
@@ -545,6 +613,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-USERS-O02-QA-005
   type: qa
   question: 为什么不应无条件把 ACL mask 设为 rwx？
@@ -561,6 +631,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-USERS-O02-QA-006
   type: qa
   question: 怎样证明默认 ACL 真正影响了新对象？
@@ -577,6 +649,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-USERS-O02-CLOZE-001
   type: cloze
   text: 访问 ACL：`setfacl -m {{c1::u:alice:rw}} <PATH>`；默认 ACL 增加前缀 `{{c2::d:}}`。
@@ -592,6 +666,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-O02-QA-001
   type: qa
   question: 给 named group qa 增加只读 access ACL 的命令是什么？
@@ -607,6 +683,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O02-QA-002
   type: qa
   question: '`g::rw-` 与 `g:project:rw-` 在 `setfacl` 中分别修改什么？'
@@ -623,6 +701,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-09-O02-QA-003
   type: qa
   question: '`setfacl -m` 对已存在和不存在的同主体条目分别做什么？'
@@ -638,6 +718,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-09-O02-QA-004
   type: qa
   question: 删除 alice 的 named user entry，命令骨架是什么？
@@ -653,6 +735,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O02-QA-005
   type: qa
   question: '`setfacl -b` 与 `setfacl -k` 的区别是什么？'
@@ -668,6 +752,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-09-O02-QA-006
   type: qa
   question: '`setfacl -n` 改变什么默认行为？'
@@ -683,6 +769,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-09-O02-QA-007
   type: qa
   question: '`setfacl --mask` 的作用是什么？'
@@ -698,6 +786,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-09-O02-QA-008
   type: qa
   question: 默认 mask 重算通常取哪些条目权限的并集？
@@ -713,6 +803,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-09-O02-QA-009
   type: qa
   question: '`X` 与小写 `x` 在 `setfacl` 权限字段中有什么区别？'
@@ -728,6 +820,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-09-O02-QA-010
   type: qa
   question: 为什么递归 `setfacl -R` 前必须先列出目标范围？
@@ -744,6 +838,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-09-O02-CLOZE-001
   type: cloze
   text: '`setfacl {{c1::-x}} u:alice <PATH>` 删除一条 named user；`{{c2::-b}}` 清扩展 access ACL；`{{c3::-k}}` 删除目录 default ACL。'
@@ -758,6 +854,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-O03-QA-001
   type: qa
   question: 父目录有 default ACL 时，新对象 ACL 的形成顺序是什么？
@@ -773,6 +871,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-09-O03-QA-002
   type: qa
   question: 目录 default ACL 含 `x`，为什么普通新文件通常仍没有执行位？
@@ -789,6 +889,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-O03-QA-003
   type: qa
   question: 父目录存在 default ACL 时，还能否用“0666/0777 直接减 umask”准确预测新对象？
@@ -804,6 +906,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-09-O03-QA-004
   type: qa
   question: 给目录设置“owner rwx、auditor r-x、owning group rwx、other 无权”的 default ACL，命令骨架是什么？
@@ -820,6 +924,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O03-QA-005
   type: qa
   question: 给父目录新增 default ACL 后，已有 `old.txt` 会自动改变吗？
@@ -836,6 +942,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-O03-QA-006
   type: qa
   question: 为什么要分别创建新文件和新目录验证继承？
@@ -852,6 +960,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-09-O03-QA-007
   type: qa
   question: 新子目录继承策略时，`getfacl` 通常应看到哪两类条目？
@@ -868,6 +978,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-09-O03-QA-008
   type: qa
   question: 新文件权限正确，但已有子目录中新建文件仍未继承，优先检查什么？
@@ -884,6 +996,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-O03-CLOZE-001
   type: cloze
   text: default ACL 只在对象 {{c1::创建时}} 生效；因此旧对象需要单独设置 {{c2::access ACL}}。
@@ -898,6 +1012,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-O04-QA-001
   type: qa
   question: 协作目录的 ACL 工作流应按什么顺序推进？
@@ -916,6 +1032,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-09-O04-QA-002
   type: qa
   question: alice 能创建文件后，为什么还要让 bob 追加同一文件？
@@ -932,6 +1050,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-09-O04-QA-003
   type: qa
   question: 只读 auditor 对目录和普通文件的典型 ACL 权限分别是什么？
@@ -948,6 +1068,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-09-O04-QA-004
   type: qa
   question: 为什么协作目录验收必须包含 auditor 的拒绝测试？
@@ -964,6 +1086,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-09-O04-QA-005
   type: qa
   question: 按目录和普通文件分别预览 `/srv/atlas` 递归范围的命令是什么？
@@ -980,6 +1104,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O04-QA-006
   type: qa
   question: 怎样用 bob 的实际身份验证其能否追加项目文件？
@@ -995,6 +1121,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-09-O04-QA-007
   type: qa
   question: setgid 协作目录与 default ACL 各解决什么问题？
@@ -1010,6 +1138,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-O04-QA-008
   type: qa
   question: 目录 access ACL 正确，但 auditor 仍无法读取深层文件，下一条最有区分度的证据是什么？
@@ -1026,6 +1156,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-O04-CLOZE-001
   type: cloze
   text: 协作验收至少要包含：创建者新建、另一成员 {{c1::交叉写入}}、只读主体读取成功，以及其 {{c2::写入/创建失败}}。
@@ -1041,6 +1173,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-O05-QA-001
   type: qa
   question: 把 reference 的 access ACL 替换到 target，命令骨架是什么？
@@ -1057,6 +1191,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O05-QA-002
   type: qa
   question: 怎样把目录当前 access ACL 作为该目录的 default ACL 输入？
@@ -1072,6 +1208,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O05-QA-003
   type: qa
   question: 递归、物理遍历并保留绝对路径备份 `/srv/atlas` ACL 的命令是什么？
@@ -1088,6 +1226,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O05-QA-004
   type: qa
   question: 不修改对象，仅预演 ACL 备份恢复结果的命令是什么？
@@ -1103,6 +1243,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-09-O05-QA-005
   type: qa
   question: '`setfacl --restore` 除 ACL 外还可能恢复什么？'
@@ -1118,6 +1260,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-O05-QA-006
   type: qa
   question: 文件内容复制成功能否证明 ACL 也已保留？
@@ -1134,6 +1278,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-O05-QA-007
   type: qa
   question: ACL 备份生成后，最低限度应验证什么？
@@ -1150,6 +1296,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-09-O05-CLOZE-001
   type: cloze
   text: ACL 备份：`getfacl {{c1::-R -P -p}} /srv/atlas > backup`；恢复前预演：`setfacl {{c2::--test --restore=backup}}`。
@@ -1165,6 +1313,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-D01-QA-001
   type: qa
   question: ACL 相关 `Permission denied` 的推荐调查顺序是什么？
@@ -1182,6 +1332,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-09-D01-QA-002
   type: qa
   question: 账号已加入 project，但当前 Shell 的 `id` 没有 project，应该先做什么？
@@ -1197,6 +1349,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-D01-QA-003
   type: qa
   question: 新文件 ACL 正确而旧文件缺少 auditor 条目，根因最可能是什么？
@@ -1213,6 +1367,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-D01-QA-004
   type: qa
   question: 执行 `setfacl -m u:analyst:rw- file` 成功，但 analyst 仍只读，下一条证据是什么？
@@ -1229,6 +1385,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-D01-QA-005
   type: qa
   question: 父目录 default ACL 正确，为什么旧子目录中新建文件仍可能不继承？
@@ -1244,6 +1402,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-D01-QA-006
   type: qa
   question: ACL、身份和父路径均允许但操作仍被拒绝，下一步应如何处理？
@@ -1260,6 +1420,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-09-D01-QA-007
   type: qa
   question: 为何 `setfacl -b` 不应作为 ACL 故障的默认修复？
@@ -1275,6 +1437,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-09-D01-QA-008
   type: qa
   question: 修复 mask 后，为什么还要用目标用户实际追加而不只看 `getfacl`？
@@ -1291,6 +1455,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-09-D01-CLOZE-001
   type: cloze
   text: 条目存在但不能写：先运行 `getfacl {{c1::-e}}` 看 effective；模板正确但旧文件不对：检查对象的 {{c2::创建时点}}。
@@ -1306,6 +1472,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-09-C01-QA-001
   type: qa
   question: 已有协作目录需要“项目组可写、auditor 只读、未来对象继承”，至少要修改哪三类状态？
@@ -1324,6 +1492,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-09-C01-QA-002
   type: qa
   question: 批量修改已有协作树前，最低限度的调查与回滚准备是什么？
@@ -1341,6 +1511,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-09-C01-QA-003
   type: qa
   question: 协作目录的完整功能验收至少包含哪些身份动作？
@@ -1358,6 +1530,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-09-C02-QA-001
   type: qa
   question: '文件显示 `user:analyst:rw- #effective:r--`、`group:qa:r--`、`mask::r--`，目标是 analyst 与 owning group 可写而 qa 只读，最小 mask
@@ -1376,6 +1550,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-09-C02-QA-002
   type: qa
   question: 上一题修复 mask 后，`ls -l` 的 group 位为什么可能从 `r--` 变为 `rw-`？
@@ -1392,6 +1568,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-09-C02-QA-003
   type: qa
   question: 诊断 mask 时，什么情况下直接提高 mask 可能过度授权？
@@ -1409,6 +1587,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-09-C01-CLOZE-001
   type: cloze
   text: 协作目录的时间维度：已有对象看 {{c1::access ACL}}，未来对象看 {{c2::default ACL}}；两者都要以真实身份做 {{c3::功能验证}}。
@@ -1425,3 +1605,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

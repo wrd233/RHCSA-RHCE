@@ -55,6 +55,8 @@ def test_anki_schema_ids_sources_cloze_and_chapter_tags():
             assert note["source"]
             assert f"chapter::{chapter['slug']}" in note["tags"]
             assert f"priority::{note['priority']}" in note["tags"]
+            assert note["disabled"] is False
+            assert note["semantic_type"] in {tag.split("::", 1)[1] for tag in note["tags"] if tag.startswith("card::")}
             if note["type"] == "cloze":
                 assert re.search(r"\{\{c\d+::.+?\}\}", note["text"])
     assert not [key for key, count in Counter(ids).items() if count > 1]

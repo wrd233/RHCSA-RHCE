@@ -21,6 +21,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-PODMAN-QA-010
   type: qa
   question: 管理 rootless Quadlet 生成的用户 unit 时，普通 `systemctl` 与 `systemctl --user` 的作用域有什么不同？
@@ -37,6 +39,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-PODMAN-QA-011
   type: qa
   question: 某 rootless 容器现在显示 running。这个证据是否足以证明主机重启后、该用户尚未登录时也会运行？
@@ -53,6 +57,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-K01-QA-001
   type: qa
   question: 当前容器实例与 Quadlet `.container` 分别代表什么？
@@ -69,6 +75,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-32-K01-QA-002
   type: qa
   question: 迁移现有容器前，为什么应先保存 `podman inspect` 基线？
@@ -85,6 +93,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-32-K01-QA-003
   type: qa
   question: 编辑 `.container` 后，当前运行容器会立即采用新配置吗？
@@ -101,6 +111,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-K01-CLOZE-001
   type: cloze
   text: 容器迁移的三步状态变化是：编辑 `.container` -> {{c1::systemctl --user daemon-reload}} -> {{c2::systemctl --user restart NAME.service}}。
@@ -116,6 +128,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-32-K01-QA-004
   type: qa
   question: 为什么容器 ID 不适合作为长期配置身份？
@@ -132,6 +146,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-32-K02-QA-001
   type: qa
   question: 在 root shell 中执行 `podman ps` 为空，能否证明普通用户 appsvc 没有 rootless 容器？
@@ -148,6 +164,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-32-K02-QA-002
   type: qa
   question: '`Linger=yes` 准确证明了什么？'
@@ -164,6 +182,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-32-K02-QA-003
   type: qa
   question: 查询用户 linger 状态的命令是什么？
@@ -180,6 +200,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-32-K02-QA-004
   type: qa
   question: 为什么 `sudo systemctl status report.service` 可能对 rootless Quadlet 给出误导性结果？
@@ -196,6 +218,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-K02-QA-005
   type: qa
   question: 用户重新登录后服务才恢复，能否算“重启后未登录自动运行”通过？
@@ -212,6 +236,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-K03-QA-001
   type: qa
   question: 普通用户最常用的 rootless Quadlet `.container` 目录是什么？
@@ -228,6 +254,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: path
 - id: RHCSA-32-K03-QA-002
   type: qa
   question: '`report.container` 默认生成什么 unit？'
@@ -244,6 +272,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-32-K03-QA-003
   type: qa
   question: 为什么不应直接编辑 `systemctl --user cat report.service` 显示的 generated 内容？
@@ -260,6 +290,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-K03-QA-004
   type: qa
   question: 创建或修改 Quadlet 后，让 user manager 重新运行 generator 的命令是什么？
@@ -276,6 +308,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-32-K03-QA-005
   type: qa
   question: '`report.service` unit not found，而 `Linger=yes`。下一步最有区分度的证据是什么？'
@@ -292,6 +326,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-O01-QA-001
   type: qa
   question: Quadlet `.container` 的必需字段是什么？
@@ -308,6 +344,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-32-O01-QA-002
   type: qa
   question: 题目明确要求 Podman 容器名称为 `report`，Quadlet 中使用什么字段？
@@ -324,6 +362,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-32-O01-QA-003
   type: qa
   question: 把宿主端口 18080 映射到容器 8080 的 Quadlet 字段是什么？
@@ -340,6 +380,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-32-O01-QA-004
   type: qa
   question: 设置容器环境变量 `REPORT_MODE=exam` 的 Quadlet 字段是什么？
@@ -356,6 +398,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-32-O01-QA-005
   type: qa
   question: 把 `/home/appsvc/report-data` 挂到容器 `/var/lib/report` 并使用私有 SELinux 重标记的字段是什么？
@@ -372,6 +416,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-32-O01-QA-006
   type: qa
   question: 让 generated service 在失败退出后等待 5 秒重启，应写哪些字段？
@@ -388,6 +434,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-32-O01-QA-007
   type: qa
   question: 让 rootless Quadlet 随用户 manager 的默认 target 启动，应在源文件写什么？
@@ -404,6 +452,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-32-O01-QA-008
   type: qa
   question: 为什么不能用 `systemctl --user enable report.service` 让 Quadlet generated service 获得持久启用关系？
@@ -421,6 +471,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-O01-QA-009
   type: qa
   question: 镜像首次拉取导致 service 超过 systemd 启动超时，优先有哪些处理？
@@ -437,6 +489,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-O02-QA-001
   type: qa
   question: 创建 rootless Quadlet 目录的安全命令骨架是什么？
@@ -453,6 +507,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-32-O02-QA-002
   type: qa
   question: 查看 user unit 的 `LoadState`、`ActiveState`、`SubState`、`Result` 和重启次数的命令骨架是什么？
@@ -469,6 +525,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-32-O02-QA-003
   type: qa
   question: '`report.service` 为 active，怎样继续验证固定端口映射和真实 HTTP 功能？'
@@ -485,6 +543,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-32-O02-QA-004
   type: qa
   question: 查看当前 boot 中某个 user unit 日志的命令是什么？
@@ -501,6 +561,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-32-O02-QA-005
   type: qa
   question: '`systemctl --user daemon-reload` 成功能证明业务已经采用新环境变量吗？'
@@ -517,6 +579,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-O02-QA-006
   type: qa
   question: 验证运行容器环境变量的常用 Podman 证据是什么？
@@ -533,6 +597,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-32-K04-QA-001
   type: qa
   question: '`Requires=database.service` 与 `After=database.service` 的区别是什么？'
@@ -549,6 +615,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-32-K04-QA-002
   type: qa
   question: Quadlet 依赖另一个 `database.container` 时，`After=` 应引用什么名称？
@@ -565,6 +633,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-32-K04-QA-003
   type: qa
   question: '`Restart=on-failure` 能否修复端口持续被占用？'
@@ -581,6 +651,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-K04-QA-004
   type: qa
   question: unit 反复重启时，哪两个 `systemctl show` 字段最能快速确认循环？
@@ -597,6 +669,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-32-K04-QA-005
   type: qa
   question: 为什么不应无条件把容器 service 配成 `Restart=always`？
@@ -613,6 +687,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-O03-QA-001
   type: qa
   question: 容器 stop 后数据仍在，是否足以证明数据独立于容器实例？
@@ -629,6 +705,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-O03-QA-002
   type: qa
   question: 调查容器当前挂载的 Podman 命令是什么？
@@ -645,6 +723,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-32-O03-QA-003
   type: qa
   question: 宿主目录写入失败时，为什么不应直接 `chmod 777`？
@@ -661,6 +741,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-32-O03-QA-004
   type: qa
   question: 持久目录访问失败的推荐调查顺序是什么？
@@ -677,6 +759,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-32-O03-QA-005
   type: qa
   question: 验证宿主标记文件在容器挂载点可见的命令骨架是什么？
@@ -693,6 +777,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-32-O03-QA-006
   type: qa
   question: 删除旧容器前必须确认的最高优先级事实是什么？
@@ -709,6 +795,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-O04-QA-001
   type: qa
   question: '`podman pull IMAGE:TAG` 完成后，正在运行的容器是否自动采用新 image ID？'
@@ -725,6 +813,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-32-O04-QA-002
   type: qa
   question: 怎样比较本地 tag 当前 image ID 与运行容器使用的 image ID？
@@ -741,6 +831,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-32-O04-QA-003
   type: qa
   question: 修改 Quadlet 端口后只执行 restart，没有先 daemon-reload，可能发生什么？
@@ -757,6 +849,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-O04-QA-004
   type: qa
   question: 容器更新后的回归验证至少覆盖哪些层？
@@ -773,6 +867,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-32-D01-QA-001
   type: qa
   question: '`.container` 放在 `~/.config/systemd/user/`，最小修复是什么？'
@@ -789,6 +885,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-D01-QA-002
   type: qa
   question: Quadlet unit 未生成时，如何静态确认文件后缀没有被编辑器变成 `.container.txt`？
@@ -805,6 +903,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-32-D01-QA-003
   type: qa
   question: Podman 版本低于 4.6 时，本章 Quadlet 主线应怎样处理？
@@ -821,6 +921,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-D02-QA-001
   type: qa
   question: journal 显示 `name already in use`，下一条最有区分度的证据是什么？
@@ -837,6 +939,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-D02-QA-002
   type: qa
   question: journal 显示宿主端口已占用，下一条证据是什么？
@@ -853,6 +957,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-D02-QA-003
   type: qa
   question: unit 显示 failed 后执行 `systemctl --user reset-failed` 能修复服务吗？
@@ -869,6 +975,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-32-D02-QA-004
   type: qa
   question: 容器创建后立即 Exited，优先读取哪些证据？
@@ -885,6 +993,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-D03-QA-001
   type: qa
   question: 当前 service active，但注销后停止。应优先比较哪两个持久性证据？
@@ -901,6 +1011,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-32-D03-QA-002
   type: qa
   question: 重启后验证未登录运行的正确顺序是什么？
@@ -917,6 +1029,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-32-D03-QA-003
   type: qa
   question: 冷启动后外部功能成功，是否还需要进入目标用户回查？
@@ -933,6 +1047,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-32-T01-QA-001
   type: qa
   question: 现有 `report` 容器包含必须保留的数据，且声明要使用同名 `ContainerName=report`。迁移操作的关键顺序是什么？
@@ -950,6 +1066,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-32-T01-QA-002
   type: qa
   question: 一个完整的 rootless Quadlet 验收矩阵至少包含哪些层？
@@ -966,6 +1084,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: comprehensive
 - id: RHCSA-32-T02-QA-001
   type: qa
   question: linger 已启用、unit not found、文件位于 `~/.config/systemd/user/portal.container`。最小修复是什么？
@@ -982,6 +1102,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-32-T02-QA-002
   type: qa
   question: 修复 restart loop 后，`NRestarts` 仍显示非零，能否直接判断修复失败？
@@ -998,3 +1120,5 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output

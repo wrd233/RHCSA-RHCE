@@ -25,6 +25,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-K01-QA-002
   type: qa
   question: 系统有多个同名 worker。怎样先按有效用户 `appsvc` 和名称选择，并显示完整命令行？
@@ -45,6 +47,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-K01-QA-003
   type: qa
   question: 已经确认 PID 2450 是目标进程。`kill 2450` 未指定信号时通常发送什么？
@@ -62,6 +66,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-SERVICES-K01-QA-004
   type: qa
   question: 为什么不应把 `SIGKILL` 作为终止进程的第一选择？
@@ -78,6 +84,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-SERVICES-K01-QA-005
   type: qa
   question: '`ps` 显示一个子进程为 `Z`。为什么继续向这个 PID 发送信号不能清除它？'
@@ -94,6 +102,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-SERVICES-K01-QA-006
   type: qa
   question: nice 值的方向是什么？
@@ -111,6 +121,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-SERVICES-K01-QA-007
   type: qa
   question: '`jobs`、`fg` 和 `bg` 的作用范围是什么？'
@@ -127,6 +139,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-K01-QA-001
   type: qa
   question: 程序、进程与线程分别是什么？
@@ -143,6 +157,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-11-K01-QA-002
   type: qa
   question: PID 能长期代表同一个业务实例吗？
@@ -159,6 +175,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-K01-QA-003
   type: qa
   question: '`PID`、`PPID`、`PGID` 与 `SID` 分别表示什么？'
@@ -176,6 +194,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-K01-QA-004
   type: qa
   question: '`ps` 的 `TTY` 字段显示 `?` 通常说明什么？'
@@ -192,6 +212,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-11-K01-QA-005
   type: qa
   question: 为什么一条 Shell 管道可能显示多个 PID，但 `jobs` 只显示一个作业？
@@ -208,6 +230,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-11-K01-QA-006
   type: qa
   question: 进程成为“孤儿”说明什么？
@@ -224,6 +248,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-11-K01-QA-007
   type: qa
   question: 要查看 PID 2450 的线程，应使用哪两类入口？
@@ -240,6 +266,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-K01-CLOZE-001
   type: cloze
   text: 终端的 `Ctrl+C` 通常向{{c1::前台进程组}}发送 `SIGINT`，不是只发送给管道中的某一个 PID。
@@ -255,6 +283,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-K02-QA-001
   type: qa
   question: '`ps` 主状态 `R` 表示什么？'
@@ -271,6 +301,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-11-K02-QA-002
   type: qa
   question: '`ps` 主状态 `S` 表示什么？'
@@ -287,6 +319,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-11-K02-QA-003
   type: qa
   question: '`ps` 主状态 `D` 表示什么？'
@@ -303,6 +337,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-11-K02-QA-004
   type: qa
   question: '`ps` 主状态 `T` 表示什么？'
@@ -319,6 +355,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-11-K02-QA-005
   type: qa
   question: '`ps` 主状态 `Z` 表示什么？'
@@ -335,6 +373,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-11-K02-QA-006
   type: qa
   question: '`STAT` 中的 `+` 修饰符说明什么？'
@@ -350,6 +390,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-11-K02-QA-007
   type: qa
   question: '`STAT` 中的 `l` 与 `N` 分别常表示什么？'
@@ -365,6 +407,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-11-K02-QA-008
   type: qa
   question: RSS 与 VSZ 的区别是什么？
@@ -382,6 +426,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-K02-QA-009
   type: qa
   question: Linux load average 可以直接当作 CPU 使用百分比吗？
@@ -398,6 +444,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-K02-QA-010
   type: qa
   question: 为什么一次 `ps` 输出不能证明高 CPU 是持续问题？
@@ -415,6 +463,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-11-K02-QA-011
   type: qa
   question: 多个 `Z` 状态进程持续累积时，下一条最有区分度的证据是什么？
@@ -431,6 +481,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-K02-QA-012
   type: qa
   question: 一个 `D` 状态 PID 在 `kill -KILL` 后仍存在，是否证明信号发送失败？
@@ -447,6 +499,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-K02-CLOZE-001
   type: cloze
   text: '`RSS` 表示{{c1::当前驻留物理内存}}，`VSZ` 表示{{c2::虚拟地址空间总量}}。'
@@ -462,6 +516,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-K02-CLOZE-002
   type: cloze
   text: Linux 的 load average 既可能包含可运行任务，也可能包含{{c1::不可中断等待任务}}。
@@ -477,6 +533,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-O01-QA-001
   type: qa
   question: 要核对 PID 2450 的父进程、用户、启动时间、会话、进程组、终端、状态和命令行，应执行什么？
@@ -496,6 +554,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O01-QA-002
   type: qa
   question: '`ps -C report-worker` 按什么匹配？'
@@ -511,6 +571,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-11-O01-QA-003
   type: qa
   question: 怎样查看 PID 2450 的直接子进程？
@@ -530,6 +592,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O01-QA-004
   type: qa
   question: 怎样按 RSS 从大到小查看进程？
@@ -549,6 +613,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O01-QA-005
   type: qa
   question: '`ps --forest` 与 `pstree` 各有什么优势？'
@@ -565,6 +631,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-O01-QA-006
   type: qa
   question: 怎样显示 PID 2450 的祖先链和参数？
@@ -584,6 +652,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O01-QA-007
   type: qa
   question: '`pidof -s chronyd` 的 `-s` 有什么作用？'
@@ -599,6 +669,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-11-O01-QA-008
   type: qa
   question: 为什么操作前后应使用同一套 `ps -o` 字段？
@@ -615,6 +687,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-11-O01-CLOZE-001
   type: cloze
   text: 在 `ps --sort=-rss` 中，排序键前的负号表示{{c1::降序}}。
@@ -629,6 +703,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-O02-QA-001
   type: qa
   question: '`pgrep -x` 与 `pgrep -f` 的区别是什么？'
@@ -644,6 +720,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-O02-QA-002
   type: qa
   question: '`pgrep -a` 与 `pgrep -l` 的区别是什么？'
@@ -659,6 +737,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-11-O02-QA-003
   type: qa
   question: 怎样选择 PID 2450 的直接子进程并显示完整命令行？
@@ -678,6 +758,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O02-QA-004
   type: qa
   question: '`pgrep -u appsvc -P 2450 worker` 中不同条件如何组合？'
@@ -693,6 +775,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O02-QA-005
   type: qa
   question: 怎样选择启动超过一小时的 `report-worker`？
@@ -712,6 +796,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O02-QA-006
   type: qa
   question: '`pgrep -o` 和 `pgrep -n` 分别选择什么？'
@@ -727,6 +813,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-O02-QA-007
   type: qa
   question: 为什么执行 `pkill -f` 前应先运行同条件的 `pgrep -a -f`？
@@ -742,6 +830,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O02-QA-008
   type: qa
   question: '`pgrep -w` 输出的是什么？'
@@ -757,6 +847,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-11-O02-QA-009
   type: qa
   question: 操作后原 PID 消失，但同条件 `pgrep -a -f` 出现新 PID。下一步是什么？
@@ -773,6 +865,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-O02-CLOZE-001
   type: cloze
   text: 批量信号的安全顺序是先用{{c1::pgrep -a}}预览集合，再用相同条件执行 `pkill`，之后再用{{c2::原条件}}验收。
@@ -787,6 +881,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-O03-QA-001
   type: qa
   question: 怎样每 2 秒采样一次、共 5 轮，并把 `top` 输出保存到文件？
@@ -806,6 +902,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O03-QA-002
   type: qa
   question: '`top -H -p 2450` 的作用是什么？'
@@ -821,6 +919,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O03-QA-003
   type: qa
   question: '`top -n 5` 与 `top -d 2` 分别控制什么？'
@@ -836,6 +936,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-11-O03-QA-004
   type: qa
   question: '`/proc/PID/status` 适合读取哪些信息？'
@@ -851,6 +953,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-11-O03-QA-005
   type: qa
   question: 为什么读取 `/proc/PID/cmdline` 时常使用 `tr "\0" " "`？
@@ -866,6 +970,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O03-QA-006
   type: qa
   question: '`/proc/PID/exe` 与 `/proc/PID/cwd` 分别是什么？'
@@ -882,6 +988,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-O03-QA-007
   type: qa
   question: '`/proc/PID/fd/` 能证明业务 I/O 正常吗？'
@@ -897,6 +1005,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O03-QA-008
   type: qa
   question: '`/proc/PID/io` 与 `wchan` 分别提供什么线索？'
@@ -913,6 +1023,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-O03-QA-009
   type: qa
   question: 为什么不应默认打印 `/proc/PID/environ`？
@@ -928,6 +1040,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-11-O03-QA-010
   type: qa
   question: 读取多个 `/proc/PID/*` 文件时，某条路径突然不存在，最先考虑什么？
@@ -943,6 +1057,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-O03-CLOZE-001
   type: cloze
   text: '`top` 的{{c1::-b}}进入批处理模式，{{c2::-n}}设置迭代次数，{{c3::-d}}设置采样间隔。'
@@ -957,6 +1073,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-O04-QA-001
   type: qa
   question: 命令末尾的 `&` 改变了什么？
@@ -973,6 +1091,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-11-O04-QA-002
   type: qa
   question: 怎样显示当前 Shell 作业的作业号、PID 和状态？
@@ -992,6 +1112,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O04-QA-003
   type: qa
   question: 前台命令按 `Ctrl+Z` 后，怎样让作业 1 在后台继续？
@@ -1013,6 +1135,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O04-QA-004
   type: qa
   question: 怎样把作业 1 拉回前台？
@@ -1032,6 +1156,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O04-QA-005
   type: qa
   question: '`%+`、`%%` 与 `%-` 分别表示什么？'
@@ -1047,6 +1173,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-11-O04-QA-006
   type: qa
   question: 为什么后台作业可能因读取终端输入再次停止？
@@ -1062,6 +1190,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-O04-QA-007
   type: qa
   question: '`nohup` 是否会自动把命令放到后台？'
@@ -1077,6 +1207,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O04-QA-008
   type: qa
   question: 怎样用 `nohup` 启动一次性长任务，并明确保存输出？
@@ -1097,6 +1229,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O04-QA-009
   type: qa
   question: '`disown -h %1` 与 `disown %1` 的区别是什么？'
@@ -1112,6 +1246,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-O04-QA-010
   type: qa
   question: 为什么 `nohup`/`disown` 不应替代 systemd service？
@@ -1129,6 +1265,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O04-CLOZE-001
   type: cloze
   text: '`Ctrl+Z` 通常发送{{c1::SIGTSTP}}，`bg`/`fg` 恢复作业时会涉及{{c2::SIGCONT}}。'
@@ -1144,6 +1282,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-O05-QA-001
   type: qa
   question: '`SIGTERM` 和 `SIGKILL` 的本质区别是什么？'
@@ -1160,6 +1300,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-O05-QA-002
   type: qa
   question: 哪些常用信号不能被捕获、阻塞或忽略？
@@ -1175,6 +1317,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-11-O05-QA-003
   type: qa
   question: '`SIGHUP` 是否统一表示“重新加载配置”？'
@@ -1190,6 +1334,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O05-QA-004
   type: qa
   question: 怎样向 PID 2450 请求有序退出，并在两秒后重新查询？
@@ -1214,6 +1360,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-11-O05-QA-005
   type: qa
   question: '`kill -0 2450` 能证明什么？'
@@ -1229,6 +1377,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-11-O05-QA-006
   type: qa
   question: 怎样继续一个明确的停止进程？
@@ -1249,6 +1399,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O05-QA-007
   type: qa
   question: 为什么信号命令返回 0 不能证明进程已经退出？
@@ -1265,6 +1417,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-11-O05-QA-008
   type: qa
   question: 要向 PGID 6200 发送 TERM，可使用什么清晰形式？
@@ -1284,6 +1438,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O05-QA-009
   type: qa
   question: 为什么不能把一个工作进程 PID 消失等同于服务停止？
@@ -1300,6 +1456,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O05-QA-010
   type: qa
   question: 一个目标在 TERM 后仍存在，升级到 KILL 前必须再次确认什么？
@@ -1317,6 +1475,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-11-O05-QA-011
   type: qa
   question: 对多个同名进程执行 `pkill -TERM name` 前，最少要做什么？
@@ -1332,6 +1492,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-11-O05-CLOZE-001
   type: cloze
   text: 未指定信号时，`kill PID` 通常发送{{c1::SIGTERM}}；强制且无清理机会的是{{c2::SIGKILL}}。
@@ -1347,6 +1509,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-O06-QA-001
   type: qa
   question: 怎样以调整量 10 启动 `build-index`？
@@ -1366,6 +1530,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O06-QA-002
   type: qa
   question: 为什么本章在 `renice` 示例中优先使用 `--priority`？
@@ -1381,6 +1547,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O06-QA-003
   type: qa
   question: 怎样把运行中的 PID 2450 设置为 nice 15？
@@ -1401,6 +1569,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-11-O06-QA-004
   type: qa
   question: '`renice --pgrp` 与 `renice --user` 分别改变什么集合？'
@@ -1416,6 +1586,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-11-O06-QA-005
   type: qa
   question: 普通用户通常能把自己的进程从 nice 10 调到 nice 15 吗？
@@ -1432,6 +1604,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-11-O06-QA-006
   type: qa
   question: 调整 nice 后应怎样验证？
@@ -1452,6 +1626,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-11-O06-QA-007
   type: qa
   question: 高负载来自多个 D 状态任务时，`renice` 是合适根因修复吗？
@@ -1468,6 +1644,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-O06-QA-008
   type: qa
   question: nice 能限制进程最多使用 20% CPU 吗？
@@ -1484,6 +1662,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-O06-CLOZE-001
   type: cloze
   text: nice 值越{{c1::低}}，普通调度越有利；值越{{c2::高}}，任务越礼让。
@@ -1499,6 +1679,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-11-D01-QA-001
   type: qa
   question: 多个 `D` 状态进程共享同一 `wchan`，且都访问同一 NFS 挂载。下一步最有区分度的方向是什么？
@@ -1515,6 +1697,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-D01-QA-002
   type: qa
   question: 一个无 `jobs` 记录的进程处于 `T`。下一步应检查什么？
@@ -1531,6 +1715,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-D01-QA-003
   type: qa
   question: load average 高、CPU idle 仍有余量时，哪类状态应优先统计？
@@ -1547,6 +1733,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-D01-QA-004
   type: qa
   question: 没有单一高 CPU 进程时，为什么要查看线程视图？
@@ -1563,6 +1751,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-D01-QA-005
   type: qa
   question: 怎样识别大量短命子进程造成的压力？
@@ -1579,6 +1769,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-D01-QA-006
   type: qa
   question: 终止 worker 后新 PID 立即出现，哪条证据比“再 kill 一次”更有区分度？
@@ -1595,6 +1787,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-D01-QA-007
   type: qa
   question: 为什么“进程命令返回成功”不能作为任务最终验收？
@@ -1610,6 +1804,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-D01-QA-008
   type: qa
   question: 调查高负载时，什么时候才适合考虑 `renice`？
@@ -1626,6 +1822,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-11-T01-QA-001
   type: qa
   question: 多个同名 worker 中只需停止 legacy 参数实例，第一条选择命令应具有什么特征？
@@ -1642,6 +1840,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-11-T01-QA-002
   type: qa
   question: 安全停止旧 worker 的完整验收为什么要检查 current 参数实例？
@@ -1657,6 +1857,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-11-T01-QA-003
   type: qa
   question: 旧 worker 原 PID 消失但 legacy 匹配出现新 PID，任务是否完成？
@@ -1672,6 +1874,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-11-T02-QA-001
   type: qa
   question: 高负载经典任务中，为什么要求 `top -b -d 2 -n 5` 而不是截图一次交互界面？
@@ -1688,6 +1892,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-11-T02-QA-002
   type: qa
   question: 高负载但 CPU idle 有余量时，哪四类假设应保留？
@@ -1703,6 +1909,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-11-T02-QA-003
   type: qa
   question: 修复依赖后怎样验证高负载改善？
@@ -1719,6 +1927,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-11-D01-CLOZE-001
   type: cloze
   text: 诊断链应按“症状 → 当前证据 → 假设 → {{c1::下一条最有区分度的证据}} → 最小修复 → 再验证”推进。
@@ -1733,3 +1943,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

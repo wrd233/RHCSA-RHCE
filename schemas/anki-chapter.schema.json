@@ -15,13 +15,14 @@
   "additionalProperties": false,
   "$defs": {"note": {
     "type": "object",
-    "required": ["id", "type", "model", "source", "tags", "priority"],
+    "required": ["id", "type", "model", "source", "tags", "priority", "semantic_type", "disabled"],
     "properties": {
       "id": {"type": "string"}, "type": {"enum": ["qa", "cloze"]},
       "model": {"enum": ["RedHat-QA", "RedHat-Cloze"]},
       "question": {"type": "string"}, "answer": {"type": "string"}, "text": {"type": "string"},
       "extra": {"type": "string"}, "source": {"type": "array", "minItems": 1, "items": {"type": "string"}},
       "tags": {"type": "array", "items": {"type": "string"}}, "priority": {"enum": ["P0", "P1", "P2"]},
+      "semantic_type": {"enum": ["command", "parameter", "syntax", "configuration", "output", "verification", "diagnosis", "process", "task", "boundary", "comparison", "concept", "cloze", "security", "path", "calculation", "help", "comprehensive"]},
       "disabled": {"type": "boolean"}
     },
     "additionalProperties": false,

@@ -22,6 +22,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-K01-QA-002
   type: qa
   question: '`/srv/project` 目录存在，能否证明目标文件系统已挂载？'
@@ -39,6 +41,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-24-K01-QA-003
   type: qa
   question: 手工执行 `mount UUID=<UUID> /srv/project` 后，为什么重启仍可能丢失该挂载？
@@ -56,6 +60,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-24-K01-QA-004
   type: qa
   question: 挂载到一个非空目录后，目录原有内容发生了什么？
@@ -73,6 +79,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-K01-QA-005
   type: qa
   question: 应用向 `/srv/project` 写入成功，为什么仍不能断定挂载正确？
@@ -90,6 +98,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K01-QA-006
   type: qa
   question: 怎样查询任意路径实际位于哪个已挂载文件系统？
@@ -105,6 +115,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-K01-QA-007
   type: qa
   question: 当前挂载表是否一定对系统中的所有隔离进程完全相同？
@@ -121,6 +133,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K01-QA-008
   type: qa
   question: 卸载一个文件系统会删除挂载点目录或文件系统内容吗？
@@ -138,6 +152,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-O01-QA-001
   type: qa
   question: 精确查询 `/srv/project` 当前挂载源、类型和选项的命令骨架是什么？
@@ -153,6 +169,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O01-QA-002
   type: qa
   question: 怎样按文件系统 UUID 查询它当前挂到了哪些目标？
@@ -168,6 +186,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O01-QA-003
   type: qa
   question: 卸载前怎样查看 `/srv/project` 下的子挂载？
@@ -183,6 +203,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O01-QA-004
   type: qa
   question: '`findmnt` 与 `df -hT` 分别主要证明什么？'
@@ -200,6 +222,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-24-O01-QA-005
   type: qa
   question: '`mountpoint -q /srv/project` 成功能证明哪些内容？'
@@ -216,6 +240,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-O01-QA-006
   type: qa
   question: 查看 fstab 中与 `/srv/project` 对应条目的 findmnt 形式是什么？
@@ -232,6 +258,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O01-QA-007
   type: qa
   question: '`findmnt -T /srv/project/file` 返回根文件系统通常说明什么？'
@@ -247,6 +275,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-24-O01-QA-008
   type: qa
   question: '`lsblk -f` 显示某设备有 MOUNTPOINTS，为什么仍建议使用 findmnt？'
@@ -263,6 +293,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-24-O02-QA-001
   type: qa
   question: 建立当前挂载的基本命令骨架是什么？
@@ -279,6 +311,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-24-O02-QA-002
   type: qa
   question: 使用真实 UUID 将文件系统当前挂到 `/srv/project` 的命令是什么？
@@ -295,6 +329,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O02-QA-003
   type: qa
   question: 已有唯一 fstab 条目时，只按挂载点建立当前挂载的命令是什么？
@@ -311,6 +347,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O02-QA-004
   type: qa
   question: '`mount -t xfs -o nodev,nosuid <SOURCE> /srv/project` 中 `-t` 与 `-o` 分别做什么？'
@@ -326,6 +364,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-24-O02-QA-005
   type: qa
   question: 怎样把当前已挂载的 `/srv/project` 重新挂为只读？
@@ -341,6 +381,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O02-QA-006
   type: qa
   question: '`nodev`、`nosuid`、`noexec` 分别限制什么？'
@@ -356,6 +398,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-24-O02-QA-007
   type: qa
   question: 为什么 LABEL 通常不如 UUID 适合唯一持久标识？
@@ -372,6 +416,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-24-O02-QA-008
   type: qa
   question: remount 成功后，为什么还要比较 fstab？
@@ -388,6 +434,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-FILESYSTEMS-QA-019
   type: qa
   question: '`umount` 报 `target is busy` 时，下一条高区分度证据是什么？'
@@ -406,6 +454,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-FILESYSTEMS-QA-020
   type: qa
   question: 挂载到非空目录后，原内容怎样？
@@ -423,6 +473,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-D01-QA-001
   type: qa
   question: 当前 Shell 位于 `/srv/project` 内导致 busy，最小修复是什么？
@@ -440,6 +492,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-24-D01-QA-002
   type: qa
   question: 查看哪些进程正在使用某个挂载文件系统的核心命令是什么？
@@ -456,6 +510,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-D01-QA-003
   type: qa
   question: 为什么不应看到 fuser 输出后直接 `kill -9`？
@@ -472,6 +528,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-D01-QA-004
   type: qa
   question: '`umount -l` 的主要边界是什么？'
@@ -487,6 +545,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-D01-QA-005
   type: qa
   question: 卸载后怎样证明挂载关系消失但目录仍存在？
@@ -504,6 +564,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-24-D01-QA-006
   type: qa
   question: 目标下还有子挂载时，推荐的处理顺序是什么？
@@ -520,6 +582,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-FILESYSTEMS-QA-010
   type: qa
   question: fstab 六字段顺序是什么？
@@ -537,6 +601,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-FILESYSTEMS-QA-011
   type: qa
   question: 为什么不应默认给 fstab 添加 `nofail`？
@@ -555,6 +621,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K02-QA-001
   type: qa
   question: 普通 XFS 按 UUID 持久挂载的 fstab 骨架是什么？
@@ -572,6 +640,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-24-K02-QA-002
   type: qa
   question: fstab 的 `fs_spec` 字段回答什么问题？
@@ -587,6 +657,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-K02-QA-003
   type: qa
   question: fstab 的 `fs_file` 字段回答什么问题？
@@ -602,6 +674,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-K02-QA-004
   type: qa
   question: fstab 的第五、六字段常见 `0 0` 分别表示什么？
@@ -617,6 +691,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-24-K02-QA-005
   type: qa
   question: '`defaults` 是否等于“没有任何挂载选项”？'
@@ -633,6 +709,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K02-QA-006
   type: qa
   question: '`noauto` 与 `nofail` 的核心区别是什么？'
@@ -649,6 +727,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-24-K02-QA-007
   type: qa
   question: fstab 字段中的路径包含空格时应怎样表示？
@@ -664,6 +744,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-24-K02-QA-008
   type: qa
   question: 重新格式化文件系统后，原 fstab UUID 条目可能发生什么？
@@ -680,6 +762,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-FILESYSTEMS-QA-012
   type: qa
   question: 修改 fstab 后的重启前验证链是什么？
@@ -699,6 +783,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-FILESYSTEMS-QA-013
   type: qa
   question: '`findmnt /srv/project` 与 `df -hT /srv/project` 分别证明什么？'
@@ -716,6 +802,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-24-O03-QA-001
   type: qa
   question: 修改 `/etc/fstab` 后为什么执行 `systemctl daemon-reload`？
@@ -733,6 +821,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-O03-QA-002
   type: qa
   question: '`findmnt --verify` 通过后，为什么还要实际挂载？'
@@ -749,6 +839,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-O03-QA-003
   type: qa
   question: '`mount -a` 主要处理哪些 fstab 条目？'
@@ -765,6 +857,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-O03-QA-004
   type: qa
   question: 目标已手工挂载时，直接运行 `mount -a` 为什么不能充分测试新 fstab 条目？
@@ -780,6 +874,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-24-O03-QA-005
   type: qa
   question: 变更 fstab 前推荐保存哪些基线？
@@ -796,6 +892,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-24-O03-QA-006
   type: qa
   question: 怎样验证 fstab 中 `/srv/project` 的声明而不混入当前挂载？
@@ -811,6 +909,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O03-QA-007
   type: qa
   question: 无重启验证为什么不能声明“启动持久性已实测”？
@@ -828,6 +928,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K03-QA-001
   type: qa
   question: 怎样计算 `/srv/project` 对应的 mount unit 名？
@@ -844,6 +946,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-K03-QA-002
   type: qa
   question: 由 fstab 生成的 mount unit 应直接编辑吗？
@@ -860,6 +964,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K03-QA-003
   type: qa
   question: mount unit 为 `active (mounted)` 能否独自证明任务完成？
@@ -878,6 +984,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K03-QA-004
   type: qa
   question: mount unit 失败时查看本次启动日志的命令是什么？
@@ -894,6 +1002,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-K03-QA-005
   type: qa
   question: '`_netdev` 的核心作用是什么？'
@@ -910,6 +1020,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-K03-QA-006
   type: qa
   question: 什么场景比普通本地磁盘更可能需要 `_netdev`？
@@ -925,6 +1037,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K03-QA-007
   type: qa
   question: 为什么关键数据盘不应为“能启动”随意添加 `nofail`？
@@ -940,6 +1054,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-24-K03-QA-008
   type: qa
   question: 查询 mount unit 当前 What、Where 和 Result 的命令骨架是什么？
@@ -956,6 +1072,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-FILESYSTEMS-QA-014
   type: qa
   question: Swap 的三层状态是什么？
@@ -974,6 +1092,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-FILESYSTEMS-QA-015
   type: qa
   question: 创建 Swap 签名并当前启用的命令是什么？
@@ -992,6 +1112,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-FILESYSTEMS-QA-016
   type: qa
   question: Swap fstab 条目骨架是什么？
@@ -1010,6 +1132,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-FILESYSTEMS-QA-017
   type: qa
   question: 查看具体 Swap 设备、大小、使用量和优先级，使用什么？
@@ -1028,6 +1152,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-FILESYSTEMS-QA-018
   type: qa
   question: Swap 的 `USED=0` 是否表示没有启用？
@@ -1046,6 +1172,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-24-O04-QA-001
   type: qa
   question: 创建带 LABEL `EXAMSWAP` 的 Swap 签名命令是什么？
@@ -1061,6 +1189,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O04-QA-002
   type: qa
   question: 按优先级 30 当前启用 `/dev/vdb2` 的命令是什么？
@@ -1076,6 +1206,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O04-QA-003
   type: qa
   question: 按真实 UUID 和优先级 30 持久启用 Swap 的 fstab 骨架是什么？
@@ -1094,6 +1226,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-24-O04-QA-004
   type: qa
   question: '`mkswap` 成功但 `free -h` 总量未增加，下一步查什么？'
@@ -1112,6 +1246,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-24-O04-QA-005
   type: qa
   question: '`swapon -a` 的作用是什么？'
@@ -1128,6 +1264,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O04-QA-006
   type: qa
   question: 为什么新增 Swap 任务应记录操作前的 `swapon --show`？
@@ -1144,6 +1282,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-24-O04-QA-007
   type: qa
   question: 只停用新增 Swap `/dev/vdb2` 的命令是什么？
@@ -1159,6 +1299,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-O04-QA-008
   type: qa
   question: 为什么不把 `swapoff -a` 作为持久性验证步骤？
@@ -1175,6 +1317,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-K04-QA-001
   type: qa
   question: 多个 Swap 的优先级比较规则是什么？
@@ -1191,6 +1335,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-K04-QA-002
   type: qa
   question: fstab 已改为 `pri=30`，当前 PRIO 仍旧，原因可能是什么？
@@ -1207,6 +1353,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-24-K04-QA-003
   type: qa
   question: '`swapoff` 前最少应检查哪些证据？'
@@ -1223,6 +1371,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-24-K04-QA-004
   type: qa
   question: 删除一个持久 Swap 的安全顺序是什么？
@@ -1239,6 +1389,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-FILESYSTEMS-QA-021
   type: qa
   question: fstab 报 UUID 不存在时怎样处理？
@@ -1256,6 +1408,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-FILESYSTEMS-QA-022
   type: qa
   question: 目录存在但精确 findmnt 无结果，数据可能写到哪里？
@@ -1273,6 +1427,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-FILESYSTEMS-QA-023
   type: qa
   question: 挂载与 Swap 综合任务的验收骨架是什么？
@@ -1291,6 +1447,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-24-D02-QA-001
   type: qa
   question: '`mount -a` 报 `wrong fs type` 时，为什么不应立即重新格式化？'
@@ -1308,6 +1466,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-D02-QA-002
   type: qa
   question: mount unit failed 后，`systemctl reset-failed` 能修复根因吗？
@@ -1323,6 +1483,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-D02-QA-003
   type: qa
   question: 使用 `nofail` 后系统启动完成，但业务目录异常，先查什么？
@@ -1339,6 +1501,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-24-D02-QA-004
   type: qa
   question: 当前挂载成功但重启后缺失，应重点核对哪些持久层证据？
@@ -1357,6 +1521,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-24-C01-QA-001
   type: qa
   question: 经典挂载任务中，第一步为什么不是直接编辑 fstab？
@@ -1377,6 +1543,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-24-C01-QA-002
   type: qa
   question: 怎样证明 `/srv/project` 当前由目标文件系统提供，而不是根文件系统普通目录？
@@ -1395,6 +1563,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-24-C01-QA-003
   type: qa
   question: 为什么经典挂载任务建议从未挂载状态执行 `mount /srv/project`？
@@ -1412,6 +1582,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-24-C01-QA-004
   type: qa
   question: 挂载选项验收时，为什么不要求当前 OPTIONS 与 fstab 文本逐字相同？
@@ -1429,6 +1601,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-24-C02-QA-001
   type: qa
   question: 新增 Swap 任务中，怎样证明没有破坏原有 Swap？
@@ -1446,6 +1620,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-24-C02-QA-002
   type: qa
   question: 新增 Swap 的完整主流程是什么？
@@ -1466,6 +1642,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-24-C02-QA-003
   type: qa
   question: 经典 Swap 任务中，为什么 `free -h` 只能作为补充证据？
@@ -1483,6 +1661,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-C02-QA-004
   type: qa
   question: 经典 Swap 任务中，从 fstab 重入前必须满足什么安全条件？
@@ -1499,6 +1679,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-24-O05-QA-001
   type: qa
   question: 持久挂载变更的三种验证层次是什么？
@@ -1514,6 +1696,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-24-O05-QA-002
   type: qa
   question: 监控关键挂载时，为什么不能只检查目录存在？
@@ -1529,6 +1713,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-24-O05-QA-003
   type: qa
   question: RHCE 自动化对本章手工状态模型的核心映射是什么？
@@ -1545,6 +1731,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-24-H01-QA-001
   type: qa
   question: 查询 fstab 字段和转义规则的本地帮助入口是什么？
@@ -1560,6 +1748,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-H01-QA-002
   type: qa
   question: 查询 systemd mount 依赖、`nofail` 与 `_netdev` 的帮助入口是什么？
@@ -1576,6 +1766,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-H01-QA-003
   type: qa
   question: 查询 Swap 优先级和 `--show` 字段的帮助入口是什么？
@@ -1592,6 +1784,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-24-CLOZE-001
   type: cloze
   text: fstab 六字段依次为 {{c1::fs_spec}}、{{c2::fs_file}}、{{c3::fs_vfstype}}、{{c4::fs_mntops}}、{{c5::fs_freq}}、{{c6::fs_passno}}。
@@ -1606,6 +1800,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-24-CLOZE-002
   type: cloze
   text: 普通持久挂载的状态链是：真实 source → {{c1::当前挂载}} → {{c2::fstab 持久条目}} → {{c3::systemd mount unit}} → 功能验证。
@@ -1621,6 +1817,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-24-CLOZE-003
   type: cloze
   text: Swap 三层状态是 {{c1::mkswap 写签名}}、{{c2::swapon 当前启用}}、{{c3::fstab 持久配置}}。
@@ -1638,6 +1836,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-24-CLOZE-004
   type: cloze
   text: '`/srv/project` 对应的 unit 名通常是 {{c1::srv-project.mount}}，可由 {{c2::systemd-escape --path --suffix=mount /srv/project}}
@@ -1654,6 +1854,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-24-CLOZE-005
   type: cloze
   text: '`noauto` 表示 {{c1::不由正常自动挂载和 mount -a 处理}}；`nofail` 表示 {{c2::失败不作为达到相关 target 的强制条件}}。'
@@ -1669,6 +1871,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-24-CLOZE-006
   type: cloze
   text: Swap 的 fstab 优先级写在第四字段，例如 `defaults,{{c1::pri=30}}`；当前实际值用 `swapon --show` 的 {{c2::PRIO}} 列确认。
@@ -1684,6 +1888,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-24-CLOZE-007
   type: cloze
   text: 修改 fstab 后的推荐链路是 {{c1::systemctl daemon-reload}} → {{c2::findmnt --verify}} → {{c3::实际挂载/启用}} → 分层验收。
@@ -1701,6 +1907,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-24-CLOZE-008
   type: cloze
   text: 挂载到非空目录会让原内容暂时{{c1::被遮蔽}}；正常卸载后原内容会{{c2::重新可见}}。
@@ -1717,3 +1925,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

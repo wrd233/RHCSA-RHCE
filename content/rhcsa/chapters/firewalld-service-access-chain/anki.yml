@@ -22,6 +22,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-NETWORK-O04-QA-002
   type: qa
   question: 标准 HTTP 服务需要在 `public` zone 中立即放行，命令是什么？
@@ -39,6 +41,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-NETWORK-O04-QA-003
   type: qa
   question: 应用真实监听 `8088/tcp`，系统没有合适的预定义 service。立即放行应使用什么命令？
@@ -56,6 +60,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-NETWORK-O04-QA-004
   type: qa
   question: 同一条 firewalld 修改怎样同时满足“现在生效”和“reload 后保留”？
@@ -73,6 +79,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-NETWORK-O04-QA-005
   type: qa
   question: '`firewall-cmd --reload` 对 runtime-only 规则有什么影响？'
@@ -90,6 +98,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-NETWORK-O04-QA-006
   type: qa
   question: 怎样分别确认 `public` zone 当前和持久配置都允许 `8088/tcp`？
@@ -113,6 +123,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-NETWORK-O04-QA-007
   type: qa
   question: '`firewall-cmd --zone=public --query-port=8088/tcp` 返回 `yes`，能否证明服务正在监听？'
@@ -130,6 +142,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-NETWORK-O04-QA-008
   type: qa
   question: 本机 `curl 127.0.0.1:8088` 成功，能否证明远端客户端可访问？
@@ -147,6 +161,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-NETWORK-D01-QA-002
   type: qa
   question: 服务 active、本机服务器地址请求成功，但远端失败。下一条最有区分度的 firewalld 证据是什么？
@@ -164,6 +180,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-NETWORK-O04-CLOZE-001
   type: cloze
   text: firewalld 的 {{c1::runtime}} 配置回答“当前实际规则”，{{c2::permanent}} 配置回答“reload、服务重启或系统重启后加载什么”。
@@ -180,6 +198,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-21-K01-QA-001
   type: qa
   question: firewalld 开放一个端口后，是否会自动创建应用 listener？
@@ -197,6 +217,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-21-K01-QA-002
   type: qa
   question: 一个远端网络服务的完整验收至少需要哪些层？
@@ -214,6 +236,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-21-K01-QA-003
   type: qa
   question: '`systemctl is-active` 成功能证明什么？'
@@ -231,6 +255,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-K01-QA-004
   type: qa
   question: '`ss -lntp` 能证明什么？'
@@ -248,6 +274,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-21-K01-QA-005
   type: qa
   question: 为什么本机回环请求不等于远端访问验证？
@@ -265,6 +293,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-K01-QA-006
   type: qa
   question: firewalld 与 SELinux 端口类型分别控制什么？
@@ -282,6 +312,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-21-K02-QA-001
   type: qa
   question: firewalld zone 的本质是什么？
@@ -299,6 +331,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-21-K02-QA-002
   type: qa
   question: '`--get-default-zone` 回答什么？'
@@ -316,6 +350,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-21-K02-QA-003
   type: qa
   question: '`--get-active-zones` 中“active”的含义是什么？'
@@ -333,6 +369,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-21-K02-QA-004
   type: qa
   question: 怎样列出系统可用的全部 zones？
@@ -350,6 +388,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-K02-QA-005
   type: qa
   question: 怎样查看 `public` zone 的当前完整规则概览？
@@ -367,6 +407,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-K02-QA-006
   type: qa
   question: '`firewall-cmd --set-default-zone=internal` 是 runtime 还是 permanent 修改？'
@@ -384,6 +426,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-21-K02-QA-007
   type: qa
   question: 为什么不能仅凭“默认 zone 是 public”就向 public 加规则？
@@ -401,6 +445,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-K02-QA-008
   type: qa
   question: source binding 支持使用主机名吗？
@@ -418,6 +464,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-O01-QA-001
   type: qa
   question: 怎样查询来源网段 `192.0.2.0/24` 当前绑定到哪个 zone？
@@ -435,6 +483,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O01-QA-002
   type: qa
   question: 怎样把 `192.0.2.0/24` 当前绑定到 `internal`？
@@ -452,6 +502,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O01-QA-003
   type: qa
   question: '`--change-interface=enp1s0` 与 `--add-interface=enp1s0` 的区别是什么？'
@@ -469,6 +521,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-21-O01-QA-004
   type: qa
   question: 怎样确认 `enp1s0` 是否属于 `internal` zone？
@@ -486,6 +540,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-21-O01-QA-005
   type: qa
   question: 怎样移除接口当前的 zone 绑定？
@@ -503,6 +559,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O01-QA-006
   type: qa
   question: 移动承载当前 SSH 会话的接口前，最重要的安全准备是什么？
@@ -520,6 +578,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-21-O01-QA-007
   type: qa
   question: 为什么 `--runtime-to-permanent` 不是“保存刚才一条规则”？
@@ -537,6 +597,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-K03-QA-001
   type: qa
   question: 不带 `--permanent` 的 `--add-service` 修改哪一层？
@@ -554,6 +616,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-21-K03-QA-002
   type: qa
   question: 带 `--permanent` 的修改会立即改变当前规则吗？
@@ -571,6 +635,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-21-K03-QA-003
   type: qa
   question: runtime=yes、permanent=no 表示什么？
@@ -588,6 +654,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-21-K03-QA-004
   type: qa
   question: runtime=no、permanent=yes 表示什么？
@@ -605,6 +673,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-21-K03-QA-005
   type: qa
   question: '`--complete-reload` 为什么不应作为普通刷新命令？'
@@ -622,6 +692,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-K03-QA-006
   type: qa
   question: '`--query-port` 返回 `no` 时常见退出码是什么？'
@@ -639,6 +711,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-21-K03-QA-007
   type: qa
   question: 某规则只需临时开放 20 分钟，命令骨架是什么？
@@ -656,6 +730,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-21-O02-QA-001
   type: qa
   question: 怎样查看 `http` service 实际包含的端口和协议？
@@ -673,6 +749,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O02-QA-002
   type: qa
   question: 怎样查看 `http` service 当前来自哪个配置文件？
@@ -690,6 +768,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O02-QA-003
   type: qa
   question: 标准服务与直接端口规则应如何选择？
@@ -707,6 +787,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-21-O02-QA-004
   type: qa
   question: 为什么 `http` service 不能自动放行应用改到的 `8088/tcp`？
@@ -724,6 +806,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-O02-QA-005
   type: qa
   question: 怎样列出 `public` zone 当前允许的直接端口？
@@ -741,6 +825,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O02-QA-006
   type: qa
   question: 怎样从 `public` 当前配置移除 `8088/tcp`？
@@ -758,6 +844,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O02-QA-007
   type: qa
   question: '`8000-8010/tcp` 在 firewalld 中表示什么？'
@@ -775,6 +863,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-21-O02-QA-008
   type: qa
   question: 同一个端口号的 TCP 和 UDP 规则是否等价？
@@ -792,6 +882,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-21-O02-QA-009
   type: qa
   question: '`--add-protocol=icmp` 与 `--add-port=8088/tcp` 的对象有何区别？'
@@ -809,6 +901,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-21-K04-QA-001
   type: qa
   question: firewalld vendor service 文件通常位于哪里？
@@ -826,6 +920,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: path
 - id: RHCSA-21-K04-QA-002
   type: qa
   question: 管理员自定义或覆盖 service 通常放在哪里？
@@ -843,6 +939,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: path
 - id: RHCSA-21-K04-QA-003
   type: qa
   question: 手工编辑 firewalld XML 后，应用前的静态检查命令是什么？
@@ -860,6 +958,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-K04-QA-004
   type: qa
   question: '`--check-config` 成功能否证明远端访问成功？'
@@ -877,6 +977,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-K04-QA-005
   type: qa
   question: 自定义 `training-web` service 的文件名应是什么？
@@ -894,6 +996,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-21-K04-QA-006
   type: qa
   question: 自定义 service 中开放 TCP 8088 的核心 XML 元素是什么？
@@ -911,6 +1015,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-21-O03-QA-001
   type: qa
   question: 什么时候应从简单 port/service 升级到 rich rule？
@@ -928,6 +1034,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-O03-QA-002
   type: qa
   question: 只允许 `192.0.2.0/24` 访问 `8088/tcp` 的 rich rule 骨架是什么？
@@ -945,6 +1053,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-21-O03-QA-003
   type: qa
   question: rich rule 中使用 IPv4 source address 时为什么应写 `family="ipv4"`？
@@ -962,6 +1072,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-21-O03-QA-004
   type: qa
   question: rich rule 的 `reject` 与 `drop` 有什么客户端表现差异？
@@ -979,6 +1091,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-21-O03-QA-005
   type: qa
   question: 怎样列出某 zone 的当前 rich rules？
@@ -996,6 +1110,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O03-QA-006
   type: qa
   question: 为什么删除 rich rule 时应复用完整规则字符串？
@@ -1013,6 +1129,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-21-O04-QA-001
   type: qa
   question: 检查 TCP listener 的推荐命令是什么？
@@ -1030,6 +1148,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-O04-QA-002
   type: qa
   question: '`127.0.0.1:8088` 与 `0.0.0.0:8088` 对远端访问意味着什么？'
@@ -1047,6 +1167,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-21-O04-QA-003
   type: qa
   question: 为什么要分别 `curl 127.0.0.1` 和服务器地址？
@@ -1064,6 +1186,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-21-O04-QA-004
   type: qa
   question: '`nc -vz` 成功能证明 HTTP 服务完整正常吗？'
@@ -1081,6 +1205,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-O04-QA-005
   type: qa
   question: 远端最终验收为什么应从题目指定客户端执行？
@@ -1098,6 +1224,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-21-O04-QA-006
   type: qa
   question: 非标准端口服务启动失败时，防火墙之外要独立检查什么？
@@ -1115,6 +1243,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-D01-QA-001
   type: qa
   question: 远端收到 `Connection refused`，第一条高区分度证据是什么？
@@ -1132,6 +1262,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-D01-QA-002
   type: qa
   question: 远端连接超时，能否直接判定 firewalld 在 drop？
@@ -1149,6 +1281,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-D01-QA-003
   type: qa
   question: 服务 active 但没有目标 listener，下一步应查什么？
@@ -1166,6 +1300,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-D01-QA-004
   type: qa
   question: 回环请求成功但服务器地址请求失败，优先检查什么？
@@ -1183,6 +1319,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-D01-QA-005
   type: qa
   question: 规则在 public 中存在，但接口属于 internal。问题本质是什么？
@@ -1200,6 +1338,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-21-D01-QA-006
   type: qa
   question: 执行 reload 后规则仍不能让远端访问，哪种 zone 错误可能被忽略？
@@ -1217,6 +1357,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-D01-QA-007
   type: qa
   question: 普通 service/port 显示允许，但某个来源仍失败，应继续查看什么？
@@ -1234,6 +1376,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-D01-QA-008
   type: qa
   question: UDP 服务排错时为什么不能只用 `ss -lntp`？
@@ -1251,6 +1395,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-21-D02-QA-001
   type: qa
   question: 为什么“停止 firewalld 后服务可访问”不能作为最终修复？
@@ -1268,6 +1414,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-21-D02-QA-002
   type: qa
   question: 为什么把接口加入 trusted 不是推荐排错方法？
@@ -1285,6 +1433,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-21-D02-QA-003
   type: qa
   question: reload 前为什么要比对 runtime 和 permanent 的 `list-all`？
@@ -1302,6 +1452,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-21-D02-QA-004
   type: qa
   question: 删除一个旧端口规则前应确认什么？
@@ -1319,6 +1471,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-T01-QA-001
   type: qa
   question: 发布非标准端口 Web 服务时，推荐的完整操作顺序是什么？
@@ -1336,6 +1490,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-21-T01-QA-002
   type: qa
   question: 任务要求现在和重启后都开放 `8088/tcp`，但不希望 reload 影响其他临时规则。最合适的做法是什么？
@@ -1353,6 +1509,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-21-T02-QA-001
   type: qa
   question: permanent 中规则存在、runtime 中不存在、且规则位于错误 zone。为什么单独 reload 仍可能失败？
@@ -1370,6 +1528,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-21-T02-QA-002
   type: qa
   question: 修复错误 zone 后，是否应立即删除旧 zone 中的规则？
@@ -1387,6 +1547,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-21-K02-CLOZE-001
   type: cloze
   text: '`firewall-cmd --get-active-zones` 中 active 表示 zone 当前绑定了 {{c1::interface 或 source}}，不表示其中一定开放了服务。'
@@ -1403,6 +1565,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-21-K03-CLOZE-001
   type: cloze
   text: '`firewall-cmd --reload` 使用 {{c1::permanent}} 重建 {{c2::runtime}}，未持久化的 runtime-only 变化会丢失。'
@@ -1419,6 +1583,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-21-O02-CLOZE-001
   type: cloze
   text: 应用监听 `8088/tcp` 时，firewalld 端口对象必须同时包含 {{c1::端口号}} 和 {{c2::协议}}。
@@ -1435,6 +1601,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-21-K04-CLOZE-001
   type: cloze
   text: 发行版 firewalld 对象通常位于 {{c1::/usr/lib/firewalld/}}，管理员配置和覆盖通常位于 {{c2::/etc/firewalld/}}。
@@ -1451,6 +1619,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-21-O03-CLOZE-001
   type: cloze
   text: 需要“只允许指定来源访问某端口”时，rich rule 的核心组合是 {{c1::source}} + {{c2::port/service}} + {{c3::action}}。
@@ -1467,6 +1637,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-21-O04-CLOZE-001
   type: cloze
   text: 完整服务访问链中，`systemctl` 证明 {{c1::服务管理状态}}，`ss` 证明 {{c2::真实 listener}}，远端协议客户端证明 {{c3::功能访问}}。
@@ -1483,6 +1655,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-21-D01-CLOZE-001
   type: cloze
   text: 远端 TCP 立即 `Connection refused` 时，优先检查 {{c1::listener}}；远端超时时，按 {{c2::监听、本机、zone、规则与路径}} 分层调查。
@@ -1499,3 +1673,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

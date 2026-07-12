@@ -48,6 +48,15 @@ def main() -> None:
             manifest["canonical"] = {name: value for name, value in manifest["canonical"].items() if name in {"lecture", "anki"}}
         manifest["base_repository"].setdefault("verification", "unavailable")
         manifest_path.write_text(yaml.safe_dump(manifest, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
+    for anki_path in sorted((ROOT / "content/rhcsa/chapters").glob("*/anki.yml")):
+        document = load_yaml(anki_path)
+        for note in document["notes"]:
+            note["disabled"] = False
+            note["semantic_type"] = next(
+                (tag.split("::", 1)[1] for tag in note["tags"] if tag.startswith("card::")),
+                "cloze" if note["type"] == "cloze" else "concept",
+            )
+        anki_path.write_text(yaml.safe_dump(document, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
     test_run = subprocess.run(["uv", "run", "pytest", "-q"], cwd=ROOT, text=True, capture_output=True)
     if test_run.returncode:
         raise RuntimeError("release blocked by test failure:\n" + test_run.stdout + test_run.stderr)

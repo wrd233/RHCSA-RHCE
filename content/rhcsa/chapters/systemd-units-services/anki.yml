@@ -22,6 +22,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-SERVICES-O01-QA-002
   type: qa
   question: '`chronyd.service` 当前未运行，题目要求现在启动并在系统重启后自动启动。应执行什么命令？'
@@ -42,6 +44,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-O01-QA-003
   type: qa
   question: '`systemctl disable UNIT` 与 `systemctl mask UNIT` 的关键区别是什么？'
@@ -58,6 +62,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-SERVICES-O01-QA-004
   type: qa
   question: 手工创建或修改了 `/etc/systemd/system/report-agent.service` 后，哪条命令让 systemd manager 重新读取 unit 定义？
@@ -78,6 +84,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-O01-QA-005
   type: qa
   question: unit 文件变化与应用自身配置文件变化，分别通常需要什么重新加载动作？
@@ -94,6 +102,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-SERVICES-O01-QA-006
   type: qa
   question: 需要同时查看 vendor 主 unit 和管理员 drop-in 时，应使用什么命令？
@@ -113,6 +123,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-O01-QA-007
   type: qa
   question: 某 Web 服务显示 `active`。这能否单独证明业务终态正确？
@@ -129,6 +141,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-SERVICES-D01-QA-001
   type: qa
   question: 自定义 service 启动失败。第一轮应优先收集哪组 systemd 证据？
@@ -146,6 +160,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-SERVICES-D01-QA-003
   type: qa
   question: 一个 service 已 `enabled`，但当前为 `inactive`。为什么不能再次盲目执行 enable？
@@ -162,6 +178,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-K01-QA-001
   type: qa
   question: systemd 中的 unit、job 与进程分别是什么？
@@ -178,6 +196,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K01-QA-002
   type: qa
   question: '`.service`、`.socket`、`.path`、`.timer` 和 `.target` 分别管理什么？'
@@ -194,6 +214,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-12-K01-QA-003
   type: qa
   question: 需要明确查询服务与同名 socket，命令骨架是什么？
@@ -213,6 +235,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K01-QA-004
   type: qa
   question: 为什么在脚本和诊断记录中优先写完整的 `.service` 后缀？
@@ -229,6 +253,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K01-QA-005
   type: qa
   question: 模板 unit 与实例 unit 的命名骨架是什么？
@@ -244,6 +270,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-12-K01-QA-006
   type: qa
   question: 模板 unit 中 `%i` 的作用是什么？
@@ -259,6 +287,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-12-K01-QA-007
   type: qa
   question: 某 oneshot unit 的 `MainPID=0`，能否仅据此判定 unit 失败？
@@ -275,6 +305,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-12-K01-QA-008
   type: qa
   question: 在 `/usr/lib/systemd/system` 中没有找到同名固定文件，能否判定 unit 不存在？
@@ -291,6 +323,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K01-QA-009
   type: qa
   question: 路径或名称需要转换为合法 unit 名时，优先使用什么工具？
@@ -310,6 +344,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K02-QA-010
   type: qa
   question: '`LoadState` 与 `ActiveState` 分别回答什么？'
@@ -326,6 +362,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K02-QA-011
   type: qa
   question: '`ActiveState` 与 `SubState` 的关系是什么？'
@@ -341,6 +379,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K02-QA-012
   type: qa
   question: '`active (exited)` 通常说明什么，不能说明什么？'
@@ -357,6 +397,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-12-K02-QA-013
   type: qa
   question: '`systemctl is-enabled UNIT` 返回 `static` 应如何解释？'
@@ -373,6 +415,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-12-K02-QA-014
   type: qa
   question: '`systemctl is-enabled UNIT` 返回 `masked` 表示什么？'
@@ -388,6 +432,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-12-K02-QA-015
   type: qa
   question: 精确查看 unit 四层状态的命令骨架是什么？
@@ -407,6 +453,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K02-QA-016
   type: qa
   question: '`failed` 能否直接给出服务根因？'
@@ -422,6 +470,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-12-K02-QA-017
   type: qa
   question: 查询 service 最近运行结果和主进程退出状态的命令骨架是什么？
@@ -441,6 +491,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K02-QA-018
   type: qa
   question: '`systemctl is-active` 与 `systemctl is-enabled` 为什么都要执行？'
@@ -456,6 +508,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K02-QA-019
   type: qa
   question: 完整 service 验收的五层是什么？
@@ -471,6 +525,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-12-K02-QA-020
   type: qa
   question: '`systemctl start UNIT` 返回成功能否证明对外功能正常？'
@@ -486,6 +542,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K02-QA-021
   type: qa
   question: 只需要脚本化判断当前是否失败，应优先使用什么命令？
@@ -505,6 +563,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K02-CLOZE-022
   type: cloze
   text: 查看 unit 时，{{c1::LoadState}} 回答定义是否有效加载，{{c2::ActiveState}} 回答当前通用生命周期，{{c3::UnitFileState}} 回答持久启用配置。
@@ -520,6 +580,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-12-O01-QA-023
   type: qa
   question: '`systemctl list-units` 与 `systemctl list-unit-files` 的对象差异是什么？'
@@ -536,6 +598,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-O01-QA-024
   type: qa
   question: 列出所有 service，包括 inactive 的命令是什么？
@@ -555,6 +619,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O01-QA-025
   type: qa
   question: 列出已安装 service unit file 及启用状态的命令是什么？
@@ -574,6 +640,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O01-QA-026
   type: qa
   question: 快速列出当前 failed unit 的命令是什么？
@@ -593,6 +661,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O01-QA-027
   type: qa
   question: '`systemctl status` 为什么是调查入口而不是完整日志工具？'
@@ -608,6 +678,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O01-QA-028
   type: qa
   question: 避免 pager 和长行截断的 status 命令骨架是什么？
@@ -627,6 +699,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O01-QA-029
   type: qa
   question: 查询主文件和 drop-in 实际来源的精确属性命令是什么？
@@ -646,6 +720,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O01-QA-030
   type: qa
   question: '`systemctl cat` 与 `systemctl show` 分别更适合看什么？'
@@ -661,6 +737,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-O01-QA-031
   type: qa
   question: 查“谁依赖或可能拉起这个 unit”的命令是什么？
@@ -680,6 +758,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O01-QA-032
   type: qa
   question: 从排序角度查看 unit 的 after/before 关系可使用什么命令？
@@ -701,6 +781,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O01-QA-033
   type: qa
   question: 为什么不应把整棵依赖树直接当作根因？
@@ -716,6 +798,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O02-QA-034
   type: qa
   question: '`start` 与 `enable` 的作用对象有什么差异？'
@@ -731,6 +815,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-O02-QA-035
   type: qa
   question: '`restart` 与 `reload` 的主要差异是什么？'
@@ -746,6 +832,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-O02-QA-036
   type: qa
   question: 服务支持 reload 时，重新读取应用配置的命令是什么？
@@ -765,6 +853,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O02-QA-037
   type: qa
   question: 希望支持 reload 时 reload，不支持时自动 restart，命令是什么？
@@ -784,6 +874,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O02-QA-038
   type: qa
   question: 为什么不能用无调查 `restart` 代替应用配置检查？
@@ -799,6 +891,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O02-QA-039
   type: qa
   question: 当前停止并移除持久开机启动链接的组合命令是什么？
@@ -818,6 +912,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O02-QA-040
   type: qa
   question: '`enable` 后 service 仍 inactive 是否必然异常？'
@@ -833,6 +929,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-12-O02-QA-041
   type: qa
   question: 解除 mask 后 unit 会自动启动吗？
@@ -848,6 +946,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O02-QA-042
   type: qa
   question: 先停止再强制禁止普通激活的命令骨架是什么？
@@ -869,6 +969,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O02-QA-043
   type: qa
   question: 服务因快速连续失败触发速率限制，修复根因后还可能需要什么命令？
@@ -888,6 +990,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-O02-QA-044
   type: qa
   question: 为什么 static unit 不应通过机械添加 `[Install]` 来“修复”？
@@ -903,6 +1007,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O02-QA-045
   type: qa
   question: 执行 `enable --now` 后最小的 systemd 双重验证是什么？
@@ -924,6 +1030,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-12-K03-QA-046
   type: qa
   question: '`Wants=` 与 `Requires=` 的核心差异是什么？'
@@ -939,6 +1047,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K03-QA-047
   type: qa
   question: '`After=` 与 `Requires=` 的差异是什么？'
@@ -954,6 +1064,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K03-QA-048
   type: qa
   question: A 写了 `After=B.service`，启动 A 时会自动启动 B 吗？
@@ -969,6 +1081,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K03-QA-049
   type: qa
   question: 希望网络在线目标进入事务，并在其后启动当前服务，常见 `[Unit]` 组合是什么？
@@ -990,6 +1104,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-12-K03-QA-050
   type: qa
   question: 为什么说 `Requires=B` 时 B 启动失败并不总能脱离顺序关系简单判断 A？
@@ -1005,6 +1121,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K03-QA-051
   type: qa
   question: '`[Unit] Wants=` 与 `[Install] WantedBy=` 分别在何时生效？'
@@ -1020,6 +1138,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K03-QA-052
   type: qa
   question: 看到 `/etc/systemd/system/multi-user.target.wants/foo.service` 能证明什么？
@@ -1035,6 +1155,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-12-K03-QA-053
   type: qa
   question: 读取合并后的 Wants、Requires、After、Before 的命令是什么？
@@ -1054,6 +1176,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K03-QA-054
   type: qa
   question: 服务“启动太早”时，最关键的两类关系证据是什么？
@@ -1069,6 +1193,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-K03-QA-055
   type: qa
   question: 关闭 unit 时 After/Before 的顺序通常怎样处理？
@@ -1084,6 +1210,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K03-CLOZE-056
   type: cloze
   text: systemd 中 {{c1::Wants/Requires}} 决定对象是否进入事务，{{c2::After/Before}} 决定同一事务中的先后顺序。
@@ -1098,6 +1226,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-12-K04-QA-057
   type: qa
   question: socket activation 的核心对象关系是什么？
@@ -1113,6 +1243,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-12-K04-QA-058
   type: qa
   question: 停止 service 后发起连接又被拉起，下一条最有区分度的证据是什么？
@@ -1128,6 +1260,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-K04-QA-059
   type: qa
   question: path activation 解决什么需求？
@@ -1143,6 +1277,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-12-K04-QA-060
   type: qa
   question: 本章对 timer unit 只训练什么？
@@ -1158,6 +1294,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K04-QA-061
   type: qa
   question: socket/path/timer 激活与 `Restart=` 的根本差异是什么？
@@ -1173,6 +1311,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K04-QA-062
   type: qa
   question: 长期服务希望仅异常退出时自动重启，应使用什么策略？
@@ -1192,6 +1332,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-12-K04-QA-063
   type: qa
   question: 控制自动重启尝试间隔的指令是什么？
@@ -1211,6 +1353,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-12-K04-QA-064
   type: qa
   question: 一次查询触发来源与重启策略的命令骨架是什么？
@@ -1230,6 +1374,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K04-QA-065
   type: qa
   question: 要求关闭 socket 自动激活，但保留手工启动 service，最小变更是什么？
@@ -1245,6 +1391,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-12-K04-QA-066
   type: qa
   question: 为什么不应通过反复 kill MainPID 判断正常停服行为？
@@ -1260,6 +1408,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K05-QA-067
   type: qa
   question: '`/etc/systemd/system`、`/run/systemd/system`、`/usr/lib/systemd/system` 分别主要放什么？'
@@ -1276,6 +1426,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K05-QA-068
   type: qa
   question: 查看当前 systemd 实际 unit 搜索路径的命令是什么？
@@ -1295,6 +1447,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K05-QA-069
   type: qa
   question: 为什么不建议直接修改 `/usr/lib/systemd/system/*.service`？
@@ -1310,6 +1464,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K05-QA-070
   type: qa
   question: 完整复制 vendor unit 到 `/etc` 与创建 drop-in 的维护差异是什么？
@@ -1325,6 +1481,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-O03-QA-071
   type: qa
   question: 为现有 unit 创建持久管理员 drop-in 的命令是什么？
@@ -1344,6 +1502,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O03-QA-072
   type: qa
   question: '`systemctl edit --runtime UNIT` 的关键边界是什么？'
@@ -1359,6 +1519,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O03-QA-073
   type: qa
   question: 何时才考虑 `systemctl edit --full UNIT`？
@@ -1374,6 +1536,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O03-QA-074
   type: qa
   question: drop-in 中替换已有 `ExecStart=` 的通用骨架是什么？
@@ -1397,6 +1561,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-12-O03-QA-075
   type: qa
   question: 为什么 `ExecStart=/usr/bin/echo hi > /tmp/x` 不会自动像 Bash 一样重定向？
@@ -1412,6 +1578,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O03-QA-076
   type: qa
   question: 静态检查自定义 unit 的命令是什么？
@@ -1431,6 +1599,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O03-QA-077
   type: qa
   question: '`systemd-analyze verify` 与 `systemctl daemon-reload` 分别做什么？'
@@ -1446,6 +1616,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-O03-QA-078
   type: qa
   question: 执行 daemon-reload 后，如何证明 drop-in 被采用？
@@ -1461,6 +1633,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-12-O03-QA-079
   type: qa
   question: '`daemon-reload` 会自动重启已运行 service 吗？'
@@ -1476,6 +1650,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O03-QA-080
   type: qa
   question: 删除本地覆盖并恢复 vendor 状态可使用什么命令？
@@ -1495,6 +1671,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-O04-QA-081
   type: qa
   question: service unit 的 `[Unit]`、`[Service]`、`[Install]` 分别负责什么？
@@ -1510,6 +1688,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-O04-QA-082
   type: qa
   question: 前台长期程序在 RHCSA 场景中常用什么 Type？
@@ -1529,6 +1709,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-12-O04-QA-083
   type: qa
   question: 一次性执行并等待命令结束应使用什么 Type？
@@ -1548,6 +1730,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-12-O04-QA-084
   type: qa
   question: 为什么不能因程序叫“daemon”就默认使用 `Type=forking`？
@@ -1563,6 +1747,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O04-QA-085
   type: qa
   question: 长期受限用户 service 的核心 `[Service]` 骨架是什么？
@@ -1594,6 +1780,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-12-O04-QA-086
   type: qa
   question: 配置 `User=svcwatch` 后，systemd 会自动创建用户和目录吗？
@@ -1609,6 +1797,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O04-QA-087
   type: qa
   question: 如何把 service 的 MainPID 与实际运行用户关联验证？
@@ -1630,6 +1820,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-12-O04-QA-088
   type: qa
   question: '`WorkingDirectory=` 指向不存在或不可访问目录时，应调查什么？'
@@ -1645,6 +1837,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O04-QA-089
   type: qa
   question: 让 enable 把自定义 service 加入多用户目标，`[Install]` 写什么？
@@ -1666,6 +1860,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-12-O04-QA-090
   type: qa
   question: '`RemainAfterExit=yes` 适合什么场景，不适合什么目的？'
@@ -1681,6 +1877,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-O04-QA-091
   type: qa
   question: 自定义 service 以错误用户运行，最有区分度的证据链是什么？
@@ -1696,6 +1894,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-O04-QA-092
   type: qa
   question: 服务反复重启时应同时检查哪些属性？
@@ -1711,6 +1911,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-O04-QA-093
   type: qa
   question: 自定义 service 的推荐部署顺序是什么？
@@ -1726,6 +1928,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-12-O04-QA-094
   type: qa
   question: 传统权限看似正确但 service 仍 permission denied，下一层应想到什么？
@@ -1741,6 +1945,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-12-K06-QA-095
   type: qa
   question: '`.target` unit 的本质是什么？'
@@ -1756,6 +1962,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-12-K06-QA-096
   type: qa
   question: 查询当前持久默认 target 的命令是什么？
@@ -1775,6 +1983,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K06-QA-097
   type: qa
   question: 把持久默认目标设置为非图形多用户目标的命令是什么？
@@ -1794,6 +2004,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K06-QA-098
   type: qa
   question: '`start TARGET` 与 `isolate TARGET` 的主要差异是什么？'
@@ -1809,6 +2021,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K06-QA-099
   type: qa
   question: 为什么远程系统上执行 `systemctl isolate` 前必须评估风险？
@@ -1824,6 +2038,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-12-K06-QA-100
   type: qa
   question: '`multi-user.target.wants/foo.service` 链接能否证明 foo 当前在运行？'
@@ -1839,6 +2055,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-12-K06-QA-101
   type: qa
   question: rescue/emergency target 的完整恢复操作属于哪一章？
@@ -1854,6 +2072,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K07-QA-102
   type: qa
   question: 系统 service 中 `User=alice` 与 user service 有什么区别？
@@ -1869,6 +2089,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-K07-QA-103
   type: qa
   question: 查询当前用户的 user manager unit，命令骨架是什么？
@@ -1888,6 +2110,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K07-QA-104
   type: qa
   question: 查询用户 manager 状态和 linger 的命令是什么？
@@ -1907,6 +2131,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-12-K07-QA-105
   type: qa
   question: '`Linger=yes` 的主要意义是什么？'
@@ -1922,6 +2148,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-12-K07-QA-106
   type: qa
   question: 系统 service 使用 `User=` 时是否需要 enable-linger？
@@ -1937,6 +2165,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-K07-QA-107
   type: qa
   question: 用户服务持久性为什么需要 live VM 做跨会话验证？
@@ -1952,6 +2182,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-12-D01-QA-108
   type: qa
   question: '`Unit UNIT could not be found` 时，第一条精确属性证据是什么？'
@@ -1971,6 +2203,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-109
   type: qa
   question: unit 文件已经创建，但 systemctl 仍 not-found，最常见的两个假设是什么？
@@ -1986,6 +2220,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-110
   type: qa
   question: '发现 `Loaded: masked` 时为什么不应直接 unmask？'
@@ -2001,6 +2237,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-111
   type: qa
   question: unit 已修改但服务仍按旧 ExecStart 运行，下一条最有区分度的证据是什么？
@@ -2016,6 +2254,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-112
   type: qa
   question: enabled 但 inactive 的调查应从哪一层开始？
@@ -2031,6 +2271,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-113
   type: qa
   question: stop 后再次 active 时的三类主要假设是什么？
@@ -2046,6 +2288,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-114
   type: qa
   question: active 且 enabled，但端口不可访问，下一步应做什么？
@@ -2061,6 +2305,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-115
   type: qa
   question: service 启动太早时为什么要同时查 Wants/Requires 和 After/Before？
@@ -2076,6 +2322,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-116
   type: qa
   question: 自定义 service 报执行失败时，应检查哪些静态对象？
@@ -2091,6 +2339,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-12-D01-QA-117
   type: qa
   question: 为什么不能把关闭 SELinux 作为 service permission denied 的默认答案？
@@ -2108,6 +2358,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-D01-QA-118
   type: qa
   question: systemd 故障的通用诊断链是什么？
@@ -2123,6 +2375,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-12-T01-QA-119
   type: qa
   question: 需要创建受限账号运行的长期 heartbeat service。部署前必须准备哪三类非 unit 对象？
@@ -2139,6 +2393,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-12-T01-QA-120
   type: qa
   question: 自定义 heartbeat service 从定义到验收的完整顺序是什么？
@@ -2155,6 +2411,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-12-T01-QA-121
   type: qa
   question: heartbeat service 的功能验证为什么要间隔读取两次文件状态？
@@ -2171,6 +2429,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-12-T01-QA-122
   type: qa
   question: 为什么 `chmod 777 /var/lib/heartbeat-worker` 不是合格答案？
@@ -2188,6 +2448,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-12-T02-QA-123
   type: qa
   question: 要求关闭 socket 自动激活但保留手工启动 service，为什么不能 mask service？
@@ -2204,6 +2466,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-12-T02-QA-124
   type: qa
   question: 证明 socket 激活已关闭的验收组合是什么？
@@ -2220,6 +2484,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-12-T02-QA-125
   type: qa
   question: 如何用实验区分 socket 激活与 Restart 重启？
@@ -2236,6 +2502,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-12-T02-QA-126
   type: qa
   question: 为什么不应在生产服务上随意 kill MainPID 来证明 Restart？
@@ -2252,6 +2520,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-12-MIX-CLOZE-127
   type: cloze
   text: 系统 unit 常见优先级可概括为 {{c1::/etc/systemd/system}} 高于 {{c2::/run/systemd/system}}，后者高于 {{c3::/usr/lib/systemd/system}}。
@@ -2266,6 +2536,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-12-MIX-CLOZE-128
   type: cloze
   text: unit 定义变化后执行 {{c1::systemctl daemon-reload}}；应用配置变化通常执行应用自身的 {{c2::reload 或 restart}}。
@@ -2280,6 +2552,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-12-MIX-CLOZE-129
   type: cloze
   text: 自定义 service 中，{{c1::[Unit]}} 描述关系，{{c2::[Service]}} 描述进程生命周期，{{c3::[Install]}} 指导 enable。
@@ -2294,6 +2568,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-12-MIX-CLOZE-130
   type: cloze
   text: '{{c1::systemctl get-default}} 查询持久默认 target，{{c2::systemctl set-default TARGET}} 修改它。'
@@ -2308,6 +2584,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-12-MIX-CLOZE-131
   type: cloze
   text: 属于用户 manager 的 unit 使用 {{c1::systemctl --user}} 管理；用户是否跨登出保留可用 {{c2::loginctl show-user USER -p Linger}} 检查。
@@ -2322,3 +2600,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

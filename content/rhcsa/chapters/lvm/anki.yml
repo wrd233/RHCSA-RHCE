@@ -21,6 +21,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-LVM-K01-QA-002
   type: qa
   question: LVM 中的 PV 是什么？
@@ -37,6 +39,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-LVM-K01-QA-003
   type: qa
   question: LVM 中的 VG 承担什么作用？
@@ -53,6 +57,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-LVM-K01-QA-004
   type: qa
   question: LVM 中的 LV 是什么？
@@ -69,6 +75,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-LVM-K01-QA-005
   type: qa
   question: '`lvs` 显示 LV 已存在，能否证明应用目录已经可用？'
@@ -85,6 +93,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-LVM-K01-QA-006
   type: qa
   question: 为什么 `lvs` 的 LV 大小与 `df -hT` 显示的文件系统大小可能略有不同？
@@ -105,6 +115,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-LVM-K01-QA-007
   type: qa
   question: '`pvs`、`vgs`、`lvs` 分别主要回答什么问题？'
@@ -121,6 +133,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-LVM-K01-QA-008
   type: qa
   question: 挂载点目录已经存在，能否证明文件系统已经挂载？
@@ -138,6 +152,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-LVM-O01-QA-001
   type: qa
   question: 准备操作一块新设备时，先用什么命令观察块设备层级、文件系统和挂载点？
@@ -158,6 +174,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O01-QA-002
   type: qa
   question: 怎样确认 `/dev/vdb1` 是否已经被 LVM 当作 PV 使用？
@@ -178,6 +196,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O01-QA-003
   type: qa
   question: 扩展 LV 前，应使用哪一层的查询判断真正可分配的剩余空间？
@@ -195,6 +215,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-LVM-O01-QA-004
   type: qa
   question: 查看 LV 名称、所属 VG、大小、路径和底层设备的推荐命令是什么？
@@ -216,6 +238,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O01-QA-005
   type: qa
   question: 怎样确认 `/srv/project` 当前由哪个设备提供？
@@ -237,6 +261,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O01-QA-006
   type: qa
   question: '`df -hT /srv/project` 主要验证哪一层？'
@@ -254,6 +280,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-LVM-O01-QA-007
   type: qa
   question: 为什么执行 `pvcreate` 或 `mkfs` 前必须重新确认设备身份？
@@ -273,6 +301,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-LVM-O01-QA-008
   type: qa
   question: 题目要求扩展 `/srv/project`，最少应先建立哪些对象之间的对应关系？
@@ -289,6 +319,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-LVM-K02-QA-001
   type: qa
   question: Physical Extent（PE）是什么？
@@ -305,6 +337,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-LVM-K02-QA-002
   type: qa
   question: 普通线性 LV 中，LE 与 PE 通常是什么关系？
@@ -321,6 +355,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-LVM-K02-QA-003
   type: qa
   question: PE 大小属于 PV、VG 还是 LV？
@@ -338,6 +374,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-LVM-K02-QA-004
   type: qa
   question: VG 的 PE 大小为 16 MiB，LV 使用 50 个 extent，LV 标称容量是多少？
@@ -354,6 +392,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-LVM-K02-QA-005
   type: qa
   question: '`lvcreate -L` 与 `lvcreate -l` 的核心区别是什么？'
@@ -371,6 +411,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-LVM-K02-QA-006
   type: qa
   question: 怎样让新 LV 使用 VG 的全部剩余 extent？
@@ -392,6 +434,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-K02-QA-007
   type: qa
   question: '`-l 70` 与 `-l +20` 在扩容时分别表示什么？'
@@ -409,6 +453,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-LVM-K02-QA-008
   type: qa
   question: 查看 VG 的 PE 大小、总 extent 和空闲 extent 的命令是什么？
@@ -430,6 +476,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O02-QA-001
   type: qa
   question: 把确认空闲的 `/dev/vdb1` 初始化为 PV 的命令是什么？
@@ -450,6 +498,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O02-QA-002
   type: qa
   question: '`pvcreate` 对设备做了什么？'
@@ -466,6 +516,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-LVM-O02-QA-003
   type: qa
   question: 使用 `/dev/vdb1` 创建 PE 大小为 16 MiB 的 `projectvg`，命令是什么？
@@ -489,6 +541,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O02-QA-004
   type: qa
   question: 创建 PV 和 VG 后，至少用哪些命令分别验证成员关系和容量？
@@ -508,6 +562,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-LVM-O02-QA-005
   type: qa
   question: PV 必须是分区吗？
@@ -524,6 +580,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-LVM-K03-QA-001
   type: qa
   question: 为什么扩大 LV 后还必须确认文件系统是否增长？
@@ -544,6 +602,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-LVM-K03-QA-002
   type: qa
   question: 在 LVM 扩容任务中，`--resizefs` 把哪两个动作连接起来？
@@ -561,6 +621,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-LVM-O04-QA-001
   type: qa
   question: 给 `projectlv` 增加 20 个 extent，并同时扩大文件系统的命令是什么？
@@ -582,6 +644,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O04-QA-002
   type: qa
   question: '`lvextend --resizefs` 中的 `--resizefs` 解决什么问题？'
@@ -599,6 +663,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-LVM-O04-QA-003
   type: qa
   question: 只执行 `lvextend` 后，`lvs` 变大但 `df` 不变，最可能说明什么？
@@ -619,6 +685,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-LVM-O04-QA-004
   type: qa
   question: 已挂载的 XFS 需要单独增长时，核心命令骨架是什么？
@@ -640,6 +708,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-LVM-O04-QA-005
   type: qa
   question: 为什么扩容前必须先确认文件系统类型？
@@ -657,6 +727,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-LVM-O04-QA-006
   type: qa
   question: 扩容完成后，为什么必须同时查看 `lvs` 和 `df -hT`？
@@ -677,6 +749,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-LVM-O04-QA-007
   type: qa
   question: 怎样证明扩容没有通过重新格式化或替换文件系统完成？
@@ -693,6 +767,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-LVM-O04-QA-008
   type: qa
   question: PE 为 16 MiB，给 LV 增加 20 个 extent，会增加多少标称容量？
@@ -709,6 +785,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-LVM-O04-QA-009
   type: qa
   question: '`-L 1120M` 与 `-L +320M` 在 `lvextend` 中有何区别？'
@@ -726,6 +804,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-LVM-C01-QA-001
   type: qa
   question: 经典任务中，16 MiB PE 的 VG 创建 50 个 extent 的 LV，初始标称容量是多少？
@@ -743,6 +823,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-LVM-C01-QA-002
   type: qa
   question: 经典任务中，初始 50 个 extent 再增加 20 个，最终标称容量是多少？
@@ -760,6 +842,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-LVM-C01-QA-003
   type: qa
   question: 怎样验证 `/etc/fstab` 中的 UUID 没有写错？
@@ -778,6 +862,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-LVM-C01-QA-004
   type: qa
   question: 怎样证明 `/srv/project` 当前确实由 `projectlv` 提供，而不是根文件系统中的普通目录？
@@ -796,6 +882,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-LVM-C01-QA-005
   type: qa
   question: 扩展任务中 `vg_free_count` 小于 20，下一步应怎样推进？
@@ -816,6 +904,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-LVM-C01-QA-006
   type: qa
   question: 经典任务中，标记文件在扩容前后保持相同能证明什么？
@@ -833,6 +923,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-LVM-C01-QA-007
   type: qa
   question: 从两个候选分区完成经典任务的主要流程骨架是什么？
@@ -850,6 +942,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-25-K01-QA-001
   type: qa
   question: 某目录需要扩容时，为什么应从 `findmnt` 开始，而不是从一个猜测的 LV 名开始？
@@ -870,6 +964,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-25-K01-QA-002
   type: qa
   question: '`findmnt -no SOURCE,FSTYPE,TARGET /srv/reports` 的三列分别回答什么？'
@@ -887,6 +983,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-25-K01-QA-003
   type: qa
   question: '`findmnt /srv/data` 显示源为 `server:/export/data`，下一步应继续查询哪个本地 VG 吗？'
@@ -904,6 +1002,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-K01-QA-004
   type: qa
   question: '`pvs` 中某 PV 的 `vg_name` 为空通常说明什么？'
@@ -920,6 +1020,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-25-K01-QA-005
   type: qa
   question: 按 20 个 extent 扩容时，`vg_free` 与 `vg_free_count` 哪个字段更直接？
@@ -937,6 +1039,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-25-K01-QA-006
   type: qa
   question: 怎样查看普通 LV 各段使用的 extent 数量？
@@ -958,6 +1062,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-25-K01-QA-007
   type: qa
   question: '`devices` 字段与 `findmnt` 的 SOURCE 各回答什么？'
@@ -978,6 +1084,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-25-K01-QA-008
   type: qa
   question: 精确验收“最终为 70 个 extent”时，为什么不应只看 `df -h`？
@@ -1001,6 +1109,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-K01-QA-009
   type: qa
   question: 怎样同时查看 PV 名称、所属 VG、大小和空闲容量？
@@ -1021,6 +1131,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-25-K01-QA-010
   type: qa
   question: 怎样同时查看 VG 的 PV 数、LV 数、总量、余量和 PE 信息？
@@ -1042,6 +1154,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-25-K02-QA-001
   type: qa
   question: 在 `lvextend -L +512M` 中，加号的语义是什么？
@@ -1059,6 +1173,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-25-K02-QA-002
   type: qa
   question: 在 `lvextend -l +100%FREE` 中，`+100%FREE` 表示什么？
@@ -1076,6 +1192,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-25-K02-QA-003
   type: qa
   question: '`lvcreate -l 100%FREE` 与 `lvextend -l +100%FREE` 的对象差异是什么？'
@@ -1093,6 +1211,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-25-K02-QA-004
   type: qa
   question: PE 为 8 MiB，题目要求增加 64 个 extent，标称增加量是多少？
@@ -1113,6 +1233,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-25-K02-QA-005
   type: qa
   question: 为什么生产扩容不应默认使用 `+100%FREE`？
@@ -1130,6 +1252,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-K02-QA-006
   type: qa
   question: 当前 LV 为 2 GiB，题目要求“增加 512 MiB”，写成 `lvextend -L 512M` 有什么问题？
@@ -1147,6 +1271,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-O02-QA-001
   type: qa
   question: '`blkid /dev/vdb1` 没有输出，能否单独证明设备可安全执行 `pvcreate`？'
@@ -1166,6 +1292,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-O02-QA-002
   type: qa
   question: '`pvcreate` 后应怎样证明设备已经成为 PV？'
@@ -1182,6 +1310,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-O02-QA-003
   type: qa
   question: '`vgcreate -s 16M projectvg /dev/vdb1` 中 `-s` 作用于哪个对象？'
@@ -1199,6 +1329,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-25-O02-QA-004
   type: qa
   question: 在 `projectvg` 中创建 50 个 extent、名为 `projectlv` 的 LV，命令是什么？
@@ -1222,6 +1354,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-25-O02-QA-005
   type: qa
   question: 创建 LV 后，怎样读取系统报告的设备路径而不是自己拼接？
@@ -1243,6 +1377,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-O02-QA-006
   type: qa
   question: VG 已创建但尚无 LV，此时应用能否通过 `/srv/project` 使用这部分容量？
@@ -1259,6 +1395,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-25-O02-QA-007
   type: qa
   question: 发现 `/dev/vdb1` 已属于另一个 VG 时，默认答案是什么？
@@ -1278,6 +1416,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-O02-QA-008
   type: qa
   question: 从安全调查到 LV 创建的最短对象闭环是什么？
@@ -1294,6 +1434,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-25-O03-QA-001
   type: qa
   question: '`lvextend` 报可用空间不足时，下一条最有区分度的证据是什么？'
@@ -1318,6 +1460,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-O03-QA-002
   type: qa
   question: 把已确认空闲的 `/dev/vdc1` 加入 `projectvg` 的推荐两步命令是什么？
@@ -1341,6 +1485,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-25-O03-QA-003
   type: qa
   question: '`vgextend` 改变了哪一层？'
@@ -1358,6 +1504,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-25-O03-QA-004
   type: qa
   question: '`vgextend` 后至少应验证哪两个事实？'
@@ -1377,6 +1525,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-O03-QA-005
   type: qa
   question: 候选设备已属于其他 VG，是否可以直接 `vgextend --force`？
@@ -1394,6 +1544,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-O03-QA-006
   type: qa
   question: 系统中另一块磁盘有未分区空间，能否直接供当前 LV 扩展？
@@ -1410,6 +1562,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-25-O03-QA-007
   type: qa
   question: '`pvs` 显示 `/dev/vdc1 projectvg`，但 `vg_free_count` 没增加，下一步应核对什么？'
@@ -1429,6 +1583,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-25-O03-QA-008
   type: qa
   question: VG 空间不足时的稳定分支是什么？
@@ -1445,6 +1601,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-25-O04-QA-001
   type: qa
   question: 不使用 `-r` 时，把 ext4 所在 LV 增加 512 MiB 并增长文件系统的两条核心命令是什么？
@@ -1471,6 +1629,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-25-O04-QA-002
   type: qa
   question: 不使用 `-r` 时，把 XFS 所在 LV 增加 20 个 extent 并增长文件系统的两条核心命令是什么？
@@ -1497,6 +1657,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-25-O04-QA-003
   type: qa
   question: '`lvextend -r` 执行失败时，为什么必须重新查询 LV 与文件系统？'
@@ -1517,6 +1679,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-O04-QA-004
   type: qa
   question: 扩展 XFS 后，用什么证据证明新增空间已被文件系统使用？
@@ -1534,6 +1698,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-O04-QA-005
   type: qa
   question: 扩展 ext4 后，用什么证据证明文件系统层完成？
@@ -1554,6 +1720,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-O04-QA-006
   type: qa
   question: '`xfs_growfs` 和 `resize2fs` 的典型作用对象有何不同？'
@@ -1571,6 +1739,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-25-O04-QA-007
   type: qa
   question: XFS 文件系统能否通过 `lvreduce` 配合工具原地缩小？
@@ -1588,6 +1758,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-O04-QA-008
   type: qa
   question: 扩容后 `findmnt` 指向另一个源，虽然 `df` 变大，任务能否视为完成？
@@ -1605,6 +1777,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-001
   type: qa
   question: '`lvs` 已增长而 `df` 未增长，下一条证据应优先确认什么？'
@@ -1625,6 +1799,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-002
   type: qa
   question: '`/srv/project` 目录存在但 `findmnt` 无结果，继续写测试文件有什么风险？'
@@ -1642,6 +1818,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-003
   type: qa
   question: '`pvcreate` 提示发现文件系统签名时，最安全的下一步是什么？'
@@ -1661,6 +1839,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-004
   type: qa
   question: VG 没有足够 PE 时，反复改变 `lvextend` 的 `-L`/`-l` 能解决问题吗？
@@ -1681,6 +1861,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-005
   type: qa
   question: '`df -hT` 与 `lvs` 的大小不完全相等，是否必然表示扩容失败？'
@@ -1701,6 +1883,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-25-D01-QA-006
   type: qa
   question: '`findmnt` 显示目标目录是 NFS，是否应运行 `lvextend`？'
@@ -1718,6 +1902,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-007
   type: qa
   question: '`lvs --segments` 显示多段线性映射时，能否只读第一行的 `seg_size_pe` 作为 LV 总 extent？'
@@ -1735,6 +1921,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-008
   type: qa
   question: 扩容后原文件校验失败，但容量和挂载都正确，任务能否视为完成？
@@ -1751,6 +1939,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-009
   type: qa
   question: '`vgextend` 后新 PV 归属正确，但扩展目标 LV 仍失败，下一条证据是什么？'
@@ -1771,6 +1961,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-D01-QA-010
   type: qa
   question: LVM 容量故障的通用诊断链是什么？
@@ -1787,6 +1979,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-25-B01-QA-001
   type: qa
   question: 为什么 `lvreduce` 不是 `lvextend` 的简单反向命令？
@@ -1807,6 +2001,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-B01-QA-002
   type: qa
   question: RHEL 9 中 XFS 的缩容边界是什么？
@@ -1824,6 +2020,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-B01-QA-003
   type: qa
   question: ext4 支持缩小，为什么本章仍不把它当作普通操作？
@@ -1841,6 +2039,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-B01-QA-004
   type: qa
   question: '`lvremove`、`vgremove`、`pvremove` 何时才应进入答案？'
@@ -1863,6 +2063,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-B01-QA-005
   type: qa
   question: 一个标记文件校验通过能否证明整个业务数据都安全？
@@ -1879,6 +2081,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-B01-QA-006
   type: qa
   question: 生产环境中使用 `lvextend -l +100%FREE` 前应额外考虑什么？
@@ -1896,6 +2100,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-B01-QA-007
   type: qa
   question: 生产扩容的多层验收至少包括哪些层？
@@ -1912,6 +2118,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-B01-QA-008
   type: qa
   question: 发现设备身份不明确、未知签名或其他 VG 归属时，正确的变更动作是什么？
@@ -1931,6 +2139,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-25-C02-QA-001
   type: qa
   question: '`reportslv` 当前为 2 GiB，要求增加 512 MiB，`lvextend` 应怎样表达？'
@@ -1953,6 +2163,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-25-C02-QA-002
   type: qa
   question: 经典 ext4 任务为何明确不使用 `-r`？
@@ -1974,6 +2186,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-25-C02-QA-003
   type: qa
   question: LV 增长后，扩展 `/dev/datavg/reportslv` 上 ext4 的命令是什么？
@@ -1996,6 +2210,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-25-C02-QA-004
   type: qa
   question: 经典 ext4 任务中，为什么要在扩容前记录 `report.db` 的校验和？
@@ -2013,6 +2229,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-C02-QA-005
   type: qa
   question: 执行 `lvextend` 后 `df` 仍为原容量，在本任务中是否异常？
@@ -2034,6 +2252,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-C02-QA-006
   type: qa
   question: '`datavg` 空间不足时，候选 `/dev/vdd1` 应经过什么路径？'
@@ -2054,6 +2274,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-25-C02-QA-007
   type: qa
   question: 经典 ext4 任务最终至少要同时证明哪些状态？
@@ -2071,6 +2293,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-25-C02-QA-008
   type: qa
   question: 为何不能通过重新格式化 `reportslv` 来“获得更大文件系统”？
@@ -2089,6 +2313,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-25-K02-CLOZE-007
   type: cloze
   text: '`lvcreate {{c1::-L}} 800M` 按容量分配；`lvcreate {{c2::-l}} 50` 按 extent 数量分配。'
@@ -2105,6 +2331,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-25-K02-CLOZE-008
   type: cloze
   text: '`lvextend -l {{c1::+20}}` 表示增加 20 个 extent；`-l {{c2::70}}` 表示目标总数为 70。'
@@ -2121,6 +2349,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-25-O03-CLOZE-009
   type: cloze
   text: 新设备要先成为 {{c1::PV}}，再通过 `vgextend` 加入 {{c2::VG}}，之后才能成为 LV 的容量来源。
@@ -2136,6 +2366,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-25-O04-CLOZE-009
   type: cloze
   text: XFS 单独增长通常执行 `xfs_growfs {{c1::<MOUNT_POINT>}}`；ext4 常执行 `resize2fs {{c2::<LV_PATH>}}`。
@@ -2152,6 +2384,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-25-D01-CLOZE-011
   type: cloze
   text: '`lvs` 变大而 `df` 不变，通常说明 {{c1::LV 已扩展但文件系统尚未增长}}。'
@@ -2171,6 +2405,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-25-B01-CLOZE-009
   type: cloze
   text: XFS 可以{{c1::增长}}，但不能原地{{c2::缩小}}。
@@ -2187,3 +2423,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

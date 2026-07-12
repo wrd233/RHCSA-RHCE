@@ -25,6 +25,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-06-K01-QA-002
   type: qa
   question: “复制目录本身”和“复制目录内容”有什么终态差异？
@@ -41,6 +43,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-K01-QA-003
   type: qa
   question: 文件的 SHA-256 相同，能否证明它们权限、所有者和时间戳也相同？
@@ -57,6 +61,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-K01-QA-004
   type: qa
   question: 一条复制命令退出状态为 0，至少还应验证哪些层次？
@@ -73,6 +79,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-K01-QA-005
   type: qa
   question: 复制目录前，哪条证据最能区分“目标不存在、目标是文件、目标是目录”？
@@ -89,6 +97,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-K01-QA-006
   type: qa
   question: '`cp -a` 或 `rsync -a` 已写入命令，为什么仍要在目标端验证属性？'
@@ -106,6 +116,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-FILES-K01-QA-007
   type: qa
   question: '`sha256sum` 能证明什么，不能证明什么？'
@@ -122,6 +134,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-K01-QA-008
   type: qa
   question: '`file`、`tar -tf` 和 `sha256sum` 分别回答什么问题？'
@@ -139,6 +153,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O01-QA-001
   type: qa
   question: 把 `/srv/source/` 的全部成员（包括隐藏成员）直接复制到已有 `/srv/destination/`，常用命令是什么？
@@ -159,6 +175,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O01-QA-002
   type: qa
   question: '`cp -R` 与 `cp -a` 的主要区别是什么？'
@@ -174,6 +192,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O01-QA-003
   type: qa
   question: 复制一个关键配置文件后，如何分别验证内容和目标模式？
@@ -196,6 +216,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O01-QA-004
   type: qa
   question: 为什么不应把 `cp -f` 作为覆盖问题的默认答案？
@@ -211,6 +233,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O01-QA-005
   type: qa
   question: '`cp -i` 适合什么场景，为什么通常不适合无人值守脚本？'
@@ -226,6 +250,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-06-O01-QA-006
   type: qa
   question: 目标中缺少 `.env`，已确认源存在。下一条最有区分度的证据是什么？
@@ -251,6 +277,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-O01-QA-007
   type: qa
   question: 同一文件系统内 `mv` 与跨文件系统 `mv` 的故障边界有何不同？
@@ -266,6 +294,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-06-O01-QA-008
   type: qa
   question: 移动完成后，只看到目标路径存在是否足够？
@@ -282,6 +312,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O01-QA-009
   type: qa
   question: '`stat -c "%F %N" link` 显示对象是 symbolic link。复制目录树时首先要决定什么？'
@@ -298,6 +330,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-FILES-O01-QA-003
   type: qa
   question: 将 `/src/` 的全部内容（包括隐藏成员）归档式复制到已有 `/dest/` 的命令是什么？
@@ -318,6 +352,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O01-QA-011
   type: qa
   question: 把单个源文件复制到已有目录和复制到不存在的路径，目标名称分别怎样确定？
@@ -333,6 +369,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O01-QA-012
   type: qa
   question: '`cp -u` 能否替代字节校验？'
@@ -349,6 +387,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O01-CLOZE-001
   type: cloze
   text: 把源目录全部成员直接复制到已有目标目录时，常用源写法是 `SOURCE/{{c1::.}}`，而不是 `SOURCE/{{c2::*}}`。
@@ -364,6 +404,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-FILES-O01-QA-002
   type: qa
   question: 把 `app.conf` 部署为 `/etc/myapp/app.conf`，创建缺失父目录并设置模式 `0640`，命令是什么？
@@ -384,6 +426,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O02-QA-002
   type: qa
   question: '`install -D` 与 `install -d` 分别做什么？'
@@ -399,6 +443,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O02-QA-003
   type: qa
   question: '`install -m 0640` 中的模式描述源还是目标？'
@@ -414,6 +460,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-06-O02-QA-004
   type: qa
   question: 创建 `/etc/myapp` 目录并设置模式 `0750` 的命令是什么？
@@ -433,6 +481,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O02-QA-005
   type: qa
   question: 普通用户执行 `install -o root` 时，为什么可能失败？
@@ -449,6 +499,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O02-QA-006
   type: qa
   question: '`install` 命令无错误后，最小的内容与属性验证组合是什么？'
@@ -472,6 +524,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O02-QA-007
   type: qa
   question: 为什么 `install` 常比“`cp` 后再 `chmod`”更适合部署脚本？
@@ -487,6 +541,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O02-QA-008
   type: qa
   question: 目标配置文件内容和模式均正确，服务仍不工作。本章下一步边界是什么？
@@ -502,6 +558,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-FILES-O04-QA-001
   type: qa
   question: '`tar` 的 `-c`、`-t`、`-x` 和 `-f` 分别表示什么？'
@@ -519,6 +577,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-FILES-O04-QA-002
   type: qa
   question: '`tar` 的 `-z`、`-j`、`-J` 分别选择哪种压缩算法？'
@@ -536,6 +596,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-FILES-O04-QA-003
   type: qa
   question: '`tar -C /srv -cf app.tar app` 中 `-C /srv` 的作用是什么？'
@@ -553,6 +615,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-06-K02-QA-004
   type: qa
   question: 归档与压缩的本质区别是什么？
@@ -570,6 +634,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-06-K02-QA-005
   type: qa
   question: '`tar -tf archive.tar.xz` 能证明什么？'
@@ -587,6 +653,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-FILES-O04-QA-004
   type: qa
   question: 不提取内容，查看 xz 压缩 tar 归档成员的命令是什么？
@@ -608,6 +676,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-K02-QA-007
   type: qa
   question: 在 `/srv` 下归档 `app` 与进入 `/srv/app` 后归档 `.`，成员顶层有什么区别？
@@ -625,6 +695,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-K02-QA-008
   type: qa
   question: 为什么未知归档应先列成员并提取到空目录？
@@ -642,6 +714,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-06-K02-QA-009
   type: qa
   question: tar 默认是否一定保存 ACL、扩展属性和 SELinux 上下文？
@@ -659,6 +733,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-06-K02-QA-010
   type: qa
   question: root 与普通用户提取同一归档时，所有者恢复有什么常见差异？
@@ -676,6 +752,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O03-QA-001
   type: qa
   question: 从 `/srv` 创建包含 `app/` 顶层的 xz 压缩归档 `/root/app.tar.xz`，命令是什么？
@@ -697,6 +775,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O03-QA-002
   type: qa
   question: 创建 gzip 和 bzip2 压缩 tar 归档的参数组合分别是什么？
@@ -714,6 +794,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O03-QA-003
   type: qa
   question: 为什么不能用 `gzip directory` 代替目录归档？
@@ -731,6 +813,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O03-QA-004
   type: qa
   question: 分别解压 `.gz`、`.bz2` 和 `.xz` 单文件的命令是什么？
@@ -748,6 +832,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O03-QA-005
   type: qa
   question: 创建压缩 tar 后，最小的非破坏性验证组合是什么？
@@ -770,6 +856,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O03-QA-006
   type: qa
   question: 使用 `tar -xzf backup.tar.xz` 报“not in gzip format”，下一条最有区分度的证据是什么？
@@ -792,6 +880,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-O03-QA-007
   type: qa
   question: 为什么归档验收应包含“试提取到空目录”？
@@ -809,6 +899,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O03-QA-008
   type: qa
   question: '`gzip -l` 或 `xz -l` 的输出能否证明 tar 成员正确？'
@@ -826,6 +918,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O03-QA-009
   type: qa
   question: '`tar -tvf` 相比 `tar -tf` 多提供哪些常用信息？'
@@ -843,6 +937,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-06-O03-QA-010
   type: qa
   question: 两个归档恢复出的普通文件完全相同，归档文件 SHA-256 是否一定相同？
@@ -862,6 +958,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-FILES-O04-CLOZE-001
   type: cloze
   text: tar 压缩选项：gzip 为 {{c1::-z}}，bzip2 为 {{c2::-j}}，xz 为 {{c3::-J}}。
@@ -878,6 +976,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-06-O03-CLOZE-002
   type: cloze
   text: 创建、列出、提取 tar 的主要操作分别是 {{c1::-c}}、{{c2::-t}}、{{c3::-x}}；归档文件由 `-f` 指定。
@@ -894,6 +994,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-06-O03-CLOZE-003
   type: cloze
   text: 固定成员顶层的常用骨架：`tar {{c1::-C /srv}} -cJf app.tar.xz {{c2::app}}`。
@@ -910,6 +1012,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-06-O04-QA-001
   type: qa
   question: '`scp`、`sftp` 和远端 `rsync` 常见的远端路径语法是什么？'
@@ -930,6 +1034,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-06-O04-QA-002
   type: qa
   question: 把本地 `archive.tar.xz` 上传到 `serverb` 的绝对目录 `/home/student/incoming/`，命令是什么？
@@ -952,6 +1058,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O04-QA-003
   type: qa
   question: 从远端下载 `/home/student/result.txt` 到本地当前目录，命令是什么？
@@ -974,6 +1082,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O04-QA-004
   type: qa
   question: 在 `sftp` 中，`pwd`/`cd` 与 `lpwd`/`lcd` 分别操作哪一端？
@@ -992,6 +1102,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O04-QA-005
   type: qa
   question: 在交互式 `sftp` 中上传和下载文件的命令分别是什么？
@@ -1010,6 +1122,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O04-QA-006
   type: qa
   question: '`host:relative/path` 的相对路径从哪里解释？'
@@ -1028,6 +1142,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O04-QA-007
   type: qa
   question: '`scp -p` 请求保留哪些常见属性？'
@@ -1043,6 +1159,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-06-O04-QA-008
   type: qa
   question: SFTP 显示上传 100%，但预期远端绝对路径没有文件。下一步最有区分度的证据是什么？
@@ -1061,6 +1179,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-O04-QA-009
   type: qa
   question: 一次性传输归档后，如何验证传输未改变归档字节？
@@ -1081,6 +1201,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O04-QA-010
   type: qa
   question: 什么时候更适合用 `sftp`，什么时候更适合用 `rsync`？
@@ -1101,6 +1223,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O04-QA-011
   type: qa
   question: RHEL 9 中，为什么不能把“`scp` 命令”简单等同于“旧 SCP 协议”？
@@ -1117,6 +1241,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O04-QA-012
   type: qa
   question: 远端目录递归传输后，除了摘要还必须检查什么高频问题？
@@ -1135,6 +1261,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O04-CLOZE-001
   type: cloze
   text: 远端路径骨架是 `{{c1::[user@]host:path}}`；冒号右侧由 {{c2::远端}} 文件系统解释。
@@ -1152,6 +1280,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-06-O04-CLOZE-002
   type: cloze
   text: SFTP 中远端工作目录命令是 {{c1::pwd/cd}}，本地工作目录命令是 {{c2::lpwd/lcd}}。
@@ -1169,6 +1299,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-FILES-O04-QA-005
   type: qa
   question: '`rsync -a /source /target/` 与 `rsync -a /source/ /target/` 的结果区别是什么？'
@@ -1185,6 +1317,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O05-QA-002
   type: qa
   question: '`rsync` 的“增量”主要表示什么？'
@@ -1201,6 +1335,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-06-O05-QA-003
   type: qa
   question: '`rsync -a` 常见地保留哪些方面，又不默认包含哪些高价值属性？'
@@ -1217,6 +1353,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-FILES-O04-QA-006
   type: qa
   question: 在不实际修改目标的情况下预览 rsync 同步，命令骨架是什么？
@@ -1237,6 +1375,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O05-QA-005
   type: qa
   question: '`rsync -i` 的用途是什么？'
@@ -1253,6 +1393,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-FILES-O04-QA-007
   type: qa
   question: 为什么 `rsync --delete` 必须先 dry-run？
@@ -1269,6 +1411,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-06-O05-QA-007
   type: qa
   question: 远端已有一个必须保留的 `remote-note.txt`，同步源内容时是否应使用 `--delete`？
@@ -1285,6 +1429,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-06-O05-QA-008
   type: qa
   question: 实际同步后再次运行同一条 `rsync -ani` 无输出，能证明什么？
@@ -1301,6 +1447,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O05-QA-009
   type: qa
   question: 为什么普通远端用户执行 `rsync -a` 时不一定能保留源 root 所有者？
@@ -1317,6 +1465,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O05-QA-010
   type: qa
   question: 把本地 `/srv/site/` 的内容直接同步到远端 `/home/student/stage/site/`，先预览的命令是什么？
@@ -1337,6 +1487,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O05-QA-011
   type: qa
   question: rsync 能否在一条普通命令中让源和目标都为两个不同的远端主机？
@@ -1352,6 +1504,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-06-O05-QA-012
   type: qa
   question: dry-run 计划在目标创建 `source/` 子目录，但任务要求内容直接进入目标。最可能的修复是什么？
@@ -1368,6 +1522,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-O05-QA-013
   type: qa
   question: 每次 rsync 都反复显示同一个文件变化，下一步先比较什么？
@@ -1385,6 +1541,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-O05-QA-014
   type: qa
   question: '`-H`、`-A`、`-X` 分别保留什么？'
@@ -1401,6 +1559,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O05-QA-015
   type: qa
   question: 为什么不应在所有同步任务中无条件添加 `-HAX`？
@@ -1417,6 +1577,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O05-QA-016
   type: qa
   question: dry-run 输出出现大量 `*deleting`，应继续实际执行吗？
@@ -1433,6 +1595,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-06-O05-QA-017
   type: qa
   question: 第二次 rsync 无变化与 `sha256sum` 相同分别证明什么？
@@ -1451,6 +1615,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-06-O05-CLOZE-001
   type: cloze
   text: '`rsync -a /source{{c1::/}} /target/` 同步源目录内容；去掉该末尾斜杠通常会在目标中形成 {{c2::source/}} 子目录。'
@@ -1466,6 +1632,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-06-O05-CLOZE-002
   type: cloze
   text: 执行前预览 rsync 的常用组合是 `rsync -a{{c1::n}}{{c2::i}} SOURCE/ DEST/`。
@@ -1481,6 +1649,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-06-O05-CLOZE-003
   type: cloze
   text: rsync 扩展属性选项：硬链接 {{c1::-H}}，ACL {{c2::-A}}，xattr {{c3::-X}}。
@@ -1496,6 +1666,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-06-O06-QA-001
   type: qa
   question: 计算一个文件 SHA-256 摘要的命令是什么？
@@ -1516,6 +1688,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O06-QA-002
   type: qa
   question: 创建并检查 SHA-256 清单的命令骨架是什么？
@@ -1538,6 +1712,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-06-O06-QA-003
   type: qa
   question: '`sha256sum -c` 全部显示 OK，是否证明清单来自可信发布者？'
@@ -1554,6 +1730,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O06-QA-004
   type: qa
   question: 如何对两个目录的普通文件建立可比较的稳定摘要视图？
@@ -1573,6 +1751,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-06-O06-QA-005
   type: qa
   question: 归档文件摘要与试提取后的成员摘要分别用于什么验收？
@@ -1592,6 +1772,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-FILES-C01-QA-002
   type: qa
   question: 归档或传输后的最小分层验证链是什么？
@@ -1610,6 +1792,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-O06-QA-007
   type: qa
   question: 两个文件大小和修改时间相同，是否足以证明内容相同？
@@ -1626,6 +1810,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-06-O06-QA-008
   type: qa
   question: 能否直接对目录执行 `sha256sum DIRECTORY` 来证明整个目录树一致？
@@ -1642,6 +1828,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-O06-QA-009
   type: qa
   question: 任务要求证明传输的 `.tar.xz` 未被改变，但不要求立即恢复。最直接的字节证据是什么？
@@ -1661,6 +1849,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-06-O06-CLOZE-001
   type: cloze
   text: 根据清单检查文件使用 `sha256sum {{c1::-c}} SHA256SUMS`。
@@ -1676,6 +1866,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-06-D01-QA-001
   type: qa
   question: 目标多出一层源目录时，下一条最有区分度的证据是什么？
@@ -1693,6 +1885,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-D01-QA-002
   type: qa
   question: 归档顶层是 `./`，但任务要求 `app/`。最小修复是什么？
@@ -1710,6 +1904,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-D01-QA-003
   type: qa
   question: 文件摘要相同但应用提示权限拒绝，下一条最有区分度的证据是什么？
@@ -1727,6 +1923,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-D01-QA-004
   type: qa
   question: rsync dry-run 计划删除大量文件时，最小安全动作是什么？
@@ -1743,6 +1941,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-D01-QA-005
   type: qa
   question: 归档扩展名为 `.tar.gz`，但 `file` 显示 xz 数据。应信任哪个证据？
@@ -1759,6 +1959,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-D01-QA-006
   type: qa
   question: 传输后远端文件大小为 0，客户端命令却退出 0。下一步应先检查什么？
@@ -1777,6 +1979,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-06-D01-QA-007
   type: qa
   question: '`install` 后文件终态正确，但服务未读取新配置。本章能否直接给出关闭 SELinux或重启所有服务的答案？'
@@ -1792,6 +1996,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-T01-QA-001
   type: qa
   question: 要求归档成员有单一顶层 `app-release/`，源为 `/srv/app-release/`。创建 xz 归档的关键命令是什么？
@@ -1813,6 +2019,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-06-T01-QA-002
   type: qa
   question: 经典归档任务中，为什么必须检查 `.release-env`？
@@ -1830,6 +2038,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-06-T01-QA-003
   type: qa
   question: 未知归档的推荐验收顺序是什么？
@@ -1847,6 +2057,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-06-T02-QA-001
   type: qa
   question: 源 `/srv/site/` 的内容必须直接进入远端 `.../site/`，rsync 源路径应怎样写？
@@ -1863,6 +2075,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-06-T02-QA-002
   type: qa
   question: 远端 `remote-note.txt` 必须保留，经典同步任务为何不能使用 `--delete`？
@@ -1879,6 +2093,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-06-T02-QA-003
   type: qa
   question: 经典同步任务执行后的验收至少包括哪些证据？
@@ -1897,3 +2113,5 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification

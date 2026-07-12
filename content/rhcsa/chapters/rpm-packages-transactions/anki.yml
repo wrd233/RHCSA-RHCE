@@ -21,6 +21,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-16-K01-QA-002
   type: qa
   question: RPM 身份中 `Version` 与 `Release` 分别由谁描述什么？
@@ -37,6 +39,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-K01-QA-003
   type: qa
   question: Epoch 在普通查询输出中经常不显眼，为什么仍不能忽略？
@@ -53,6 +57,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-16-K01-QA-004
   type: qa
   question: 为什么不能仅根据 `name-version-release.arch.rpm` 的文件名手工认定包身份？
@@ -69,6 +75,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-K01-QA-005
   type: qa
   question: 需要查看本地 `./tool.rpm` 的 Name、Epoch、Version、Release 和 Architecture，应使用什么命令骨架？
@@ -89,6 +97,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-K01-QA-006
   type: qa
   question: '`rpm -q <PACKAGE>` 与 `rpm -qp <FILE.rpm>` 的对象差异是什么？'
@@ -105,6 +115,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-K01-QA-007
   type: qa
   question: 一个 `.rpm` 文件保存在 `/tmp` 中，能否据此判断该包已经安装？
@@ -121,6 +133,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-K01-QA-008
   type: qa
   question: 为什么删除同名包前应注意多版本和多架构场景？
@@ -137,6 +151,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-K01-QA-009
   type: qa
   question: RPM 查询格式中 `--qf` 的作用是什么？
@@ -153,6 +169,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-16-K01-QA-010
   type: qa
   question: 怎样查看当前 RPM 支持的查询标签？
@@ -173,6 +191,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-K01-CLOZE-001
   type: cloze
   text: NEVRA 中的字母依次代表 {{c1::Name、Epoch、Version、Release、Architecture}}。
@@ -188,6 +208,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-16-K02-QA-001
   type: qa
   question: RPM 数据库主要记录什么？
@@ -204,6 +226,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-16-K02-QA-002
   type: qa
   question: '`rpm -qf /path` 成功与 `rpm -V <PACKAGE>` 无输出分别证明什么？'
@@ -220,6 +244,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-K02-QA-003
   type: qa
   question: 为什么 `ls /path` 成功不能证明该文件受 RPM 管理？
@@ -236,6 +262,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-K02-QA-004
   type: qa
   question: '`rpm -ql`、`rpm -qc`、`rpm -qd` 的集合关系是什么？'
@@ -252,6 +280,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-K02-QA-005
   type: qa
   question: 为什么不应使用 `rpm -ql <PACKAGE> | grep /etc` 代替 `rpm -qc <PACKAGE>`？
@@ -268,6 +298,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-K02-QA-006
   type: qa
   question: 某路径被人工删除后，为什么 `rpm -ql <PACKAGE>` 仍可能列出它？
@@ -284,6 +316,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-K02-QA-007
   type: qa
   question: RPM 文件归属与“最后修改者”有什么区别？
@@ -300,6 +334,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-K02-QA-008
   type: qa
   question: 为什么管理脚本不应直接依赖 RPM 数据库的内部文件和后端格式？
@@ -316,6 +352,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-K02-QA-009
   type: qa
   question: RPM 查询和事务普遍报数据库错误时，为什么不应立即无备份重建数据库？
@@ -332,6 +370,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-K02-CLOZE-001
   type: cloze
   text: '`rpm -ql` 读取的是 {{c1::RPM 数据库中的文件清单}}，不是对磁盘进行实时目录扫描。'
@@ -347,6 +387,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-PACKAGES-K01-QA-002
   type: qa
   question: 确认 `<PACKAGE>` 是否已安装并查看默认版本输出，命令是什么？
@@ -367,6 +409,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-PACKAGES-K01-QA-003
   type: qa
   question: 列出已安装包 `<PACKAGE>` 的全部路径，命令是什么？
@@ -387,6 +431,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O01-QA-004
   type: qa
   question: 查看已安装包 `<PACKAGE>` 的详细包头信息，命令是什么？
@@ -407,6 +453,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O01-QA-005
   type: qa
   question: 只列出已安装包 `<PACKAGE>` 的配置文件，命令是什么？
@@ -427,6 +475,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O01-QA-006
   type: qa
   question: 只列出已安装包 `<PACKAGE>` 的文档文件，命令是什么？
@@ -447,6 +497,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O01-QA-007
   type: qa
   question: 从绝对路径 `/usr/bin/example` 反查所属已安装包，命令是什么？
@@ -467,6 +519,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O01-QA-008
   type: qa
   question: 从命令名 `<COMMAND>` 调查提供它的已安装包，应按什么顺序？
@@ -483,6 +537,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-16-O01-QA-009
   type: qa
   question: 查看已安装包在安装、升级或删除时定义的 scriptlet，命令是什么？
@@ -503,6 +559,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O01-QA-010
   type: qa
   question: 查看已安装包声明的依赖，命令是什么？
@@ -523,6 +581,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O01-QA-011
   type: qa
   question: 查看已安装包声明提供的能力，命令是什么？
@@ -543,6 +603,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O01-QA-012
   type: qa
   question: '`rpm -qf <PATH>` 报没有任何包拥有该文件，下一步不应直接做什么？'
@@ -559,6 +621,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-O01-QA-013
   type: qa
   question: 用 `rpm -qc` 找到配置路径后，还需要检查什么才能证明配置可用？
@@ -575,6 +639,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-O01-QA-014
   type: qa
   question: 为什么 `rpm -q --scripts` 的输出不等于脚本已经执行成功？
@@ -591,6 +657,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O01-CLOZE-001
   type: cloze
   text: 从路径反查已安装包使用 {{c1::rpm -qf /absolute/path}}。
@@ -606,6 +674,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-16-O02-QA-001
   type: qa
   question: 查看本地 `./package.rpm` 的详细包头信息，命令是什么？
@@ -626,6 +696,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O02-QA-002
   type: qa
   question: 列出本地 `./package.rpm` 将包含的路径，命令是什么？
@@ -646,6 +718,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O02-QA-003
   type: qa
   question: 列出本地 RPM 中被标记为配置文件的路径，命令是什么？
@@ -666,6 +740,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O02-QA-004
   type: qa
   question: 查看本地 RPM 的依赖和 scriptlet，应分别使用什么命令？
@@ -688,6 +764,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O02-QA-005
   type: qa
   question: 检查本地 RPM 包文件中的摘要和数字签名，推荐命令是什么？
@@ -708,6 +786,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-16-O02-QA-006
   type: qa
   question: '`rpmkeys --checksig FILE.rpm` 与 `rpm -V PACKAGE` 分别验证哪一层？'
@@ -724,6 +804,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-O02-QA-007
   type: qa
   question: 签名检查提示缺少公钥，能否直接断言包已被篡改？
@@ -740,6 +822,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O02-QA-008
   type: qa
   question: 为什么不应从与未知 RPM 相同的未验证来源下载公钥后立即信任？
@@ -756,6 +840,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O02-QA-009
   type: qa
   question: 包未签名与签名验证失败是否等价？
@@ -772,6 +858,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O02-QA-010
   type: qa
   question: 收到第三方本地 RPM 后，安装前的主要检查顺序是什么？
@@ -788,6 +876,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-16-O02-QA-011
   type: qa
   question: 用 `rpm2cpio` 提取文件后，为什么不能说包已经安装？
@@ -805,6 +895,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O02-QA-012
   type: qa
   question: 只想列出本地 RPM 的归档内容而不安装，可使用什么命令骨架？
@@ -826,6 +918,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O02-QA-013
   type: qa
   question: 本地 RPM 的 Architecture 为 `x86_64`，安装前至少还应与什么证据比较？
@@ -842,6 +936,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-O02-CLOZE-001
   type: cloze
   text: 查询尚未安装的本地 RPM 文件时，关键选择器是 {{c1::-p}}。
@@ -857,6 +953,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-PACKAGES-K01-QA-005
   type: qa
   question: '`rpm -V <PACKAGE>` 没有输出，最低合格判断是什么？'
@@ -873,6 +971,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-002
   type: qa
   question: 验证一个已安装包的文件属性，命令是什么？
@@ -893,6 +993,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O03-QA-003
   type: qa
   question: 已知一个受 RPM 管理的路径，想通过路径选择所属包并验证，命令是什么？
@@ -913,6 +1015,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O03-QA-004
   type: qa
   question: 为什么 `rpm -Va` 不适合作为每次小变更后的默认第一条命令？
@@ -929,6 +1033,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O03-QA-005
   type: qa
   question: '`rpm -V` 差异位置中的 `S` 表示什么？'
@@ -945,6 +1051,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-006
   type: qa
   question: '`rpm -V` 差异位置中的 `M` 表示什么？'
@@ -961,6 +1069,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-007
   type: qa
   question: '`rpm -V` 差异位置中的 `5` 表示什么？'
@@ -977,6 +1087,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-008
   type: qa
   question: '`rpm -V` 差异位置中的 `D` 表示什么？'
@@ -993,6 +1105,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-009
   type: qa
   question: '`rpm -V` 差异位置中的 `L` 表示什么？'
@@ -1009,6 +1123,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-010
   type: qa
   question: '`rpm -V` 差异位置中的 `U` 表示什么？'
@@ -1025,6 +1141,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-011
   type: qa
   question: '`rpm -V` 差异位置中的 `G` 表示什么？'
@@ -1041,6 +1159,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-012
   type: qa
   question: '`rpm -V` 差异位置中的 `T` 表示什么？'
@@ -1057,6 +1177,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-013
   type: qa
   question: '`rpm -V` 差异位置中的 `P` 表示什么？'
@@ -1073,6 +1195,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-014
   type: qa
   question: '`rpm -V` 属性位置中的 `.` 与 `?` 分别表示什么？'
@@ -1089,6 +1213,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-015
   type: qa
   question: '`rpm -V` 输出中的 `missing` 表示什么？'
@@ -1105,6 +1231,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-016
   type: qa
   question: '`rpm -V` 行中的文件类别标记 `c` 通常表示什么？'
@@ -1121,6 +1249,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O03-QA-017
   type: qa
   question: 配置文件出现摘要差异时，下一条最有区分度的证据通常是什么？
@@ -1137,6 +1267,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-O03-QA-018
   type: qa
   question: 为什么不能把任何 `rpm -V` 差异直接等同于入侵？
@@ -1153,6 +1285,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O03-QA-019
   type: qa
   question: 发现关键文件 `missing` 后的调查顺序是什么？
@@ -1169,6 +1303,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-16-O03-CLOZE-001
   type: cloze
   text: '`rpm -V` 的九个常见属性位置依次为 {{c1::S M 5 D L U G T P}}。'
@@ -1184,6 +1320,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-16-K03-QA-001
   type: qa
   question: 升级后出现 `.rpmnew`，常见含义是什么？
@@ -1201,6 +1339,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-16-K03-QA-002
   type: qa
   question: 升级后出现 `.rpmsave`，常见含义是什么？
@@ -1218,6 +1358,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-16-K03-QA-003
   type: qa
   question: '`.rpmnew` 与 `.rpmsave` 的主要区别是什么？'
@@ -1235,6 +1377,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-K03-QA-004
   type: qa
   question: 为什么看到 `.rpmnew` 后不应直接覆盖正式配置？
@@ -1252,6 +1396,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-K03-QA-005
   type: qa
   question: 在 `/etc` 中定位 `.rpmnew` 和 `.rpmsave` 的命令骨架是什么？
@@ -1273,6 +1419,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-K03-QA-006
   type: qa
   question: 处理旁置配置文件的正确流程是什么？
@@ -1290,6 +1438,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-16-K03-QA-007
   type: qa
   question: 完成 `.rpmnew` 合并后，为什么还需要应用自身的配置检查？
@@ -1307,6 +1457,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-K03-QA-008
   type: qa
   question: 什么时候才适合删除 `.rpmnew` 或 `.rpmsave`？
@@ -1324,6 +1476,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-K03-QA-009
   type: qa
   question: 升级事务成功但应用拒绝新参数，下一条最有区分度的证据是什么？
@@ -1341,6 +1495,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-K03-CLOZE-001
   type: cloze
   text: 旁置配置的处理顺序是 {{c1::diff → 选择性合并 → 语法检查 → 应用加载 → 功能验证}}。
@@ -1357,6 +1513,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-PACKAGES-K01-QA-006
   type: qa
   question: RPM 与 DNF 在 RHEL 9 软件管理中的职责边界是什么？
@@ -1374,6 +1532,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-O04-QA-002
   type: qa
   question: 使用推荐路径安装本地 `./package.rpm`，命令是什么？
@@ -1395,6 +1555,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-16-O04-QA-003
   type: qa
   question: 本地 RPM 安装命令中为什么常写 `./package.rpm` 而不是只写文件名？
@@ -1412,6 +1574,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-16-O04-QA-004
   type: qa
   question: '`dnf install`、`dnf upgrade` 与 `dnf reinstall` 的目标差异是什么？'
@@ -1429,6 +1593,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-O04-QA-005
   type: qa
   question: '`rpm -i`、`rpm -U`、`rpm -F` 的语义差异是什么？'
@@ -1445,6 +1611,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-O04-QA-008
   type: qa
   question: 为什么 `dnf history undo <ID>` 不能视为无条件回滚按钮？
@@ -1462,6 +1630,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O04-QA-009
   type: qa
   question: 为什么不使用 `rpm --nodeps` 解决依赖失败？
@@ -1478,6 +1648,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O04-QA-010
   type: qa
   question: '`rpm --force` 为什么是高风险选项？'
@@ -1494,6 +1666,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O04-QA-011
   type: qa
   question: 为什么不把 `dnf --nogpgcheck` 当作签名问题的默认修复？
@@ -1511,6 +1685,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O04-QA-012
   type: qa
   question: DNF 事务摘要计划删除大量超出目标的包，最合理的动作是什么？
@@ -1528,6 +1704,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-16-O04-QA-013
   type: qa
   question: 使用 `dnf reinstall` 恢复文件后，为什么仍需运行 `rpm -V` 和应用验证？
@@ -1545,6 +1723,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-O04-QA-014
   type: qa
   question: '`rpm --test` 的作用是什么？'
@@ -1561,6 +1741,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-16-O04-QA-015
   type: qa
   question: 为什么第一次审阅高影响事务时不应直接添加 `-y`？
@@ -1578,6 +1760,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O04-CLOZE-001
   type: cloze
   text: 安装本地 RPM 的推荐命令骨架是 {{c1::dnf install ./package.rpm}}。
@@ -1594,6 +1778,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-16-O05-QA-001
   type: qa
   question: 软件事务后的分层验收顺序是什么？
@@ -1611,6 +1797,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-16-O05-QA-002
   type: qa
   question: DNF 显示 `Complete!` 后，包层第一条独立证据是什么？
@@ -1628,6 +1816,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-O05-QA-003
   type: qa
   question: 确认包已安装后，怎样验证一个关键文件确实由目标包管理？
@@ -1644,6 +1834,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-O05-QA-004
   type: qa
   question: 升级后为什么要同时检查 `rpm -V` 和 `.rpmnew/.rpmsave`？
@@ -1661,6 +1853,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-O05-QA-006
   type: qa
   question: 包提供 systemd unit 时，至少应分开检查哪些状态？
@@ -1678,6 +1872,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-O05-QA-007
   type: qa
   question: 为什么不能为所有应用统一编造 `<COMMAND> --config-test`？
@@ -1695,6 +1891,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-O05-QA-008
   type: qa
   question: 事务后保留 `dnf history info <ID>` 有什么价值？
@@ -1712,6 +1910,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-O05-QA-009
   type: qa
   question: 包层、文件层与功能层分别回答什么问题？
@@ -1729,6 +1929,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-16-O05-QA-010
   type: qa
   question: 把手工包变更迁移为自动化状态时，应至少表达哪些内容？
@@ -1746,6 +1948,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-16-O05-CLOZE-001
   type: cloze
   text: 事务成功后的第一层独立验证是 {{c1::查询 RPM 数据库中的最终 NEVRA}}，而不是只保留 DNF 的最后一行。
@@ -1762,6 +1966,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-16-D01-QA-001
   type: qa
   question: '`dnf install ./package.rpm` 失败，下一条证据链应从哪里开始？'
@@ -1779,6 +1985,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-002
   type: qa
   question: 包显示已安装，但关键文件缺失，下一步最有区分度的证据是什么？
@@ -1795,6 +2003,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-003
   type: qa
   question: 升级后应用无法启动且目录中出现 `.rpmnew`，优先调查什么？
@@ -1812,6 +2022,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-004
   type: qa
   question: DNF 删除摘要超出预期，为什么“取消”是正确诊断动作？
@@ -1829,6 +2041,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-005
   type: qa
   question: DNF 成功但命令仍找不到，应按什么顺序调查？
@@ -1846,6 +2060,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-006
   type: qa
   question: 签名检查提示缺少公钥，最小安全处理是什么？
@@ -1862,6 +2078,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-007
   type: qa
   question: '`dnf history undo` 因旧版本不可用而失败，下一步是什么？'
@@ -1879,6 +2097,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-008
   type: qa
   question: '`rpm -V` 只有 `T` 差异，能否据此断言文件内容改变？'
@@ -1895,6 +2115,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-009
   type: qa
   question: 大量包同时出现文件摘要差异，为什么不应逐包重装作为第一步？
@@ -1911,6 +2133,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-QA-010
   type: qa
   question: 为什么不把服务 `active` 当作软件事务的最终验收？
@@ -1927,6 +2151,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-D01-QA-011
   type: qa
   question: 本地包 Architecture 与 `uname -m` 不一致时，为什么不应尝试 `--force`？
@@ -1943,6 +2169,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-16-D01-CLOZE-001
   type: cloze
   text: 诊断软件事务遵循 {{c1::症状 → 当前证据 → 假设 → 最有区分度的下一条证据 → 最小修复 → 再验证}}。
@@ -1959,6 +2187,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-16-T01-QA-001
   type: qa
   question: 题目给出一个配置路径和关键文件路径，但没有包名。调查的第一步是什么？
@@ -1975,6 +2205,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-16-T01-QA-002
   type: qa
   question: 识别包后，怎样建立“身份—清单—差异”的最小证据组？
@@ -1991,6 +2223,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-16-T01-QA-003
   type: qa
   question: 任务要求保留合法本地配置，为什么不能通过 `dnf reinstall` 直接完成？
@@ -2008,6 +2242,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-16-T01-QA-004
   type: qa
   question: 安装本地 RPM 的综合任务中，DNF 确认前必须核对哪些摘要信息？
@@ -2025,6 +2261,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-16-T01-QA-005
   type: qa
   question: 本地 RPM 任务完成后，最小验收矩阵包含哪些层次？
@@ -2042,6 +2280,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-16-T01-QA-006
   type: qa
   question: 综合任务中为什么不能编造服务名或端口作为验收？
@@ -2059,6 +2299,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-16-T01-CLOZE-001
   type: cloze
   text: 综合验收不能止于 `Complete!`，还要完成 {{c1::NEVRA、文件、配置、unit 与真实功能}} 的分层证据。
@@ -2075,3 +2317,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

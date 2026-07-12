@@ -26,6 +26,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-O02-QA-002
   model: RedHat-QA
   type: qa
@@ -47,6 +49,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-O02-QA-003
   model: RedHat-QA
   type: qa
@@ -64,6 +68,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-SERVICES-O02-QA-004
   model: RedHat-QA
   type: qa
@@ -85,6 +91,8 @@ notes:
   - card::verification
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-SERVICES-O02-QA-005
   model: RedHat-QA
   type: qa
@@ -107,6 +115,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-O02-QA-006
   model: RedHat-QA
   type: qa
@@ -124,6 +134,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-K01-QA-001
   model: RedHat-QA
   type: qa
@@ -141,6 +153,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-K01-QA-002
   model: RedHat-QA
   type: qa
@@ -159,6 +173,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-K01-QA-003
   model: RedHat-QA
   type: qa
@@ -176,6 +192,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-K01-QA-004
   model: RedHat-QA
   type: qa
@@ -193,6 +211,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-K01-QA-005
   model: RedHat-QA
   type: qa
@@ -210,6 +230,8 @@ notes:
   - card::concept
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-13-K01-QA-006
   model: RedHat-QA
   type: qa
@@ -227,6 +249,8 @@ notes:
   - card::concept
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-13-K01-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -244,6 +268,8 @@ notes:
   - card::cloze
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-13-O01-QA-001
   model: RedHat-QA
   type: qa
@@ -265,6 +291,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O01-QA-002
   model: RedHat-QA
   type: qa
@@ -282,6 +310,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O01-QA-003
   model: RedHat-QA
   type: qa
@@ -303,6 +333,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O01-QA-004
   model: RedHat-QA
   type: qa
@@ -324,6 +356,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O01-QA-005
   model: RedHat-QA
   type: qa
@@ -342,6 +376,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O01-QA-006
   model: RedHat-QA
   type: qa
@@ -360,6 +396,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O01-QA-007
   model: RedHat-QA
   type: qa
@@ -377,6 +415,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-O01-QA-008
   model: RedHat-QA
   type: qa
@@ -394,6 +434,8 @@ notes:
   - card::syntax
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-13-O01-QA-009
   model: RedHat-QA
   type: qa
@@ -411,6 +453,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O01-QA-010
   model: RedHat-QA
   type: qa
@@ -428,6 +472,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O01-QA-011
   model: RedHat-QA
   type: qa
@@ -445,6 +491,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-O01-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -461,6 +509,8 @@ notes:
   - card::cloze
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-13-O02-QA-001
   model: RedHat-QA
   type: qa
@@ -482,6 +532,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O02-QA-002
   model: RedHat-QA
   type: qa
@@ -499,6 +551,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O02-QA-003
   model: RedHat-QA
   type: qa
@@ -516,6 +570,8 @@ notes:
   - card::concept
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-13-O02-QA-004
   model: RedHat-QA
   type: qa
@@ -533,6 +589,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O02-QA-005
   model: RedHat-QA
   type: qa
@@ -550,6 +608,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O02-QA-006
   model: RedHat-QA
   type: qa
@@ -567,6 +627,8 @@ notes:
   - card::output
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-13-O02-QA-007
   model: RedHat-QA
   type: qa
@@ -584,6 +646,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-O02-QA-008
   model: RedHat-QA
   type: qa
@@ -605,6 +669,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O02-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -621,6 +687,8 @@ notes:
   - card::cloze
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-13-O03-QA-001
   model: RedHat-QA
   type: qa
@@ -638,6 +706,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O03-QA-002
   model: RedHat-QA
   type: qa
@@ -655,6 +725,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O03-QA-003
   model: RedHat-QA
   type: qa
@@ -672,6 +744,8 @@ notes:
   - card::configuration
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-13-O03-QA-004
   model: RedHat-QA
   type: qa
@@ -693,6 +767,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O03-QA-005
   model: RedHat-QA
   type: qa
@@ -710,6 +786,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O03-QA-006
   model: RedHat-QA
   type: qa
@@ -727,6 +805,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O03-QA-007
   model: RedHat-QA
   type: qa
@@ -750,6 +830,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O03-QA-008
   model: RedHat-QA
   type: qa
@@ -769,6 +851,8 @@ notes:
   - card::verification
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-13-O03-QA-009
   model: RedHat-QA
   type: qa
@@ -790,6 +874,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O03-QA-010
   model: RedHat-QA
   type: qa
@@ -807,6 +893,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O03-QA-011
   model: RedHat-QA
   type: qa
@@ -824,6 +912,8 @@ notes:
   - card::security
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-13-O03-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -840,6 +930,8 @@ notes:
   - card::cloze
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-13-O04-QA-001
   model: RedHat-QA
   type: qa
@@ -856,6 +948,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O04-QA-002
   model: RedHat-QA
   type: qa
@@ -874,6 +968,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O04-QA-003
   model: RedHat-QA
   type: qa
@@ -890,6 +986,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O04-QA-004
   model: RedHat-QA
   type: qa
@@ -910,6 +1008,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O04-QA-005
   model: RedHat-QA
   type: qa
@@ -926,6 +1026,8 @@ notes:
   - card::verification
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-13-O04-QA-006
   model: RedHat-QA
   type: qa
@@ -944,6 +1046,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-O05-QA-001
   model: RedHat-QA
   type: qa
@@ -965,6 +1069,8 @@ notes:
   - card::syntax
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-13-O05-QA-002
   model: RedHat-QA
   type: qa
@@ -982,6 +1088,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O05-QA-003
   model: RedHat-QA
   type: qa
@@ -999,6 +1107,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O05-QA-004
   model: RedHat-QA
   type: qa
@@ -1016,6 +1126,8 @@ notes:
   - card::configuration
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-13-O05-QA-005
   model: RedHat-QA
   type: qa
@@ -1033,6 +1145,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-O05-QA-006
   model: RedHat-QA
   type: qa
@@ -1051,6 +1165,8 @@ notes:
   - card::verification
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-13-O05-QA-007
   model: RedHat-QA
   type: qa
@@ -1068,6 +1184,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-O05-QA-008
   model: RedHat-QA
   type: qa
@@ -1085,6 +1203,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-O05-QA-009
   model: RedHat-QA
   type: qa
@@ -1102,6 +1222,8 @@ notes:
   - card::security
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-13-O05-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -1119,6 +1241,8 @@ notes:
   - card::cloze
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-13-O06-QA-001
   model: RedHat-QA
   type: qa
@@ -1136,6 +1260,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O06-QA-002
   model: RedHat-QA
   type: qa
@@ -1153,6 +1279,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-O06-QA-003
   model: RedHat-QA
   type: qa
@@ -1170,6 +1298,8 @@ notes:
   - card::concept
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-13-O06-QA-004
   model: RedHat-QA
   type: qa
@@ -1187,6 +1317,8 @@ notes:
   - card::process
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-13-O06-QA-005
   model: RedHat-QA
   type: qa
@@ -1205,6 +1337,8 @@ notes:
   - card::verification
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-13-O06-QA-006
   model: RedHat-QA
   type: qa
@@ -1222,6 +1356,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-O07-QA-001
   model: RedHat-QA
   type: qa
@@ -1238,6 +1374,8 @@ notes:
   - card::concept
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-13-O07-QA-002
   model: RedHat-QA
   type: qa
@@ -1254,6 +1392,8 @@ notes:
   - card::configuration
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-13-O07-QA-003
   model: RedHat-QA
   type: qa
@@ -1270,6 +1410,8 @@ notes:
   - card::concept
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-13-O07-QA-004
   model: RedHat-QA
   type: qa
@@ -1286,6 +1428,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O07-QA-005
   model: RedHat-QA
   type: qa
@@ -1302,6 +1446,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O07-QA-006
   model: RedHat-QA
   type: qa
@@ -1318,6 +1464,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O07-QA-007
   model: RedHat-QA
   type: qa
@@ -1334,6 +1482,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O07-QA-008
   model: RedHat-QA
   type: qa
@@ -1350,6 +1500,8 @@ notes:
   - card::parameter
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-13-O07-QA-009
   model: RedHat-QA
   type: qa
@@ -1366,6 +1518,8 @@ notes:
   - card::comparison
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-13-O07-QA-010
   model: RedHat-QA
   type: qa
@@ -1386,6 +1540,8 @@ notes:
   - card::command
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-13-O07-QA-011
   model: RedHat-QA
   type: qa
@@ -1402,6 +1558,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-O07-QA-012
   model: RedHat-QA
   type: qa
@@ -1418,6 +1576,8 @@ notes:
   - card::concept
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-13-O07-QA-013
   model: RedHat-QA
   type: qa
@@ -1434,6 +1594,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-O07-QA-014
   model: RedHat-QA
   type: qa
@@ -1451,6 +1613,8 @@ notes:
   - card::verification
   - priority::P0
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-13-O07-QA-015
   model: RedHat-QA
   type: qa
@@ -1468,6 +1632,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-O07-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -1483,6 +1649,8 @@ notes:
   - card::cloze
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-13-D01-QA-001
   model: RedHat-QA
   type: qa
@@ -1500,6 +1668,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-D01-QA-002
   model: RedHat-QA
   type: qa
@@ -1519,6 +1689,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-D01-QA-003
   model: RedHat-QA
   type: qa
@@ -1535,6 +1707,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-D01-QA-004
   model: RedHat-QA
   type: qa
@@ -1552,6 +1726,8 @@ notes:
   - card::diagnosis
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-13-D01-QA-005
   model: RedHat-QA
   type: qa
@@ -1570,6 +1746,8 @@ notes:
   - card::process
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-13-D01-QA-006
   model: RedHat-QA
   type: qa
@@ -1589,6 +1767,8 @@ notes:
   - card::process
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-13-D01-QA-007
   model: RedHat-QA
   type: qa
@@ -1609,6 +1789,8 @@ notes:
   - card::boundary
   - priority::P2
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-13-D01-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -1623,3 +1805,5 @@ notes:
   - card::cloze
   - priority::P1
   priority: P1
+  disabled: false
+  semantic_type: cloze

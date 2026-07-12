@@ -8,5 +8,5 @@
 - Source completeness: 100%
 
 - APKG bytes: 2220250
-- APKG SHA-256: `bd1ffb91da1ad2c4c97b5d2e484f4d772aa239b836101038fcdb7c6651448b33`
+- APKG SHA-256: `b951ba04708d3fdb5a76b63275260bc1afe35b8e50b689cf08e5a9ee05aa2132`
 - AnkiConnect: added 10, updated 2011, unchanged 1342; readback 3363 notes / 3711 cards.

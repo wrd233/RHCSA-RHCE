@@ -21,6 +21,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-FILES-O02-QA-002
   type: qa
   question: 用 `find` 只选择普通文件的测试是什么？
@@ -37,6 +39,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-FILES-O02-QA-003
   type: qa
   question: '`find ... -size +10M` 中的 `+` 表示什么？'
@@ -53,6 +57,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-FILES-O02-QA-004
   type: qa
   question: '`find ... -mtime -7` 的核心语义是什么？'
@@ -69,6 +75,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-FILES-O02-QA-005
   type: qa
   question: 为什么不推荐 `for f in $(find ...)` 处理路径？
@@ -86,6 +94,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-FILES-O02-QA-006
   type: qa
   question: 候选直接来自 `find`，要批量把路径作为独立参数传给命令，推荐什么动作？
@@ -102,6 +112,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-FILES-O02-QA-007
   type: qa
   question: '`find` 与 `xargs` 之间安全传递任意文件名的组合是什么？'
@@ -119,6 +131,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-FILES-O03-QA-001
   type: qa
   question: '`grep -E`、`-i`、`-n`、`-v` 分别表示什么？'
@@ -136,6 +150,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-FILES-O03-QA-002
   type: qa
   question: 为什么 `uniq` 前通常先运行 `sort`？
@@ -156,6 +172,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-FILES-O03-QA-003
   type: qa
   question: 验证文本筛选结果时，除了结果非空还应检查什么？
@@ -171,6 +189,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-FILES-O02-CLOZE-001
   type: cloze
   text: 安全路径批处理可用 `find ... {{c1::-exec command -- {} +}}`；NUL 管道使用 `{{c2::-print0}} | xargs -0 -r`。
@@ -187,6 +207,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-05-K01-QA-001
   type: qa
   question: 在本章流水线中，“文件对象”和“路径文本”有什么区别？
@@ -203,6 +225,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-K01-QA-002
   type: qa
   question: 为什么必须先确定记录分隔符，再讨论字段分隔符？
@@ -222,6 +246,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-05-K01-QA-003
   type: qa
   question: '`find`、`grep` 与 `awk` 分别主要选择哪个层次的对象？'
@@ -243,6 +269,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-K01-QA-004
   type: qa
   question: 批量修改前，候选清单为什么应被视为审计真源？
@@ -258,6 +286,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-K01-QA-005
   type: qa
   question: 路径名中哪些字节不能出现，因此可作为任意文件名的安全分隔符？
@@ -275,6 +305,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-K01-QA-006
   type: qa
   question: 为什么“命令退出 0”不能单独证明批量文本任务完成？
@@ -290,6 +322,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-K02-QA-001
   type: qa
   question: 省略 `find` 搜索起点时，GNU `find` 从哪里开始？
@@ -306,6 +340,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-K02-QA-002
   type: qa
   question: 为什么 `find /etc -name *.conf` 的语义不稳定？
@@ -322,6 +358,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-K02-QA-003
   type: qa
   question: '`-maxdepth 1` 与 `-mindepth 1` 分别限制什么？'
@@ -338,6 +376,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-K02-QA-004
   type: qa
   question: 从 `/` 查找大文件时，`-xdev` 的主要作用是什么？
@@ -354,6 +394,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-K02-QA-005
   type: qa
   question: GNU `find` 默认的符号链接处理模式是什么？
@@ -370,6 +412,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-05-K02-QA-006
   type: qa
   question: '`find` 标准输出为空时，下一条最有区分度的证据是什么？'
@@ -386,6 +430,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-K02-QA-007
   type: qa
   question: 遍历目录时，目录的哪类权限直接影响 `find` 进入已知子路径？
@@ -402,6 +448,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-K02-QA-008
   type: qa
   question: 为什么批量修改任务通常不应随意给 `find` 加 `-L`？
@@ -418,6 +466,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-05-O01-QA-001
   type: qa
   question: '`find -name` 与 `find -path` 的匹配对象分别是什么？'
@@ -434,6 +484,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-O01-QA-002
   type: qa
   question: 不区分大小写匹配文件 basename 使用什么测试？
@@ -450,6 +502,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O01-QA-003
   type: qa
   question: 查找所有者为 `appsvc`、组为 `ops` 的普通文件，条件骨架是什么？
@@ -466,6 +520,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O01-QA-004
   type: qa
   question: '`-nouser` 和 `-nogroup` 分别发现什么？'
@@ -482,6 +538,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-O01-QA-005
   type: qa
   question: '`find -perm 0640` 的语义是什么？'
@@ -498,6 +556,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O01-QA-006
   type: qa
   question: '`find -perm -0600` 的语义是什么？'
@@ -514,6 +574,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O01-QA-007
   type: qa
   question: '`find -perm /002` 的语义是什么？'
@@ -530,6 +592,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O01-QA-008
   type: qa
   question: 按字节精确复核 `find -size` 边界，推荐什么证据？
@@ -546,6 +610,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-O01-QA-009
   type: qa
   question: 最近 90 分钟修改过的文件应优先使用哪个测试？
@@ -562,6 +628,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O01-QA-010
   type: qa
   question: 需要表达“参照文件之后修改”的条件，使用什么测试？
@@ -578,6 +646,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O01-QA-011
   type: qa
   question: 查找 `/usr/share` 下大于 50 MiB 且小于 100 MiB 的普通文件，命令骨架是什么？
@@ -594,6 +664,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O01-QA-012
   type: qa
   question: '`find` 结果中的一个路径在稍后执行时已被替换，这说明什么边界？'
@@ -610,6 +682,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-O02-QA-001
   type: qa
   question: '`find` 相邻测试之间没有显式运算符时，默认是什么？'
@@ -626,6 +700,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-05-O02-QA-002
   type: qa
   question: '`find` 中 AND 与 OR 哪个优先级更高？'
@@ -642,6 +718,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-O02-QA-003
   type: qa
   question: 只选择普通 `.conf` 或 `.ini` 文件的正确表达式骨架是什么？
@@ -658,6 +736,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-05-O02-QA-004
   type: qa
   question: 为什么动作放在 OR 表达式一侧可能导致部分对象不输出？
@@ -674,6 +754,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-O02-QA-005
   type: qa
   question: '`find` 没有显式动作时通常采用什么默认动作？'
@@ -690,6 +772,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-05-O02-QA-006
   type: qa
   question: 使用 `find -printf` 时，为什么格式中通常要显式写 `\n`？
@@ -706,6 +790,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-05-O02-QA-007
   type: qa
   question: '`-exec command {} \;` 与 `-exec command {} +` 的主要差异是什么？'
@@ -722,6 +808,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-O02-QA-008
   type: qa
   question: '`-execdir` 相比 `-exec` 改变了什么？'
@@ -738,6 +826,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-O02-QA-009
   type: qa
   question: 为什么 `-ok` 不等于完整的批量变更安全流程？
@@ -754,6 +844,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-K03-QA-001
   type: qa
   question: '`locate` 为什么通常比 `find` 快？'
@@ -771,6 +863,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-K03-QA-002
   type: qa
   question: 刚创建的文件为什么可能无法被 `locate` 找到？
@@ -788,6 +882,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-K03-QA-003
   type: qa
   question: '`locate` 返回的路径已经不存在，最合理的解释是什么？'
@@ -805,6 +901,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-05-K03-QA-004
   type: qa
   question: '`updatedb` 执行成功能证明所有挂载点都已被索引吗？'
@@ -822,6 +920,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-K03-QA-005
   type: qa
   question: '`locate` 候选的最小实时确认组合是什么？'
@@ -839,6 +939,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-K04-QA-001
   type: qa
   question: 搜索含有字面量 `server[1]` 的记录，为什么优先使用 `grep -F`？
@@ -856,6 +958,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-K04-QA-002
   type: qa
   question: '`grep` 与 `grep -E` 分别使用哪类正则？'
@@ -873,6 +977,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-K04-QA-003
   type: qa
   question: 完整匹配有效行 `Listen 8080`，允许空白变化，ERE 骨架是什么？
@@ -890,6 +996,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-05-K04-QA-004
   type: qa
   question: POSIX 字符类 `[[:digit:]]` 相比 `[0-9]` 的主要价值是什么？
@@ -907,6 +1015,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-K04-QA-005
   type: qa
   question: 只输出包含匹配记录的文件名，使用什么选项？
@@ -924,6 +1034,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-K04-QA-006
   type: qa
   question: '`grep -c` 统计的是什么？'
@@ -941,6 +1053,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-05-K04-QA-007
   type: qa
   question: '`grep -o` 输出什么？'
@@ -958,6 +1072,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-05-K04-QA-008
   type: qa
   question: '`grep` 退出状态 0、1、2 通常分别表示什么？'
@@ -975,6 +1091,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-05-K04-QA-009
   type: qa
   question: 为什么诊断输入错误时不应只依赖 `grep -q`？
@@ -992,6 +1110,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-K04-QA-010
   type: qa
   question: 递归搜索目录时，`grep -r` 与 `-R` 的关键边界是什么？
@@ -1009,6 +1129,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-K04-QA-011
   type: qa
   question: 为什么不把 `grep -a` 作为所有文件的默认选项？
@@ -1026,6 +1148,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-K04-QA-012
   type: qa
   question: 模式由 Shell 变量提供时，命令骨架应怎样引用？
@@ -1043,6 +1167,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O03-QA-001
   type: qa
   question: '`cut -d: -f1,3 /etc/passwd` 的输入合同是什么？'
@@ -1063,6 +1189,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-05-O03-QA-002
   type: qa
   question: '`cut -s -d: -f1` 中 `-s` 有什么作用？'
@@ -1083,6 +1211,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O03-QA-003
   type: qa
   question: 为什么不推荐长期依赖 `cut -d" " -f10` 解析面向人的对齐输出？
@@ -1103,6 +1233,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-O03-QA-004
   type: qa
   question: 按冒号第 3 字段数字升序、再按第 1 字段排序，`sort` 骨架是什么？
@@ -1123,6 +1255,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O03-QA-005
   type: qa
   question: 为什么机器可重复排序常局部使用 `LC_ALL=C`？
@@ -1143,6 +1277,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-O03-QA-006
   type: qa
   question: '`sort -n` 与默认 `sort` 的差异是什么？'
@@ -1163,6 +1299,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-O03-QA-007
   type: qa
   question: '`uniq -c` 输出的计数针对什么？'
@@ -1183,6 +1321,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-05-O03-QA-008
   type: qa
   question: 需要保留首次出现顺序并去重，可使用什么简短 `awk` 模式？
@@ -1199,6 +1339,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O03-QA-009
   type: qa
   question: '`tr -d ''root''` 为什么不是删除单词 `root`？'
@@ -1219,6 +1361,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-O03-QA-010
   type: qa
   question: 把连续空白压缩为一个空格，`tr` 骨架是什么？
@@ -1239,6 +1383,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-O03-QA-011
   type: qa
   question: '`wc -l` 实际统计什么？'
@@ -1259,6 +1405,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-05-O03-QA-012
   type: qa
   question: '`wc -c` 与 `wc -m` 分别统计什么？'
@@ -1279,6 +1427,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-O04-QA-001
   type: qa
   question: 只打印第 10 到 20 行的 `sed` 命令骨架是什么？
@@ -1296,6 +1446,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O04-QA-002
   type: qa
   question: 使用 `sed -n '/ERROR/p' file` 时，`-n` 的作用是什么？
@@ -1313,6 +1465,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O04-QA-003
   type: qa
   question: '`sed s///` 默认替换每条记录中的多少次匹配？'
@@ -1330,6 +1484,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O04-QA-004
   type: qa
   question: '`sed` 替换文本中的 `&` 代表什么？'
@@ -1347,6 +1503,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-05-O04-QA-005
   type: qa
   question: 处理路径替换时为什么常把 `s/old/new/` 的分隔符改为 `#`？
@@ -1364,6 +1522,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O04-QA-006
   type: qa
   question: '`sed -i.rhcsa05.bak` 与 `sed -i` 的主要差异是什么？'
@@ -1381,6 +1541,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-O04-QA-007
   type: qa
   question: 为什么 `sed -n -i 's/old/new/' file` 可能把文件写空？
@@ -1398,6 +1560,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-O04-QA-008
   type: qa
   question: 即使内容替换正确，`sed -i` 后还应验证哪些非内容边界？
@@ -1415,6 +1579,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-O05-QA-001
   type: qa
   question: '`awk` 中 `$0`、`$1` 和 `NF` 分别是什么？'
@@ -1431,6 +1597,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-05-O05-QA-002
   type: qa
   question: '`NR` 与 `FNR` 的差异是什么？'
@@ -1447,6 +1615,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-O05-QA-003
   type: qa
   question: '`awk -F: -v OFS="\t"` 分别设置什么？'
@@ -1463,6 +1633,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O05-QA-004
   type: qa
   question: '`awk ''$3 >= 1000 {print $1}'' /etc/passwd` 的模式和动作分别是什么？'
@@ -1479,6 +1651,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-05-O05-QA-005
   type: qa
   question: '`awk` 中正则匹配和否定匹配分别使用什么运算符？'
@@ -1495,6 +1669,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O05-QA-006
   type: qa
   question: 为什么从 Shell 向 `awk` 传值优先使用 `-v name="$value"`？
@@ -1511,6 +1687,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-O05-QA-007
   type: qa
   question: 验证冒号记录必须有 5 个字段，`awk` 条件是什么？
@@ -1527,6 +1705,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-O05-QA-008
   type: qa
   question: 按用户统计记录数的关联数组骨架是什么？
@@ -1543,6 +1723,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-O05-QA-009
   type: qa
   question: '`print` 与 `printf` 在输出合同上的主要差异是什么？'
@@ -1559,6 +1741,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-05-O05-QA-010
   type: qa
   question: 为什么旧异常文件在本次没有异常时可能造成误判？
@@ -1575,6 +1759,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-O06-QA-001
   type: qa
   question: 普通 `xargs` 默认怎样解释空白和引号，为什么不适合任意文件名？
@@ -1592,6 +1778,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-O06-QA-002
   type: qa
   question: GNU `xargs -r` 解决什么问题？
@@ -1609,6 +1797,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O06-QA-003
   type: qa
   question: '`grep -lZ` 中 `-Z` 的作用是什么？'
@@ -1629,6 +1819,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O06-QA-004
   type: qa
   question: '`xargs -n 20` 的语义是什么？'
@@ -1646,6 +1838,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-05-O06-QA-005
   type: qa
   question: '`xargs -I {}` 的主要代价是什么？'
@@ -1663,6 +1857,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-O06-QA-006
   type: qa
   question: 为什么不把 `xargs -P` 作为批量修改默认答案？
@@ -1680,6 +1876,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-05-O06-QA-007
   type: qa
   question: 文件名以 `-` 开头时，子命令参数边界怎样处理？
@@ -1697,6 +1895,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-O06-QA-008
   type: qa
   question: NUL 流水线能否消除选择后对象被替换的竞态？
@@ -1714,6 +1914,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-05-D01-QA-001
   type: qa
   question: '`find` 复杂表达式结果过多时，第一步怎样缩小问题？'
@@ -1730,6 +1932,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-05-D01-QA-002
   type: qa
   question: 为什么验证筛选模式必须包含反例？
@@ -1745,6 +1949,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-D01-QA-003
   type: qa
   question: '`uniq` 后仍出现“看起来相同”的记录，下一条证据是什么？'
@@ -1768,6 +1974,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-D01-QA-004
   type: qa
   question: 批量动作只处理部分对象时，应保留哪四类证据？
@@ -1783,6 +1991,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-05-D01-QA-005
   type: qa
   question: 预览集合与执行集合为什么应来自同一个机器可读清单？
@@ -1800,6 +2010,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-D01-QA-006
   type: qa
   question: 文本批量任务的最小验收矩阵包含哪些维度？
@@ -1815,6 +2027,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-05-T01-QA-001
   type: qa
   question: 配置批量替换任务中，元数据候选和内容候选为什么要分两阶段生成？
@@ -1837,6 +2051,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-05-T01-QA-002
   type: qa
   question: 空白可变但必须完整匹配 `Listen 8080` 的 ERE 是什么？
@@ -1854,6 +2070,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-05-T01-QA-003
   type: qa
   question: 配置候选已经保存为 NUL 清单，批量备份修改的命令骨架是什么？
@@ -1874,6 +2092,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-05-T01-QA-004
   type: qa
   question: 验证配置修改时，为什么只检查 `Listen 8081` 存在还不够？
@@ -1889,6 +2109,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-T02-QA-001
   type: qa
   question: 结构化日志聚合前，为什么要先检查 `NF` 和数字字段？
@@ -1905,6 +2127,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-T02-QA-002
   type: qa
   question: '`awk` 关联数组聚合后，为什么还要把输出交给 `sort`？'
@@ -1927,6 +2151,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-05-T02-QA-003
   type: qa
   question: 聚合报告的两个关键恒等式是什么？
@@ -1942,6 +2168,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-05-K02-CLOZE-001
   type: cloze
   text: GNU `find` 默认从省略的起点 {{c1::.}} 开始；`{{c2::-xdev}}` 阻止下降到其他文件系统。
@@ -1957,6 +2185,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-05-O01-CLOZE-001
   type: cloze
   text: '`find -perm MODE` 是{{c1::精确匹配}}；`-perm -MODE` 要求{{c2::所有指定权限位都存在}}；`-perm /MODE` 要求{{c3::至少一个指定权限位存在}}。'
@@ -1972,6 +2202,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-05-O02-CLOZE-001
   type: cloze
   text: '`find` 中隐式运算符是 {{c1::-a/AND}}，且其优先级{{c2::高于}} `-o/OR`。'
@@ -1987,6 +2219,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-05-K04-CLOZE-001
   type: cloze
   text: '`grep` 正常退出状态：有匹配={{c1::0}}，无匹配={{c2::1}}，错误={{c3::2}}。'
@@ -2003,6 +2237,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-05-O03-CLOZE-001
   type: cloze
   text: '`uniq` 只折叠{{c1::相邻}}重复记录；`wc -l` 统计{{c2::换行数量}}。'
@@ -2022,6 +2258,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-05-O04-CLOZE-001
   type: cloze
   text: '`sed` 的 `{{c1::-n}}` 关闭默认输出，替换标志 `{{c2::g}}` 表示替换当前记录内的所有匹配。'
@@ -2038,6 +2276,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-05-O05-CLOZE-001
   type: cloze
   text: awk 中完整记录={{c1::$0}}，字段数={{c2::NF}}，累计记录号={{c3::NR}}，当前文件记录号={{c4::FNR}}。
@@ -2053,6 +2293,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-05-O06-CLOZE-001
   type: cloze
   text: NUL 路径链路：`find {{c1::-print0}}` → `grep -l{{c2::Z}}` → `xargs -{{c3::0}} -r`。
@@ -2072,3 +2314,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

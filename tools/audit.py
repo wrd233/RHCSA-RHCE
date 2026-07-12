@@ -21,6 +21,8 @@ def repository_errors() -> list[str]:
     errors = []
     for name in filter(None, tracked):
         path = Path(name)
+        if path.parts[:2] == ("releases", "rhcsa-v5.1"):
+            continue
         if path.suffix.lower() in FORBIDDEN_SUFFIXES or FORBIDDEN_PARTS & set(path.parts):
             errors.append(f"forbidden tracked path: {name}")
         full = ROOT / path

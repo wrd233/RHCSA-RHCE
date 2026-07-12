@@ -22,6 +22,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-NFS-QA-002
   type: qa
   question: 要确认路径 `/srv/project` 当前实际来自哪个挂载源，应优先使用什么？
@@ -39,6 +41,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-NFS-QA-003
   type: qa
   question: NFS export 的 `root_squash` 核心效果是什么？
@@ -57,6 +61,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: security
 - id: RHCSA-NFS-QA-004
   type: qa
   question: NFS 持久挂载在 `/etc/fstab` 中的源字段骨架是什么？
@@ -75,6 +81,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-NFS-QA-005
   type: qa
   question: NFS fstab 条目中的 `_netdev` 表达什么？
@@ -93,6 +101,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-NFS-QA-006
   type: qa
   question: 怎样证明一个 NFS fstab 条目能够独立建立挂载？
@@ -111,6 +121,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-NFS-QA-012
   type: qa
   question: NFS 挂载报 `access denied by server` 时，客户端对挂载点执行 `chmod 777` 能修复吗？
@@ -128,6 +140,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-NFS-QA-013
   type: qa
   question: NFS 当前挂载成功能否证明系统重启后仍会挂载？
@@ -146,6 +160,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-NFS-QA-014
   type: qa
   question: 查看当前 NFS 挂载实际版本和 NFS 专属选项，使用什么命令？
@@ -163,6 +179,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-NFS-QA-018
   type: qa
   question: NFS 客户端综合任务的推荐验收层次是什么？
@@ -180,6 +198,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-26-K01-QA-001
   type: qa
   question: NFS 任务中，export、远端源和本地挂载点分别是什么？
@@ -197,6 +217,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-26-K01-QA-002
   type: qa
   question: 把 NFS 挂载到一个原本非空的本地目录时，原内容是否被删除？
@@ -213,6 +235,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-26-K01-QA-003
   type: qa
   question: '`showmount -e` 成功、`findmnt` 有结果、fstab 有条目和用户能写，分别证明哪个状态层？'
@@ -230,6 +254,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-26-K01-QA-004
   type: qa
   question: 客户端引用 NFS 源时，主机名和远端路径之间使用什么分隔？
@@ -247,6 +273,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-26-K02-QA-001
   type: qa
   question: 题目要求使用 NFSv4.2 时，挂载选项怎样写？
@@ -264,6 +292,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-26-K02-QA-002
   type: qa
   question: NFSv3 与 NFSv4 在客户端调查入口上的关键区别是什么？
@@ -281,6 +311,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-26-K02-QA-003
   type: qa
   question: '`showmount -e server` 超时，已知服务器是 NFSv4-only。能否据此断定没有 export？'
@@ -298,6 +330,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-26-K02-QA-004
   type: qa
   question: 需要检查 NFSv3 服务器通过 rpcbind 注册了哪些 RPC 程序时，可用什么命令？
@@ -315,6 +349,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-K02-QA-005
   type: qa
   question: 未明确版本的普通 NFS 挂载，是否必须先写 `vers=4.2`？
@@ -331,6 +367,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-26-K03-QA-001
   type: qa
   question: 常见 `sec=sys` NFS 访问中，服务端权限判断主要依据什么身份信息？
@@ -349,6 +387,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-26-K03-QA-002
   type: qa
   question: 两端都显示用户 `project1`，但 NFS 文件权限异常。下一条最有区分度的证据是什么？
@@ -367,6 +407,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-26-K03-QA-003
   type: qa
   question: 挂载前本地挂载点的 owner/mode 与挂载后看到的根目录权限分别来自哪里？
@@ -385,6 +427,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-26-K03-QA-004
   type: qa
   question: 客户端 root 创建的 NFS 文件显示为匿名数值 UID/GID，最可能说明什么？
@@ -403,6 +447,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-26-O01-QA-001
   type: qa
   question: 在 RHEL 9 客户端安装 NFS 挂载和诊断工具，使用什么包？
@@ -420,6 +466,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-O01-QA-002
   type: qa
   question: 把 `storage.example.com:/exports/project` 临时挂载到 `/srv/project` 的命令骨架是什么？
@@ -437,6 +485,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-O01-QA-003
   type: qa
   question: 手工建立 NFS 挂载前的最小调查顺序是什么？
@@ -454,6 +504,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-26-O01-QA-004
   type: qa
   question: 安装 `nfs-utils` 并成功执行 `showmount`，能否证明目标用户可以写共享？
@@ -471,6 +523,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-26-O02-QA-001
   type: qa
   question: 按任意路径定位其所属挂载，并定制显示源、目标、类型和选项，命令是什么？
@@ -488,6 +542,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-O02-QA-002
   type: qa
   question: '`findmnt -T /srv/project` 无结果，但目录存在。可以得出什么结论？'
@@ -505,6 +561,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-26-O02-QA-003
   type: qa
   question: 查看 NFS 当前状态时，`findmnt` 与 `nfsstat -m` 的侧重点有什么不同？
@@ -522,6 +580,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-26-O02-QA-004
   type: qa
   question: '`findmnt` 显示挂载选项包含 `rw`，能否证明 `project1` 一定可以创建文件？'
@@ -540,6 +600,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-26-O03-QA-001
   type: qa
   question: 把 `storage.example.com:/exports/project` 持久挂载到 `/srv/project` 的 fstab 行是什么？
@@ -558,6 +620,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-26-O03-QA-002
   type: qa
   question: 编辑 `/etc/fstab` 后，静态核对条目的推荐命令是什么？
@@ -576,6 +640,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-O03-QA-003
   type: qa
   question: '`findmnt --verify` 与卸载后 `mount -a` 分别证明什么？'
@@ -594,6 +660,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-26-O03-QA-004
   type: qa
   question: NFS fstab 中添加 `_netdev` 后，是否等于远端不可用时启动一定不等待？
@@ -612,6 +680,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-26-O03-QA-005
   type: qa
   question: 手工挂载正确，但 `mount /srv/project` 按 fstab 失败。优先比较什么？
@@ -630,6 +700,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-26-D01-QA-001
   type: qa
   question: NFS `mount` 失败时，为什么应先保留完整原始错误？
@@ -647,6 +719,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-26-D01-QA-002
   type: qa
   question: 服务器可以解析并能到达，但 `mount` 报 `access denied by server`。下一步调查什么？
@@ -664,6 +738,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-26-D01-QA-003
   type: qa
   question: NFS 连接“被拒绝”和“超时”通常分别提示什么方向？
@@ -681,6 +757,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-26-D01-QA-004
   type: qa
   question: 确认 TCP 2049 可连接，能否证明 NFSv3 完整可用？
@@ -698,6 +776,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-26-D02-QA-001
   type: qa
   question: 要查看用户 `opsuser` 的 UID、主 GID 和附加组，使用什么命令？
@@ -716,6 +796,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-D02-QA-002
   type: qa
   question: 要避免用户名映射掩盖问题，怎样查看 NFS 目录的数值属主？
@@ -734,6 +816,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-D02-QA-003
   type: qa
   question: 用户主 GID 与目录组不同，但他应通过附加组写入。下一条证据是什么？
@@ -752,6 +836,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-26-D02-QA-004
   type: qa
   question: NFS 权限问题中，为什么不应先执行 `chmod 777`？
@@ -770,6 +856,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-26-D03-QA-001
   type: qa
   question: NFS hard 挂载在服务器暂时失联时，文件操作通常怎样表现？
@@ -785,6 +873,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-26-D03-QA-002
   type: qa
   question: 为什么不把 `soft` 作为所有 NFS 挂载的默认“防卡死”选项？
@@ -800,6 +890,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-26-D03-QA-003
   type: qa
   question: NFS 服务器失联，访问进程处于不可中断 I/O 等待。反复 `kill -9` 是否可靠？
@@ -816,6 +908,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-26-D03-QA-004
   type: qa
   question: 远端 NFS 不可用时的推荐恢复顺序是什么？
@@ -833,6 +927,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-26-D03-QA-005
   type: qa
   question: 正常卸载 NFS 挂载前，怎样查看哪些进程正在使用挂载点？
@@ -850,6 +946,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-T01-QA-001
   type: qa
   question: 题目要求持久挂载 NFS 并验证业务用户可写。完成 `mount` 后还缺哪些关键验收？
@@ -867,6 +965,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-26-T01-QA-002
   type: qa
   question: 配置持久 NFS 挂载时，推荐的完整操作顺序是什么？
@@ -884,6 +984,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-26-T02-QA-001
   type: qa
   question: 服务器可达、挂载已成功，但 `opsuser` 写入失败。下一条最有区分度的证据组合是什么？
@@ -902,6 +1004,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-26-H01-QA-001
   type: qa
   question: 需要查看 NFS 客户端挂载选项的完整本地说明，应打开哪个手册页？
@@ -918,6 +1022,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-H01-QA-002
   type: qa
   question: 需要确认 `showmount` 的限制和参数，应打开哪个手册页？
@@ -933,6 +1039,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-26-K01-CLOZE-001
   type: cloze
   text: NFS 客户端源的基本格式是 {{c1::<server>:/<export-path>}}，本地接入目录称为 {{c2::挂载点}}。
@@ -949,6 +1057,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-26-K02-CLOZE-001
   type: cloze
   text: '{{c1::showmount}} 查询传统 {{c2::MOUNT}} 协议信息，因此 NFSv4-only 服务器无结果并不等于没有 export。'
@@ -965,6 +1075,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-26-O03-CLOZE-001
   type: cloze
   text: NFS fstab 条目中，{{c1::_netdev}} 表达网络依赖；它不证明服务器可达，也不替代 {{c2::目标用户功能测试}}。
@@ -982,6 +1094,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-26-K03-CLOZE-001
   type: cloze
   text: 常见 `sec=sys` 权限判断要比较客户端进程的数值 {{c1::UID/GID 与附加组}}，而不是只比较 {{c2::用户名文本}}。
@@ -999,6 +1113,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-26-D03-CLOZE-001
   type: cloze
   text: NFS 默认 hard 语义可能让请求持续 {{c1::重试并等待}}；把所有挂载改成 soft 可能引入 {{c2::I/O 错误和数据完整性风险}}。
@@ -1013,6 +1129,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-26-T01-CLOZE-001
   type: cloze
   text: 一个完整 NFS 客户端验收链是：远端信息 → {{c1::当前挂载}} → {{c2::持久重建}} → {{c3::目标身份功能}}。
@@ -1029,3 +1147,5 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze

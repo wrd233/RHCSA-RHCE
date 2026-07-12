@@ -25,6 +25,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-SERVICES-O04-QA-002
   type: qa
   question: '`/etc/crontab` 或 `/etc/cron.d/*` 与用户 crontab 相比，多出的字段是什么？'
@@ -45,6 +47,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-SERVICES-O04-QA-003
   type: qa
   question: 每天 02:15 执行命令的用户 crontab 时间表达式是什么？
@@ -65,6 +69,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-SERVICES-O04-QA-004
   type: qa
   question: 为什么 cron 命令应优先使用绝对路径并显式处理 stdout/stderr？
@@ -85,6 +91,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-SERVICES-O04-QA-005
   type: qa
   question: 怎样提交、列出和删除一个 at 一次性任务？
@@ -104,6 +112,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-SERVICES-O04-QA-006
   type: qa
   question: 计划任务定义已经存在，为什么仍不能宣布任务完成？
@@ -120,6 +130,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-SERVICES-D01-QA-002
   type: qa
   question: 脚本在管理员终端手工成功，但由 cron 执行失败。下一条最有区分度的证据是什么？
@@ -138,6 +150,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-SERVICES-O04-CLOZE-001
   type: cloze
   text: 用户 crontab 的字段是 {{c1::分钟 小时 月中日 月 星期}}；`/etc/crontab` 与 `/etc/cron.d/*` 还要在命令前增加 {{c2::执行用户}}。
@@ -157,6 +171,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-K01-QA-001
   type: qa
   question: 未来只执行一次的任务通常应选择哪个调度对象？
@@ -174,6 +190,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-15-K01-QA-002
   type: qa
   question: 简单、固定的重复日历任务通常优先选择什么？
@@ -191,6 +209,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-15-K01-QA-003
   type: qa
   question: 任务要求关机错过后补执行，并统一查看退出状态。应优先考虑什么对象？
@@ -210,6 +230,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-15-K01-QA-004
   type: qa
   question: 一个可维护的调度定义最适合表达哪三件事？
@@ -226,6 +248,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-15-K01-QA-005
   type: qa
   question: 计划任务的“定义状态”和“功能状态”分别回答什么？
@@ -242,6 +266,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-15-K01-QA-006
   type: qa
   question: '`crond.service` 为 active 能证明某条 cron job 成功吗？'
@@ -259,6 +285,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K01-QA-007
   type: qa
   question: timer 显示 `active (waiting)` 能证明同名 service 最近成功吗？
@@ -278,6 +306,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K01-QA-008
   type: qa
   question: 为什么不应把 alias、SSH agent 或交互口令作为计划任务依赖？
@@ -294,6 +324,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K01-CLOZE-001
   type: cloze
   text: 调度任务的完整证据链是：定义 → {{c1::调度器}} → 触发 → {{c2::执行结果}} → 真实产物。
@@ -309,6 +341,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-O01-QA-001
   type: qa
   question: 两小时后提交一次性任务的命令骨架是什么？
@@ -328,6 +362,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O01-QA-002
   type: qa
   question: 怎样让 `at` 从已有文件读取任务正文？
@@ -347,6 +383,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-O01-QA-003
   type: qa
   question: 怎样列出当前用户待执行的 at job？
@@ -366,6 +404,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O01-QA-004
   type: qa
   question: 怎样审阅 job 12 保存的 Shell 脚本和环境？
@@ -385,6 +425,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O01-QA-005
   type: qa
   question: 怎样取消尚未执行的 at job 12？
@@ -404,6 +446,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O01-QA-006
   type: qa
   question: '`atrm` 能停止一个已经开始运行的作业进程吗？'
@@ -423,6 +467,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O01-QA-007
   type: qa
   question: here-document 结束标记写成 `<<'ATJOB'` 的主要作用是什么？
@@ -442,6 +488,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-15-O01-QA-008
   type: qa
   question: '`atq` 中存在 job 能证明将来执行成功吗？'
@@ -461,6 +509,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O01-QA-009
   type: qa
   question: 检查 at 调度器当前和持久状态的命令是什么？
@@ -480,6 +530,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O01-QA-010
   type: qa
   question: 为什么 at job 仍应使用绝对路径，即使 `at -c` 显示保存了 PATH？
@@ -499,6 +551,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O01-QA-011
   type: qa
   question: '`at -c JOB` 输出很长时，审核重点是什么？'
@@ -518,6 +572,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-15-O01-QA-012
   type: qa
   question: 没有收到 at 输出邮件能证明任务没有运行吗？
@@ -537,6 +593,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O01-QA-013
   type: qa
   question: 存在 `/etc/at.allow` 时，访问控制通常怎样判断？
@@ -556,6 +614,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-15-O01-CLOZE-001
   type: cloze
   text: at 作业的四个核心管理入口是：提交用 {{c1::at}}，列队列用 {{c2::atq}}，审阅用 {{c3::at -c}}，删除用 {{c4::atrm}}。
@@ -574,6 +634,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-K02-QA-001
   type: qa
   question: cron 中 `*/10` 表示“从任务创建时刻起每 10 分钟”吗？
@@ -594,6 +656,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K02-QA-002
   type: qa
   question: 工作日 08:00 执行的五字段表达式是什么？
@@ -614,6 +678,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-15-K02-QA-003
   type: qa
   question: 每 15 分钟匹配一次的分钟字段是什么？
@@ -634,6 +700,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-15-K02-QA-004
   type: qa
   question: cron 的范围 `1-5` 是否包含端点？
@@ -654,6 +722,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-15-K02-QA-005
   type: qa
   question: cron 的列表 `1,15,30` 表示什么？
@@ -674,6 +744,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-15-K02-QA-006
   type: qa
   question: 表达式 `0 6 1 * 1` 通常何时运行？
@@ -694,6 +766,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-15-K02-QA-007
   type: qa
   question: cron 判断日期时，哪些字段必须匹配，两个“日”字段怎样匹配？
@@ -714,6 +788,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-15-K02-QA-008
   type: qa
   question: 星期字段中 `0` 和 `7` 通常表示什么？
@@ -734,6 +810,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-15-K02-QA-009
   type: qa
   question: 夏令时导致某个本地时刻不存在时，cron 任务可能怎样？
@@ -754,6 +832,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K02-QA-010
   type: qa
   question: 夏令时导致本地时刻重复时，cron 任务可能怎样？
@@ -774,6 +854,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K02-CLOZE-001
   type: cloze
   text: cron 中，分钟、小时和月份必须匹配，而月中日与星期采用“{{c1::至少一个匹配}}”的语义。
@@ -793,6 +875,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-O02-QA-001
   type: qa
   question: 列出 `monitor` 用户 crontab 的命令是什么？
@@ -813,6 +897,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O02-QA-002
   type: qa
   question: 编辑 `monitor` 用户 crontab 的命令是什么？
@@ -833,6 +919,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O02-QA-003
   type: qa
   question: '`crontab -r` 删除一条任务还是整张表？'
@@ -853,6 +941,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O02-QA-004
   type: qa
   question: 为什么不应直接编辑 `/var/spool/cron` 中的文件？
@@ -873,6 +963,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O02-QA-005
   type: qa
   question: 用户 crontab 中误写执行用户字段会发生什么？
@@ -893,6 +985,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-O02-QA-006
   type: qa
   question: '`/etc/cron.d` 条目漏掉执行用户会发生什么？'
@@ -913,6 +1007,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-O02-QA-007
   type: qa
   question: crontab 中 `SHELL=/bin/bash` 改变了什么？
@@ -933,6 +1029,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-15-O02-QA-008
   type: qa
   question: 为什么应在 crontab 中显式设置受控 `PATH`？
@@ -953,6 +1051,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-15-O02-QA-009
   type: qa
   question: '`MAILTO=""` 通常表示什么？'
@@ -973,6 +1073,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-15-O02-QA-010
   type: qa
   question: cron 命令需要固定工作目录时，怎样避免 `cd` 失败后继续执行？
@@ -993,6 +1095,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O02-QA-011
   type: qa
   question: crontab 命令字段中的第一个未转义 `%` 有什么语义？
@@ -1013,6 +1117,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-15-O02-QA-012
   type: qa
   question: 在 crontab 中直接使用 `date +%F` 时怎样写百分号？
@@ -1033,6 +1139,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: syntax
 - id: RHCSA-15-O02-QA-013
   type: qa
   question: 把脚本放进 `/etc/cron.daily` 能证明它已经运行吗？
@@ -1053,6 +1161,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O02-QA-014
   type: qa
   question: root 预先创建 cron 日志文件但目标用户不可写，会在哪一层失败？
@@ -1071,6 +1181,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-O02-CLOZE-001
   type: cloze
   text: '`crontab -r` 删除的是 {{c1::整张用户任务表}}，不是一条规则；变更前应先用 {{c2::crontab -l}} 保存基线。'
@@ -1090,6 +1202,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-O02-CLOZE-002
   type: cloze
   text: crontab 命令字段中的未转义 {{c1::%}} 会切分命令与标准输入；需要字面百分号时写成 {{c2::\%}}。
@@ -1109,6 +1223,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-D01-QA-001
   type: qa
   question: 排查“手工成功但 cron 失败”时，第一步应确认什么？
@@ -1127,6 +1243,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D01-QA-002
   type: qa
   question: 怎样用精简环境测试 `monitor` 的脚本？
@@ -1145,6 +1263,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-D01-QA-003
   type: qa
   question: 精简环境测试失败后，下一条证据优先看什么？
@@ -1163,6 +1283,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D01-QA-004
   type: qa
   question: 为什么不推荐在 cron 中 `source ~/.bashrc` 作为通用修复？
@@ -1181,6 +1303,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-D01-QA-005
   type: qa
   question: cron 完全没有触发证据时，应优先检查哪些层？
@@ -1199,6 +1323,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-15-D01-QA-006
   type: qa
   question: cron 有触发记录但命令失败时，应转向哪些证据？
@@ -1217,6 +1343,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-15-D01-QA-007
   type: qa
   question: 脚本退出 0 但报告错误或缺失时，下一步是什么？
@@ -1235,6 +1363,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D01-QA-008
   type: qa
   question: 排错初期为什么不应把输出重定向到 `/dev/null`？
@@ -1253,6 +1383,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-D01-QA-009
   type: qa
   question: 没有正式等待到周期时间时，能够声称任务已 live 验证吗？
@@ -1269,6 +1401,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-D01-CLOZE-001
   type: cloze
   text: “手工成功但 cron 失败”的稳定链路是：正确用户 → {{c1::精简环境}} → 路径/权限 → 触发日志 → {{c2::真实产物}}。
@@ -1286,6 +1420,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-K03-QA-001
   type: qa
   question: '`.timer` 默认激活哪个 unit？'
@@ -1305,6 +1441,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-15-K03-QA-002
   type: qa
   question: 一个只由 timer 周期触发的 service 通常需要 enable 吗？
@@ -1324,6 +1462,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K03-QA-003
   type: qa
   question: timer 到期时目标 service 已经 active，会自动启动第二个实例吗？
@@ -1343,6 +1483,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K03-QA-004
   type: qa
   question: 为什么重复 timer 通常不搭配 `RemainAfterExit=yes` 的 oneshot service？
@@ -1362,6 +1504,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-K03-QA-005
   type: qa
   question: '`OnCalendar=` 使用哪类时间基准？'
@@ -1381,6 +1525,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-K03-QA-006
   type: qa
   question: '`OnBootSec=10min` 表示什么？'
@@ -1400,6 +1546,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-K03-QA-007
   type: qa
   question: '`OnUnitActiveSec=30min` 的计时起点是什么？'
@@ -1419,6 +1567,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-K03-QA-008
   type: qa
   question: 需要从任务变为 inactive 后再等 30 分钟，应使用什么？
@@ -1438,6 +1588,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-K03-QA-009
   type: qa
   question: '`Persistent=true` 对纯 `OnBootSec=` timer 有效吗？'
@@ -1457,6 +1609,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K03-QA-010
   type: qa
   question: 系统关机期间错过多个日历周期，`Persistent=true` 会逐次回放吗？
@@ -1476,6 +1630,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K03-QA-011
   type: qa
   question: '`RandomizedDelaySec=5min` 的含义是什么？'
@@ -1495,6 +1651,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-K03-QA-012
   type: qa
   question: '`AccuracySec=` 的主要目的是什么？'
@@ -1514,6 +1672,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-K03-QA-013
   type: qa
   question: 同时设置随机延迟和精度窗口时，顺序怎样理解？
@@ -1533,6 +1693,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-15-K03-QA-014
   type: qa
   question: '`list-timers` 的 `NEXT` 能证明什么？'
@@ -1552,6 +1714,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-15-K03-QA-015
   type: qa
   question: '`list-timers` 的 `LAST` 能证明业务产物正确吗？'
@@ -1571,6 +1735,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-K03-QA-016
   type: qa
   question: systemd timer 的日历表达式怎样做静态解析？
@@ -1590,6 +1756,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-K03-CLOZE-001
   type: cloze
   text: systemd timer 负责 {{c1::何时激活}}，被触发的 service 负责 {{c2::怎样执行及记录退出状态}}。
@@ -1608,6 +1776,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-K03-CLOZE-002
   type: cloze
   text: '`Persistent=true` 只对配置了 {{c1::OnCalendar=}} 的 timer 生效；错过多个周期后通常只补 {{c2::一次}}。'
@@ -1626,6 +1796,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-O03-QA-001
   type: qa
   question: 创建 timer 前，为什么先直接运行目标脚本？
@@ -1642,6 +1814,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-15-O03-QA-002
   type: qa
   question: 周期脚本对应的 service 常用什么 `Type=`？
@@ -1659,6 +1833,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-15-O03-QA-003
   type: qa
   question: service 中以 `reporter` 用户运行应设置什么？
@@ -1676,6 +1852,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-15-O03-QA-004
   type: qa
   question: 怎样静态检查 service 与 timer unit 文件？
@@ -1695,6 +1873,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O03-QA-005
   type: qa
   question: unit 文件修改后需要执行什么？
@@ -1712,6 +1892,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O03-QA-006
   type: qa
   question: 为什么在启用 timer 前手工 `start` service？
@@ -1728,6 +1910,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-15-O03-QA-007
   type: qa
   question: 同时启用并立即启动 `daily-report.timer` 的命令是什么？
@@ -1745,6 +1929,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O03-QA-008
   type: qa
   question: 列出全部 timer（包括未活动项）的命令是什么？
@@ -1764,6 +1950,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O03-QA-009
   type: qa
   question: 怎样读取 service 的 systemd 结果和主进程退出状态？
@@ -1781,6 +1969,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O03-QA-010
   type: qa
   question: 怎样同时查询 timer 和 service 的 journal？
@@ -1798,6 +1988,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O03-QA-011
   type: qa
   question: '`systemd-analyze calendar` 成功能证明 timer 已加载吗？'
@@ -1817,6 +2009,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O03-QA-012
   type: qa
   question: '`systemd-analyze verify` 无报错能证明业务脚本成功吗？'
@@ -1836,6 +2030,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O03-QA-013
   type: qa
   question: 为什么 timer active、service inactive 可能是正常状态？
@@ -1855,6 +2051,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: output
 - id: RHCSA-15-O03-QA-014
   type: qa
   question: service 显示 `Result=success` 后还必须验证什么？
@@ -1871,6 +2069,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-15-O03-CLOZE-001
   type: cloze
   text: 持久 timer 的稳定建立顺序是：脚本精简环境 → {{c1::service 独立成功}} → timer 日历解析 → {{c2::enable --now timer}} → Result/journal/产物。
@@ -1886,6 +2086,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-O04-QA-001
   type: qa
   question: 两分钟后临时运行命令的 systemd-run 骨架是什么？
@@ -1904,6 +2106,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-O04-QA-002
   type: qa
   question: 创建 transient 日历 timer 使用什么选项？
@@ -1922,6 +2126,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-O04-QA-003
   type: qa
   question: 怎样为 transient timer 指定 `AccuracySec=1s`？
@@ -1940,6 +2146,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-O04-QA-004
   type: qa
   question: 使用 timer 选项调用 `systemd-run` 时，立即启动的是谁？
@@ -1958,6 +2166,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: concept
 - id: RHCSA-15-O04-QA-005
   type: qa
   question: transient timer 能替代题目要求的重启后持久 timer 吗？
@@ -1976,6 +2186,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O04-QA-006
   type: qa
   question: 迁移 cron 到 timer 时，为什么不能先删除旧 cron？
@@ -1992,6 +2204,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O04-QA-007
   type: qa
   question: 为什么旧 cron 和新 timer 不应长期并行？
@@ -2008,6 +2222,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-O04-QA-008
   type: qa
   question: 迁移完成后怎样检查是否还存在重复 cron 入口？
@@ -2024,6 +2240,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-15-O04-QA-009
   type: qa
   question: '`OnUnitActiveSec` 和 `OnUnitInactiveSec` 的关键区别是什么？'
@@ -2043,6 +2261,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-15-O04-CLOZE-001
   type: cloze
   text: cron 迁移 timer 的切换原则是：先验证 {{c1::新 service/timer 链路}}，再删除 {{c2::旧 cron 入口}}，最后全局查重。
@@ -2058,6 +2278,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-D02-QA-001
   type: qa
   question: timer 不在 `list-timers` 中，第一组证据是什么？
@@ -2074,6 +2296,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D02-QA-002
   type: qa
   question: timer 为 waiting 但 NEXT 错误，下一步查什么？
@@ -2094,6 +2318,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D02-QA-003
   type: qa
   question: timer 有 LAST，但 service 为 failed。调查入口是什么？
@@ -2110,6 +2336,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D02-QA-004
   type: qa
   question: service 为 success 但无报告，下一条证据是什么？
@@ -2126,6 +2354,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D02-QA-005
   type: qa
   question: '`Persistent=true` 未立即补跑时，为什么先检查随机延迟？'
@@ -2145,6 +2375,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D02-QA-006
   type: qa
   question: timer 任务出现重复执行时，应先搜索哪些入口？
@@ -2161,6 +2393,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: diagnosis
 - id: RHCSA-15-D02-QA-007
   type: qa
   question: 怎样区分“timer 触发问题”和“service 执行问题”？
@@ -2177,6 +2411,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: comparison
 - id: RHCSA-15-D02-CLOZE-001
   type: cloze
   text: timer 排错分层：不在列表查 {{c1::加载}}；NEXT 错查日历与延迟；有 LAST 查 {{c2::service}}；service success 后查产物。
@@ -2192,6 +2428,8 @@ notes:
   - priority::P1
   model: RedHat-Cloze
   priority: P1
+  disabled: false
+  semantic_type: cloze
 - id: RHCSA-15-C01-QA-001
   type: qa
   question: 题目要求每周三 15:30 以 `monitor` 执行，且指定使用用户 crontab。核心条目是什么？
@@ -2208,6 +2446,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: task
 - id: RHCSA-15-C01-QA-002
   type: qa
   question: 健康检查任务中，安装 crontab 前必须先证明什么？
@@ -2224,6 +2464,8 @@ notes:
   - priority::P1
   model: RedHat-QA
   priority: P1
+  disabled: false
+  semantic_type: process
 - id: RHCSA-15-C01-QA-003
   type: qa
   question: 无法等待到正式周三时，怎样表述验证边界？
@@ -2240,6 +2482,8 @@ notes:
   - priority::P2
   model: RedHat-QA
   priority: P2
+  disabled: false
+  semantic_type: boundary
 - id: RHCSA-15-C02-QA-001
   type: qa
   question: cron 迁移 timer 时，为什么 service 配置 `Type=oneshot`？
@@ -2256,6 +2500,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: configuration
 - id: RHCSA-15-C02-QA-002
   type: qa
   question: daily-report timer 要求关机错过后补一次，核心属性是什么？
@@ -2276,6 +2522,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-C02-QA-003
   type: qa
   question: 多台主机最多摊开 5 分钟，应设置什么？
@@ -2296,6 +2544,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: parameter
 - id: RHCSA-15-C02-QA-004
   type: qa
   question: 新 timer 验收后删除旧 cron，最后必须证明什么？
@@ -2312,6 +2562,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-15-C02-QA-005
   type: qa
   question: timer active、enabled 且 NEXT 正确，任务是否完成？
@@ -2328,6 +2580,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: verification
 - id: RHCSA-15-Z01-QA-001
   type: qa
   question: 查看 cron 表格式与 `%` 语义应进入哪个手册页？
@@ -2344,6 +2598,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-Z01-QA-002
   type: qa
   question: 查看 timer 属性语义应进入哪个手册页？
@@ -2360,6 +2616,8 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
 - id: RHCSA-15-Z01-QA-003
   type: qa
   question: 查看 transient timer 命令行选项应进入哪个手册页？
@@ -2376,3 +2634,5 @@ notes:
   - priority::P0
   model: RedHat-QA
   priority: P0
+  disabled: false
+  semantic_type: command
