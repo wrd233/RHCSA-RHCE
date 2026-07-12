@@ -12,5 +12,6 @@
   "page_equation": true,
   "visual_mismatches": 0,
   "anki": "ANKI_CANONICAL_UNCHANGED",
-  "ankiconnect": "ANKICONNECT_APPLY_NOT_REQUIRED"
+  "ankiconnect": "ANKICONNECT_APPLY_NOT_REQUIRED",
+  "git_commit": "97021f0c4663a2c782018ae742fbc96375884ad8"
 }

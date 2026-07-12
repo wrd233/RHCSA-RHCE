@@ -10,4 +10,5 @@
 - Book: `releases/rhcsa-v5.1/RHCSA-RHEL9-v5.1.pdf`, `1085 = 1082 + 3` pages.
 - Visual regression: 0 content-stream mismatches across all chapter pages.
 - Anki: `ANKI_CANONICAL_UNCHANGED`; APKG rebuilt from canonical; `ANKICONNECT_APPLY_NOT_REQUIRED`.
+- Git commit at report generation: `97021f0c4663a2c782018ae742fbc96375884ad8`.
 - Unresolved release blockers: 0.

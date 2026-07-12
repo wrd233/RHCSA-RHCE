@@ -5,6 +5,7 @@ import csv
 import hashlib
 import json
 import re
+import subprocess
 import zipfile
 from pathlib import Path
 
@@ -129,7 +130,7 @@ REJECTED_REFERENCES: none. The obsolete Downloads sample was not read and is for
         qa_lines.append(f"| {chapter['id']} | {item['pages']} | {item['bytes']} | {'PASS' if not item['errors'] else '; '.join(item['errors'])} |")
     write(REPORTS / "rhcsa-v5.1-reading-chapter-qa.md", "\n".join(qa_lines))
     with (REPORTS / "rhcsa-v5.1-reading-pdf-sizes.csv").open("w", newline="", encoding="utf-8") as handle:
-        out = csv.writer(handle); out.writerow(["chapter", "file", "pages", "bytes", "sha256"])
+        out = csv.writer(handle, lineterminator="\n"); out.writerow(["chapter", "file", "pages", "bytes", "sha256"])
         for chapter, item in zip(chapters, chapter_qa): out.writerow([chapter["id"], Path(item["path"]).name, item["pages"], item["bytes"], item["sha256"]])
 
     visual = {"front_matter_pages": front_pages, "chapter_pages": sum(x["pages"] for x in chapter_qa), "book_pages": book_qa["pages"], "equation_ok": equation_ok, "comparisons": comparisons}
@@ -148,6 +149,7 @@ REJECTED_REFERENCES: none. The obsolete Downloads sample was not read and is for
         "chapter_pages": visual["chapter_pages"], "front_matter_pages": front_pages, "book_pages": book_qa["pages"],
         "page_equation": equation_ok, "visual_mismatches": sum(len(x["mismatches"]) for x in comparisons),
         "anki": "ANKI_CANONICAL_UNCHANGED", "ankiconnect": "ANKICONNECT_APPLY_NOT_REQUIRED",
+        "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
     }
     write(REPORTS / "RHCSA_V5_1_READING_RENDERER_CORRECTION.json", json.dumps(correction, ensure_ascii=False, indent=2))
     report = f"""# RHCSA v5.1 Reading Renderer Correction
@@ -162,6 +164,7 @@ REJECTED_REFERENCES: none. The obsolete Downloads sample was not read and is for
 - Book: `{book_path.relative_to(ROOT)}`, `{book_qa['pages']} = {visual['chapter_pages']} + {front_pages}` pages.
 - Visual regression: {correction['visual_mismatches']} content-stream mismatches across all chapter pages.
 - Anki: `ANKI_CANONICAL_UNCHANGED`; APKG rebuilt from canonical; `ANKICONNECT_APPLY_NOT_REQUIRED`.
+- Git commit at report generation: `{correction['git_commit']}`.
 - Unresolved release blockers: 0.
 """
     write(REPORTS / "RHCSA_V5_1_READING_RENDERER_CORRECTION.md", report)
