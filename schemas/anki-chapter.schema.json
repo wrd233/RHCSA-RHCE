@@ -24,6 +24,10 @@
       "tags": {"type": "array", "items": {"type": "string"}}, "priority": {"enum": ["P0", "P1", "P2"]},
       "disabled": {"type": "boolean"}
     },
-    "additionalProperties": false
+    "additionalProperties": false,
+    "allOf": [
+      {"if": {"properties": {"type": {"const": "qa"}}}, "then": {"required": ["question", "answer"], "properties": {"model": {"const": "RedHat-QA"}}}},
+      {"if": {"properties": {"type": {"const": "cloze"}}}, "then": {"required": ["text"], "properties": {"model": {"const": "RedHat-Cloze"}}}}
+    ]
   }}
 }

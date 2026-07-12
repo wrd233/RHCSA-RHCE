@@ -28,6 +28,13 @@ canonical_ids:
     chapter: selinux-model-context-avc
     reason: global duplicate resolved to the chapter with primary ownership
 redirects: {}
+tombstones:
+  RHCSA-NETWORK-C01-QA-001:
+    disabled: true
+    canonical_owner: RHCSA-18
+    duplicate_owner: RHCSA-21
+    action: consolidate_disabled_tombstone
+    reason: Both legacy aggregate cards were disabled; this central record is the single retained tombstone.
 disable_ids:
 - id: RHCSA-16-T01-QA-007
   reason: candidate migration record removed from active chapter YAML (rpm-packages-transactions)

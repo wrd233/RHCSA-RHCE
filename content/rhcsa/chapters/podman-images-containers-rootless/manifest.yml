@@ -75,3 +75,4 @@ limitations:
 - Codex must perform full-book Section ID and Anki ID uniqueness, cross-chapter duplicate checks, unified PDF/APKG builds,
   AnkiConnect synchronization, Git integration, and release decisions.
 - The review PDF is a chapter-level reading artifact and should be rebuilt with the repository-wide pipeline during integration.
+extensions: {}

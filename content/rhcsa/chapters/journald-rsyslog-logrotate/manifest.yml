@@ -74,3 +74,4 @@ limitations:
 - 未执行 RHEL 9 命令级 live test。
 - 跨 boot journal、rsyslog 实际路由与远端接收、logrotate 真实轮转和写入者 reopen 仍需实机验证。
 - 全书 Section ID/Anki ID 唯一性、跨章重复、统一 PDF/APKG、Git 集成和发布由 Codex 完成。
+extensions: {}

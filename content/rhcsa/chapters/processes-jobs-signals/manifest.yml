@@ -74,3 +74,4 @@ limitations:
 - No RHEL 9 live VM was controlled by this session.
 - Full-book Section/Anki uniqueness, formal PDF/APKG build, AnkiConnect, Git import and release remain Codex responsibilities.
 - The manifest does not hash itself because that would be self-referential; every payload file is hashed.
+extensions: {}

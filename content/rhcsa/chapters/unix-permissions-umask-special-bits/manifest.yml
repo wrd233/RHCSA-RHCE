@@ -74,3 +74,4 @@ limitations:
 - 未连接可控 RHEL 9 虚拟机，未执行命令级 live test。
 - 全书 Section ID、Anki ID、跨章重复和统一 integration HEAD 仍由 Codex 检查。
 - 正式整书 PDF、APKG、AnkiConnect、Git 提交和 release 不属于单章冻结范围。
+extensions: {}

@@ -1,0 +1,10 @@
+{
+  "endpoint": "http://127.0.0.1:8765",
+  "api_version": 6,
+  "executed_at": "2026-07-12T23:42:00+08:00",
+  "mode": "stable_id_upsert",
+  "added": 10,
+  "updated": 2011,
+  "unchanged": 1342,
+  "errors": []
+}

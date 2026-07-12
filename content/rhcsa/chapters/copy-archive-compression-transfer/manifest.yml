@@ -6,15 +6,12 @@ chapter:
   number: 6
   slug: copy-archive-compression-transfer
   title: 复制、归档、压缩与远程传输
-  canonical_lecture: content/rhcsa/chapters/copy-archive-compression-transfer/lecture.md
-  canonical_anki: content/rhcsa/chapters/copy-archive-compression-transfer/anki.yml
 base_repository:
   url: https://github.com/wrd233/RHCSA-RHCE
   branch: main
   commit: 961a29b3af4c07a828078a5de90c221a036546df
   verification: verified
   verified_at: '2026-07-12'
-  canonical_content_commit: ff238606d0d82b95287d87a80163ba44a00cf4e1
 integration:
   head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
   method: three_way
@@ -225,3 +222,8 @@ extensions:
       added: []
       disabled: []
     global_uniqueness: requires_codex
+  chapter:
+    canonical_lecture: content/rhcsa/chapters/copy-archive-compression-transfer/lecture.md
+    canonical_anki: content/rhcsa/chapters/copy-archive-compression-transfer/anki.yml
+  base_repository:
+    canonical_content_commit: ff238606d0d82b95287d87a80163ba44a00cf4e1

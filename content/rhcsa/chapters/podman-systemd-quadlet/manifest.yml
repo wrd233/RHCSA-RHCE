@@ -17,8 +17,6 @@ integration:
 canonical:
   lecture: content/rhcsa/chapters/podman-systemd-quadlet/lecture.md
   anki: content/rhcsa/chapters/podman-systemd-quadlet/anki.yml
-  lecture_sha256: 9331394d4d3e25d402ab2a11d198c92a500dd9a06a72260a3025b9e327c5103f
-  anki_sha256: 405659be14450d53ac2b19db0e611816a0f03398ba3320b6c78bad258f942e21
 package:
   version: '5.1'
   status: content_frozen_for_integration
@@ -88,3 +86,6 @@ extensions:
     source_completeness_percent: 100
     exact_duplicates: 0
     near_duplicate_warnings: 0
+  canonical:
+    lecture_sha256: 9331394d4d3e25d402ab2a11d198c92a500dd9a06a72260a3025b9e327c5103f
+    anki_sha256: 405659be14450d53ac2b19db0e611816a0f03398ba3320b6c78bad258f942e21

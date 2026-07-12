@@ -7,5 +7,5 @@
 - Anki: 3069 QA + 269 Cloze; priority {'P0': 2556, 'P1': 742, 'P2': 40} -> {'P1': 1401, 'P0': 1421, 'P2': 516}.
 - PDFs: 33 chapters / 990 pages; full book 646 pages; QA failures 0.
 - APKG: 2220250 bytes; AnkiConnect added 10, updated 2011, unchanged 1342; readback passed.
-- Tests: 22 passed.
+- Tests: 23 passed.
 - Live RHEL 9 command tests: not performed.

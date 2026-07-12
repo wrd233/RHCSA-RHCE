@@ -1,0 +1,118 @@
+release: RHCSA-RHEL9-v5.1
+status: RHCSA_V5_1_RELEASED
+chapters: 33
+artifacts:
+  RELEASE_NOTES.md:
+    sha256: 73e914e8db61131ab4a4c4a61db0f8a88931e7b7185afa8b983e83de51b0e25f
+    bytes: 449
+  RHCSA-RHEL9-v5.1.pdf:
+    sha256: d75b0d3514525e13d7a2ce8fc6a99bffafe63a2735eaa2aa8e0afc060270857d
+    bytes: 19845842
+  anki/RHCSA-RHEL9-v5.1.apkg:
+    sha256: bd1ffb91da1ad2c4c97b5d2e484f4d772aa239b836101038fcdb7c6651448b33
+    bytes: 2220250
+  anki/rhcsa-anki-preview.html:
+    sha256: 1ed2d0b1bfdcc0f3667278a19c8fe0268dceb54cb809afa16c07b8f7ac08ad8d
+    bytes: 998429
+  anki/rhcsa-anki-summary.md:
+    sha256: 6e4eec1867d980d0bf4710344a84dba52a073728c26d4c88f72fc8fb6bfcfde4
+    bytes: 211
+  chapters/01-shell-parsing-expansion.pdf:
+    sha256: f1d52dd255258ee5fb7fb48d94f59a008c0113b0fbe70b81c4712ab6bfca48d7
+    bytes: 1506004
+  chapters/02-io-redirection-pipelines.pdf:
+    sha256: b67e3fcf78aff5f23ed3541222226a05f061d56c0a247c1f42a1f63d9cff3360
+    bytes: 1344828
+  chapters/03-local-help-command-discovery.pdf:
+    sha256: beb8ee2662652722d0583de957a8a2d80b69a1b551afa1b50bdae3aef682f576
+    bytes: 1351890
+  chapters/04-filesystem-paths-types-links.pdf:
+    sha256: 5b8eb1c5de26865947754d3e5dd7667695f4468c3f075b698105c6670202cca2
+    bytes: 1258078
+  chapters/05-file-search-text-processing.pdf:
+    sha256: 338a20f6d949de6def9763389b929b38b7386bf29fccea5e7028002e82e16826
+    bytes: 1667105
+  chapters/06-copy-archive-compression-transfer.pdf:
+    sha256: d35963ac33ccdb06a9e68ff8cbe6dd9c601ce8200961b0fb8bb9cafcf7f8b03a
+    bytes: 1357769
+  chapters/07-users-groups-lifecycle.pdf:
+    sha256: 2850e93c5588bf3e15ced7ee070fe4a90287ad14cfd785c59f6c36f420b064c7
+    bytes: 1350423
+  chapters/08-unix-permissions-umask-special-bits.pdf:
+    sha256: 2aec63f9e16f9152c7586c8783e253309eb58911af8baf33772686fd03e40161
+    bytes: 1426843
+  chapters/09-acl-collaboration-directories.pdf:
+    sha256: acacfb7e2a0efad5acafd9f670f19385f8072219e1abfd8ba0e08e0ff3296199
+    bytes: 1307787
+  chapters/10-sudo-least-privilege.pdf:
+    sha256: f18318ec49091619dbb284bc7a4b74671e88b7790b6879d565d65a769f3c66f9
+    bytes: 1256072
+  chapters/11-processes-jobs-signals.pdf:
+    sha256: 108761b633b8649c0a9cf09baaa0d651ad4970459122e6780964120279ce08a6
+    bytes: 1562690
+  chapters/12-systemd-units-services.pdf:
+    sha256: 3f221cdae83ecf7bd6c9047882847e5707e3fb3626b246ad8aa4b0b71ad6d744
+    bytes: 1688947
+  chapters/13-journald-rsyslog-logrotate.pdf:
+    sha256: 9377613935066d8cf65a1637558a922ec2399f29d529cf3a0135a9bc1078cad3
+    bytes: 1402649
+  chapters/14-time-timezone-rtc-chrony.pdf:
+    sha256: b1f696fa6a0cd9a37eb932bd800b078df235713d90584f4efdfb84394caa1b03
+    bytes: 1258973
+  chapters/15-scheduling-at-cron-timers.pdf:
+    sha256: bd75b9b2b4320aedbd0fe32485af458d1503e1d2828d50a5d3490249c34f549a
+    bytes: 1414462
+  chapters/16-rpm-packages-transactions.pdf:
+    sha256: 073d1dce275eb620398174464bb1f792f274638996359e58bd41993a15ea9532
+    bytes: 1486588
+  chapters/17-dnf-repositories-modules-groups.pdf:
+    sha256: 5c781305d4439116c0cf83fcfce248e129e91fac9ec88566c0e8a70a54b6d2da
+    bytes: 1540609
+  chapters/18-networkmanager-ipv4-routing.pdf:
+    sha256: 8027e737deb720f0bcbd708654bc7a4947b7f323aa31f20c9dec71a5772975f8
+    bytes: 1348200
+  chapters/19-hostname-nss-dns.pdf:
+    sha256: f0d4e09a1b9bd01685ad6d77139432060881e02f464ee411d2522a64264ef69f
+    bytes: 1360586
+  chapters/20-ssh-client-server-keys.pdf:
+    sha256: 9dd997f5b5075bc109f50a20f07f2d334b4906382586a3df0f357ca582a006b2
+    bytes: 1347523
+  chapters/21-firewalld-service-access-chain.pdf:
+    sha256: 0c950055c1b7af5f900f95d553a6e162470878b84bd4a870d6b05a0095b6c34c
+    bytes: 1251215
+  chapters/22-block-devices-partitions-signatures.pdf:
+    sha256: 4121e15a09dfea3b928e827fdb7d6d3c6c4c3e4a830953a4e792312758e8cfb3
+    bytes: 1419612
+  chapters/23-filesystems-labels-uuid-capacity.pdf:
+    sha256: bd07aad06b4162b52bad6dddec097d691409673a7a499630748441f05fb39261
+    bytes: 1420513
+  chapters/24-mounts-fstab-swap.pdf:
+    sha256: d66a574295ba1d8a377531b3a5ef0f5227cb720bc046e2f348cc9037e5643050
+    bytes: 1242601
+  chapters/25-lvm.pdf:
+    sha256: e4d435a7485320af15684ba4326c48fe244e53838a25d1c79daf33979358a6a7
+    bytes: 1170614
+  chapters/26-nfs-client.pdf:
+    sha256: df3fedabe6db054305aa82db230c2cc4dfbf45ecf8a411e2397eac8132893343
+    bytes: 1284521
+  chapters/27-autofs.pdf:
+    sha256: 4a3c45ca6c93b60e4b574e6ddb81e1c3116724f5b80d1f0cb49e43a07b076541
+    bytes: 1143712
+  chapters/28-selinux-model-context-avc.pdf:
+    sha256: dcb3b1269d1bb0fa721d4ef75c8b1158d685171064ad3ceeb5590ef7697da283
+    bytes: 1465007
+  chapters/29-selinux-files-ports-booleans.pdf:
+    sha256: be558c12212e2d896f8319950a22268316b9d3268b2bd49671e9a58e7a8fcc92
+    bytes: 1248968
+  chapters/30-boot-grub-recovery.pdf:
+    sha256: 0d118c02badc23da494615b1c359c57ef66ea1cad4e876f8549a965e777c0e47
+    bytes: 1437661
+  chapters/31-podman-images-containers-rootless.pdf:
+    sha256: 52dbfd08a87b2ac2838f82a744e196d93395d7e374864e5eca64155366d7f266
+    bytes: 1318080
+  chapters/32-podman-systemd-quadlet.pdf:
+    sha256: bca7b1259c6b27cd684d735f334ccd78e4b23dd8b6fb5d3604f81f52ede74818
+    bytes: 1174510
+  chapters/33-comprehensive.pdf:
+    sha256: 0ede44debd9f688f0a8f8cc1cb0aeeba10e3d16c32b1b6a98336e484109ab7a8
+    bytes: 1589276

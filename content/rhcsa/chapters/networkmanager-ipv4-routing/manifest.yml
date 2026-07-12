@@ -75,3 +75,4 @@ ids:
 limitations:
 - No controllable RHEL 9 virtual machine was available; command-level and reboot persistence tests were not performed.
 - Global Section ID, Anki ID, cross-chapter duplication, unified PDF, APKG, AnkiConnect and Git release remain Codex responsibilities.
+extensions: {}

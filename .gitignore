@@ -8,13 +8,12 @@ backups/
 dist/
 reports/pdf-reading-review/
 dist/
-releases/
 tmp/
 sources/
 incoming/
 imports/
 *.zip
-*.pdf
-*.apkg
+# The canonical v5.1 release is versioned; scratch PDFs/APKG remain covered by
+# their ignored build/dist roots and candidate archives remain ignored below.
 
 # Large source material and generated releases are always local-only.

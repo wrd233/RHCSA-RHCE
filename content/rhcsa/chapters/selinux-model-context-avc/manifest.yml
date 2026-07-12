@@ -75,3 +75,4 @@ limitations:
 - No controlled RHEL 9 virtual machine was available; command-level live tests were not performed.
 - Full-book Section ID/Anki ID uniqueness and cross-chapter near-duplicate checks remain Codex responsibilities.
 - Formal full-book PDF, APKG, AnkiConnect, Git integration, and release were not performed.
+extensions: {}

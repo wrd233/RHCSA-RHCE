@@ -6,6 +6,7 @@ import html
 import json
 import re
 import shutil
+import subprocess
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -28,6 +29,39 @@ def write(path: Path, value: str) -> None:
 
 
 def main() -> None:
+    # Move heterogeneous nested source metadata out of strict canonical fields
+    # before validating; nothing is discarded.
+    for manifest_path in sorted((ROOT / "content/rhcsa/chapters").glob("*/manifest.yml")):
+        manifest = load_yaml(manifest_path)
+        extensions = manifest.setdefault("extensions", {})
+        for key, allowed in {
+            "chapter": {"id", "exam", "part", "number", "slug", "title"},
+            "base_repository": {"url", "branch", "commit", "verification", "verified_at", "previous_recorded_commit"},
+        }.items():
+            extras = {name: value for name, value in manifest[key].items() if name not in allowed}
+            if extras:
+                extensions.setdefault(key, {}).update(extras)
+                manifest[key] = {name: value for name, value in manifest[key].items() if name in allowed}
+        canonical_extras = {name: value for name, value in manifest["canonical"].items() if name not in {"lecture", "anki"}}
+        if canonical_extras:
+            extensions.setdefault("canonical", {}).update(canonical_extras)
+            manifest["canonical"] = {name: value for name, value in manifest["canonical"].items() if name in {"lecture", "anki"}}
+        manifest["base_repository"].setdefault("verification", "unavailable")
+        manifest_path.write_text(yaml.safe_dump(manifest, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
+    test_run = subprocess.run(["uv", "run", "pytest", "-q"], cwd=ROOT, text=True, capture_output=True)
+    if test_run.returncode:
+        raise RuntimeError("release blocked by test failure:\n" + test_run.stdout + test_run.stderr)
+    match = re.search(r"(\d+) passed", test_run.stdout)
+    if not match:
+        raise RuntimeError("could not determine test count")
+    tests_passed = int(match.group(1))
+    audit_run = subprocess.run(["uv", "run", "python", "tools/audit.py", "rhcsa"], cwd=ROOT, text=True, capture_output=True)
+    if audit_run.returncode:
+        raise RuntimeError("release blocked by audit failure:\n" + audit_run.stdout + audit_run.stderr)
+    sync = json.loads((REPORTS / "anki-connect-sync-v5.1.json").read_text())
+    readback = json.loads((REPORTS / "anki-readback-v5.1.json").read_text())
+    if sync.get("errors") or readback.get("errors") or readback.get("duplicate_stable_ids"):
+        raise RuntimeError("release blocked by AnkiConnect evidence")
     chapters = list(iter_chapters(["rhcsa"]))
     notes = []
     section_locations = defaultdict(list)
@@ -87,7 +121,7 @@ def main() -> None:
     write(RELEASE / "anki/rhcsa-anki-preview.html", "\n".join(preview))
     summary = f"# RHCSA v5.1 Anki Summary\n\n- RHCSA notes: {len(notes)}\n- QA / Cloze: {anki_qa['qa']} / {anki_qa['cloze']}\n- Priority before: P0 {before['P0']}, P1 {before['P1']}, P2 {before['P2']}\n- Priority after: P0 {after['P0']}, P1 {after['P1']}, P2 {after['P2']}\n- Stable ID duplicates: 0\n- Source completeness: 100%\n"
     write(RELEASE / "anki/rhcsa-anki-summary.md", summary)
-    write(REPORTS / "rhcsa-v5.1-anki-build.md", summary + f"\n- APKG bytes: {(RELEASE / 'anki/RHCSA-RHEL9-v5.1.apkg').stat().st_size}\n- APKG SHA-256: `{sha(RELEASE / 'anki/RHCSA-RHEL9-v5.1.apkg')}`\n- AnkiConnect: added 10, updated 2011, unchanged 1342; readback 3363 notes / 3711 cards including 25 common-exam notes.\n")
+    write(REPORTS / "rhcsa-v5.1-anki-build.md", summary + f"\n- APKG bytes: {(RELEASE / 'anki/RHCSA-RHEL9-v5.1.apkg').stat().st_size}\n- APKG SHA-256: `{sha(RELEASE / 'anki/RHCSA-RHEL9-v5.1.apkg')}`\n- AnkiConnect: added {sync['added']}, updated {sync['updated']}, unchanged {sync['unchanged']}; readback {readback['notes']} notes / {readback['cards']} cards.\n")
 
     pdf_qa = json.loads((REPORTS / "rhcsa-v5.1-pdf-qa.json").read_text())
     chapter_pdfs = [x for x in pdf_qa if "/chapters/" in x["path"]]
@@ -100,7 +134,7 @@ def main() -> None:
     write(REPORTS / "RHCSA_V5_1_SCHEMA_MIGRATION.md", "# RHCSA v5.1 Schema Migration\n\nAll 33 manifests and Anki YAML documents validate against one schema. Manifest self-hashes are excluded. Unknown package metadata is retained under `extensions`. Stable Section/Note IDs and frozen authored content were preserved.")
     write(REPORTS / "RHCSA_V5_1_UNRESOLVED.md", "# RHCSA v5.1 Unresolved\n\nNo release-blocking integration issue. Command-level RHEL 9 live tests were not performed because no controlled VM was provided.")
 
-    release_notes = f"# RHCSA RHEL 9 v5.1\n\n33 frozen chapters were imported from the v5.1 package set over package base `961a29b3`. This release normalizes package and Anki schemas, consolidates the disabled network tombstone, recalibrates priority metadata, and rebuilds all PDF/HTML/APKG artifacts. Static and rendering QA passed. RHEL 9 command-level live tests were not performed. AnkiConnect completed with stable-ID upserts: 10 added, 2011 updated, 1342 unchanged.\n"
+    release_notes = f"# RHCSA RHEL 9 v5.1\n\n33 frozen chapters were imported from the v5.1 package set over package base `961a29b3`. This release normalizes package and Anki schemas, consolidates the disabled network tombstone, recalibrates priority metadata, and rebuilds all PDF/HTML/APKG artifacts. Static and rendering QA passed. RHEL 9 command-level live tests were not performed. AnkiConnect completed with stable-ID upserts: {sync['added']} added, {sync['updated']} updated, {sync['unchanged']} unchanged.\n"
     write(RELEASE / "RELEASE_NOTES.md", release_notes)
     manifest = {"release": "RHCSA-RHEL9-v5.1", "status": "RHCSA_V5_1_RELEASED", "chapters": 33, "artifacts": {}}
     for path in sorted(p for p in RELEASE.rglob("*") if p.is_file() and p.name not in {"MANIFEST.yml", "SHA256SUMS.txt"}):
@@ -112,9 +146,9 @@ def main() -> None:
     status = {"rhcsa": {"version": "5.1", "chapters_total": 33, "chapters_integrated": 33, "lecture_status": "passed", "pdf_status": "passed", "anki_status": "passed", "apkg_status": "passed", "anki_connect_status": "passed", "release_status": "released"}}
     write(REPORTS / "PROJECT_STATUS.yml", yaml.safe_dump(status, sort_keys=False))
     book_pages = next(x["pages"] for x in pdf_qa if x["path"].endswith("RHCSA-RHEL9-v5.1.pdf"))
-    integration = {"final_status": "RHCSA_V5_1_RELEASED", "chapters": 33, "lecture_characters": inventory["summary"]["lecture_characters"], "section_ids": len(section_locations), "section_id_conflicts": 0, **anki_qa, "chapter_pdf_pages": sum(x["pages"] for x in chapter_pdfs), "full_book_pages": book_pages, "pdf_qa_failures": 0, "apkg_bytes": (RELEASE / "anki/RHCSA-RHEL9-v5.1.apkg").stat().st_size, "anki_connect": {"added": 10, "updated": 2011, "unchanged": 1342}, "tests": 22, "unresolved_blockers": 0}
+    integration = {"final_status": "RHCSA_V5_1_RELEASED", "chapters": 33, "lecture_characters": inventory["summary"]["lecture_characters"], "section_ids": len(section_locations), "section_id_conflicts": 0, **anki_qa, "chapter_pdf_pages": sum(x["pages"] for x in chapter_pdfs), "full_book_pages": book_pages, "pdf_qa_failures": sum(bool(x["errors"]) for x in pdf_qa), "apkg_bytes": (RELEASE / "anki/RHCSA-RHEL9-v5.1.apkg").stat().st_size, "anki_connect": {key: sync[key] for key in ("added", "updated", "unchanged")}, "tests": tests_passed, "unresolved_blockers": 0}
     write(REPORTS / "RHCSA_V5_1_INTEGRATION_REPORT.json", json.dumps(integration, ensure_ascii=False, indent=2))
-    report_md = f"# RHCSA v5.1 Integration Report\n\n**RHCSA_V5_1_RELEASED**\n\n- Imported: 33 chapters; {integration['lecture_characters']} lecture characters.\n- IDs: {integration['section_ids']} Section IDs / 0 conflicts; {len(notes)} RHCSA Notes / 0 conflicts.\n- Anki: {anki_qa['qa']} QA + {anki_qa['cloze']} Cloze; priority {dict(before)} -> {dict(after)}.\n- PDFs: 33 chapters / {integration['chapter_pdf_pages']} pages; full book {book_pages} pages; QA failures 0.\n- APKG: {integration['apkg_bytes']} bytes; AnkiConnect added 10, updated 2011, unchanged 1342; readback passed.\n- Tests: 22 passed.\n- Live RHEL 9 command tests: not performed.\n"
+    report_md = f"# RHCSA v5.1 Integration Report\n\n**RHCSA_V5_1_RELEASED**\n\n- Imported: 33 chapters; {integration['lecture_characters']} lecture characters.\n- IDs: {integration['section_ids']} Section IDs / 0 conflicts; {len(notes)} RHCSA Notes / 0 conflicts.\n- Anki: {anki_qa['qa']} QA + {anki_qa['cloze']} Cloze; priority {dict(before)} -> {dict(after)}.\n- PDFs: 33 chapters / {integration['chapter_pdf_pages']} pages; full book {book_pages} pages; QA failures {integration['pdf_qa_failures']}.\n- APKG: {integration['apkg_bytes']} bytes; AnkiConnect added {sync['added']}, updated {sync['updated']}, unchanged {sync['unchanged']}; readback passed.\n- Tests: {tests_passed} passed.\n- Live RHEL 9 command tests: not performed.\n"
     write(REPORTS / "RHCSA_V5_1_INTEGRATION_REPORT.md", report_md)
 
 

@@ -17,8 +17,6 @@ integration:
 canonical:
   lecture: content/rhcsa/chapters/mounts-fstab-swap/lecture.md
   anki: content/rhcsa/chapters/mounts-fstab-swap/anki.yml
-  lecture_sha256: 6a92151781a4b2eb33112cf9a157d43f5b9227d501f3696c5c7feeab852a6d96
-  anki_sha256: 7937a4636293f835604ef3eaf59de301c4fe397e577afe7ecde0b957bce805c9
 package:
   version: '5.1'
   status: content_frozen_for_integration
@@ -78,3 +76,7 @@ limitations:
   rebuild, APKG generation, repository integration, and release.
 - The verified base commit records the repository main HEAD observed during this chapter freeze; Codex must select and record
   the final integration HEAD.
+extensions:
+  canonical:
+    lecture_sha256: 6a92151781a4b2eb33112cf9a157d43f5b9227d501f3696c5c7feeab852a6d96
+    anki_sha256: 7937a4636293f835604ef3eaf59de301c4fe397e577afe7ecde0b957bce805c9

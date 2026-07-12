@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import re
+import hashlib
+import zipfile
 from collections import Counter
 from pathlib import Path
 
@@ -31,6 +33,17 @@ def test_manifest_schema_all_chapters_and_no_self_hash():
             assert re.fullmatch(r"[0-9a-f]{64}", entry["sha256"])
 
 
+def test_required_payload_hashes_against_frozen_archives():
+    for chapter, path in zip(CHAPTERS, chapter_files("manifest.yml")):
+        value = yaml.safe_load(path.read_text())
+        archive = next(ROOT.glob(f"{chapter['id']}-*.zip"))
+        with zipfile.ZipFile(archive) as package:
+            members = {Path(name).name: name for name in package.namelist() if not name.endswith("/")}
+            for entry in value["files"].values():
+                payload = package.read(members[entry["path"]])
+                assert hashlib.sha256(payload).hexdigest() == entry["sha256"]
+
+
 def test_anki_schema_ids_sources_cloze_and_chapter_tags():
     schema = json.loads((ROOT / "schemas/anki-chapter.schema.json").read_text())
     ids = []
@@ -46,6 +59,10 @@ def test_anki_schema_ids_sources_cloze_and_chapter_tags():
                 assert re.search(r"\{\{c\d+::.+?\}\}", note["text"])
     assert not [key for key, count in Counter(ids).items() if count > 1]
     assert "RHCSA-NETWORK-C01-QA-001" not in ids
+    migrations = yaml.safe_load((ROOT / "config/anki-migrations.yml").read_text())
+    tombstones = migrations["tombstones"]
+    assert list(tombstones) == ["RHCSA-NETWORK-C01-QA-001"]
+    assert tombstones["RHCSA-NETWORK-C01-QA-001"]["disabled"] is True
 
 
 def test_section_ids_unique_globally():

@@ -6,8 +6,6 @@ chapter:
   number: 2
   slug: io-redirection-pipelines
   title: 标准输入输出、重定向与管道
-  canonical_lecture: content/rhcsa/chapters/io-redirection-pipelines/lecture.md
-  canonical_anki: content/rhcsa/chapters/io-redirection-pipelines/anki.yml
 base_repository:
   url: https://github.com/wrd233/RHCSA-RHCE
   branch: main
@@ -119,3 +117,6 @@ extensions:
   - RHCSA-02-A01
   - RHCSA-02-A02
   - RHCSA-02-S01
+  chapter:
+    canonical_lecture: content/rhcsa/chapters/io-redirection-pipelines/lecture.md
+    canonical_anki: content/rhcsa/chapters/io-redirection-pipelines/anki.yml

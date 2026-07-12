@@ -74,3 +74,4 @@ limitations:
 - No controllable RHEL 9 VM; command-level live tests were not performed.
 - Whole-book ID uniqueness, cross-chapter duplicate checks, unified PDF/APKG build, AnkiConnect, Git integration and release
   remain Codex responsibilities.
+extensions: {}

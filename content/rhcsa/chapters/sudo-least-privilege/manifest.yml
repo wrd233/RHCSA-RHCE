@@ -76,3 +76,4 @@ limitations:
   release remain Codex responsibilities.
 - Manifest self-hash is intentionally not embedded because it would be self-referential; every other delivery file has a SHA-256
   entry.
+extensions: {}

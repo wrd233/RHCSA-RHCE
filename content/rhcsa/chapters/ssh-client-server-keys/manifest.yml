@@ -75,3 +75,4 @@ limitations:
 - Full-book Section ID and Anki ID uniqueness, cross-chapter duplicate checks, formal PDF/APKG builds, Git integration and
   release remain Codex responsibilities.
 - manifest.yml is the hash index and is not self-hashed to avoid a self-referential digest.
+extensions: {}

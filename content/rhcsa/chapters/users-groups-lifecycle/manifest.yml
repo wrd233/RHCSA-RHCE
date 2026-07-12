@@ -12,7 +12,6 @@ base_repository:
   commit: 961a29b3af4c07a828078a5de90c221a036546df
   verification: verified
   verified_at: '2026-07-12T22:20:08+08:00'
-  previous_v5_0_base_commit: 39e873dab15347a0f1a7611a6f212c3d26bd3562
 integration:
   head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
   method: three_way
@@ -82,3 +81,5 @@ limitations:
 extensions:
   integrity_note: Manifest self-hash is intentionally omitted to avoid recursive hashing; every other delivery file is hashed
     above.
+  base_repository:
+    previous_v5_0_base_commit: 39e873dab15347a0f1a7611a6f212c3d26bd3562

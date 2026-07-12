@@ -75,3 +75,4 @@ limitations:
 - Global Section ID uniqueness, global Anki ID uniqueness, cross-chapter similarity, unified book PDF and APKG remain Codex
   integration tasks.
 - The review PDF is a chapter review artifact; Codex must rebuild the formal PDF with the repository-wide template.
+extensions: {}

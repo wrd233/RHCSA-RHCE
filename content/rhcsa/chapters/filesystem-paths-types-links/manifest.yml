@@ -18,7 +18,6 @@ integration:
 canonical:
   lecture: content/rhcsa/chapters/filesystem-paths-types-links/lecture.md
   anki: content/rhcsa/chapters/filesystem-paths-types-links/anki.yml
-  anki_baseline_sha256: fe6083318f071bafcf6a6a0365550237278c36ca231f34619eee59138031a61a
 package:
   version: '5.1'
   status: content_frozen_for_integration
@@ -93,3 +92,5 @@ extensions:
     disabled_changes: 0
     anki_connect_used: false
     apkg_generated: false
+  canonical:
+    anki_baseline_sha256: fe6083318f071bafcf6a6a0365550237278c36ca231f34619eee59138031a61a

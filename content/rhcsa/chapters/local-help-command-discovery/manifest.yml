@@ -17,8 +17,6 @@ integration:
 canonical:
   lecture: content/rhcsa/chapters/local-help-command-discovery/lecture.md
   anki: content/rhcsa/chapters/local-help-command-discovery/anki.yml
-  lecture_sha256: e08c984827cb4b69eed4f8d533bde85e59409c62a8c03e821f9dbc1e4463017e
-  anki_sha256: 4b3940afe12266dbbc9c6db5ab4ddafc89c06ebb3e786bae86c99debc5c835dc
 package:
   version: '5.1'
   status: content_frozen_for_integration
@@ -78,3 +76,7 @@ limitations:
   Git integration and release remain Codex responsibilities.
 - Locale-specific output, Info document availability, man index state, RPM database versus file-presence behavior, and DNF
   provider results require live verification.
+extensions:
+  canonical:
+    lecture_sha256: e08c984827cb4b69eed4f8d533bde85e59409c62a8c03e821f9dbc1e4463017e
+    anki_sha256: 4b3940afe12266dbbc9c6db5ab4ddafc89c06ebb3e786bae86c99debc5c835dc

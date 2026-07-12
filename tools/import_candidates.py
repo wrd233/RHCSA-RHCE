@@ -219,9 +219,12 @@ def apply_package(package_root: Path, package: Package, root: Path) -> None:
         "lecture": f"content/{track}/chapters/{package.slug}/lecture.md",
         "anki": f"content/{track}/chapters/{package.slug}/anki.yml",
     }
+    source_chapter = source.get("chapter") or {}
+    chapter_fields = {key: source_chapter.get(key) for key in ("id", "exam", "part", "number", "slug", "title")}
+    nested_extensions = {key: value for key, value in source_chapter.items() if key not in chapter_fields}
     normalized_manifest = {
         "package_version": 1,
-        "chapter": source.get("chapter") or {},
+        "chapter": chapter_fields,
         "base_repository": source.get("base_repository") or {},
         "integration": {
             "head": integration_head,
@@ -244,6 +247,8 @@ def apply_package(package_root: Path, package: Package, root: Path) -> None:
     extensions = {key: value for key, value in source.items() if key not in known}
     if extensions:
         normalized_manifest["extensions"] = extensions
+    if nested_extensions:
+        normalized_manifest.setdefault("extensions", {})["chapter"] = nested_extensions
     (destination / "manifest.yml").write_text(yaml.safe_dump(normalized_manifest, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
 
 

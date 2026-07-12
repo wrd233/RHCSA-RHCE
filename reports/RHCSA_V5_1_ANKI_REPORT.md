@@ -9,4 +9,4 @@
 
 - APKG bytes: 2220250
 - APKG SHA-256: `bd1ffb91da1ad2c4c97b5d2e484f4d772aa239b836101038fcdb7c6651448b33`
-- AnkiConnect: added 10, updated 2011, unchanged 1342; readback 3363 notes / 3711 cards including 25 common-exam notes.
+- AnkiConnect: added 10, updated 2011, unchanged 1342; readback 3363 notes / 3711 cards.
