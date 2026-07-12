@@ -4,6 +4,9 @@ __pycache__/
 .DS_Store
 .build/
 build/
+backups/
+dist/
+reports/pdf-reading-review/
 dist/
 releases/
 tmp/

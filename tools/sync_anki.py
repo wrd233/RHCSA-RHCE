@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import datetime
 import sys
 import urllib.error
 import urllib.request
@@ -24,7 +25,7 @@ MODELS = {
         "templates": [{
             "Name": "RedHat-QA",
             "Front": "{{Question}}",
-            "Back": '{{Answer}}<div class="extra">{{Extra}}</div><div class="source">{{Source}}</div>',
+            "Back": '{{Answer}}<div class="extra">{{Extra}}</div>',
         }],
         "is_cloze": False,
     },
@@ -34,7 +35,7 @@ MODELS = {
         "templates": [{
             "Name": "RedHat-Cloze",
             "Front": "{{cloze:Text}}",
-            "Back": '{{cloze:Text}}<div class="extra">{{Extra}}</div><div class="source">{{Source}}</div>',
+            "Back": '{{cloze:Text}}<div class="extra">{{Extra}}</div>',
         }],
         "is_cloze": True,
     },
@@ -105,12 +106,7 @@ def sync_note(note: dict, deck: str, endpoint: str) -> str:
     if len(matches) > 1:
         raise RuntimeError(f"stable ID {note['id']} matches multiple Anki notes: {matches}")
     if note.get("disabled"):
-        if not matches:
-            return "disabled-missing"
-        cards = invoke("findCards", endpoint=endpoint, query=f"nid:{matches[0]}")
-        if cards:
-            invoke("suspend", endpoint=endpoint, cards=cards)
-        return "suspended"
+        return "disabled-skipped"
 
     spec = MODELS[note["type"]]
     fields = note_fields(note)
@@ -136,16 +132,29 @@ def sync_note(note: dict, deck: str, endpoint: str) -> str:
             f"{note['id']} uses {info['modelName']}, expected {spec['name']}; "
             "refusing an unsafe note-type change"
         )
-    invoke("updateNoteFields", endpoint=endpoint, note={"id": note_id, "fields": fields})
+    actual_fields = {key: value.get("value", "") for key, value in info["fields"].items()}
+    fields_changed = any(actual_fields.get(key) != value for key, value in fields.items())
     old_tags = info.get("tags") or []
-    if old_tags:
+    tags_changed = sorted(old_tags) != sorted(tags)
+    if not fields_changed and not tags_changed:
+        return "unchanged"
+    if fields_changed:
+        invoke("updateNoteFields", endpoint=endpoint, note={"id": note_id, "fields": fields})
+    if tags_changed and old_tags:
         invoke("removeTags", endpoint=endpoint, notes=[note_id], tags=" ".join(old_tags))
-    if tags:
+    if tags_changed and tags:
         invoke("addTags", endpoint=endpoint, notes=[note_id], tags=" ".join(tags))
-    cards = info.get("cards") or invoke("findCards", endpoint=endpoint, query=f"nid:{note_id}")
-    if cards:
-        invoke("unsuspend", endpoint=endpoint, cards=cards)
     return "updated"
+
+
+def project_snapshot(endpoint: str, path: Path) -> list[int]:
+    ids = sorted(set(invoke("findNotes", endpoint=endpoint, query='note:"RedHat-QA"') + invoke("findNotes", endpoint=endpoint, query='note:"RedHat-Cloze"')))
+    infos = []
+    for start in range(0, len(ids), 200):
+        infos.extend(invoke("notesInfo", endpoint=endpoint, notes=ids[start:start + 200]))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(infos, ensure_ascii=False, indent=2), encoding="utf-8")
+    return ids
 
 
 def collect(paths: list[Path]) -> list[tuple[Path, dict]]:
@@ -170,9 +179,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Synchronize YAML notes by stable ID")
     parser.add_argument("sources", nargs="*", type=Path, help="one or more chapter anki.yml files")
     parser.add_argument("--all", action="store_true", help="use every content/**/anki.yml source")
+    parser.add_argument("--exam", choices=["rhcsa", "rhce"], help="limit common notes to the target exam")
     parser.add_argument("--apply", action="store_true", help="contact AnkiConnect and perform writes")
     parser.add_argument("--yes", action="store_true", help="confirm the explicit apply operation")
     parser.add_argument("--endpoint", default=ENDPOINT)
+    parser.add_argument("--report", type=Path)
     args = parser.parse_args()
 
     if args.all and args.sources:
@@ -181,6 +192,16 @@ def main() -> int:
     if not paths:
         parser.error("provide source files or --all")
     items = collect(paths)
+    if args.exam:
+        scoped = []
+        for path, data in items:
+            if f"content/{args.exam}/" not in path.as_posix() and "content/common/" not in path.as_posix():
+                continue
+            copy = dict(data)
+            if "content/common/" in path.as_posix():
+                copy["notes"] = [n for n in data["notes"] if f"exam::{args.exam}" in (n.get("tags") or [])]
+            scoped.append((path, copy))
+        items = scoped
     migrations = load_migrations()
     counts = {"active": 0, "disabled": 0}
     for _, data in items:
@@ -197,15 +218,44 @@ def main() -> int:
     if not args.yes:
         parser.error("--apply also requires --yes; this prevents accidental writes")
 
-    invoke("version", endpoint=args.endpoint)
+    version = invoke("version", endpoint=args.endpoint)
     ensure_models(args.endpoint)
+    stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    backup = ROOT / "backups" / "anki" / f"RHCSA-before-sync-{stamp}.notes.json"
+    before_ids = project_snapshot(args.endpoint, backup)
     results: dict[str, int] = {}
+    if not before_ids:
+        pending = []
+        pending_ids = []
+        for _, data in items:
+            invoke("createDeck", endpoint=args.endpoint, deck=data["deck"])
+            for note in data["notes"]:
+                if note.get("disabled"):
+                    results["disabled-skipped"] = results.get("disabled-skipped", 0) + 1
+                    continue
+                spec = MODELS[note["type"]]
+                pending.append({"deckName": data["deck"], "modelName": spec["name"], "fields": note_fields(note),
+                                "tags": list(dict.fromkeys(note.get("tags") or [])), "options": {"allowDuplicate": False}})
+                pending_ids.append(note["id"])
+        for start in range(0, len(pending), 100):
+            batch = pending[start:start + 100]
+            added = invoke("addNotes", endpoint=args.endpoint, notes=batch)
+            failed = [pending_ids[start+i] for i, value in enumerate(added) if value is None]
+            if failed:
+                raise RuntimeError(f"addNotes batch failed for stable IDs: {failed}")
+            results["added"] = results.get("added", 0) + len(batch)
+        items = []
     for path, data in items:
         invoke("createDeck", endpoint=args.endpoint, deck=data["deck"])
         for note in data["notes"]:
             result = sync_note(note, data["deck"], args.endpoint)
             results[result] = results.get(result, 0) + 1
         print(f"synced {path}")
+    after_ids = project_snapshot(args.endpoint, ROOT / "backups" / "anki" / f"RHCSA-after-sync-{stamp}.notes.json")
+    summary = {"endpoint": args.endpoint, "api_version": version, "backup": str(backup), "before_notes": len(before_ids), "after_notes": len(after_ids), "results": results}
+    if args.report:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print("sync result: " + ", ".join(f"{key}={value}" for key, value in sorted(results.items())))
     return 0
 

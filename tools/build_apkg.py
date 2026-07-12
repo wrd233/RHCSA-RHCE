@@ -27,7 +27,7 @@ QA_MODEL = genanki.Model(
     templates=[{
         "name": "RedHat-QA",
         "qfmt": "{{Question}}",
-        "afmt": "{{Answer}}<div class=\"extra\">{{Extra}}</div><div class=\"source\">{{Source}}</div>",
+        "afmt": "{{Answer}}<div class=\"extra\">{{Extra}}</div>",
     }],
     css=CARD_CSS,
 )
@@ -39,7 +39,7 @@ CLOZE_MODEL = genanki.Model(
     templates=[{
         "name": "RedHat-Cloze",
         "qfmt": "{{cloze:Text}}",
-        "afmt": "{{cloze:Text}}<div class=\"extra\">{{Extra}}</div><div class=\"source\">{{Source}}</div>",
+        "afmt": "{{cloze:Text}}<div class=\"extra\">{{Extra}}</div>",
     }],
     css=CARD_CSS,
     model_type=genanki.Model.CLOZE,

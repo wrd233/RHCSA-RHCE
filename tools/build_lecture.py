@@ -18,10 +18,12 @@ ENV = Environment(
 )
 
 
-def wrap_html(title: str, body: str, output: Path) -> None:
+def wrap_html(title: str, body: str, output: Path, profile: str = "reading") -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
-    css_uri = (ROOT / "styles" / "lecture.css").resolve().as_uri()
-    rendered = ENV.get_template("lecture.html").render(title=title, body=body, css_uri=css_uri)
+    css_name = "lecture-reading.css" if profile == "reading" else "lecture.css"
+    template = "lecture-reading.html" if profile == "reading" else "lecture.html"
+    css_uri = (ROOT / "styles" / css_name).resolve().as_uri()
+    rendered = ENV.get_template(template).render(title=title, body=body, css_uri=css_uri)
     output.write_text(rendered, encoding="utf-8")
 
 
@@ -30,13 +32,21 @@ def chapter_html(chapter: dict) -> str:
     return lecture_markdown_to_html(source.read_text(encoding="utf-8"))
 
 
-def build_chapter(chapter: dict) -> Path:
-    out_dir = ROOT / "build" / "chapters" / chapter["track"] / chapter["slug"]
+def display_title(chapter: dict) -> str:
+    if chapter["track"] == "rhcsa":
+        clean = re.sub(r'^RHCSA-\d+\s*', '', chapter["title"])
+        return f'第 {chapter["number"]:02d} 章　{clean}'
+    return chapter["title"]
+
+
+def build_chapter(chapter: dict, profile: str = "reading") -> Path:
+    out_dir = ROOT / "build" / "chapters" / profile / chapter["track"] / chapter["slug"]
     html_path = out_dir / "lecture.html"
     pdf_path = out_dir / "lecture.pdf"
-    wrap_html(chapter["title"], chapter_html(chapter), html_path)
+    body = re.sub(r'<h1>.*?</h1>', f'<h1>{display_title(chapter)}</h1>', chapter_html(chapter), count=1)
+    wrap_html(display_title(chapter), body, html_path, profile)
     chrome_pdf(html_path, pdf_path)
-    release = ROOT / "dist" / chapter["track"] / "chapters" / f'{chapter["number"]:02d}-{chapter["slug"]}.pdf'
+    release = ROOT / "dist" / chapter["track"] / profile / "chapters" / f'{chapter["number"]:02d}-{chapter["slug"]}.pdf'
     release.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(pdf_path, release)
     print(f"built {rel(release)} ({len(PdfReader(release).pages)} pages)")
@@ -60,22 +70,43 @@ def book_filename(track: str, incomplete: bool) -> str:
     return f'RHEL9-{track.upper()}-V2-INCOMPLETE-PREVIEW.pdf' if incomplete else f'RHEL9-{track.upper()}-讲义.pdf'
 
 
-def build_book(track: str, incomplete: bool = False) -> Path:
+def build_book(track: str, incomplete: bool = False, profile: str = "reading") -> Path:
     manifest = load_manifest()
     common = list(iter_chapters(["common"]))
     chapters = common + list(iter_chapters([track]))
     title = f'RHEL 9 {track.upper()} 讲义'
-    filename = book_filename(track, incomplete)
-    out_dir = ROOT / "build" / "books" / track
+    filename = "RHEL9-RHCSA-讲义-大字号阅读版.pdf" if track == "rhcsa" and profile == "reading" and not incomplete else book_filename(track, incomplete)
+    out_dir = ROOT / "build" / "books" / profile / track
     html_path = out_dir / f"{track}.html"
     pdf_path = out_dir / filename
-    wrap_html(title, book_body(title, chapters), html_path)
+    wrap_html(title, book_body(title, chapters), html_path, profile)
     chrome_pdf(html_path, pdf_path)
-    release = ROOT / "dist" / track / filename
+    release = ROOT / "dist" / track / profile / filename
     release.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(pdf_path, release)
     print(f"built {rel(release)} ({len(PdfReader(release).pages)} pages)")
     return release
+
+
+def build_parts(track: str, profile: str = "reading") -> list[Path]:
+    chapters = list(iter_chapters([track]))
+    grouped: dict[str, list[dict]] = {}
+    for chapter in chapters:
+        grouped.setdefault(chapter["part"], []).append(chapter)
+    outputs = []
+    for index, (part, members) in enumerate(grouped.items(), 1):
+        title = f'RHEL 9 {track.upper()}　{part}'
+        out_dir = ROOT / "build" / "parts" / profile / track
+        html_path = out_dir / f"part-{index:02d}.html"
+        pdf_path = out_dir / f"part-{index:02d}.pdf"
+        wrap_html(title, book_body(title, members), html_path, profile)
+        chrome_pdf(html_path, pdf_path)
+        release = ROOT / "dist" / track / profile / "parts" / f"{index:02d}-{part.replace('　', '-')}.pdf"
+        release.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(pdf_path, release)
+        outputs.append(release)
+        print(f"built {rel(release)} ({len(PdfReader(release).pages)} pages)")
+    return outputs
 
 
 def build_combined() -> Path:

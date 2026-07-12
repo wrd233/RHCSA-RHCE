@@ -70,3 +70,13 @@ uv run python tools/build.py rhce --allow-incomplete
 APKG Model 包含 `Source` 字段。构建从不调用 AnkiConnect。`tools/sync_anki.py` 默认 dry-run，只有 `--apply --yes` 才会联系本机 AnkiConnect；本轮未调用该接口。
 
 外部资料策略见 `docs/guides/external-sources.md`，完整集成证据见 `reports/V2_INTEGRATION_REPORT.md`。
+# 正式阅读版与 AnkiConnect
+
+RHCSA 正式 PDF 默认采用大字号阅读版：无页眉、页脚和页码；概念全宽单列、术语加粗换色，定义与已有理解说明分层；操作语义采用可查询的 man-page 风格，重要参数逐项排列。详见 `docs/specs/PDF大字号阅读版排版规范.md`。
+
+```bash
+uv run python tools/doctor.py
+uv run python tools/build.py rhcsa --profile reading --all-chapters
+```
+
+PDF 输出在 `dist/rhcsa/reading/`。APKG 是离线包，与 AnkiConnect 写入不同。同步先执行 `uv run python tools/sync_anki.py --all` dry-run；确认 Anki 正在运行且全部门禁通过后，才使用 `--apply --yes`。工具在写入前保存 Note JSON 快照，按稳定 ID 幂等新增或更新，绝不删除用户其他 Note；正式卡片保留 Source 字段但不显示它。完整流程见 `docs/guides/AnkiConnect同步.md`。

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import html
+import os
 import re
 import shutil
 import subprocess
@@ -17,7 +18,23 @@ import yaml
 from pypdf import PdfReader, PdfWriter
 
 ROOT = Path(__file__).resolve().parents[1]
-CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+CHROME_CANDIDATES = [
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    r"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    r"C:\\Program Files\\Chromium\\Application\\chrome.exe",
+]
+
+
+def find_chrome() -> Path | None:
+    for key in ("CHROME_BIN", "CHROMIUM_BIN"):
+        if os.environ.get(key) and Path(os.environ[key]).is_file():
+            return Path(os.environ[key])
+    for name in ("google-chrome", "chromium", "chromium-browser", "chrome"):
+        found = shutil.which(name)
+        if found:
+            return Path(found)
+    return next((Path(value) for value in CHROME_CANDIDATES if Path(value).is_file()), None)
 
 
 def load_yaml(path: Path):
@@ -65,11 +82,36 @@ def strip_front_matter(text: str) -> tuple[dict, str]:
 def lecture_markdown_to_html(text: str) -> str:
     _, body = strip_front_matter(text)
     body = re.sub(r"<section(?![^>]*\bmarkdown=)", '<section markdown="1"', body)
-    return markdown.markdown(
+    rendered = markdown.markdown(
         body,
         extensions=["extra", "md_in_html", "sane_lists", "toc"],
         output_format="html5",
     )
+    # Canonical Markdown remains the source; deterministic semantic wrappers
+    # expose its authored labels to reading CSS without inventing content.
+    def concept(match: re.Match) -> str:
+        term = match.group(1).strip()
+        content = f'{term}是{match.group(2).strip()}。'
+        sentences = re.split(r'(?<=。)', content, maxsplit=1)
+        definition = sentences[0]
+        understanding = sentences[1].strip() if len(sentences) > 1 else ""
+        extra = f'<div class="concept-understanding"><strong>理解：</strong>{understanding}</div>' if understanding else ""
+        return ('<div class="concept-block"><div class="concept-heading">'
+                '<span class="semantic-badge">概念</span>'
+                f'<strong class="concept-term">{term}</strong></div>'
+                f'<div class="concept-definition"><strong>定义：</strong>{definition}</div>{extra}</div>')
+    rendered = re.sub(
+        r'<p><strong>\[概念\]</strong>\s*(.*?)(?:是|指|属于)(.*?)(?:。</p>)',
+        concept,
+        rendered, flags=re.S)
+    rendered = re.sub(
+        r'<p><strong>\[操作语义\]</strong>\s*(.*?)</p>',
+        r'<div class="operation-block"><div class="operation-heading"><span class="semantic-badge">操作语义</span></div><div class="operation-semantics">\1</div></div>',
+        rendered, flags=re.S)
+    rendered = re.sub(r'<h2>\[(知识|操作|诊断)专题\]\s*', r'<h2><span class="semantic-badge">\1专题</span> ', rendered)
+    rendered = re.sub(r'<h3>([①-⑳])\s*\[(知识点|操作|诊断点)\]\s*', r'<h3><span class="point-index">\1</span><span class="semantic-badge subtle">\2</span> ', rendered)
+    rendered = rendered.replace('<p><strong>[Cheatsheet]</strong></p>', '<div class="cheatsheet-label">Cheatsheet</div>')
+    return rendered
 
 
 ALLOWED_TAGS = {
@@ -99,14 +141,15 @@ def stable_int(value: str) -> int:
 
 
 def chrome_pdf(html_path: Path, pdf_path: Path) -> None:
-    if not CHROME.exists():
-        raise RuntimeError(f"Chrome not found: {CHROME}")
+    chrome = find_chrome()
+    if not chrome:
+        raise RuntimeError("Chrome/Chromium not found; set CHROME_BIN or CHROMIUM_BIN")
     pdf_path.parent.mkdir(parents=True, exist_ok=True)
     if pdf_path.exists():
         pdf_path.unlink()
     profile = Path(tempfile.mkdtemp(prefix="chrome-pdf-", dir=ROOT / "build"))
     command = [
-        str(CHROME),
+        str(chrome),
         "--headless=new",
         "--disable-gpu",
         "--disable-background-networking",

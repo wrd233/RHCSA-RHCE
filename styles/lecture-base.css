@@ -1,0 +1,24 @@
+@page { size: A4 portrait; margin: 20mm 20mm 21mm; }
+:root { color: #172033; font-family: "Songti SC", "STSong", serif; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+h1, h2, h3 { color: #123f6d; font-family: "Hiragino Sans GB", "Heiti SC", sans-serif; break-after: avoid-page; }
+h1 { break-before: page; } body > h1:first-child, .book-title h1 { break-before: auto; }
+p { text-align: justify; }
+code { font-family: "SFMono-Regular", Menlo, "Hiragino Sans GB", monospace; hyphens: none; word-break: normal; overflow-wrap: normal; }
+p code, li code, td code { white-space: nowrap; }
+pre { white-space: pre-wrap; overflow-wrap: normal; break-inside: avoid-page; }
+pre code { white-space: inherit; }
+table { width: 100%; border-collapse: collapse; }
+thead { display: table-header-group; }
+tr { break-inside: avoid-page; }
+.task-page, .solution-page { break-before: page; }
+.book-title { min-height: 250mm; display: flex; flex-direction: column; justify-content: center; text-align: center; break-after: page; }
+.book-title p { text-align: center; }
+.toc { break-after: page; }
+.toc ol { list-style: none; padding: 0; }
+.concept-block, .operation-block { width: 100%; display: block; break-inside: avoid-page; }
+.semantic-badge { display: inline-block; }
+.cheatsheet-label { break-after: avoid-page; }
+.part-title { break-before: page; }
+

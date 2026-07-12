@@ -6,7 +6,7 @@ import sys
 
 from build_anki_preview import build as build_preview
 from build_apkg import build as build_apkg
-from build_lecture import build_book, build_chapter
+from build_lecture import build_book, build_chapter, build_parts
 from common import iter_chapters, load_manifest
 
 
@@ -21,6 +21,7 @@ def main() -> int:
     parser.add_argument("--chapter")
     parser.add_argument("--all-chapters", action="store_true")
     parser.add_argument("--allow-incomplete", action="store_true")
+    parser.add_argument("--profile", choices=["reading", "compact"], default="reading")
     args = parser.parse_args()
     manifest = load_manifest()
     if args.chapter:
@@ -28,7 +29,7 @@ def main() -> int:
         if not chapters:
             print(f"chapter is pending or unknown: {args.chapter}", file=sys.stderr)
             return 1
-        build_chapter(chapters[0])
+        build_chapter(chapters[0], args.profile)
         build_preview(chapters[0])
         return 0
     complete = release_ready(args.track, manifest)
@@ -39,9 +40,11 @@ def main() -> int:
     chapters = list(iter_chapters([args.track]))
     if args.all_chapters:
         for chapter in chapters:
-            build_chapter(chapter)
+            build_chapter(chapter, args.profile)
             build_preview(chapter)
-    build_book(args.track, incomplete=not complete)
+    if args.track == "rhcsa" and args.profile == "reading":
+        build_parts(args.track, args.profile)
+    build_book(args.track, incomplete=not complete, profile=args.profile)
     build_apkg(args.track, incomplete=not complete)
     return 0
 
