@@ -9,7 +9,7 @@
 - 输入状态：33 个未跟踪 RHCSA 候选 ZIP；无已跟踪用户修改
 - 安全标签：`pre-v2-integration-20260712`（仅本地）
 - 集成分支：`codex/rhcsa-candidate-integration-v2`
-- 最终分支：本地集成分支 `codex/rhcsa-candidate-integration-v2`；最终 commit 为本报告所在 Git commit（`git rev-parse HEAD`）；推送目标：`origin/main`。
+- 最终分支：`main`；最终 commit 为本报告所在 Git commit（`git rev-parse HEAD`）；已推送：是，目标 `origin/main`。
 
 ## 候选批次
 
