@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from pypdf import PdfReader
+from pypdf import PdfReader, PdfWriter
 
 from common import ROOT, chrome_pdf, iter_chapters, lecture_markdown_to_html, load_manifest, rel
 
@@ -20,8 +20,10 @@ ENV = Environment(
 
 def wrap_html(title: str, body: str, output: Path, profile: str = "reading") -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
-    css_name = "lecture-reading.css" if profile == "reading" else "lecture.css"
-    template = "lecture-reading.html" if profile == "reading" else "lecture.html"
+    if profile != "reading":
+        raise ValueError("only the formal reading profile is supported")
+    css_name = "lecture-reading.css"
+    template = "lecture-reading.html"
     css_uri = (ROOT / "styles" / css_name).resolve().as_uri()
     rendered = ENV.get_template(template).render(title=title, body=body, css_uri=css_uri)
     output.write_text(rendered, encoding="utf-8")
@@ -46,7 +48,9 @@ def build_chapter(chapter: dict, profile: str = "reading") -> Path:
     body = re.sub(r'<h1>.*?</h1>', f'<h1>{display_title(chapter)}</h1>', chapter_html(chapter), count=1)
     wrap_html(display_title(chapter), body, html_path, profile)
     chrome_pdf(html_path, pdf_path)
-    release = ROOT / "dist" / chapter["track"] / profile / "chapters" / f'{chapter["number"]:02d}-{chapter["slug"]}.pdf'
+    release = (ROOT / "releases" / "rhcsa-v5.1" / "chapters" / f'{chapter["number"]:02d}-{chapter["slug"]}.pdf'
+               if chapter["track"] == "rhcsa" and profile == "reading"
+               else ROOT / "dist" / chapter["track"] / profile / "chapters" / f'{chapter["number"]:02d}-{chapter["slug"]}.pdf')
     release.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(pdf_path, release)
     print(f"built {rel(release)} ({len(PdfReader(release).pages)} pages)")
@@ -71,11 +75,11 @@ def book_filename(track: str, incomplete: bool) -> str:
 
 
 def build_book(track: str, incomplete: bool = False, profile: str = "reading") -> Path:
-    manifest = load_manifest()
-    common = list(iter_chapters(["common"]))
-    chapters = common + list(iter_chapters([track]))
+    chapters = list(iter_chapters([track]))
     title = f'RHEL 9 {track.upper()} 讲义'
     filename = "RHEL9-RHCSA-讲义-大字号阅读版.pdf" if track == "rhcsa" and profile == "reading" and not incomplete else book_filename(track, incomplete)
+    if track == "rhcsa" and profile == "reading" and not incomplete:
+        return build_reading_book_from_chapters(chapters)
     out_dir = ROOT / "build" / "books" / profile / track
     html_path = out_dir / f"{track}.html"
     pdf_path = out_dir / filename
@@ -85,6 +89,67 @@ def build_book(track: str, incomplete: bool = False, profile: str = "reading") -
     release.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(pdf_path, release)
     print(f"built {rel(release)} ({len(PdfReader(release).pages)} pages)")
+    return release
+
+
+def build_reading_book_from_chapters(chapters: list[dict]) -> Path:
+    """Merge accepted chapter PDFs; never reflow the 33 Markdown documents."""
+    release_root = ROOT / "releases/rhcsa-v5.1"
+    chapter_paths = [release_root / "chapters" / f'{c["number"]:02d}-{c["slug"]}.pdf' for c in chapters]
+    missing = [path for path in chapter_paths if not path.is_file()]
+    if missing:
+        raise FileNotFoundError("build chapter PDFs before the book: " + ", ".join(map(str, missing)))
+    page_counts = [len(PdfReader(path).pages) for path in chapter_paths]
+    toc = "".join(
+        f'<li><strong>{c["id"]}</strong>　{c["title"]}　<span>{pages} 页</span></li>'
+        for c, pages in zip(chapters, page_counts)
+    )
+    front_body = (
+        '<section class="book-title"><h1>RHCSA RHEL 9 v5.1</h1>'
+        '<p>大字号正式阅读版</p><p>由 33 个已验收单章 PDF 原样合并</p></section>'
+        f'<nav class="toc"><h1>目录与阅读导航</h1><ol>{toc}</ol></nav>'
+    )
+    out_dir = ROOT / "build/books/reading/rhcsa"
+    front_html = out_dir / "front-matter.html"
+    front_pdf = out_dir / "front-matter.pdf"
+    wrap_html("RHCSA RHEL 9 v5.1", front_body, front_html, "reading")
+    chrome_pdf(front_html, front_pdf)
+    writer = PdfWriter()
+    writer.append(str(front_pdf))
+    front_pages = len(PdfReader(front_pdf).pages)
+    offset = front_pages
+    part_parents: dict[str, object] = {}
+    for chapter, path, pages in zip(chapters, chapter_paths, page_counts):
+        writer.append(str(path), import_outline=False)
+        part = chapter.get("part", "RHCSA")
+        if part not in part_parents:
+            part_parents[part] = writer.add_outline_item(part, offset)
+        chapter_parent = writer.add_outline_item(
+            f'{chapter["id"]} {chapter["title"]}', offset, parent=part_parents[part]
+        )
+        source_outline = PdfReader(path).outline
+        for item in source_outline:
+            if isinstance(item, list) or not hasattr(item, "title"):
+                continue
+            try:
+                local_page = PdfReader(path).get_destination_page_number(item)
+            except Exception:
+                continue
+            if local_page > 0:
+                writer.add_outline_item(str(item.title), offset + local_page, parent=chapter_parent)
+        offset += pages
+    release = release_root / "RHCSA-RHEL9-v5.1.pdf"
+    staging = out_dir / "RHCSA-RHEL9-v5.1.staging.pdf"
+    staging.parent.mkdir(parents=True, exist_ok=True)
+    with staging.open("wb") as handle:
+        writer.write(handle)
+    actual = len(PdfReader(staging).pages)
+    expected = front_pages + sum(page_counts)
+    if actual != expected:
+        raise RuntimeError(f"book page equation failed: {actual} != {sum(page_counts)} + {front_pages}")
+    release.parent.mkdir(parents=True, exist_ok=True)
+    staging.replace(release)
+    print(f"built {rel(release)} ({actual} pages = {sum(page_counts)} chapter + {front_pages} front matter)")
     return release
 
 

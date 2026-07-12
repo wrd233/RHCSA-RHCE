@@ -1,0 +1,825 @@
+[
+  {
+    "path": "releases/rhcsa-v5.1/chapters/01-shell-parsing-expansion.pdf",
+    "pages": 38,
+    "bytes": 1568075,
+    "sha256": "e6005fcf700b40864b3ec9c2078f9bdf8bb70141e8cd6926b65ad882a97bc3a0",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "FAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "FAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/02-io-redirection-pipelines.pdf",
+    "pages": 32,
+    "bytes": 1407138,
+    "sha256": "62487770ef1f439f22c2a9c938307cd8644cbe037d3047adf404512ecdf5a6ff",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "FAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Regular",
+      "KAAAAA+Menlo-Bold",
+      "NAAAAA+STSongti-SC-Bold",
+      "OAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "FAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Regular",
+      "KAAAAA+Menlo-Bold",
+      "NAAAAA+STSongti-SC-Bold",
+      "OAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/03-local-help-command-discovery.pdf",
+    "pages": 28,
+    "bytes": 1462082,
+    "sha256": "39514064e3c815e8357877cc014f93bb02d498bf774f19dfbf98f51b0ba19c43",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "GAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "KAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "GAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "KAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/04-filesystem-paths-types-links.pdf",
+    "pages": 30,
+    "bytes": 1320751,
+    "sha256": "999c2ae7b9f744f7d3e961e970a86e9693f7b935fdb289870696febf289bbdac",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Regular",
+      "NAAAAA+STSongti-SC-Bold"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Regular",
+      "NAAAAA+STSongti-SC-Bold"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/05-file-search-text-processing.pdf",
+    "pages": 40,
+    "bytes": 1725527,
+    "sha256": "33ce6373a3bcc6b312a44d6a2d08462964ea92aac8a8c8f1ba7c7394061e3751",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/06-copy-archive-compression-transfer.pdf",
+    "pages": 34,
+    "bytes": 1422096,
+    "sha256": "0eaa1d21f95ff6a86b80360b339e2a7e40d92acbb4d1b2b2f4a3306e66b20a5e",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/07-users-groups-lifecycle.pdf",
+    "pages": 32,
+    "bytes": 1409715,
+    "sha256": "9eb13ca35529716d7449994df10e6de7d947c012945464f5c277bae3964299c6",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "GAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "GAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/08-unix-permissions-umask-special-bits.pdf",
+    "pages": 33,
+    "bytes": 1480643,
+    "sha256": "7717ecfdbeab863451716089c3a394fb10a8044ac0b56fd16da4278c6ce6305a",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+Menlo-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "FAAAAA+STSongti-SC-Bold",
+      "GAAAAA+STSongti-SC-Regular",
+      "JAAAAA+Menlo-Bold",
+      "MAAAAA+Menlo-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+Menlo-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "FAAAAA+STSongti-SC-Bold",
+      "GAAAAA+STSongti-SC-Regular",
+      "JAAAAA+Menlo-Bold",
+      "MAAAAA+Menlo-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/09-acl-collaboration-directories.pdf",
+    "pages": 31,
+    "bytes": 1348856,
+    "sha256": "c24d6236c4edbc67ac995e428c1147581379a479fbd6cf035609b49be3e3f766",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+Menlo-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "FAAAAA+STSongti-SC-Bold",
+      "GAAAAA+STSongti-SC-Regular",
+      "JAAAAA+Menlo-Bold",
+      "LAAAAA+Menlo-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+Menlo-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "FAAAAA+STSongti-SC-Bold",
+      "GAAAAA+STSongti-SC-Regular",
+      "JAAAAA+Menlo-Bold",
+      "LAAAAA+Menlo-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/10-sudo-least-privilege.pdf",
+    "pages": 30,
+    "bytes": 1298312,
+    "sha256": "6dde75c1cbf21344b66de73aabe5029e0484f62b32eb6467af3f584652de9561",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "FAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Regular",
+      "LAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "FAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Regular",
+      "LAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/11-processes-jobs-signals.pdf",
+    "pages": 33,
+    "bytes": 1627467,
+    "sha256": "471de123221df5d10dd370129197416553e11ebec724bc2cffb27ef551aa2e8e",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/12-systemd-units-services.pdf",
+    "pages": 41,
+    "bytes": 1731734,
+    "sha256": "08ee1950a8df5f3c37392ac1fbaa7ff9a3701cce3b240ac88f42dd1a19165174",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "EAAAAA+STSongti-SC-Bold",
+      "FAAAAA+STSongti-SC-Regular",
+      "GAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "LAAAAA+Menlo-Regular",
+      "NAAAAA+STSongti-SC-Bold"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "EAAAAA+STSongti-SC-Bold",
+      "FAAAAA+STSongti-SC-Regular",
+      "GAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "LAAAAA+Menlo-Regular",
+      "NAAAAA+STSongti-SC-Bold"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/13-journald-rsyslog-logrotate.pdf",
+    "pages": 36,
+    "bytes": 1452178,
+    "sha256": "b829342147665c35441510e63b8e06475747891b1514a95a7abb60d7ae725ba4",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "FAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "FAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/14-time-timezone-rtc-chrony.pdf",
+    "pages": 29,
+    "bytes": 1315099,
+    "sha256": "47336a0637b5f36fa6a2767573aa88f3e7276b182e9f9ed7b3243faaf3d60411",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "FAAAAA+STSongti-SC-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "NAAAAA+STSongti-SC-Bold"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "FAAAAA+STSongti-SC-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "NAAAAA+STSongti-SC-Bold"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/15-scheduling-at-cron-timers.pdf",
+    "pages": 37,
+    "bytes": 1473103,
+    "sha256": "67b9ac0641751d52086ab92eb559fa7646874936441dc94c5924cb8db72f7a4f",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/16-rpm-packages-transactions.pdf",
+    "pages": 35,
+    "bytes": 1536684,
+    "sha256": "96c6659955e03744c353ea63515ba333c9634b9bec08ed99945f0268ce209848",
+    "fonts": [
+      "BAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "FAAAAA+STSongti-SC-Bold",
+      "GAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "LAAAAA+Menlo-Regular"
+    ],
+    "subset_fonts": [
+      "BAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "FAAAAA+STSongti-SC-Bold",
+      "GAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "LAAAAA+Menlo-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/17-dnf-repositories-modules-groups.pdf",
+    "pages": 42,
+    "bytes": 1551172,
+    "sha256": "5aa13201d356627a9d7a37df557eb1849d01b5be5d034bd9ff9c2b4e5b861d27",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Regular",
+      "LAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Regular",
+      "LAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/18-networkmanager-ipv4-routing.pdf",
+    "pages": 33,
+    "bytes": 1424098,
+    "sha256": "d92ef961a8fd0abe0494729636378ad9a974676473622ebfe6a2fff2601c2bb0",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "FAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "FAAAAA+Menlo-Regular",
+      "JAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/19-hostname-nss-dns.pdf",
+    "pages": 35,
+    "bytes": 1431426,
+    "sha256": "8310d835ca75ff4fb3e05022fb75b3c4b893c32fae5f83aea86cda876facf973",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/20-ssh-client-server-keys.pdf",
+    "pages": 24,
+    "bytes": 1400723,
+    "sha256": "5fc9e2ee124d810dab278ee0307da870eaea9cc9f65217f305d048f519229dc2",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "FAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "FAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/21-firewalld-service-access-chain.pdf",
+    "pages": 30,
+    "bytes": 1296718,
+    "sha256": "088b2d6be592724c8f2471223bd5891b489a89817c1041897d5102e03d980a4a",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "EAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "EAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "MAAAAA+STSongti-SC-Bold"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/22-block-devices-partitions-signatures.pdf",
+    "pages": 26,
+    "bytes": 1444507,
+    "sha256": "31eeac1a43135dd8f47de908ef6046bb56bbc82ae1fa8442ec4687945d10ab81",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/23-filesystems-labels-uuid-capacity.pdf",
+    "pages": 34,
+    "bytes": 1483277,
+    "sha256": "e7534cc598e795cba3f4c660a29b3299e768ce0265466ae4abb0494aadd163cf",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+STSongti-SC-Bold",
+      "FAAAAA+STSongti-SC-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "LAAAAA+Menlo-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+STSongti-SC-Bold",
+      "FAAAAA+STSongti-SC-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "LAAAAA+Menlo-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/24-mounts-fstab-swap.pdf",
+    "pages": 33,
+    "bytes": 1297812,
+    "sha256": "08d441e9c7d49b979af9496d191476cdcbe55ce585b3b4f11d0a255306b3f767",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/25-lvm.pdf",
+    "pages": 30,
+    "bytes": 1311246,
+    "sha256": "2c9949a6fea33deb7105614b39b9ee98fe36459a8494efd8dd943da59c7b6112",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "BAAAAA+STSongti-SC-Bold",
+      "CAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "NAAAAA+STSongti-SC-Bold",
+      "OAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "BAAAAA+STSongti-SC-Bold",
+      "CAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "NAAAAA+STSongti-SC-Bold",
+      "OAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/26-nfs-client.pdf",
+    "pages": 28,
+    "bytes": 1330042,
+    "sha256": "ea5f093c5f8e352caea08e16fd77cb5b2f1a2b94f4ba33c2b1d12e8fe1695d87",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+Menlo-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "HAAAAA+Menlo-Bold",
+      "IAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+Menlo-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "HAAAAA+Menlo-Bold",
+      "IAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/27-autofs.pdf",
+    "pages": 31,
+    "bytes": 1194561,
+    "sha256": "ecf0943b7419d1940d57e64070f191e41a4b21ed9b20c69d3fac0728bbd327a0",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Regular",
+      "GAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/28-selinux-model-context-avc.pdf",
+    "pages": 31,
+    "bytes": 1505266,
+    "sha256": "ca363b00c22d091027bf4a80e3ff0c81ccf492b8355f098b2b1a948c8b50a043",
+    "fonts": [
+      "BAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "FAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "BAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "FAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/29-selinux-files-ports-booleans.pdf",
+    "pages": 28,
+    "bytes": 1305847,
+    "sha256": "bdfffa245facd070690b72d91186746b84c981502a5cc2c5a87aac56d9f118ef",
+    "fonts": [
+      "CAAAAA+STSongti-SC-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "HAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "CAAAAA+STSongti-SC-Regular",
+      "DAAAAA+STSongti-SC-Bold",
+      "HAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Bold",
+      "KAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/30-boot-grub-recovery.pdf",
+    "pages": 39,
+    "bytes": 1471230,
+    "sha256": "386427630f4581ee40bf53bec0921fd77fd9c08469fb131d5e9b0a3d010cfa33",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "NAAAAA+STSongti-SC-Bold"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+STSongti-SC-Regular",
+      "EAAAAA+Menlo-Regular",
+      "HAAAAA+Menlo-Bold",
+      "JAAAAA+Menlo-Regular",
+      "NAAAAA+STSongti-SC-Bold"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/31-podman-images-containers-rootless.pdf",
+    "pages": 24,
+    "bytes": 1365824,
+    "sha256": "5a5f06dc1846376d9c565e1f7fa7842caed4e625210d299826b8eadd0839078d",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+STSongti-SC-Regular",
+      "FAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Regular",
+      "KAAAAA+STSongti-SC-Bold",
+      "LAAAAA+Menlo-Bold"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "EAAAAA+STSongti-SC-Regular",
+      "FAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Regular",
+      "KAAAAA+STSongti-SC-Bold",
+      "LAAAAA+Menlo-Bold"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/32-podman-systemd-quadlet.pdf",
+    "pages": 32,
+    "bytes": 1236291,
+    "sha256": "c201d36bc358bfa884988f9b9caf55d3142827e89206bc9994bef6590358008f",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Bold",
+      "EAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "DAAAAA+Menlo-Bold",
+      "EAAAAA+Menlo-Regular",
+      "IAAAAA+Menlo-Regular",
+      "MAAAAA+STSongti-SC-Bold",
+      "NAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  },
+  {
+    "path": "releases/rhcsa-v5.1/chapters/33-comprehensive.pdf",
+    "pages": 43,
+    "bytes": 1669362,
+    "sha256": "8520c93d79d6bc2dd0d35610dcfbd01e83ad5df7afdf8159883c1a8c19aff5d9",
+    "fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "JAAAAA+Menlo-Regular",
+      "KAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "subset_fonts": [
+      "AAAAAA+STSongti-SC-Regular",
+      "CAAAAA+STSongti-SC-Bold",
+      "JAAAAA+Menlo-Regular",
+      "KAAAAA+Menlo-Regular",
+      "LAAAAA+STSongti-SC-Bold",
+      "MAAAAA+STSongti-SC-Regular"
+    ],
+    "errors": []
+  }
+]

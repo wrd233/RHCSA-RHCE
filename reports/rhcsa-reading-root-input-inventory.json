@@ -1,0 +1,208 @@
+{
+  "selected_reference": {
+    "archive": "RHCSA-01-shell-parsing-expansion-v5.1-final.zip",
+    "member": "RHCSA-01-shell-parsing-expansion/lecture-review.pdf",
+    "sha256": "94613171491c8dc864850fc194d26c8d5a1e3803dab7b76078ffcd955b84f770"
+  },
+  "rejected_references": [],
+  "inputs": [
+    {
+      "name": "RHCSA-01-shell-parsing-expansion-v5.1-final.zip",
+      "sha256": "66f062ee7ce7b4ebf6273643a987729c5ecd408a422314c189f8e07fe8a48f4e",
+      "bytes": 933456,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-02-io-redirection-pipelines-v5.1-final.zip",
+      "sha256": "13713b26c38293b7a660ab93871fc7a03fcf1f02f5f79738e988add544c20ec6",
+      "bytes": 936690,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-03-local-help-command-discovery-v5.1-final.zip",
+      "sha256": "3e424159c9e329660fcb0f5892da3def85b101847f8d318f13bc895fad5be3fb",
+      "bytes": 720026,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-04-filesystem-paths-types-links-v5.1-final.zip",
+      "sha256": "d5b8269df12cadfd8c4c77bf47b01bf3df3ff0288bc20d627a8bcdc33085c7a9",
+      "bytes": 1083314,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-05-file-search-text-processing-v5.1-final.zip",
+      "sha256": "2c314a28412439d6907186314f8b3b4068624436d30e1f703e4e2a410acb381c",
+      "bytes": 15194997,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-06-copy-archive-compression-transfer-v5.1-final.zip",
+      "sha256": "10e1fe3112e28dbb65175451f26a26eff022dd7ccf81ce4c89be1edb43700d0b",
+      "bytes": 1048947,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-07-users-groups-lifecycle-v5.1-final.zip",
+      "sha256": "e7a25cfaddf78bd761a3907edc150dc39e0387a7191549b18b605b4b0c6a5e2e",
+      "bytes": 1264065,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-08-unix-permissions-umask-special-bits-v5.1-final.zip",
+      "sha256": "27c2ae889ff5950aa6394d8cc38e5e6bfe3029723a89c101f1269525e85787a2",
+      "bytes": 1010506,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-09-acl-collaboration-directories-v5.1-final.zip",
+      "sha256": "1c72316aab2f1da8be6c7ed5931b6ae8c185a55377351664c311e118ea5c4c73",
+      "bytes": 1274800,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-10-sudo-least-privilege-v5.1-final.zip",
+      "sha256": "5782aefaaddbc0b996741e1a7672dfeee08ff18adeb67ac553c8ae6a28b0032a",
+      "bytes": 35252530,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-11-processes-jobs-signals-v5.1-final.zip",
+      "sha256": "c63f41b9883a6538560798497a94ab6603b9b13849fc4ed1a3b1d70af57de8f3",
+      "bytes": 1311278,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-12-systemd-units-services-v5.1-final.zip",
+      "sha256": "80619bc4dac77a855e516de6d48d1353229607cc17d407786138a86119a7da91",
+      "bytes": 1362422,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-13-journald-rsyslog-logrotate-v5.1-final.zip",
+      "sha256": "8a9e038b2e484018d868cb8e32143c35abc52fde042b5ab59125cb4f51cf2644",
+      "bytes": 948694,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-14-time-timezone-rtc-chrony-v5.1-final.zip",
+      "sha256": "1edd6dc060ea5b2492921e3313c6968fc171f8e68df7f0bfcc809626f4ff0646",
+      "bytes": 1058821,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-15-scheduling-at-cron-timers-v5.1-final.zip",
+      "sha256": "8b21dd7b4c344a2d30962aed9dae2ef444a49d18fcf95320aec313c590864f96",
+      "bytes": 1390892,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-16-rpm-packages-transactions-v5.1-final.zip",
+      "sha256": "91846c251791dd52dc65e8ac2a416465a7b2ec22716b71042c3ede9e7cdbbda9",
+      "bytes": 893089,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-17-dnf-repositories-modules-groups-v5.1-final.zip",
+      "sha256": "2d9cbafd0267bdc7f0c7890be225182cdfef9218be69290dc9d0c1ef6e07543f",
+      "bytes": 1226021,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-18-networkmanager-ipv4-routing-v5.1-final.zip",
+      "sha256": "2edd4ec8ab2c4b19e86869092ab8fa12fab0efbf26423a8b0c19675d0cfbc189",
+      "bytes": 1048220,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-19-hostname-nss-dns-v5.1-final.zip",
+      "sha256": "ca896c7b6aec7003977f84c1ffa5033c2edd9fb9aac8dc2a0888afc8b7e907a9",
+      "bytes": 1200843,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-20-ssh-client-server-keys-v5.1-final.zip",
+      "sha256": "444b0512d613555fa9e15ef3beb17eb4b4129604110d9bf611118d6f9c6a946c",
+      "bytes": 1184525,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-21-firewalld-service-access-chain-v5.1-final.zip",
+      "sha256": "a7c6e8d3dfde6da623f77d090c0f6d439e307931d324f53299936f43347b6d50",
+      "bytes": 1265139,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-22-block-devices-partitions-signatures-v5.1-final.zip",
+      "sha256": "90d689003bc770a6ee21a14826c2eb5e683b4a505567200dc1455d14ed901ff3",
+      "bytes": 1236009,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-23-filesystems-labels-uuid-capacity-v5.1-final.zip",
+      "sha256": "9cc8d8485f93aefd8aaf1e95f624a89c229a19c2783823d6f9a18962549a0f3f",
+      "bytes": 913634,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-24-mounts-fstab-swap-v5.1-final.zip",
+      "sha256": "1c4ecc547c23f09b3022e6a2404ec2b1ecf4c73035c33d27bef2a353f8228ee1",
+      "bytes": 1136222,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-25-lvm-v5.1-final.zip",
+      "sha256": "3634bfde113b1cc6dd936166deb73707c8fd832a025dab5c5fbe7fa3a902181b",
+      "bytes": 1168588,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-26-nfs-client-v5.1-final.zip",
+      "sha256": "38bd9d24db6e5a51cc07371372906099ba077cf0636dc14d765629f95849b5d5",
+      "bytes": 1018577,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-27-autofs-v5.1-final.zip",
+      "sha256": "86701ccdf1a31a2187cea08d19fcb62000f1f661a379d1b57d7b189eeee73537",
+      "bytes": 28922736,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-28-selinux-model-context-avc-v5.1-final.zip",
+      "sha256": "b7c20a68dbdd985a2384d7f12e39b086be0d02ff6e91af4869518a1a7ad0db91",
+      "bytes": 1013738,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-29-selinux-files-ports-booleans-v5.1-final.zip",
+      "sha256": "5b40cfb137d295aee5c6a522228d6f60063b73cfa9fe2d854d546c081c5900fb",
+      "bytes": 1177741,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-30-boot-grub-recovery-v5.1-final.zip",
+      "sha256": "67c6785010231bcd15cf59942c7a58c7982caec60e92801e90855ed6ba833310",
+      "bytes": 1084530,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-31-podman-images-containers-rootless-v5.1-final.zip",
+      "sha256": "e8cd9965a20d1d725f79287d8ccad89937cdf7ba094c0ebe6a82607010a6fc2e",
+      "bytes": 1394196,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-32-podman-systemd-quadlet-v5.1-final.zip",
+      "sha256": "6f567568f6bbb6a06c54c36c6ef3433f902245f52f413a5f7a054a7e11fd3cb2",
+      "bytes": 1358811,
+      "kind": "v5.1 chapter package"
+    },
+    {
+      "name": "RHCSA-33-comprehensive-v5.1-final.zip",
+      "sha256": "6a505eba7ba9160dcf234a25db434889ff42c1b4c6d9b8df8b80473dfc82dadb",
+      "bytes": 1403422,
+      "kind": "v5.1 chapter package"
+    }
+  ]
+}

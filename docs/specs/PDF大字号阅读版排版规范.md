@@ -1,12 +1,19 @@
 # PDF 大字号阅读版排版规范
 
-正式讲义使用 `reading` profile：A4 纵向、20 mm 左右页边距、10.2 pt 正文、1.64 行高、8.5 pt 代码和表格。可见页面不出现页眉、页脚、页码、构建时间、commit、状态、Chapter ID、slug、Source 或稳定 ID；维护信息只进入源 frontmatter、PDF metadata、manifest 和报告。
+## 唯一视觉参考
 
-概念以 `.concept-block` 全宽单列显示，`.concept-term` 加粗并使用深蓝强调色。作者已有的第一句为“定义”，后续句为“理解”；构建器只做确定性重排，绝不补写技术内容。缺少后续解释的概念由 QA 报告列出。
+正式参考为根目录输入包 `RHCSA-01-shell-parsing-expansion-v5.1-final.zip` 内的 `RHCSA-01-shell-parsing-expansion/lecture-review.pdf`，SHA-256 为 `94613171491c8dc864850fc194d26c8d5a1e3803dab7b76078ffcd955b84f770`。该摘要同时写入输入清单和自动测试；不得引用个人目录或其他样章。
 
-专题和原子节点保留 Markdown 的语义标签，输出时转为 `.semantic-badge`。操作摘要使用 `.operation-block`；重要参数应在源中逐项书写，HTML 使用定义列表 `.option-list`，不得复制完整 man page。经典任务 `.task-page` 与参考解答 `.solution-page` 必须另起页。
+## 内容与组件合同
 
-代码和内联标识符禁用 hyphenation；短内联代码不换行，长命令进入代码块。表格不得低于 8.1 pt，长表重复表头，过宽内容改为纵向结构。目录只列章并可点击；PDF 书签保留章和专题层级。
+渲染器只读取源 Markdown 已明确表达的语义，不通过自然语言模式猜概念、拆句或创造参数。历史冻结稿 class 只能通过有限 alias map 迁移到 canonical 组件：`chapter-cover`、`reading-navigation`、`concept-block`、`concept-term`、`concept-explanation`、`operation-quickref`、`quickref-command`、`quickref-synopsis`、`option-list`、`knowledge-topic`、`operation-topic`、`diagnosis-topic`、`atomic-point`、`classic-task`、`reference-solution`、`chapter-closing`、`decision-table`、`page-break`。
 
-正式构建产物位于 `dist/rhcsa/reading/`，二进制不提交 Git。紧凑样式保留为兼容 profile，但不是正式默认。
+概念必须全宽单列，名称蓝色加粗，作者解释保持为自然完整段落；页面不显示机械式的两段标签。操作速查使用独立浅绿色区域，每个关键命令具有独立 SYNOPSIS 代码框，重要参数或形式使用纵向 `dl/dt/dd`；只渲染作者显式写出的命令、形式和解释。
 
+正文保留知识、操作、查询、验证、边界和诊断的自然教学叙事。经典任务与参考答案分别从新页开始。A4 正文为 9.8--10.5 pt、行高 1.58--1.68，代码 8.3--8.8 pt，表格不低于 8.2 pt。命令、选项、路径、unit、FQCN、SELinux 类型、变量名和配置键不得内部断词。页面不显示运行页眉、页脚、页码、commit、Source、status 或 Chapter ID。
+
+## 构建与视觉回归
+
+正式流程先分别生成并验收 33 个单章 PDF，再生成封面/目录前置 PDF，最后按 `config/chapters.yml` 顺序原样合并单章。禁止把 33 章重新拼成巨大 HTML 二次排版。整书页数必须等于单章页数之和加前置页数。
+
+视觉回归逐章比较单章与整书对应页的 media box 和解码后 PDF content stream，并抽取封面、导航、概念、速查、高密度代码/表格、任务、答案和末页制作 contact sheet。二进制 PDF、PNG 和 contact sheet 只保留在忽略目录；结构化 QA 与结论进入 `reports/`。

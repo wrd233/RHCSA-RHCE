@@ -21,7 +21,7 @@ def main() -> int:
     parser.add_argument("--chapter")
     parser.add_argument("--all-chapters", action="store_true")
     parser.add_argument("--allow-incomplete", action="store_true")
-    parser.add_argument("--profile", choices=["reading", "compact"], default="reading")
+    parser.add_argument("--profile", choices=["reading"], default="reading")
     args = parser.parse_args()
     manifest = load_manifest()
     if args.chapter:
@@ -42,8 +42,6 @@ def main() -> int:
         for chapter in chapters:
             build_chapter(chapter, args.profile)
             build_preview(chapter)
-    if args.track == "rhcsa" and args.profile == "reading":
-        build_parts(args.track, args.profile)
     build_book(args.track, incomplete=not complete, profile=args.profile)
     build_apkg(args.track, incomplete=not complete)
     return 0

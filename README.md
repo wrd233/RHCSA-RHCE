@@ -22,7 +22,7 @@ tests/       V2 行为与清洁门禁
 reports/     当前集成报告与项目状态
 ```
 
-`build/`、`dist/`、`releases/`、候选 ZIP/PDF/APKG、原始课件和缓存均被忽略。正式本地发布入口为 `releases/rhcsa-v5.1/`，构建报告与校验规则进入 Git。
+`build/`、`dist/`、`incoming/`、候选 ZIP/PDF/APKG、原始课件和缓存均被忽略。唯一正式本地发布入口为 `releases/rhcsa-v5.1/`，构建报告与校验规则进入 Git。
 
 ## 安装与校验
 
@@ -65,7 +65,7 @@ uv run python tools/finalize_v51.py
 uv run python tools/build.py rhce --allow-incomplete
 ```
 
-正式命令要求对应考试全部章节为 `validated` 或 `released`；否则失败。v5.1 的章节 PDF、整书 PDF、维护 HTML 和 APKG 由上述两条命令构建并收敛到单一 Release 目录。
+正式命令要求对应考试全部章节为 `validated` 或 `released`；否则失败。渲染器不猜概念语义，只消费显式 concept 与 operation quickref；整书由 33 个已验收单章 PDF 原样合并，不进行二次重排。正式页面没有页眉、页脚和页码。
 
 ## Anki 安全边界
 
@@ -81,4 +81,4 @@ uv run python tools/doctor.py
 uv run python tools/build.py rhcsa --profile reading --all-chapters
 ```
 
-PDF 输出在 `dist/rhcsa/reading/`。APKG 是离线包，与 AnkiConnect 写入不同。同步先执行 `uv run python tools/sync_anki.py --all` dry-run；确认 Anki 正在运行且全部门禁通过后，才使用 `--apply --yes`。工具在写入前保存 Note JSON 快照，按稳定 ID 幂等新增或更新，绝不删除用户其他 Note；正式卡片保留 Source 字段但不显示它。完整流程见 `docs/guides/AnkiConnect同步.md`。
+PDF 输出在 `releases/rhcsa-v5.1/`。APKG 是离线包，与 AnkiConnect 写入不同。本次 PDF 修复只执行 canonical dry-run/readback，没有向 AnkiConnect 重复导入 Note。以后同步仍须先执行 `uv run python tools/sync_anki.py --all` dry-run；只有明确需要写入时才使用 `--apply --yes`。正式卡片保留 Source 字段但不显示它。完整流程见 `docs/guides/AnkiConnect同步.md`。

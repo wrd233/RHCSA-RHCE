@@ -7,4 +7,11 @@ rhcsa:
   anki_status: passed
   apkg_status: passed
   anki_connect_status: passed
-  release_status: released
+  release_status: RHCSA_V5_1_READING_RELEASED
+  reading_reference_sha256: 94613171491c8dc864850fc194d26c8d5a1e3803dab7b76078ffcd955b84f770
+  reading_chapter_pages: 1082
+  reading_front_matter_pages: 3
+  reading_book_pages: 1085
+  reading_book_is_chapter_merge: true
+  anki_canonical_status: ANKI_CANONICAL_UNCHANGED
+  ankiconnect_apply_status: ANKICONNECT_APPLY_NOT_REQUIRED

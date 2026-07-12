@@ -17,8 +17,9 @@ tr { break-inside: avoid-page; }
 .book-title p { text-align: center; }
 .toc { break-after: page; }
 .toc ol { list-style: none; padding: 0; }
-.concept-block, .operation-block { width: 100%; display: block; break-inside: avoid-page; }
+.concept-block, .operation-quickref { width: 100%; display: block; }
+.concept-block { break-inside: avoid-page; }
 .semantic-badge { display: inline-block; }
 .cheatsheet-label { break-after: avoid-page; }
 .part-title { break-before: page; }
-
+.classic-task, .reference-solution { break-before: page; }

@@ -15,10 +15,14 @@ table { margin: 4mm 0; font-size: 8.5pt; line-height: 1.48; } th, td { border: .
 .concept-block { margin: 4mm 0; padding: 3.5mm 4mm; border: .65pt solid #b8cede; border-left: 3px solid #2879a5; border-radius: 3px; background: #f3f8fb; }
 .concept-heading { margin-bottom: 1.6mm; }
 .concept-term { color: #075985; font-family: "Hiragino Sans GB", sans-serif; }
-.concept-definition { line-height: 1.62; }
-.concept-understanding { margin-top: 1.8mm; color: #334155; }
-.operation-block { margin: 4mm 0; padding: 3.5mm 4mm; border-left: 3px solid #3a7b62; background: #f2f8f5; }
-.operation-heading { margin-bottom: 1.5mm; }
+.concept-explanation { line-height: 1.62; }
+.operation-quickref { margin: 5mm 0; padding: 4mm; border-left: 3px solid #3a7b62; background: #edf8f1; }
+.quickref-command { padding: 2.5mm 0 3.5mm; border-bottom: .55pt solid #a8cbb8; break-inside: avoid-page; }
+.quickref-command:last-child { border-bottom: 0; }
+.quickref-command h3 { margin-top: 1mm; }
+.quickref-synopsis { margin: 2mm 0 3mm; }
+.quickref-synopsis > span { display: block; color: #287055; font: 700 7.6pt/1.4 "Hiragino Sans GB", sans-serif; letter-spacing: .08em; }
+.quickref-synopsis pre { margin: 1mm 0 2mm; background: #fff; border-left-color: #4b9674; }
 .option-list dt { margin-top: 2mm; font-weight: 700; } .option-list dd { margin: .5mm 0 2mm 5mm; }
 .cheatsheet-label { margin-top: 4mm; padding: 2mm 3mm; color: #164e63; background: #e8f4f7; font-weight: 700; }
 .book-title h1 { font-size: 30pt; } .book-title p { color: #64748b; }
@@ -26,4 +30,3 @@ table { margin: 4mm 0; font-size: 8.5pt; line-height: 1.48; } th, td { border: .
 .relationship-diagram, .evidence-flow, .lvm-layer-flow { margin: 4mm 0; padding: 4mm; background: #f4f7fa; border: .6pt solid #c7d2df; text-align: center; break-inside: avoid-page; }
 .diagram-node, .flow-item, .lvm-layer { border: .6pt solid #7890aa; background: white; padding: 2.4mm; margin: 1.2mm auto; max-width: 85%; }
 .final { background: #e8f0f7; font-weight: 600; }
-

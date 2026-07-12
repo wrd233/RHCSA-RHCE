@@ -1,0 +1,133 @@
+{
+  "status": "passed",
+  "chapters": {
+    "RHCSA-01": {
+      "path": "releases/rhcsa-v5.1/chapters/01-shell-parsing-expansion.pdf",
+      "pages": 38,
+      "bytes": 1568075,
+      "sha256": "e6005fcf700b40864b3ec9c2078f9bdf8bb70141e8cd6926b65ad882a97bc3a0",
+      "fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "CAAAAA+STSongti-SC-Bold",
+        "EAAAAA+Menlo-Regular",
+        "FAAAAA+Menlo-Regular",
+        "IAAAAA+Menlo-Bold",
+        "MAAAAA+STSongti-SC-Bold",
+        "NAAAAA+STSongti-SC-Regular"
+      ],
+      "subset_fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "CAAAAA+STSongti-SC-Bold",
+        "EAAAAA+Menlo-Regular",
+        "FAAAAA+Menlo-Regular",
+        "IAAAAA+Menlo-Bold",
+        "MAAAAA+STSongti-SC-Bold",
+        "NAAAAA+STSongti-SC-Regular"
+      ],
+      "errors": []
+    },
+    "RHCSA-03": {
+      "path": "releases/rhcsa-v5.1/chapters/03-local-help-command-discovery.pdf",
+      "pages": 28,
+      "bytes": 1462082,
+      "sha256": "39514064e3c815e8357877cc014f93bb02d498bf774f19dfbf98f51b0ba19c43",
+      "fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "CAAAAA+STSongti-SC-Bold",
+        "GAAAAA+Menlo-Bold",
+        "JAAAAA+Menlo-Regular",
+        "KAAAAA+Menlo-Regular",
+        "LAAAAA+STSongti-SC-Bold",
+        "MAAAAA+STSongti-SC-Regular"
+      ],
+      "subset_fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "CAAAAA+STSongti-SC-Bold",
+        "GAAAAA+Menlo-Bold",
+        "JAAAAA+Menlo-Regular",
+        "KAAAAA+Menlo-Regular",
+        "LAAAAA+STSongti-SC-Bold",
+        "MAAAAA+STSongti-SC-Regular"
+      ],
+      "errors": []
+    },
+    "RHCSA-12": {
+      "path": "releases/rhcsa-v5.1/chapters/12-systemd-units-services.pdf",
+      "pages": 41,
+      "bytes": 1731734,
+      "sha256": "08ee1950a8df5f3c37392ac1fbaa7ff9a3701cce3b240ac88f42dd1a19165174",
+      "fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "EAAAAA+STSongti-SC-Bold",
+        "FAAAAA+STSongti-SC-Regular",
+        "GAAAAA+Menlo-Regular",
+        "JAAAAA+Menlo-Bold",
+        "LAAAAA+Menlo-Regular",
+        "NAAAAA+STSongti-SC-Bold"
+      ],
+      "subset_fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "EAAAAA+STSongti-SC-Bold",
+        "FAAAAA+STSongti-SC-Regular",
+        "GAAAAA+Menlo-Regular",
+        "JAAAAA+Menlo-Bold",
+        "LAAAAA+Menlo-Regular",
+        "NAAAAA+STSongti-SC-Bold"
+      ],
+      "errors": []
+    },
+    "RHCSA-25": {
+      "path": "releases/rhcsa-v5.1/chapters/25-lvm.pdf",
+      "pages": 30,
+      "bytes": 1311246,
+      "sha256": "2c9949a6fea33deb7105614b39b9ee98fe36459a8494efd8dd943da59c7b6112",
+      "fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "BAAAAA+STSongti-SC-Bold",
+        "CAAAAA+Menlo-Regular",
+        "GAAAAA+Menlo-Bold",
+        "JAAAAA+Menlo-Regular",
+        "NAAAAA+STSongti-SC-Bold",
+        "OAAAAA+STSongti-SC-Regular"
+      ],
+      "subset_fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "BAAAAA+STSongti-SC-Bold",
+        "CAAAAA+Menlo-Regular",
+        "GAAAAA+Menlo-Bold",
+        "JAAAAA+Menlo-Regular",
+        "NAAAAA+STSongti-SC-Bold",
+        "OAAAAA+STSongti-SC-Regular"
+      ],
+      "errors": []
+    },
+    "RHCSA-32": {
+      "path": "releases/rhcsa-v5.1/chapters/32-podman-systemd-quadlet.pdf",
+      "pages": 32,
+      "bytes": 1236291,
+      "sha256": "c201d36bc358bfa884988f9b9caf55d3142827e89206bc9994bef6590358008f",
+      "fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "CAAAAA+STSongti-SC-Bold",
+        "DAAAAA+Menlo-Bold",
+        "EAAAAA+Menlo-Regular",
+        "IAAAAA+Menlo-Regular",
+        "MAAAAA+STSongti-SC-Bold",
+        "NAAAAA+STSongti-SC-Regular"
+      ],
+      "subset_fonts": [
+        "AAAAAA+STSongti-SC-Regular",
+        "CAAAAA+STSongti-SC-Bold",
+        "DAAAAA+Menlo-Bold",
+        "EAAAAA+Menlo-Regular",
+        "IAAAAA+Menlo-Regular",
+        "MAAAAA+STSongti-SC-Bold",
+        "NAAAAA+STSongti-SC-Regular"
+      ],
+      "errors": []
+    }
+  },
+  "renderer_injected_definition_understanding": 0,
+  "double_column_concepts": 0,
+  "plain_operation_block_fallback": 0
+}

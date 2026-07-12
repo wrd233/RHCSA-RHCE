@@ -13,6 +13,14 @@ sources/
 incoming/
 imports/
 *.zip
+*.pdf
+*.apkg
+*.png
+*.jpg
+*.jpeg
+contact-sheet*
+**/contact-sheets/
+__MACOSX/
 # The canonical v5.1 release is versioned; scratch PDFs/APKG remain covered by
 # their ignored build/dist roots and candidate archives remain ignored below.
 

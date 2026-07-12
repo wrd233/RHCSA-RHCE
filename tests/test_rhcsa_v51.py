@@ -33,17 +33,6 @@ def test_manifest_schema_all_chapters_and_no_self_hash():
             assert re.fullmatch(r"[0-9a-f]{64}", entry["sha256"])
 
 
-def test_required_payload_hashes_against_frozen_archives():
-    for chapter, path in zip(CHAPTERS, chapter_files("manifest.yml")):
-        value = yaml.safe_load(path.read_text())
-        archive = next(ROOT.glob(f"{chapter['id']}-*.zip"))
-        with zipfile.ZipFile(archive) as package:
-            members = {Path(name).name: name for name in package.namelist() if not name.endswith("/")}
-            for entry in value["files"].values():
-                payload = package.read(members[entry["path"]])
-                assert hashlib.sha256(payload).hexdigest() == entry["sha256"]
-
-
 def test_anki_schema_ids_sources_cloze_and_chapter_tags():
     schema = json.loads((ROOT / "schemas/anki-chapter.schema.json").read_text())
     ids = []

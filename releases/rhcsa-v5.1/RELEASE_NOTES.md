@@ -1,3 +1,3 @@
-# RHCSA RHEL 9 v5.1
+# RHCSA RHEL 9 v5.1 Reading Release
 
-33 frozen chapters were imported from the v5.1 package set over package base `961a29b3`. This release normalizes package and Anki schemas, consolidates the disabled network tombstone, recalibrates priority metadata, and rebuilds all PDF/HTML/APKG artifacts. Static and rendering QA passed. RHEL 9 command-level live tests were not performed. AnkiConnect completed with stable-ID upserts: 10 added, 2011 updated, 1342 unchanged.
+The formal book is merged from 33 accepted single-chapter PDFs. The renderer consumes explicit concept and operation-quickref markup, preserves authored text, and emits no running header, footer or page number. Canonical Anki YAML was unchanged; the APKG was rebuilt offline and no AnkiConnect apply was performed.
