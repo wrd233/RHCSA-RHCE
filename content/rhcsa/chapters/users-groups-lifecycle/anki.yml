@@ -1,0 +1,1504 @@
+chapter_id: RHCSA-07
+chapter_slug: users-groups-lifecycle
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+notes:
+- id: RHCSA-USERS-K01-QA-001
+  type: qa
+  question: '`/etc/passwd`、`/etc/shadow`、`/etc/group` 分别保存什么核心信息？'
+  answer: 账号公开属性；受保护的口令与期限；组定义、GID 与显式成员。
+  extra: '`/etc/gshadow` 还保存受保护的组口令、管理员和成员字段。'
+  source:
+  - passwd(5)
+  - shadow(5)
+  - group(5)
+  - gshadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::local-databases
+  - card::comparison
+  - priority::P0
+- id: RHCSA-USERS-K01-QA-002
+  type: qa
+  question: 为什么 `/etc/group` 某组成员列表为空，仍可能有用户属于该组？
+  answer: 用户可以通过 `/etc/passwd` 中的主 GID 把该组作为主组。
+  extra: 使用 `id USER` 汇总主组和附加组，不要只看组成员字段。
+  source:
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::identity-model
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-USERS-K01-QA-003
+  type: qa
+  question: 通过系统名称服务查询账号和组，推荐什么命令？
+  answer: '`getent passwd NAME` 与 `getent group NAME`。'
+  extra: 它们遵循 NSS 配置，比只 grep 本地文件更符合系统解析语义。
+  source:
+  - getent(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::query-baseline
+  - card::command
+  - priority::P0
+- id: RHCSA-USERS-K01-QA-004
+  type: qa
+  question: '`useradd -u`、`-g`、`-G`、`-s` 分别指定什么？'
+  answer: UID、主组、附加组列表、登录 Shell。
+  extra: '`-d` 指定家目录字段，`-m` 创建家目录。'
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::parameter
+  - priority::P0
+- id: RHCSA-USERS-K01-QA-005
+  type: qa
+  question: 给 alice 追加附加组 developers 的正确命令是什么？
+  answer: '`usermod -aG developers alice`'
+  extra: 漏掉 `-a` 会把未列出的附加组从目标列表中移除。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::command
+  - priority::P0
+- id: RHCSA-USERS-K01-QA-006
+  type: qa
+  question: 管理员已把用户加入新组，但其当前 Shell 的 `id` 看不到，原因是什么？
+  answer: 进程在会话建立时取得组凭据，现有 Shell 不会自动刷新。
+  extra: 比较 `id USER` 与用户会话内的 `id`，再重新登录或创建新会话。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-USERS-O03-QA-001
+  type: qa
+  question: '`chage -M`、`-m`、`-W`、`-E` 分别设置什么？'
+  answer: 口令最大期限、最小期限、到期前警告天数、账号到期日期。
+  extra: '`-I` 是口令过期后的失效天数；`-d 0` 常用于强制下次登录修改口令。'
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::parameter
+  - priority::P0
+- id: RHCSA-USERS-O03-QA-002
+  type: qa
+  question: 查看用户口令期限和口令状态分别用什么？
+  answer: '`chage -l USER` 与 `passwd -S USER`。'
+  extra: 前者展示期限，后者快速展示口令字段状态，两者不能互相替代。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::command
+  - priority::P0
+- id: RHCSA-USERS-O03-QA-003
+  type: qa
+  question: '`passwd -l` 能否保证用户无法通过 SSH 公钥登录？'
+  answer: 不能。它锁定口令认证，不必然禁用其他认证方式。
+  extra: 还要调查账号到期、Shell、SSH 配置、已有会话和运行进程。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::disable-account
+  - card::boundary
+  - priority::P0
+- id: RHCSA-USERS-O03-QA-004
+  type: qa
+  question: '`/sbin/nologin` 的主要作用边界是什么？'
+  answer: 阻止正常交互式登录 Shell；不能笼统等同于完全禁用账号。
+  extra: 服务仍可按该 UID 运行，特定协议是否受影响取决于其认证和会话方式。
+  source:
+  - usermod(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::disable-account
+  - card::boundary
+  - priority::P1
+- id: RHCSA-USERS-K01-CLOZE-001
+  type: cloze
+  text: '`usermod {{c1::-aG}} developers alice` 中，`-a` 表示{{c2::追加而非替换附加组}}。'
+  extra: 修改组后还要在新会话中验证。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::cloze
+  - priority::P0
+- id: RHCSA-07-K01-QA-001
+  type: qa
+  question: 用户名和 UID 的核心区别是什么？
+  answer: 用户名是便于人使用的名称；UID 是系统识别本地用户的数字身份。
+  extra: 文件保存数字 UID，账号改名通常不改变文件所有权。
+  source:
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::identity-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-K01-QA-002
+  type: qa
+  question: 删除账号后为什么旧文件可能只显示数字所有者？
+  answer: 文件仍保存原 UID，但名称服务已没有该 UID 对应的用户名。
+  extra: 这类文件应先审计，不要直接删除。
+  source:
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::output
+  - priority::P0
+- id: RHCSA-07-K01-QA-003
+  type: qa
+  question: UID 与同名用户私有组的 GID 必须相同吗？
+  answer: 不必须；UID 和 GID 属于独立的数字命名空间。
+  extra: RHEL 常让二者相同只是默认约定，不是机制要求。
+  source:
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::identity-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-07-K01-QA-004
+  type: qa
+  question: 一个用户可有多少主组和附加组？
+  answer: 恰好一个主组，零个或多个附加组。
+  extra: 主组来自 passwd 主 GID，附加组通常由 group 成员关系表达。
+  source:
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::identity-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-07-K01-QA-005
+  type: qa
+  question: '`id alice` 与 alice 当前 Shell 中运行 `id` 的证据差异是什么？'
+  answer: '`id alice` 查询名称服务计算出的身份；会话内 `id` 显示该进程实际持有的凭据。'
+  extra: 组变更后，两者可能暂时不同。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-K01-QA-006
+  type: qa
+  question: '`getent passwd alice` 有结果，是否一定能用 `usermod alice` 修改？'
+  answer: 不一定；`getent` 可能返回远程身份源，而 `usermod` 管理本地账号数据库。
+  extra: 先确认账号来源，再选择管理工具。
+  source:
+  - getent(1)
+  - usermod(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::query-baseline
+  - card::boundary
+  - priority::P1
+- id: RHCSA-07-K01-CLOZE-001
+  type: cloze
+  text: 文件元数据保存的是数字 {{c1::UID}} 和 {{c2::GID}}，用户名和组名来自名称服务映射。
+  extra: 因此删除或重用数字身份前必须调查数据。
+  source:
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::identity-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-07-K02-QA-001
+  type: qa
+  question: '`/etc/passwd` 一行的七个字段顺序是什么？'
+  answer: '`login:placeholder:UID:GID:GECOS:home:shell`。'
+  extra: 口令占位通常为 `x`，实际受保护口令在 shadow 数据库。
+  source:
+  - passwd(5)
+  - shadow(5)
+  - group(5)
+  - gshadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::local-databases
+  - card::syntax
+  - priority::P0
+- id: RHCSA-07-K02-QA-002
+  type: qa
+  question: '`/etc/passwd` 中的 GID 字段表示什么？'
+  answer: 该用户的主组 GID。
+  extra: 它与 `/etc/group` 的显式成员列表是两个表达位置。
+  source:
+  - passwd(5)
+  - shadow(5)
+  - group(5)
+  - gshadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::local-databases
+  - card::configuration
+  - priority::P0
+- id: RHCSA-07-K02-QA-003
+  type: qa
+  question: '`/etc/shadow` 的 `inactive` 与 `expire` 字段分别表示什么？'
+  answer: '`inactive` 是口令过期后的失效宽限天数；`expire` 是账号到期日。'
+  extra: 口令到期与账号到期是两个独立维度。
+  source:
+  - passwd(5)
+  - shadow(5)
+  - group(5)
+  - gshadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-K02-QA-004
+  type: qa
+  question: '`/etc/group` 一行的四个字段顺序是什么？'
+  answer: '`group:password-placeholder:GID:members`。'
+  extra: members 是逗号分隔的显式成员，通常用于附加组关系。
+  source:
+  - passwd(5)
+  - shadow(5)
+  - group(5)
+  - gshadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::local-databases
+  - card::syntax
+  - priority::P0
+- id: RHCSA-07-K02-QA-005
+  type: qa
+  question: '`/etc/gshadow` 主要增加了哪些受保护字段？'
+  answer: 组口令、组管理员和成员列表。
+  extra: 普通 RHCSA 任务不把共享组口令作为推荐授权机制。
+  source:
+  - passwd(5)
+  - shadow(5)
+  - group(5)
+  - gshadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::local-databases
+  - card::concept
+  - priority::P1
+- id: RHCSA-07-K02-QA-006
+  type: qa
+  question: 为什么普通账号维护不应直接编辑 `/etc/passwd` 或 `/etc/shadow`？
+  answer: 容易造成关联数据库不一致，并绕过专用工具的锁和校验。
+  extra: 使用 `useradd/usermod/userdel/passwd/chage`。
+  source:
+  - passwd(5)
+  - shadow(5)
+  - group(5)
+  - gshadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::local-databases
+  - card::security
+  - priority::P0
+- id: RHCSA-07-K02-QA-007
+  type: qa
+  question: shadow 口令字段前出现锁定标记，最可靠的判断入口是什么？
+  answer: 使用 `passwd -S USER` 并结合现场 `passwd(1)` 帮助。
+  extra: 不要在静态题面中只凭一个字符猜全部账号状态。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-K02-CLOZE-001
+  type: cloze
+  text: '`/etc/shadow` 中 {{c1::max}} 控制口令最大期限，而 {{c2::expire}} 控制账号到期日。'
+  extra: 二者不能混为同一个过期状态。
+  source:
+  - passwd(5)
+  - shadow(5)
+  - group(5)
+  - gshadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::cloze
+  - priority::P0
+- id: RHCSA-07-O01-QA-001
+  type: qa
+  question: 创建 UID 2401 的用户前，应怎样检查数字是否已被解析？
+  answer: '`getent passwd 2401`。'
+  extra: 还应按目标用户名查询，分别排除名称和数字冲突。
+  source:
+  - getent(1)
+  - useradd(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::query-baseline
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O01-QA-002
+  type: qa
+  question: 创建 GID 4200 的组前，应怎样检查数字冲突？
+  answer: '`getent group 4200`。'
+  extra: 同时执行 `getent group GROUP` 检查名称冲突。
+  source:
+  - getent(1)
+  - groupadd(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::query-baseline
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O01-QA-003
+  type: qa
+  question: 只执行 `grep alice /etc/passwd` 有什么证据边界？
+  answer: 它只搜索本地文件文本，不能代表 NSS 最终解析结果。
+  extra: 优先用 `getent passwd alice`。
+  source:
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::query-baseline
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O01-QA-004
+  type: qa
+  question: 查看指定用户所有组的名称列表，命令是什么？
+  answer: '`id -nG USER`。'
+  extra: '`id -G USER` 输出数字 GID 列表。'
+  source:
+  - id(1)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::query-baseline
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O01-QA-005
+  type: qa
+  question: 修改 UID 前，为什么应记录旧 UID 而不只记录用户名？
+  answer: 用户名可能改名或删除，文件仍按旧数字 UID 保存所有权。
+  extra: 按旧 UID 搜索才能发现账号外数据。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O01-QA-006
+  type: qa
+  question: 查看用户家目录字段与实际目录分别用什么证据？
+  answer: '`getent passwd USER` 查看字段，`stat PATH` 查看实际目录。'
+  extra: 字段正确不代表目录存在或数据已搬迁。
+  source:
+  - getent(1)
+  - stat(1)
+  - usermod(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::query-baseline
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O01-QA-007
+  type: qa
+  question: 账号变更后，为什么不能只看命令退出码？
+  answer: 退出码只说明工具处理结果，不能证明组、家目录、期限和新会话功能都符合目标。
+  extra: 按对象建立验证矩阵。
+  source:
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::query-baseline
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O02-QA-001
+  type: qa
+  question: 查看 `useradd` 可展示的默认项，命令是什么？
+  answer: '`useradd -D`。'
+  extra: 它不展示 `/etc/login.defs` 中全部相关策略。
+  source:
+  - useradd(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::useradd-defaults
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O02-QA-002
+  type: qa
+  question: '`/etc/default/useradd` 与 `/etc/login.defs` 的职责区别是什么？'
+  answer: 前者偏向 `useradd` 的默认账号属性；后者包含 UID/GID 范围、期限和创建策略等系统默认。
+  extra: 显式命令行参数用于覆盖当前账号目标。
+  source:
+  - useradd(8)
+  - login.defs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::useradd-defaults
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-O02-QA-003
+  type: qa
+  question: 修改 `/etc/login.defs` 的口令期限默认值会自动改变既有用户吗？
+  answer: 不会；它主要影响之后创建的账号。
+  extra: 既有用户要用 `chage` 单独修改并验证。
+  source:
+  - login.defs(5)
+  - chage(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::useradd-defaults
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O02-QA-004
+  type: qa
+  question: '`/etc/skel` 的内容在什么条件下进入新用户家目录？'
+  answer: 当 `useradd` 实际创建家目录并使用该 skeleton 目录时。
+  extra: 修改 skeleton 不会回溯同步既有家目录。
+  source:
+  - useradd(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::useradd-defaults
+  - card::configuration
+  - priority::P0
+- id: RHCSA-07-O02-QA-005
+  type: qa
+  question: 题目明确要求创建家目录时，为什么建议显式使用 `-m`？
+  answer: 避免依赖现场 `CREATE_HOME` 等默认值，使目标终态确定。
+  extra: 操作后仍需 `stat` 和内容核对。
+  source:
+  - useradd(8)
+  - login.defs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::useradd-defaults
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O02-QA-006
+  type: qa
+  question: 创建系统账号时，能否默认假设会建立家目录？
+  answer: 不能；系统账号的家目录和 Shell 应由服务需求明确指定。
+  extra: 需要目录时显式使用对应参数并验证。
+  source:
+  - useradd(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::useradd-defaults
+  - card::boundary
+  - priority::P1
+- id: RHCSA-07-O02-CLOZE-001
+  type: cloze
+  text: 创建家目录并从指定 skeleton 复制内容的关键组合是 `useradd {{c1::-m}} {{c2::-k DIR}} USER`。
+  extra: '`-k` 应与创建家目录配合。'
+  source:
+  - useradd(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::useradd-defaults
+  - card::cloze
+  - priority::P0
+- id: RHCSA-07-O03-QA-001
+  type: qa
+  question: 创建 GID 为 4200 的 `ops` 组，命令是什么？
+  answer: '`groupadd -g 4200 ops`。'
+  extra: 执行前后都用 `getent group` 检查名称和数字。
+  source:
+  - groupadd(8)
+  - groupmod(8)
+  - groupdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O03-QA-002
+  type: qa
+  question: '`groupadd -r appsvc` 的 `-r` 表示什么？'
+  answer: 从系统组范围创建系统组。
+  extra: 实际范围由本机配置决定。
+  source:
+  - groupadd(8)
+  - groupmod(8)
+  - groupdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::parameter
+  - priority::P1
+- id: RHCSA-07-O03-QA-003
+  type: qa
+  question: 创建 UID 2401、主组 ops、附加组 developers 和 audit 的 lina，身份参数骨架是什么？
+  answer: '`useradd -u 2401 -g ops -G developers,audit lina`。'
+  extra: 组必须先存在，家目录、Shell 和期限需要按目标继续补齐。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O03-QA-004
+  type: qa
+  question: '`useradd -d /srv/home/lina lina` 能否证明家目录已经创建？'
+  answer: 不能；`-d` 设置家目录字段，创建目录应显式配合 `-m` 并用 `stat` 验证。
+  extra: 这是字段状态与数据状态的区别。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O03-QA-005
+  type: qa
+  question: '`useradd -e 2030-12-31` 与 `-f 5` 分别控制什么？'
+  answer: '`-e` 设置账号到期日；`-f` 设置口令到期后到账号因口令失效的天数。'
+  extra: 两者不是同一过期状态。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-O03-QA-006
+  type: qa
+  question: 设置新用户初始口令的推荐交互命令是什么？
+  answer: '`passwd USER`。'
+  extra: 避免把明文口令放入命令行历史。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O03-QA-007
+  type: qa
+  question: 怎样要求用户下次交互登录时修改口令？
+  answer: '`chage -d 0 USER`。'
+  extra: 设置后非交互会话可能因必须改口令而失败。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O03-QA-008
+  type: qa
+  question: 创建用户后最少应分哪几层验证？
+  answer: 名称解析、UID/GID 与组、家目录、口令状态、期限、新会话身份。
+  extra: 不要用一条 `id` 代替全部验收。
+  source:
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::process
+  - priority::P0
+- id: RHCSA-07-O03-CLOZE-001
+  type: cloze
+  text: '`useradd -d HOME {{c1::-m}} USER` 同时表达家目录字段和{{c2::实际创建目录}}。'
+  extra: 创建后仍要检查 skeleton 内容和所有者。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::create-user
+  - card::cloze
+  - priority::P0
+- id: RHCSA-07-O04-QA-001
+  type: qa
+  question: 把登录名 `lina` 改为 `lina2`，命令是什么？
+  answer: '`usermod -l lina2 lina`。'
+  extra: 它不自动完成家目录路径、同名组和所有应用引用的全局改名。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O04-QA-002
+  type: qa
+  question: 修改用户 UID 后，为什么仍要搜索旧 UID 的文件？
+  answer: 账号外路径和其他文件系统中的数字所有权不应假设全部自动迁移。
+  extra: 按旧 UID 和新 UID 分别复查。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O04-QA-003
+  type: qa
+  question: '`usermod -G audit alice` 对现有附加组的影响是什么？'
+  answer: 把附加组终态设为给出的列表，未列出的附加组会被移除。
+  extra: 追加应使用 `-aG`。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::parameter
+  - priority::P0
+- id: RHCSA-07-O04-QA-004
+  type: qa
+  question: 需要从 alice 的附加组中移除一个组，推荐怎样思考？
+  answer: 先取得完整目标附加组列表，再用 `usermod -G 完整列表 alice` 设置终态。
+  extra: 不要凭记忆写一个不完整列表。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::process
+  - priority::P0
+- id: RHCSA-07-O04-QA-005
+  type: qa
+  question: '`usermod -g` 与 `-G` 分别作用于什么？'
+  answer: '`-g` 修改主组；`-G` 设置附加组列表。'
+  extra: 主组只能一个，附加组可以多个。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-O04-QA-006
+  type: qa
+  question: '`usermod -d NEW USER` 与 `usermod -d NEW -m USER` 的区别是什么？'
+  answer: 前者只设置家目录字段；后者同时请求移动原家目录内容。
+  extra: 跨文件系统、目标存在和安全上下文仍需现场验证。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-O04-QA-007
+  type: qa
+  question: 把服务账号 Shell 改为 `nologin` 的命令是什么？
+  answer: '`usermod -s /sbin/nologin SERVICE_USER`。'
+  extra: 它只控制正常交互 Shell，不会停止服务进程。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::modify-user
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O04-QA-008
+  type: qa
+  question: 修改组成员后，怎样证明新会话取得了新组？
+  answer: '`su - USER -c "id"` 或让用户重新登录后运行 `id`。'
+  extra: 管理员侧 `id USER` 只能证明数据库解析。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O05-QA-001
+  type: qa
+  question: 把组 `ops` 改名为 `operations`，命令是什么？
+  answer: '`groupmod -n operations ops`。'
+  extra: GID 通常保持不变；引用旧名称的配置需另行调查。
+  source:
+  - groupadd(8)
+  - groupmod(8)
+  - groupdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::group-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O05-QA-002
+  type: qa
+  question: 把 `operations` 的 GID 改为 4300，命令是什么？
+  answer: '`groupmod -g 4300 operations`。'
+  extra: 变更前后要按旧/new GID 查找文件。
+  source:
+  - groupadd(8)
+  - groupmod(8)
+  - groupdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::group-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O05-QA-003
+  type: qa
+  question: '`getent group operations` 能否列出所有把它作为主组的用户？'
+  answer: 不能；它主要显示组记录和显式成员。
+  extra: 应按该 GID 筛选 `getent passwd` 的第 4 字段。
+  source:
+  - getent(1)
+  - group(5)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::group-lifecycle
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O05-QA-004
+  type: qa
+  question: '`groupdel` 为什么可能拒绝删除一个存在的组？'
+  answer: 该组仍被某个用户用作主组。
+  extra: 先找出这些用户并迁移主组，再删除。
+  source:
+  - groupadd(8)
+  - groupmod(8)
+  - groupdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::group-lifecycle
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-07-O05-QA-005
+  type: qa
+  question: 删除组记录后，旧 GID 拥有的文件会自动改成其他组吗？
+  answer: 不会。文件仍保存旧数字 GID。
+  extra: 需要按业务决定重新归组、归档或保留。
+  source:
+  - groupadd(8)
+  - groupmod(8)
+  - groupdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::group-lifecycle
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O05-QA-006
+  type: qa
+  question: 怎样找出主 GID 为 4300 的本地解析用户？
+  answer: '`getent passwd | awk -F: ''$4 == 4300 {print $1}''`。'
+  extra: 动态脚本可先从 `getent group` 取得 GID。
+  source:
+  - getent(1)
+  - awk(1)
+  - groupdel(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::group-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-07-O05-QA-007
+  type: qa
+  question: 组改名后，为什么文件通常仍可显示新组名？
+  answer: 文件保存 GID，名称服务把同一 GID 映射为新的组名。
+  extra: 但脚本和配置中写死的旧组名不会自动修改。
+  source:
+  - groupadd(8)
+  - groupmod(8)
+  - groupdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::group-lifecycle
+  - card::output
+  - priority::P1
+- id: RHCSA-07-O06-QA-001
+  type: qa
+  question: '`chage -I 5 alice` 设置的是什么？'
+  answer: 口令过期后再过 5 天，账号因口令失效而不可用。
+  extra: 它不是账号固定到期日。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::parameter
+  - priority::P0
+- id: RHCSA-07-O06-QA-002
+  type: qa
+  question: '`chage -E 2030-12-31 alice` 设置的是什么？'
+  answer: 账号到期日。
+  extra: 与口令最大有效天数独立。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::parameter
+  - priority::P0
+- id: RHCSA-07-O06-QA-003
+  type: qa
+  question: 口令被锁定与账号已到期有什么区别？
+  answer: 口令锁定阻止口令认证；账号到期限制新的账号使用。
+  extra: 两者都不会自动终止已有进程。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::disable-account
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-O06-QA-004
+  type: qa
+  question: 为什么解锁前应先查看 `passwd -S USER`？
+  answer: 确认账号是否有可恢复的有效口令，避免误处理无口令或其他状态。
+  extra: 解锁不是设置新口令的替代。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O06-QA-005
+  type: qa
+  question: 修改 `PASS_MAX_DAYS` 后，怎样让既有用户获得新最大期限？
+  answer: 对既有用户执行 `chage -M DAYS USER` 并用 `chage -l` 验证。
+  extra: 全局默认不会回溯。
+  source:
+  - login.defs(5)
+  - chage(1)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::process
+  - priority::P0
+- id: RHCSA-07-O06-QA-006
+  type: qa
+  question: 用户口令仍在有效期内，但账号已经到期，能否仅靠重置口令恢复？
+  answer: 不能；还要修正账号到期字段。
+  extra: 先用 `chage -l` 区分两种状态。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-07-O06-QA-007
+  type: qa
+  question: 怎样把口令锁定状态和账号到期状态分层验证？
+  answer: '`passwd -S USER` 查口令；`chage -l USER` 查账号与口令期限。'
+  extra: 必要时再检查登录 Shell 和具体认证服务。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::disable-account
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O06-QA-008
+  type: qa
+  question: “账号停用”为什么不是一条固定命令？
+  answer: 因为目标可能涉及口令、账号到期、Shell、其他认证、已有会话和数据保留多个层次。
+  extra: 应先定义允许和禁止的访问终态。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::disable-account
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O06-CLOZE-001
+  type: cloze
+  text: '`chage {{c1::-d 0}} USER` 常用于强制{{c2::下次登录修改口令}}。'
+  extra: 设置后要选择合适的交互登录路径验证。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::password-aging
+  - card::cloze
+  - priority::P0
+- id: RHCSA-07-O07-QA-001
+  type: qa
+  question: '`su alice` 与 `su - alice` 的核心差异是什么？'
+  answer: 前者主要切换身份并可能保留较多当前环境；后者请求登录式环境。
+  extra: 最终用 `id`、`pwd` 和环境变量验证。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-O07-QA-002
+  type: qa
+  question: 用 `su - alice` 验证时，至少应检查哪些证据？
+  answer: '`id`、`pwd`，以及必要的 `HOME`、`SHELL`、`PATH`。'
+  extra: 提示符变化不是充分证据。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O07-QA-003
+  type: qa
+  question: '`newgrp developers` 会永久修改用户的默认主组吗？'
+  answer: 不会；它在新的 Shell 中临时把当前主组切换为目标组。
+  extra: 退出该 Shell 后返回上层会话。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O07-QA-004
+  type: qa
+  question: 运行 `newgrp` 前后最直接的验证命令是什么？
+  answer: '`id` 或 `id -gn`。'
+  extra: 同时注意 `newgrp` 创建了嵌套 Shell。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O07-QA-005
+  type: qa
+  question: 连续使用 `su` 和 `newgrp` 后，为什么要逐层 `exit`？
+  answer: 每次可能创建一个新 Shell；逐层退出才能恢复原身份和环境。
+  extra: 返回后再次运行 `id` 确认当前层级。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::process
+  - priority::P1
+- id: RHCSA-07-O07-QA-006
+  type: qa
+  question: 数据库 `id alice` 已有新组，而 `su - alice -c id` 仍没有，下一步应调查什么？
+  answer: NSS/PAM 缓存、身份源和会话建立过程，而不是重复执行同一 `usermod`。
+  extra: 先确认修改的是本地账号且组确实存在。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::session-identity
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-07-O08-QA-001
+  type: qa
+  question: '`userdel alice` 与 `userdel -r alice` 的核心区别是什么？'
+  answer: 前者删除账号记录并保留家目录；后者还处理家目录和邮件池。
+  extra: 二者都不保证删除任意外部路径中的全部数据。
+  source:
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::comparison
+  - priority::P0
+- id: RHCSA-07-O08-QA-002
+  type: qa
+  question: 删除用户前最重要的数字证据是什么？
+  answer: 保存 UID、主 GID，并按这些数字搜索账号拥有的数据。
+  extra: 删除后名称映射可能消失。
+  source:
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O08-QA-003
+  type: qa
+  question: '`find ... -nouser` 表示什么？'
+  answer: 文件 UID 在当前名称服务中没有对应用户。
+  extra: 它是审计线索，不等于文件可以直接删除。
+  source:
+  - find(1)
+  - userdel(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::output
+  - priority::P0
+- id: RHCSA-07-O08-QA-004
+  type: qa
+  question: 为什么删除用户后不应立即重用其 UID？
+  answer: 新账号会被解释为旧 UID 文件的所有者，可能造成信息泄漏。
+  extra: 先完成数据移交和无人拥有文件审计。
+  source:
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::security
+  - priority::P0
+- id: RHCSA-07-O08-QA-005
+  type: qa
+  question: '`userdel -r` 是否会删除 `/srv/project` 中该用户创建的文件？'
+  answer: 不应假设会；家目录外的数据需要单独调查和处理。
+  extra: 按 UID/GID 搜索并根据业务审批处置。
+  source:
+  - userdel(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-O08-QA-006
+  type: qa
+  question: 用户删除后，同名用户私有组一定自动消失吗？
+  answer: 不能假设；应执行 `getent group USER` 重新查询。
+  extra: 若仍存在，先检查成员、主组引用和旧 GID 文件。
+  source:
+  - userdel(8)
+  - groupdel(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::verification
+  - priority::P0
+- id: RHCSA-07-O08-QA-007
+  type: qa
+  question: 为什么不把 `userdel --force` 作为默认解题手段？
+  answer: 它可能绕过正在使用的账号等安全检查，却不解决数据和进程边界。
+  extra: 先调查、最小变更、再验证。
+  source:
+  - userdel(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::security
+  - priority::P0
+- id: RHCSA-07-O08-CLOZE-001
+  type: cloze
+  text: '`userdel {{c1::-r}} USER` 处理默认家目录和邮件池，但{{c2::不保证删除家目录外的全部数据}}。'
+  extra: 删除前按数字 UID/GID 建立数据清单。
+  source:
+  - userdel(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::delete-boundary
+  - card::cloze
+  - priority::P0
+- id: RHCSA-07-D01-QA-001
+  type: qa
+  question: 用户无法登录时，推荐的前四层证据顺序是什么？
+  answer: '`getent passwd` → `passwd -S` → `chage -l` → 检查登录 Shell。'
+  extra: 这些正常后再进入具体认证服务日志。
+  source:
+  - RH124-RHEL9-Ch6
+  - passwd(1)
+  - chage(1)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-07-D01-QA-002
+  type: qa
+  question: 用户加入组后访问仍失败，最有区分度的下一条证据是什么？
+  answer: 让用户在当前失败会话中运行 `id`，与管理员的 `id USER` 比较。
+  extra: 可迅速区分数据库错误与旧会话问题。
+  source:
+  - su(1)
+  - newgrp(1)
+  - id(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-07-D01-QA-003
+  type: qa
+  question: passwd 条目已指向新家目录，但目录中没有旧数据，最可能漏了什么？
+  answer: 只使用了 `usermod -d`，没有使用 `-m` 或另行迁移数据。
+  extra: 继续用 `stat` 比较新旧路径。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-07-D01-QA-004
+  type: qa
+  question: '`groupdel` 提示组仍是主组时，下一步是什么？'
+  answer: 按组 GID 查询 passwd 第 4 字段，找出使用它作为主组的用户。
+  extra: 迁移这些用户主组并验证后再删除。
+  source:
+  - groupadd(8)
+  - groupmod(8)
+  - groupdel(8)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-07-D01-QA-005
+  type: qa
+  question: 锁定口令后仍看到该用户进程，能否判断锁定失败？
+  answer: 不能；口令锁定不会自动终止已有进程。
+  extra: 先识别进程来源和是否有已有会话。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-07-D01-QA-006
+  type: qa
+  question: 账号到期后 `getent passwd USER` 仍有结果是否异常？
+  answer: 不异常；到期限制账号使用，不删除数据库记录。
+  extra: 使用 `chage -l` 验证到期状态。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::diagnosis
+  - card::output
+  - priority::P0
+- id: RHCSA-07-D01-QA-007
+  type: qa
+  question: 改组后管理员 `id USER` 和新登录会话 `id` 都正确，但业务仍拒绝访问，下一章应调查什么？
+  answer: 文件传统权限、umask 或特殊权限位。
+  extra: 这些属于第 08 章，不在本章重复展开。
+  source:
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::chapter-boundary
+  - card::boundary
+  - priority::P1
+- id: RHCSA-07-C01-QA-001
+  type: qa
+  question: 创建指定身份账号的推荐流程骨架是什么？
+  answer: 查名称/数字冲突 → 先建组 → 建用户和家目录 → 设置口令/期限 → 分层验证 → 新会话验证。
+  extra: 每一层对应不同对象，不能只看一条命令。
+  source:
+  - RH124-RHEL9-Ch6
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-07-C01-QA-002
+  type: qa
+  question: 新用户目标为 UID 2401、主组 ops、附加组 developers,audit、家目录 `/srv/home/lina`，命令骨架是什么？
+  answer: '`useradd -u 2401 -g ops -G developers,audit -d /srv/home/lina -m lina`。'
+  extra: Shell、到期和口令按题目继续设置。
+  source:
+  - useradd(8)
+  - usermod(8)
+  - userdel(8)
+  - RH124-RHEL9-Ch6
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-07-C02-QA-001
+  type: qa
+  question: 离职账号要求今天禁用但不删除数据，第一步应做什么？
+  answer: 记录 UID/GID、组、家目录、口令与期限，并按数字身份建立数据清单。
+  extra: 先保留证据，再锁定和到期。
+  source:
+  - userdel(8)
+  - passwd(1)
+  - chage(1)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-07-C02-QA-002
+  type: qa
+  question: 怎样同时表达“阻止口令认证”和“账号已到期”，但保留账号记录？
+  answer: 锁定口令并设置一个已过去的账号到期日，然后分别验证。
+  extra: 已有会话、其他认证和进程仍需独立调查。
+  source:
+  - passwd(1)
+  - chage(1)
+  - shadow(5)
+  - RH124-RHEL9-Ch6
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-07-C02-QA-003
+  type: qa
+  question: 删除离职账号前，为什么要同时按 UID 和 GID 搜索？
+  answer: 用户可能拥有文件，也可能有以其主组或私有组为组所有者的数据。
+  extra: 删除用户和组是两个数字身份边界。
+  source:
+  - userdel(8)
+  - groupdel(8)
+  tags:
+  - exam::rhcsa
+  - chapter::users-groups-lifecycle
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+status: integrated

@@ -1,0 +1,2042 @@
+chapter_id: RHCSA-31
+chapter_slug: podman-images-containers-rootless
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCSA-PODMAN-QA-001
+  type: qa
+  question: 在 Podman 对象模型中，image 与 container 的核心区别是什么？
+  answer: Image 是只读模板和层集合；container 是从镜像创建的实例，具有独立配置、可写层和生命周期。
+  extra: 同一镜像可创建多个容器。容器删除通常不删除镜像。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-PODMAN-QA-002
+  type: qa
+  question: 创建容器时使用 `-p 8088:8080`，两个端口分别属于哪一侧？
+  answer: 宿主端口是 `8088`，容器端口是 `8080`。
+  extra: 语法方向为 `HOST_PORT:CONTAINER_PORT`。还要用 `podman port`、`ss` 和 `curl` 分层验证。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::port-publishing
+  - card::parameter
+  - priority::P0
+- id: RHCSA-PODMAN-QA-003
+  type: qa
+  question: Bind mount 的 `:Z` 与 `:z` 分别适合什么共享边界？
+  answer: '`:Z` 为当前容器使用私有、非共享标签；`:z` 为多个容器共享同一内容使用共享标签。'
+  extra: 两者都会请求重标记宿主内容。不要对系统大目录随意使用。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::selinux-volume
+  - card::comparison
+  - priority::P0
+- id: RHCSA-PODMAN-QA-004
+  type: qa
+  question: 容器执行后立即退出，怎样列出包括已退出实例在内的容器？
+  answer: '`podman ps -a`'
+  extra: 默认 `podman ps` 只列出 running 容器。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-observation
+  - card::command
+  - priority::P0
+- id: RHCSA-PODMAN-QA-005
+  type: qa
+  question: 怎样查看某容器记录的端口发布映射？
+  answer: '`podman port <CONTAINER>`'
+  extra: 该命令只证明 Podman 配置的映射；宿主监听和协议功能还要分别用 `ss` 与 `curl` 验证。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::port-publishing
+  - card::verification
+  - priority::P0
+- id: RHCSA-PODMAN-QA-006
+  type: qa
+  question: '`podman run -d` 返回容器 ID，但容器没有出现在 `podman ps` 中。最先应读取哪三类证据？'
+  answer: '`podman ps -a`、`podman logs <CONTAINER>`、`podman container inspect <CONTAINER>`。'
+  extra: 重点检查实际命令、状态、退出码和错误日志，不要反复创建同名容器。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-exited
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-PODMAN-QA-007
+  type: qa
+  question: Rootless 容器访问 bind mount 时出现 `permission denied`，应按哪三个权限层调查？
+  answer: 宿主 DAC 权限、rootless UID/GID 映射、SELinux 标签与 AVC。
+  extra: 默认答案不是 `chmod 777`、关闭 SELinux 或 `--privileged`。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-volume
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-PODMAN-QA-008
+  type: qa
+  question: 题目要求面向用户 `websvc` 运行 rootless 容器。为什么 login、pull、run、inspect 和 rm 都应保持在该用户上下文？
+  answer: 因为 rootless 的镜像、容器、卷、Registry 认证和用户命名空间都属于调用 Podman 的宿主用户。
+  extra: root 或其他普通用户查询的是另一套 Podman 状态。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-context
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-K01-QA-001
+  type: qa
+  question: 完整镜像引用 `registry.lab.example.com/training/webapp:1.0` 中，Registry 部分是什么？
+  answer: '`registry.lab.example.com`'
+  extra: Registry 定位提供镜像内容和元数据的服务。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-reference
+  - card::syntax
+  - priority::P0
+- id: RHCSA-31-K01-QA-002
+  type: qa
+  question: 镜像引用中的 tag 主要回答什么问题？
+  answer: 它是指向某个镜像内容的可读版本或发布通道名称。
+  extra: Tag 可以移动，不能把它当作不可变内容身份。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-reference
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-K01-QA-003
+  type: qa
+  question: 镜像 digest 相比 tag 的关键特性是什么？
+  answer: Digest 按镜像内容计算，适合标识不可变内容。
+  extra: 题目给 tag 时仍按题意使用，但可通过 inspect 记录 RepoDigests。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-reference
+  - card::comparison
+  - priority::P0
+- id: RHCSA-31-K01-QA-004
+  type: qa
+  question: 同一个 IMAGE ID 能否同时拥有多个 repository:tag 名称？
+  answer: 可以。
+  extra: '`podman tag` 通常只是为本地镜像增加引用，不复制所有镜像层。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-reference
+  - card::concept
+  - priority::P1
+- id: RHCSA-31-K01-QA-005
+  type: qa
+  question: 题目已经提供完整镜像引用时，为什么不应随意改成短名称？
+  answer: 短名称依赖本机 Registry 配置、别名和可能的交互选择，容易产生歧义。
+  extra: 考试和自动化场景优先使用题目给出的完整引用。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::registry-config
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-K01-QA-006
+  type: qa
+  question: 系统级 Registry 配置文件的常见路径是什么？
+  answer: '`/etc/containers/registries.conf`'
+  extra: 普通用户可通过 `~/.config/containers/registries.conf` 使用用户级设置。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::registry-config
+  - card::configuration
+  - priority::P0
+- id: RHCSA-31-K01-QA-007
+  type: qa
+  question: 用户级 `registries.conf` 主要影响哪类操作？
+  answer: 影响该用户对未限定镜像名称的补全、Registry 搜索以及相应 Registry 规则。
+  extra: 完整行为应查当前系统的 `containers-registries.conf(5)`。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::registry-config
+  - card::configuration
+  - priority::P1
+- id: RHCSA-31-K01-QA-008
+  type: qa
+  question: '`containers.conf` 与 `storage.conf` 分别管理什么？'
+  answer: '`containers.conf` 管理 Podman/容器运行默认值；`storage.conf` 管理镜像和容器存储。'
+  extra: 不要把 Registry、运行默认值和存储配置当成一个文件。
+  source:
+  - podman(1)
+  - containers.conf(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::podman-configuration
+  - card::comparison
+  - priority::P0
+- id: RHCSA-31-K01-QA-009
+  type: qa
+  question: Rootless 用户默认把镜像和容器持久数据放在哪类位置？
+  answer: 当前用户的数据目录，通常位于 `$HOME/.local/share/containers/storage`，除非 XDG 或 storage 配置覆盖。
+  extra: rootful 默认使用另一套系统级存储。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-storage
+  - card::path
+  - priority::P1
+- id: RHCSA-31-K01-QA-010
+  type: qa
+  question: '`podman search` 能否可靠证明某 Registry 中一定存在某镜像？'
+  answer: 不能。
+  extra: Registry 搜索 API 的实现可能不同；真正的证据是 pull/inspect 或 Registry 的直接访问结果。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::registry-search
+  - card::boundary
+  - priority::P1
+- id: RHCSA-31-O01-QA-001
+  type: qa
+  question: 以当前用户拉取完整镜像引用的命令骨架是什么？
+  answer: '`podman pull <REGISTRY>/<NAMESPACE>/<IMAGE>:<TAG>`'
+  extra: 拉取后用 `podman images` 和 `podman image inspect` 验证。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-operations
+  - card::command
+  - priority::P0
+- id: RHCSA-31-O01-QA-002
+  type: qa
+  question: 私有 Registry 需要认证时，应在哪个用户上下文执行 `podman login`？
+  answer: 在后续将执行 pull/run 的同一目标用户上下文中。
+  extra: root 的认证状态不等于普通用户的认证状态。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::registry-auth
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-O01-QA-003
+  type: qa
+  question: 列出当前用户本地镜像的命令是什么？
+  answer: '`podman images`'
+  extra: 该命令只列当前 Podman 存储上下文可见的镜像。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-operations
+  - card::command
+  - priority::P0
+- id: RHCSA-31-O01-QA-004
+  type: qa
+  question: 为什么检查镜像时优先写 `podman image inspect IMAGE`，而不是只写 `podman inspect IMAGE`？
+  answer: 显式对象类型可避免把镜像、容器或其他同名对象混淆。
+  extra: '`podman inspect` 能处理多种对象，但题意和证据范围应写清。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-operations
+  - card::boundary
+  - priority::P1
+- id: RHCSA-31-O01-QA-005
+  type: qa
+  question: 执行 `podman tag SOURCE TARGET` 后，最关键的验证是什么？
+  answer: 确认 TARGET 出现在 `podman images` 中，并与 SOURCE 指向预期的 IMAGE ID。
+  extra: 命令无报错不等于名称指向了正确内容。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-operations
+  - card::verification
+  - priority::P0
+- id: RHCSA-31-O01-QA-006
+  type: qa
+  question: 由 `podman save` 生成的镜像归档应使用哪个导入命令？
+  answer: '`podman load -i <ARCHIVE>` 或 `podman load < <ARCHIVE>`。'
+  extra: '`podman import` 面向容器文件系统 tar，语义不同。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  - RHCSA9-Mock-Container-Tasks
+  - RH134-RHEL9-Running-Containers
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-archive
+  - card::command
+  - priority::P0
+- id: RHCSA-31-O01-QA-007
+  type: qa
+  question: '`podman load` 与 `podman import` 的主要区别是什么？'
+  answer: '`load` 恢复镜像归档；`import` 把文件系统 tar 导入为新镜像。'
+  extra: 先判断归档来源，不要机械试两个命令。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-archive
+  - card::comparison
+  - priority::P0
+- id: RHCSA-31-O01-QA-008
+  type: qa
+  question: 镜像 `EXPOSE 8080` 能否证明宿主已经监听 8080？
+  answer: 不能。
+  extra: EXPOSE 是镜像元数据；宿主发布需要容器创建时配置 `-p`，并进一步用 `ss` 与协议请求验证。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-metadata
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-K02-QA-001
+  type: qa
+  question: '`podman create` 对容器生命周期做了什么？'
+  answer: 创建容器配置对象，但不启动主进程。
+  extra: 通常可在 `podman ps -a` 中看到 created 状态。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-K02-QA-002
+  type: qa
+  question: '`podman run` 与 `podman create` 的关系是什么？'
+  answer: '`podman run` 通常等价于创建新容器并立即启动。'
+  extra: '`-d` 只改变附着方式，不保证容器持续运行。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::comparison
+  - priority::P0
+- id: RHCSA-31-K02-QA-003
+  type: qa
+  question: 为什么不能用 `podman start` 修正已创建容器的端口、环境变量或挂载？
+  answer: 这些参数在创建时已经固化，start 只按现有配置再次启动。
+  extra: 配置错误通常需要保存证据后重建。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-K02-QA-004
+  type: qa
+  question: 容器主进程退出后，容器通常进入什么状态？
+  answer: exited。
+  extra: 后台运行参数 `-d` 不会把一次性命令变成长驻服务。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::output
+  - priority::P0
+- id: RHCSA-31-K02-QA-005
+  type: qa
+  question: 容器处于 created 状态时，下一条典型操作是什么？
+  answer: '`podman start <CONTAINER>`'
+  extra: start 只启动已有对象。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::command
+  - priority::P1
+- id: RHCSA-31-K02-QA-006
+  type: qa
+  question: 容器处于 exited 状态，且创建配置正确。是否一定要重新 `podman run`？
+  answer: 不一定；可先检查退出原因，必要时对同一对象执行 `podman start`。
+  extra: 若端口、挂载或环境错误，则应重建。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-K02-QA-007
+  type: qa
+  question: 普通 `podman rm CONTAINER` 主要删除哪些内容？
+  answer: 删除容器对象、配置和其可写层。
+  extra: 通常不删除镜像、bind mount 数据或显式命名 volume。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-removal
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-K02-QA-008
+  type: qa
+  question: 显式 named volume 会被 `podman rm --volumes CONTAINER` 自动删除吗？
+  answer: 不会。
+  extra: '`--volumes` 主要处理匿名 volume；命名 volume 需要单独管理。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-removal
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-K02-QA-009
+  type: qa
+  question: 匿名 volume 在什么情况下可能随容器一起删除？
+  answer: 使用 `podman run --rm` 或 `podman rm --volumes` 时。
+  extra: 显式命名 volume 的删除边界不同。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-removal
+  - card::parameter
+  - priority::P1
+- id: RHCSA-31-O02-QA-001
+  type: qa
+  question: 后台创建并运行命名容器的基本骨架是什么？
+  answer: '`podman run -d --name <NAME> <IMAGE>`'
+  extra: 执行后立即用 `podman ps -a` 检查，而不是只相信返回的容器 ID。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-31-O02-QA-002
+  type: qa
+  question: 有序停止容器的常用命令是什么？
+  answer: '`podman stop <CONTAINER>`'
+  extra: 不要把 `podman kill` 当作常规停止入口。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-31-O02-QA-003
+  type: qa
+  question: 停止后再次启动同一容器的命令是什么？
+  answer: '`podman start <CONTAINER>`'
+  extra: 它使用原创建配置。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-31-O02-QA-004
+  type: qa
+  question: 删除错误容器前，至少应保留哪两类证据？
+  answer: '`podman container inspect` 的配置/状态和 `podman logs` 的运行记录。'
+  extra: 还应确认挂载来源和端口，避免误删唯一数据现场。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-removal
+  - card::process
+  - priority::P0
+- id: RHCSA-31-O02-QA-005
+  type: qa
+  question: 出现“container name is already in use”时，下一条最有区分度的证据是什么？
+  answer: '`podman ps -a --filter name=<NAME>`，随后 inspect 该旧对象。'
+  extra: 旧对象若配置正确可 start；配置错误才重建。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-name-conflict
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-31-K03-QA-001
+  type: qa
+  question: Rootless 容器中的 UID 0 默认对应宿主上的谁？
+  answer: 默认对应调用 Podman 的普通宿主用户，而不是宿主 UID 0。
+  extra: 这是用户命名空间映射的结果。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-userns
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-K03-QA-002
+  type: qa
+  question: 确认当前 shell 正在以哪个宿主用户执行 Podman，最直接的命令是什么？
+  answer: '`id`'
+  extra: 还可结合 `whoami` 和 `podman info`。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-context
+  - card::command
+  - priority::P0
+- id: RHCSA-31-K03-QA-003
+  type: qa
+  question: 查看 rootless 用户命名空间 UID 映射的命令入口是什么？
+  answer: '`podman unshare cat /proc/self/uid_map`'
+  extra: 映射数值依赖当前系统，不应编造固定输出。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-userns
+  - card::command
+  - priority::P1
+- id: RHCSA-31-K03-QA-004
+  type: qa
+  question: '`/etc/subuid` 与 `/etc/subgid` 为 rootless Podman 提供什么？'
+  answer: 为用户提供可在用户命名空间中使用的附加 UID/GID 范围。
+  extra: '可用 `grep ^USER: /etc/subuid /etc/subgid` 检查。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-userns
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-K03-QA-005
+  type: qa
+  question: root 执行 `podman ps -a` 为空，能否证明普通用户没有 rootless 容器？
+  answer: 不能。
+  extra: 应在目标用户上下文执行 `podman ps -a`。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-context
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-K03-QA-006
+  type: qa
+  question: Rootless bind mount 的宿主 DAC 检查，为什么不能只看源目录最后一级？
+  answer: 父目录也必须允许目标用户和映射后的进程遍历。
+  extra: 可使用 `namei -l <PATH>` 逐级检查。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-volume-permission
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-31-K03-QA-007
+  type: qa
+  question: 普通用户能否绑定某低端口，应该查询什么系统状态而不是死记固定阈值？
+  answer: '`sysctl net.ipv4.ip_unprivileged_port_start`'
+  extra: 实际能力还可能受网络实现和系统策略影响。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-port
+  - card::verification
+  - priority::P1
+- id: RHCSA-31-K03-QA-008
+  type: qa
+  question: 题目要求 rootless 容器时，改用 root 运行为什么不是等价修复？
+  answer: 它改变了容器所有者、存储、用户命名空间和安全边界。
+  extra: 应修复普通用户的实际权限或配置问题。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-context
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-K03-QA-009
+  type: qa
+  question: 本章使用 `loginctl show-user USER -p State -p Linger` 能证明什么？
+  answer: 只能观察该用户会话和 linger 当前状态。
+  extra: 配置 linger、用户 systemd 与 Quadlet 归下一章。
+  source:
+  - loginctl(1)
+  - RHCSA-32-boundary
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::chapter-boundary
+  - card::verification
+  - priority::P1
+- id: RHCSA-31-K03-QA-010
+  type: qa
+  question: 容器当前 `running` 能否证明用户注销或系统重启后仍自动运行？
+  answer: 不能。
+  extra: 持久运行需要用户 systemd/Quadlet/linger 等另一套状态，本章不展开。
+  source:
+  - RHCSA-32-boundary
+  - podman-ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::chapter-boundary
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-O03-QA-001
+  type: qa
+  question: '`podman run` 的通用语法中，镜像名前后分别是什么？'
+  answer: 镜像名前是 Podman 创建/运行参数；镜像名后是容器要执行的命令和参数。
+  extra: 位置错误会把参数交给错误对象。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::run-syntax
+  - card::syntax
+  - priority::P0
+- id: RHCSA-31-O03-QA-002
+  type: qa
+  question: '`-d` 参数的准确语义是什么？'
+  answer: 让 Podman 以 detached 方式运行，不持续附着前台。
+  extra: 它不保证容器主进程不会退出。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::run-parameters
+  - card::parameter
+  - priority::P0
+- id: RHCSA-31-O03-QA-003
+  type: qa
+  question: 为容器设置稳定名称使用哪个参数？
+  answer: '`--name <NAME>`'
+  extra: 名称冲突时先调查旧对象。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::run-parameters
+  - card::parameter
+  - priority::P0
+- id: RHCSA-31-O03-QA-004
+  type: qa
+  question: 向容器设置单个环境变量的参数骨架是什么？
+  answer: '`-e KEY=VALUE` 或 `--env KEY=VALUE`'
+  extra: 创建后可用 inspect 检查配置，并在运行容器中用 `exec env` 做运行时证据。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::run-environment
+  - card::parameter
+  - priority::P0
+- id: RHCSA-31-O03-QA-005
+  type: qa
+  question: 为什么 `podman exec CONTAINER env` 不能替代 `podman container inspect`？
+  answer: exec 只显示运行容器内部当前命令结果；inspect 记录创建配置和结构化状态。
+  extra: 两者证据范围不同。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::run-environment
+  - card::comparison
+  - priority::P1
+- id: RHCSA-31-O03-QA-006
+  type: qa
+  question: 镜像名后追加 `/bin/sh -c ...` 通常会影响什么？
+  answer: 覆盖或参与镜像默认命令，决定容器实际主进程。
+  extra: 命令错误可能导致容器立即退出。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::run-command
+  - card::parameter
+  - priority::P1
+- id: RHCSA-31-O03-QA-007
+  type: qa
+  question: 怎样验证 Podman 记录的端口映射、宿主监听和 HTTP 功能？
+  answer: 依次用 `podman port`、`ss -lnt`、`curl`。
+  extra: 三条证据不能互相替代。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::port-publishing
+  - card::process
+  - priority::P0
+- id: RHCSA-31-O03-QA-008
+  type: qa
+  question: '`podman port` 显示 8088 映射成功，能否直接判定 Web 应用健康？'
+  answer: 不能。
+  extra: 应用可能未监听、尚未就绪或返回错误；仍需日志和协议请求。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::port-publishing
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-O03-QA-009
+  type: qa
+  question: '`ss -lnt` 能证明什么，不能证明什么？'
+  answer: 能证明宿主存在 TCP 监听；不能证明 HTTP 内容、应用逻辑或远程防火墙链路正确。
+  extra: 最终仍需对应协议验证。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::port-publishing
+  - card::verification
+  - priority::P1
+- id: RHCSA-31-O03-QA-010
+  type: qa
+  question: 容器端口发布方向错误时，为什么 restart 不能修复？
+  answer: 端口绑定属于创建配置，restart 仍使用旧配置。
+  extra: 保存证据后删除并以正确 `-p HOST:CONTAINER` 重建。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-port
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-31-K04-QA-001
+  type: qa
+  question: 容器可写层中的数据在 stop/start 同一容器后是否仍在？
+  answer: 通常仍在。
+  extra: 但删除容器后可写层随对象消失。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::storage-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-31-K04-QA-002
+  type: qa
+  question: Bind mount 的 source 由谁管理？
+  answer: 由宿主文件系统和管理员/用户管理。
+  extra: 容器删除不会自动删除该宿主路径。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::storage-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-K04-QA-003
+  type: qa
+  question: Named volume 的基本创建命令是什么？
+  answer: '`podman volume create <NAME>`'
+  extra: 随后用 `podman volume inspect <NAME>` 查看。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::named-volume
+  - card::command
+  - priority::P0
+- id: RHCSA-31-K04-QA-004
+  type: qa
+  question: 在 `-v SOURCE:/container/path` 中，怎样区分 bind mount 与 named volume？
+  answer: SOURCE 以 `/` 或 `.` 开头时是宿主路径；不以它们开头时通常被解释为 named volume 名称。
+  extra: 容器目标路径必须是绝对路径。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::volume-syntax
+  - card::syntax
+  - priority::P0
+- id: RHCSA-31-K04-QA-005
+  type: qa
+  question: Bind mount 的源路径不存在时，当前 Podman 文档要求怎样处理？
+  answer: 用户应预先创建源文件或目录；Podman 返回错误而不是把它当作 named volume。
+  extra: 实际行为以考试环境 man page 为准。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::volume-syntax
+  - card::boundary
+  - priority::P1
+- id: RHCSA-31-K04-QA-006
+  type: qa
+  question: '`-v webdata:/var/lib/webapp` 中，`webdata` 是什么？'
+  answer: 显式 named volume。
+  extra: 不存在时 Podman 可创建该 named volume；它不会因普通容器删除而自动消失。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::named-volume
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-K04-QA-007
+  type: qa
+  question: 为什么不能只在容器内 `ls` 来证明数据持久化？
+  answer: 容器内文件可能位于可写层，未必来自宿主路径或独立 volume。
+  extra: 必须 inspect Mounts，并在宿主或 volume 层验证。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::storage-verification
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-K04-QA-008
+  type: qa
+  question: 检查容器挂载 source、destination 和 options 的主要入口是什么？
+  answer: '`podman container inspect <CONTAINER>`'
+  extra: 还可结合 `podman volume inspect` 和宿主文件检查。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::storage-verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-31-O04-QA-001
+  type: qa
+  question: 将宿主 `/home/websvc/site` 私有挂载到容器 `/opt/app/site` 的参数是什么？
+  answer: '`-v /home/websvc/site:/opt/app/site:Z`'
+  extra: '`:Z` 适合单个容器私有使用。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::selinux-volume
+  - card::command
+  - priority::P0
+- id: RHCSA-31-O04-QA-002
+  type: qa
+  question: 多个容器需要同时共享同一宿主目录时，SELinux 挂载后缀应优先考虑什么？
+  answer: '`:z`'
+  extra: 它请求共享容器内容标签；共享需求必须真实存在。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::selinux-volume
+  - card::parameter
+  - priority::P0
+- id: RHCSA-31-O04-QA-003
+  type: qa
+  question: 为什么对大目录使用 `:Z` 或 `:z` 可能导致启动变慢？
+  answer: 重标记需要遍历目录下文件并修改标签。
+  extra: inode 很多时成本明显。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::selinux-volume
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-31-O04-QA-004
+  type: qa
+  question: 为什么不应把系统目录或整个 home 目录随意用 `:Z` 重标记？
+  answer: 重标记会修改宿主标签，可能破坏其他受限服务或扩大影响范围。
+  extra: 优先为容器准备专用子目录。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::selinux-volume
+  - card::security
+  - priority::P0
+- id: RHCSA-31-O04-QA-005
+  type: qa
+  question: 怎样检查宿主目录的 DAC 与 SELinux 标签？
+  answer: '`ls -ldZ <PATH>`；父目录遍历问题可再用 `namei -l <PATH>`。'
+  extra: 仍需结合容器 UID/GID 映射。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::selinux-volume
+  - card::verification
+  - priority::P0
+- id: RHCSA-31-O04-QA-006
+  type: qa
+  question: 容器内成功创建文件后，怎样证明写入进入 bind mount？
+  answer: 在宿主 source 目录中读取同一文件。
+  extra: 只在容器内看见文件不能排除写入其他路径。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::storage-verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-31-O04-QA-007
+  type: qa
+  question: 删除并重建容器后验证数据仍在，主要证明了什么？
+  answer: 证明数据持久性来自 bind mount 或独立 volume，而不是旧容器可写层。
+  extra: 重建时必须指向同一 source。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::storage-verification
+  - card::process
+  - priority::P0
+- id: RHCSA-31-O04-QA-008
+  type: qa
+  question: 出现挂载访问拒绝时，为什么 `chmod 777` 不是可靠默认修复？
+  answer: 它破坏最小权限，且不能解决 SELinux 或 UID/GID 映射问题。
+  extra: 应先证明确切失败层。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-volume
+  - card::security
+  - priority::P0
+- id: RHCSA-31-O04-QA-009
+  type: qa
+  question: 为什么 `--privileged` 不应作为普通容器挂载失败的默认答案？
+  answer: 它显著扩大容器对宿主的权限并绕过部分隔离，掩盖真实配置错误。
+  extra: 应修复 DAC、映射或标签。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-volume
+  - card::security
+  - priority::P0
+- id: RHCSA-31-O05-QA-001
+  type: qa
+  question: '`podman ps` 与 `podman ps -a` 的对象范围差异是什么？'
+  answer: 前者默认只列 running 容器；后者列出包括 created、exited 在内的全部容器。
+  extra: 立即退出故障必须使用 `-a`。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-observation
+  - card::comparison
+  - priority::P0
+- id: RHCSA-31-O05-QA-002
+  type: qa
+  question: 读取容器结构化状态和创建配置的主要命令是什么？
+  answer: '`podman container inspect <CONTAINER>`'
+  extra: 可关注 State、ExitCode、Cmd、Env、Ports 和 Mounts。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-observation
+  - card::command
+  - priority::P0
+- id: RHCSA-31-O05-QA-003
+  type: qa
+  question: '`podman logs` 主要读取什么？'
+  answer: 容器日志驱动已经收集到的 stdout/stderr 记录。
+  extra: 应用只写内部文件或尚未刷新时，日志可能为空。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-observation
+  - card::concept
+  - priority::P0
+- id: RHCSA-31-O05-QA-004
+  type: qa
+  question: 查看容器最近 50 行日志的命令是什么？
+  answer: '`podman logs --tail 50 <CONTAINER>`'
+  extra: 还可按当前版本支持情况使用 `--since`。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-observation
+  - card::command
+  - priority::P1
+- id: RHCSA-31-O05-QA-005
+  type: qa
+  question: '`podman exec` 的前提是什么？'
+  answer: 目标容器必须处于 running，且容器中存在要执行的命令。
+  extra: exec 成功不证明宿主端口或外部业务成功。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-observation
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-O05-QA-006
+  type: qa
+  question: 在运行容器中检查环境变量的命令骨架是什么？
+  answer: '`podman exec <CONTAINER> /usr/bin/env`'
+  extra: 实际路径依赖镜像，极简镜像可能没有该命令。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-observation
+  - card::command
+  - priority::P1
+- id: RHCSA-31-O05-QA-007
+  type: qa
+  question: 不确定某 Podman 参数时，优先查什么？
+  answer: 当前系统的 `podman <SUBCOMMAND> --help` 或对应 man page。
+  extra: RHEL 9 小版本的 Podman 行为可能不同于最新上游文档。
+  source:
+  - podman(1)
+  - local-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::help-entry
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-D01-QA-001
+  type: qa
+  question: 容器立即退出时，inspect 中最关键的两个状态字段是什么？
+  answer: 状态和退出码，例如 `.State.Status` 与 `.State.ExitCode`。
+  extra: 还要核对实际命令和 logs。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-exited
+  - card::output
+  - priority::P0
+- id: RHCSA-31-D01-QA-002
+  type: qa
+  question: 容器日志显示“command not found”，下一步应优先核对什么？
+  answer: 容器实际执行的命令、镜像中是否存在该程序，以及命令位置是否写在镜像名之后。
+  extra: 不要用无关长驻命令掩盖失败。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-exited
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-31-D01-QA-003
+  type: qa
+  question: 容器 running、`podman port` 正确，但 `curl` 仍失败。下一条最有区分度的证据是什么？
+  answer: 检查应用日志和容器内是否真的监听目标容器端口。
+  extra: 宿主发布正确不等于应用已就绪。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-port
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-31-D01-QA-004
+  type: qa
+  question: '`ss` 看不到预期宿主监听，而 `podman port` 有映射。应如何继续？'
+  answer: 检查容器状态、实际网络/端口配置和 Podman 日志，不直接断言 firewalld。
+  extra: 先确认本机发布链。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-port
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-31-D01-QA-005
+  type: qa
+  question: 普通用户可以读取宿主目录，但容器应用仍不能写。哪一假设需要继续检查？
+  answer: 容器应用 UID/GID 经 rootless 映射后可能没有写权限。
+  extra: 还要检查 SELinux。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-volume
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-31-D01-QA-006
+  type: qa
+  question: 容器删除后业务文件消失，最可能需要先回答什么？
+  answer: 文件原先是在容器可写层、bind mount 还是 named volume。
+  extra: 已删除且无备份时不能承诺恢复可写层数据。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-data-loss
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-31-D01-QA-007
+  type: qa
+  question: 为什么无调查执行 `podman rm -f` 会降低可诊断性？
+  answer: 它可能丢失容器现场、退出状态、日志关联和有序停止机会。
+  extra: 先保存 inspect/logs，再做最小变更。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::diagnosis-safety
+  - card::security
+  - priority::P0
+- id: RHCSA-31-D01-QA-008
+  type: qa
+  question: 一个完整的本地 Web 容器验收链是什么？
+  answer: 用户身份 → 镜像 → 容器状态/日志/inspect → 端口映射 → 宿主监听 → HTTP → 宿主数据。
+  extra: 当前 running 只是链条中的一层。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::verification-chain
+  - card::process
+  - priority::P0
+- id: RHCSA-31-T01-QA-001
+  type: qa
+  question: 目标是以 `websvc` 运行带端口、环境和 bind mount 的 rootless 容器。操作前第一组基线应包含什么？
+  answer: '`id`、目标用户的 `podman info/images/ps -a`，以及宿主目录的 owner/mode/SELinux 标签。'
+  extra: 先建立用户和数据基线，再 pull/run。
+  source:
+  - RHCSA9-Mock-Container-Tasks
+  - RH134-RHEL9-Running-Containers
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-31-T01-QA-002
+  type: qa
+  question: 按题目要求发布宿主 8088 到容器 8080、设置 `APP_MODE=exam`、私有挂载站点目录，`podman run` 的核心参数组合是什么？
+  answer: '`-e APP_MODE=exam -p 8088:8080 -v /home/websvc/site:/opt/app/site:Z`'
+  extra: 还应包含 `-d --name <NAME>` 和完整镜像引用。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::classic-task
+  - card::syntax
+  - priority::P0
+- id: RHCSA-31-T01-QA-003
+  type: qa
+  question: 怎样证明站点数据不是只写入旧容器可写层？
+  answer: 在宿主 source 目录读取数据，并在删除、重建容器后再次验证。
+  extra: 重建必须复用同一 bind mount 或 named volume。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-31-T01-QA-004
+  type: qa
+  question: 经典任务中为什么明确禁止配置 user systemd、linger 或 Quadlet？
+  answer: 因为本章只验收当前容器运行；持久服务属于 RHCSA-32 的主归属。
+  extra: 章节边界避免重复和错误扩大终态。
+  source:
+  - RHCSA-31-work-order
+  - RHCSA-32-boundary
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::chapter-boundary
+  - card::boundary
+  - priority::P0
+- id: RHCSA-31-T02-QA-001
+  type: qa
+  question: 同时存在端口方向错误和 SELinux 挂载拒绝时，为什么应拆成两个故障层处理？
+  answer: 端口发布与文件访问属于不同对象和证据链，混合修复无法判断哪个变更生效。
+  extra: 先分别证明，再一次性按已确认参数重建。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::classic-diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-31-T02-QA-002
+  type: qa
+  question: 修复错误容器前保存 `inspect` 和 `logs` 的价值是什么？
+  answer: 保留旧配置、退出状态和应用错误，便于证明重建原因并对比修复结果。
+  extra: 证据先于破坏性变更。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::classic-diagnosis
+  - card::verification
+  - priority::P1
+- id: RHCSA-31-CLOZE-001
+  type: cloze
+  text: 完整镜像引用中，{{c1::tag}} 是可移动的可读引用，而 {{c2::digest}} 更适合标识不可变内容。
+  extra: 按题目 tag 操作，同时用 image inspect 记录实际身份。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - containers-registries.conf(5)
+  - podman-pull(1)
+  - podman-images(1)
+  - podman-image-inspect(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::image-reference
+  - card::cloze
+  - priority::P0
+- id: RHCSA-31-CLOZE-002
+  type: cloze
+  text: '`podman run` 通常完成 {{c1::create}} 与 {{c2::start}} 两个阶段。'
+  extra: '`-d` 不会改变容器主进程退出即容器退出的生命周期。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-lifecycle
+  - card::cloze
+  - priority::P0
+- id: RHCSA-31-CLOZE-003
+  type: cloze
+  text: 端口发布 `-p 8088:8080` 的方向是宿主 {{c1::8088}} 到容器 {{c2::8080}}。
+  extra: 验证时依次看 port、ss、curl。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-create(1)
+  - podman-start(1)
+  - podman-stop(1)
+  - podman-rm(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::port-publishing
+  - card::cloze
+  - priority::P0
+- id: RHCSA-31-CLOZE-004
+  type: cloze
+  text: Rootless 默认把调用 Podman 的宿主用户映射为用户命名空间中的 {{c1::UID 0}}，但它并不是宿主 {{c2::root}}。
+  extra: 容器内显示 root 不等于拥有宿主 root 权限。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman(1)
+  - podman-run(1)
+  - subuid(5)
+  - subgid(5)
+  - containers-storage.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::rootless-userns
+  - card::cloze
+  - priority::P0
+- id: RHCSA-31-CLOZE-005
+  type: cloze
+  text: 单个容器私有使用宿主目录时选择 {{c1:::Z}}；多个容器共享时选择 {{c2:::z}}。
+  extra: 两者都可能递归修改宿主标签。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::selinux-volume
+  - card::cloze
+  - priority::P0
+- id: RHCSA-31-CLOZE-006
+  type: cloze
+  text: '`podman ps` 默认只显示 {{c1::running}} 容器；查看已退出对象要加 {{c2::-a}}。'
+  extra: 立即退出故障的第一步。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-observation
+  - card::cloze
+  - priority::P0
+- id: RHCSA-31-CLOZE-007
+  type: cloze
+  text: 容器可写层通常随 {{c1::容器对象删除}} 而消失；bind mount 数据由 {{c2::宿主文件系统}} 管理。
+  extra: 持久性应通过 source 和重建验证。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-volume(1)
+  - SELinux-container-volume-semantics
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::storage-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-31-CLOZE-008
+  type: cloze
+  text: 完整本地验证链中，`podman port` 证明 {{c1::映射配置}}，`ss` 证明 {{c2::宿主监听}}，`curl` 证明 {{c3::协议功能}}。
+  extra: 三类证据不能互相替代。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-ps(1)
+  - podman-inspect(1)
+  - podman-logs(1)
+  - podman-exec(1)
+  - podman-port(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::verification-chain
+  - card::cloze
+  - priority::P0
+status: integrated

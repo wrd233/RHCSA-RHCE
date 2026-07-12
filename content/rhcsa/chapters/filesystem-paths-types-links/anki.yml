@@ -1,0 +1,1444 @@
+chapter_id: RHCSA-04
+chapter_slug: filesystem-paths-types-links
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+live_test: not_performed
+notes:
+- id: RHCSA-04-K01-QA-001
+  type: qa
+  question: Linux 普通路径的统一起点是什么？
+  answer: '`/`。绝对路径从当前进程看到的根目录开始解析。'
+  extra: 单根目录树可以接入多个文件系统；统一命名空间不代表所有目录都在同一文件系统。
+  source:
+  - hier(7)
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::fhs
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K01-QA-002
+  type: qa
+  question: 系统和服务的主机特定配置通常放在哪个目录？
+  answer: '`/etc`。'
+  extra: 配置文件仍可能由软件包、管理员或工具生成；具体配置加载顺序属于相应服务章节。
+  source:
+  - hier(7)
+  - RHCSA-Course-03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::fhs
+  - card::path
+  - priority::P0
+- id: RHCSA-04-K01-QA-003
+  type: qa
+  question: '`/var` 与 `/run` 的核心区别是什么？'
+  answer: '`/var` 面向可变且通常需要持久保存的数据；`/run` 保存当前启动周期的运行时状态。'
+  extra: 重启后 `/run` 内容通常重建，不能把它当作长期持久存储。
+  source:
+  - hier(7)
+  - RHCSA-Course-03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::fhs
+  - card::comparison
+  - priority::P0
+- id: RHCSA-04-K01-QA-004
+  type: qa
+  question: '`/home` 与 `/root` 分别服务于谁？'
+  answer: '`/home` 通常包含普通用户主目录；`/root` 是 root 用户的主目录。'
+  extra: 用户实际主目录以账户数据库中的配置为准。
+  source:
+  - hier(7)
+  - RHCSA-Course-03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::fhs
+  - card::comparison
+  - priority::P0
+- id: RHCSA-04-K01-QA-005
+  type: qa
+  question: '`/usr` 与 `/usr/local` 的管理边界是什么？'
+  answer: '`/usr` 主要承载发行版提供的程序、库和共享数据；`/usr/local` 用于本地管理员安装的内容。'
+  extra: 该边界便于避免本地内容与发行版包管理内容混杂。
+  source:
+  - hier(7)
+  - RHCSA-Course-03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::fhs
+  - card::comparison
+  - priority::P1
+- id: RHCSA-04-K01-QA-006
+  type: qa
+  question: '`/proc`、`/sys` 与 `/dev` 为什么不能简单理解为普通磁盘目录？'
+  answer: 它们主要提供内核、设备和运行状态接口，其中大量对象由内核或设备管理机制动态生成。
+  extra: 本章只识别对象性质；设备管理和内核调优在后续章节展开。
+  source:
+  - hier(7)
+  - RHCSA-Course-03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::fhs
+  - card::boundary
+  - priority::P1
+- id: RHCSA-04-K01-QA-007
+  type: qa
+  question: 在 RHEL 9 上看到 `/bin -> usr/bin`，说明了什么？
+  answer: '`/bin` 是兼容符号链接，最终程序路径位于 `/usr/bin`。'
+  extra: 应使用 `ls -ld /bin`、`readlink /bin` 和 `realpath -e /bin` 查询目标系统，而不是只背目录名。
+  source:
+  - RHEL9-filesystem-layout
+  - RHCSA-Course-03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::fhs
+  - card::output
+  - priority::P1
+- id: RHCSA-04-K01-QA-008
+  type: qa
+  question: 为什么不能把 `/tmp` 当作可靠的长期存储目录？
+  answer: 它面向临时数据，内容可能被清理，生命周期不由业务文件自身保证。
+  extra: 需要持久保存的数据应放入符合业务和系统约定的持久目录。
+  source:
+  - hier(7)
+  - RHCSA-Course-03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::fhs
+  - card::boundary
+  - priority::P1
+- id: RHCSA-04-K02-QA-001
+  type: qa
+  question: 绝对路径与相对路径的解析起点分别是什么？
+  answer: 绝对路径从 `/` 开始；相对路径从进程当前工作目录开始。
+  extra: 同一个相对路径在不同工作目录中可能指向不同对象。
+  source:
+  - path_resolution(7)
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::comparison
+  - priority::P0
+- id: RHCSA-04-K02-QA-002
+  type: qa
+  question: 查看当前 Shell 工作目录使用什么命令？
+  answer: '`pwd`。'
+  extra: 调查相对路径前先记录 `pwd`，避免把当前目录假设成任务目录。
+  source:
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::command
+  - priority::P0
+- id: RHCSA-04-K02-QA-003
+  type: qa
+  question: 路径分量 `.` 与 `..` 分别表示什么？
+  answer: '`.` 表示当前目录；`..` 表示父目录。'
+  extra: 在根目录中继续解析 `..` 仍停留在根目录。
+  source:
+  - path_resolution(7)
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::syntax
+  - priority::P0
+- id: RHCSA-04-K02-QA-004
+  type: qa
+  question: 为什么普通文件路径末尾追加 `/` 可能报错？
+  answer: 尾随 `/` 要求最终解析结果具有目录语义；普通文件不是目录。
+  extra: 这类错误应检查最终分量类型，而不是删除尾随斜线后忽略对象要求。
+  source:
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-04-K02-QA-005
+  type: qa
+  question: Linux 路径分量中不能包含哪两个特殊内容？
+  answer: 斜线 `/` 不能作为分量内部字符；NUL 字符不能出现在路径名中。
+  extra: 其他字符虽可能合法，但空白和控制字符会增加命令行处理风险。
+  source:
+  - path_resolution(7)
+  - inode(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::boundary
+  - priority::P1
+- id: RHCSA-04-K02-QA-006
+  type: qa
+  question: '`~` 是内核路径解析中的特殊目录吗？'
+  answer: 不是。`~` 通常由 Shell 在执行命令前展开为主目录路径。
+  extra: 完整展开规则属于“Shell 解析、引用、展开与命令组合”章节。
+  source:
+  - bash(1)
+  - Chapter-RHCSA-01
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::boundary
+  - priority::P1
+- id: RHCSA-04-K02-QA-007
+  type: qa
+  question: '`pwd` 与 `pwd -P` 的主要区别是什么？'
+  answer: '`pwd` 通常保留逻辑路径；`pwd -P` 展开符号链接并显示物理路径。'
+  extra: 两者分别服务于导航语境和真实落点调查。
+  source:
+  - bash(1)
+  - pwd(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::comparison
+  - priority::P0
+- id: RHCSA-04-K02-QA-008
+  type: qa
+  question: 要求路径的所有分量当前都存在，并输出规范绝对路径，使用什么命令骨架？
+  answer: '`realpath -e -- PATH`'
+  extra: '`-e` 适合验证现有路径；失败时继续用 `namei -l` 查第一处问题。'
+  source:
+  - realpath(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::command
+  - priority::P0
+- id: RHCSA-04-K02-QA-009
+  type: qa
+  question: 规范化一个允许尚不存在分量的路径，`realpath` 使用哪个选项？
+  answer: '`-m` 或 `--canonicalize-missing`。'
+  extra: 它适合计划创建路径或分析失效目标文本，不证明对象已经存在。
+  source:
+  - realpath(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::parameter
+  - priority::P1
+- id: RHCSA-04-K02-QA-010
+  type: qa
+  question: 相对符号链接目标从哪里开始解释？
+  answer: 从符号链接所在目录开始解释。
+  extra: 不是从创建链接时的工作目录，也不是从调用者当前目录解释。
+  source:
+  - ln(1)
+  - link(2)
+  - symlink(7)
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K02-QA-011
+  type: qa
+  question: 路径中的中间符号链接怎样参与解析？
+  answer: 链接的目标文本替换当前分量，然后与剩余路径继续解析。
+  extra: 这解释了目录链接后还可以继续追加 `/bin/report` 等剩余分量。
+  source:
+  - path_resolution(7)
+  - symlink(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::process
+  - priority::P1
+- id: RHCSA-04-K02-QA-012
+  type: qa
+  question: 脚本中依赖相对路径时，最容易遗漏的运行状态是什么？
+  answer: 当前工作目录。
+  extra: 交互 Shell、cron、systemd 或其他调用者的工作目录可能不同；稳定任务应明确工作目录或使用绝对路径。
+  source:
+  - path_resolution(7)
+  - Lecture-Standard
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-04-K03-QA-001
+  type: qa
+  question: 目录项在路径解析中保存什么核心映射？
+  answer: 保存名称到所属文件系统 inode 的映射。
+  extra: 路径解析会在每一级目录中查找下一个名称。
+  source:
+  - inode(7)
+  - RHCSA-Course-16
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K03-QA-002
+  type: qa
+  question: 普通文件名是否保存在该文件的 inode 中？
+  answer: 不保存。文件名属于目录项，inode 保存对象元数据和数据引用。
+  extra: 同一 inode 因而可以有多个硬链接名称。
+  source:
+  - inode(7)
+  - RHCSA-Course-16
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K03-QA-003
+  type: qa
+  question: inode 通常保存哪些高价值元数据？
+  answer: 对象类型、模式位、UID/GID、大小、时间、链接计数以及数据位置等。
+  extra: 具体内部布局由文件系统实现；本章不展开数据块寻址算法。
+  source:
+  - inode(7)
+  - RHCSA-Course-16
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::concept
+  - priority::P1
+- id: RHCSA-04-K03-QA-004
+  type: qa
+  question: 判断两个路径是否为同一对象，为什么不能只比较 inode 数字？
+  answer: inode 编号只在所属文件系统内唯一，还必须比较设备或文件系统标识。
+  extra: 推荐比较 `stat` 的 `%d:%i`。
+  source:
+  - inode(7)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::verification
+  - priority::P0
+- id: RHCSA-04-K03-QA-005
+  type: qa
+  question: 用 `stat` 输出设备、inode 和链接计数的命令骨架是什么？
+  answer: '`stat -c ''device=%d inode=%i links=%h name=%N'' -- PATH`'
+  extra: '`%d` 与 `%i` 用于对象身份，`%h` 用于观察硬链接计数。'
+  source:
+  - stat(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::command
+  - priority::P0
+- id: RHCSA-04-K03-QA-006
+  type: qa
+  question: 同一文件系统内重命名普通文件时，inode 通常怎样变化？
+  answer: 通常保持不变，主要变化是目录项中的名称或所在目录。
+  extra: 跨文件系统移动通常需要复制并删除旧名称，不能沿用原 inode。
+  source:
+  - rename(2)
+  - RHCSA-Course-16
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::process
+  - priority::P1
+- id: RHCSA-04-K03-QA-007
+  type: qa
+  question: 普通文件的硬链接计数表示什么？
+  answer: 表示当前有多少目录项名称引用该 inode。
+  extra: 打开文件描述符不是硬链接计数的一部分，但会影响最后名称删除后的生命周期。
+  source:
+  - inode(7)
+  - unlink(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K03-QA-008
+  type: qa
+  question: 最后一个硬链接名称删除后，文件一定立即回收吗？
+  answer: 不一定；若仍有进程打开该文件，对象会保留到最后一个相关文件描述符关闭。
+  extra: 名称消失和对象最终回收是两个状态。
+  source:
+  - unlink(2)
+  - open(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::boundary
+  - priority::P0
+- id: RHCSA-FILES-K01-QA-002
+  type: qa
+  question: 逐层查看路径中每个分量及其类型和模式摘要，推荐什么命令？
+  answer: '`namei -l PATH`'
+  extra: 它比只看最终文件的 `ls -l` 更适合路径链排错；完整权限计算留到第 08 章。
+  source:
+  - RH124-RHEL9-Ch03
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::command
+  - priority::P0
+- id: RHCSA-FILES-K01-QA-003
+  type: qa
+  question: 硬链接的两个名称在 inode 上是什么关系？
+  answer: 在同一文件系统中指向同一个 inode 和同一份数据。
+  extra: '`stat` 应同时比较设备标识、inode 和链接计数。'
+  source:
+  - RH124-RHEL9-Ch03
+  - link(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::concept
+  - priority::P0
+- id: RHCSA-FILES-K01-QA-004
+  type: qa
+  question: 硬链接为什么不能跨文件系统？
+  answer: 目录项只能引用所属文件系统内部的 inode；另一个文件系统无法直接引用该 inode。
+  extra: 跨文件系统需要按目标选择符号链接或复制。
+  source:
+  - RH124-RHEL9-Ch03
+  - link(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-FILES-K01-QA-005
+  type: qa
+  question: 删除符号链接目标后，链接本身会怎样？
+  answer: 链接对象仍存在，但跟随它时目标路径无法解析，形成悬空链接。
+  extra: '`readlink` 仍可显示其保存的路径文本。'
+  source:
+  - RH124-RHEL9-Ch03
+  - symlink(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::output
+  - priority::P0
+- id: RHCSA-FILES-K01-QA-006
+  type: qa
+  question: 相对符号链接的目标从哪里解释？
+  answer: 从符号链接所在目录解释。
+  extra: 不是从创建链接时的工作目录解释。
+  source:
+  - RH124-RHEL9-Ch03
+  - symlink(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K04-QA-001
+  type: qa
+  question: '`ls -l` 首字符 `-`、`d`、`l` 分别表示什么？'
+  answer: 普通文件、目录、符号链接。
+  extra: 首字符表示对象类型，后续权限位属于第 08 章。
+  source:
+  - ls(1)
+  - inode(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::file-types
+  - card::output
+  - priority::P0
+- id: RHCSA-04-K04-QA-002
+  type: qa
+  question: '`ls -l` 首字符 `b` 与 `c` 分别表示什么？'
+  answer: 块设备与字符设备。
+  extra: 设备节点是访问设备的文件系统接口，不等同于普通数据文件。
+  source:
+  - ls(1)
+  - inode(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::file-types
+  - card::output
+  - priority::P1
+- id: RHCSA-04-K04-QA-003
+  type: qa
+  question: '`ls -l` 首字符 `p` 与 `s` 分别表示什么？'
+  answer: FIFO/命名管道与 socket。
+  extra: 它们常用于进程间通信，不能按普通持久文件内容理解。
+  source:
+  - ls(1)
+  - inode(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::file-types
+  - card::output
+  - priority::P1
+- id: RHCSA-04-K04-QA-004
+  type: qa
+  question: 用 `stat` 只输出对象类型文本，格式字段是什么？
+  answer: '`%F`。例如：`stat -c %F -- PATH`。'
+  extra: 若 PATH 是符号链接，是否跟随由 `-L` 决定。
+  source:
+  - stat(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::file-types
+  - card::parameter
+  - priority::P0
+- id: RHCSA-04-K04-QA-005
+  type: qa
+  question: '`stat` 与 `file` 的“类型”分别偏向什么？'
+  answer: '`stat` 查看 inode 对象类型和元数据；`file` 根据内容、magic 等判断格式。'
+  extra: 两者不能互相替代。
+  source:
+  - stat(1)
+  - file(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::file-types
+  - card::comparison
+  - priority::P0
+- id: RHCSA-04-K04-QA-006
+  type: qa
+  question: 检查符号链接目标的内容格式，`file` 使用哪个关键选项？
+  answer: '`-L` 或 `--dereference`。'
+  extra: 不加 `-L` 时通常报告链接对象及其目标文本。
+  source:
+  - file(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::file-types
+  - card::parameter
+  - priority::P1
+- id: RHCSA-04-K04-QA-007
+  type: qa
+  question: 为什么文件扩展名不能作为 Linux 对象类型的最终证据？
+  answer: 扩展名只是名称的一部分，目录、链接和二进制文件都可以使用任意后缀。
+  extra: 使用 `ls -ld`/`stat` 判断对象类型，使用 `file` 判断内容格式。
+  source:
+  - RH124-RHEL9-Ch03
+  - file(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::file-types
+  - card::boundary
+  - priority::P0
+- id: RHCSA-04-K04-QA-008
+  type: qa
+  question: 查看目录自身而不是列出目录内容，`ls` 使用什么形式？
+  answer: '`ls -ld -- DIRECTORY`'
+  extra: '`-d` 把目录项本身作为输出对象。'
+  source:
+  - ls(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::file-types
+  - card::command
+  - priority::P0
+- id: RHCSA-04-O01-QA-001
+  type: qa
+  question: '`stat LINK` 与 `stat -L LINK` 分别检查什么？'
+  answer: 前者检查符号链接自身；后者跟随链接并检查目标对象。
+  extra: 诊断时应明确需要哪一层，不能混用输出。
+  source:
+  - stat(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::comparison
+  - priority::P0
+- id: RHCSA-04-O01-QA-002
+  type: qa
+  question: 只读取符号链接保存的原始目标文本，使用什么命令？
+  answer: '`readlink -- LINK`'
+  extra: 它不保证目标存在，也不规范化相对目标。
+  source:
+  - readlink(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::command
+  - priority::P0
+- id: RHCSA-04-O01-QA-003
+  type: qa
+  question: '`readlink` 与 `realpath -e` 分别回答什么问题？'
+  answer: '`readlink` 回答链接保存了什么文本；`realpath -e` 回答完整现有路径最终规范化到哪里。'
+  extra: 前者可在悬空链接上成功，后者要求所有分量存在。
+  source:
+  - readlink(1)
+  - realpath(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::comparison
+  - priority::P0
+- id: RHCSA-04-O01-QA-004
+  type: qa
+  question: '`realpath -e LINK` 失败而 `readlink LINK` 成功，最合理的初步判断是什么？'
+  answer: 链接对象存在，但目标解析链中至少有一个分量缺失或错误。
+  extra: 下一步使用 `namei -l LINK` 找第一处失败。
+  source:
+  - readlink(1)
+  - realpath(1)
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-04-O01-QA-005
+  type: qa
+  question: '`namei -l` 的核心诊断价值是什么？'
+  answer: 逐层显示路径分量，并在遇到符号链接时展开目标链。
+  extra: 它帮助定位第一处不存在、类型错误或链接循环的分量。
+  source:
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-04-O01-QA-006
+  type: qa
+  question: '`namei -x` 主要增加哪类边界信息？'
+  answer: 标记挂载点或文件系统边界。
+  extra: 具体输出格式随 util-linux 版本而异，使用前查看目标系统帮助。
+  source:
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::parameter
+  - priority::P2
+- id: RHCSA-04-O01-QA-007
+  type: qa
+  question: 命令参数中的 `--` 有什么路径安全价值？
+  answer: 结束选项解析，使后续以 `-` 开头的名称按路径参数处理。
+  extra: 它不能修复错误路径，只避免名称被误解释为选项。
+  source:
+  - coreutils-common-options
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::parameter
+  - priority::P1
+- id: RHCSA-04-O01-QA-008
+  type: qa
+  question: 需要同时输出设备、inode、链接计数、类型和名称，推荐什么 `stat` 骨架？
+  answer: '`stat -c ''device=%d inode=%i links=%h type=%F name=%N'' -- PATH`'
+  extra: 这是对象关系的稳定证据，比面向人的默认输出更适合比较。
+  source:
+  - stat(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::command
+  - priority::P0
+- id: RHCSA-04-O01-QA-009
+  type: qa
+  question: 诊断路径时，`ls -ld` 能证明而 `namei -l` 不能替代的重点是什么？
+  answer: '`ls -ld` 便于确认输入名称自身的类型和链接展示；`namei` 重点是完整分量链。'
+  extra: 两者组合比单独使用更清楚。
+  source:
+  - ls(1)
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::comparison
+  - priority::P1
+- id: RHCSA-04-O01-QA-010
+  type: qa
+  question: 想判断文件是文本、ELF 还是压缩数据，应优先使用什么命令？
+  answer: '`file -- PATH`'
+  extra: 它判断内容格式，不证明 inode 或链接关系。
+  source:
+  - file(1)
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::command
+  - priority::P0
+- id: RHCSA-04-K05-QA-001
+  type: qa
+  question: 创建普通文件硬链接的命令骨架是什么？
+  answer: '`ln -- TARGET NEW_NAME`'
+  extra: 参数顺序是已有目标在前，新名称在后。
+  source:
+  - ln(1)
+  - link(2)
+  - symlink(7)
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::command
+  - priority::P0
+- id: RHCSA-04-K05-QA-002
+  type: qa
+  question: 创建硬链接后，哪个 `stat` 字段应增加？
+  answer: 硬链接计数 `%h`。
+  extra: 所有指向同一 inode 的普通文件名称看到相同的链接计数。
+  source:
+  - stat(1)
+  - link(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::output
+  - priority::P0
+- id: RHCSA-04-K05-QA-003
+  type: qa
+  question: 硬链接创建后，能从 inode 判断哪个名称是“原件”吗？
+  answer: 不能。多个名称地位平等，均可用于访问同一对象。
+  extra: “原文件”只是一种操作历史描述，不是 inode 状态。
+  source:
+  - link(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K05-QA-004
+  type: qa
+  question: 为什么两个硬链接名称显示相同所有者和权限？
+  answer: 这些元数据保存在共享的同一个 inode 中。
+  extra: 修改权限会影响通过所有硬链接名称访问该对象的结果；具体权限规则见第 08 章。
+  source:
+  - inode(7)
+  - link(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::concept
+  - priority::P1
+- id: RHCSA-04-K05-QA-005
+  type: qa
+  question: 删除一个硬链接名称后，剩余名称为什么仍可读取数据？
+  answer: 删除只移除了一个目录项并减少链接计数，inode 仍被其他名称引用。
+  extra: 最后名称删除后还要考虑打开文件描述符。
+  source:
+  - unlink(2)
+  - RHCSA-Course-16
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::process
+  - priority::P0
+- id: RHCSA-04-K05-QA-006
+  type: qa
+  question: 题目要求为目录建立链接时，为什么不应选择硬链接？
+  answer: 普通目录硬链接会破坏树状结构并产生循环风险，常规工作流也会被系统拒绝。
+  extra: 目录引用使用符号链接，并验证最终解析。
+  source:
+  - link(2)
+  - ln(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::boundary
+  - priority::P0
+- id: RHCSA-04-K05-QA-007
+  type: qa
+  question: 硬链接失败并报告跨设备错误时，下一条最有区分度的证据是什么？
+  answer: 比较源文件和新名称父目录的 `stat -c 'device=%d mount=%m name=%N'`。
+  extra: 设备或挂载点不同即不满足硬链接对象模型。
+  source:
+  - link(2)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-04-K05-QA-008
+  type: qa
+  question: 只比较两个路径的内容哈希，能否验收硬链接任务？
+  answer: 不能。哈希只验收字节内容，硬链接必须证明同一文件系统和同一 inode。
+  extra: 使用 `%d:%i`，并可检查 `%h`。
+  source:
+  - Lecture-Standard
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::verification
+  - priority::P0
+- id: RHCSA-04-K06-QA-001
+  type: qa
+  question: 创建符号链接的命令骨架是什么？
+  answer: '`ln -s -- TARGET_TEXT LINK_NAME`'
+  extra: TARGET_TEXT 会原样保存为链接内容，可以是相对或绝对路径。
+  source:
+  - ln(1)
+  - link(2)
+  - symlink(7)
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::command
+  - priority::P0
+- id: RHCSA-04-K06-QA-002
+  type: qa
+  question: 符号链接自身与目标对象的 inode 是否相同？
+  answer: 不同。符号链接是拥有自己 inode 的独立对象。
+  extra: '`stat LINK` 看链接自身，`stat -L LINK` 看目标。'
+  source:
+  - symlink(7)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K06-QA-003
+  type: qa
+  question: 符号链接为什么可以跨文件系统？
+  answer: 它保存的是目标路径文本，不直接引用目标文件系统中的 inode。
+  extra: 可创建不等于目标一定存在或可访问。
+  source:
+  - symlink(7)
+  - ln(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::concept
+  - priority::P0
+- id: RHCSA-04-K06-QA-004
+  type: qa
+  question: 符号链接能否指向目录或尚不存在的路径？
+  answer: 都可以。它保存路径文本，创建时不要求目标已经存在。
+  extra: 目标不存在时形成悬空链接。
+  source:
+  - symlink(7)
+  - ln(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::boundary
+  - priority::P0
+- id: RHCSA-04-K06-QA-005
+  type: qa
+  question: 绝对符号链接与相对符号链接的核心差异是什么？
+  answer: 绝对目标从 `/` 解析；相对目标从链接所在目录解析。
+  extra: 迁移整棵目录树时相对链接可能更便携，单独移动链接则可能失效。
+  source:
+  - symlink(7)
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::comparison
+  - priority::P0
+- id: RHCSA-04-K06-QA-006
+  type: qa
+  question: 把相对符号链接本身移动到另一个目录，最需要重新验证什么？
+  answer: 目标文本从新链接所在目录解释后是否仍到达预期对象。
+  extra: 使用 `readlink` 保留原文，再用 `namei -l` 和 `realpath -e` 验证。
+  source:
+  - symlink(7)
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-04-K06-QA-007
+  type: qa
+  question: 悬空符号链接的 `readlink` 与 `realpath -e` 通常分别怎样？
+  answer: '`readlink` 仍可输出目标文本；`realpath -e` 无法证明完整路径存在。'
+  extra: 这正好区分“链接对象存在”和“目标链可解析”。
+  source:
+  - readlink(1)
+  - realpath(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::output
+  - priority::P0
+- id: RHCSA-04-K06-QA-008
+  type: qa
+  question: 目标名称删除后又在同一路径创建新文件，符号链接会指向哪个对象？
+  answer: 会按路径解析到新文件的 inode。
+  extra: 符号链接绑定的是名称路径，不是旧 inode。
+  source:
+  - symlink(7)
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::process
+  - priority::P0
+- id: RHCSA-04-K06-QA-009
+  type: qa
+  question: 删除指向目录的符号链接本身，应使用什么安全形式？
+  answer: '`rm -- LINK_NAME`，不要给链接名称追加 `/`。'
+  extra: 操作前用 `ls -ld` 和 `test -L` 确认它确实是符号链接。
+  source:
+  - rm(1)
+  - symlink(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::command
+  - priority::P0
+- id: RHCSA-04-K06-QA-010
+  type: qa
+  question: 为什么不能用 `cat LINK` 查看符号链接保存的原始文本？
+  answer: '`cat` 通常跟随链接并读取目标内容；原始目标文本应使用 `readlink`。'
+  extra: 目标是目录或失效时，`cat` 还会产生不同错误，不能替代链接取证。
+  source:
+  - readlink(1)
+  - cat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::comparison
+  - priority::P1
+- id: RHCSA-04-O02-QA-001
+  type: qa
+  question: 创建链接前最小基线调查是什么？
+  answer: 至少执行 `ls -ld -- TARGET LINK_NAME`，确认源对象和目的名称当前状态。
+  extra: 目的名称已存在为目录时，`ln` 的落点语义可能与预期不同。
+  source:
+  - ln(1)
+  - Lecture-Standard
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::link-operations
+  - card::process
+  - priority::P0
+- id: RHCSA-04-O02-QA-002
+  type: qa
+  question: '`ln` 的 `-T`/`--no-target-directory` 解决什么歧义？'
+  answer: 把目的路径严格当作一个名称，而不是在其为目录时把新链接创建到目录内部。
+  extra: 使用前查看目标 RHEL 9 的 `ln --help`；它不能替代操作前调查。
+  source:
+  - ln(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::link-operations
+  - card::parameter
+  - priority::P2
+- id: RHCSA-04-O02-QA-003
+  type: qa
+  question: 为什么不把 `ln -sf` 作为替换链接的默认答案？
+  answer: 它会直接覆盖或重建目的名称，容易隐藏已有对象类型和错误状态。
+  extra: 先 `ls -ld`、`test -L`、`readlink`，确认后再最小删除并创建。
+  source:
+  - ln(1)
+  - Lecture-Standard
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::link-operations
+  - card::security
+  - priority::P0
+- id: RHCSA-04-O02-QA-004
+  type: qa
+  question: 安全替换一个已确认符号链接的命令链是什么？
+  answer: '`ls -ld LINK; readlink LINK; test -L LINK && rm -- LINK && ln -s -- TARGET_TEXT LINK`'
+  extra: 真实业务还应评估并发和原子切换；RHCSA 任务至少不能删除未知普通文件或目录。
+  source:
+  - ln(1)
+  - rm(1)
+  - Lecture-Standard
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::link-operations
+  - card::process
+  - priority::P0
+- id: RHCSA-04-O02-QA-005
+  type: qa
+  question: 硬链接创建后的最小身份验收组合是什么？
+  answer: 比较源和新名称的设备标识、inode 和链接计数。
+  extra: 推荐：`stat -c '%d:%i %h %N' -- SOURCE HARD_LINK`。
+  source:
+  - stat(1)
+  - link(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::link-operations
+  - card::verification
+  - priority::P0
+- id: RHCSA-04-O02-QA-006
+  type: qa
+  question: 符号链接创建后的分层验收组合是什么？
+  answer: '`ls -ld` 看链接自身，`readlink` 看原文，`namei -l` 看链路，`realpath -e` 看最终现有路径，`stat -L` 看目标对象。'
+  extra: 每层证据回答不同问题。
+  source:
+  - ln(1)
+  - readlink(1)
+  - namei(1)
+  - realpath(1)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::link-operations
+  - card::verification
+  - priority::P0
+- id: RHCSA-04-O02-QA-007
+  type: qa
+  question: '`rm LINK` 删除符号链接时会删除目标吗？'
+  answer: 不会；它删除的是符号链接这个目录项。
+  extra: 前提是不使用会改变路径语义的尾随 `/`，并且操作对象确实是链接名称。
+  source:
+  - unlink(2)
+  - rm(1)
+  - symlink(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::link-operations
+  - card::boundary
+  - priority::P0
+- id: RHCSA-04-O02-QA-008
+  type: qa
+  question: 链接相关命令的本地帮助入口有哪些？
+  answer: '`man ln`、`man stat`、`man readlink`、`man realpath`、`man namei`。'
+  extra: 需要确认目标系统参数时优先使用本机手册和 `--help`。
+  source:
+  - Lecture-Standard
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::link-operations
+  - card::help
+  - priority::P1
+- id: RHCSA-04-D01-QA-001
+  type: qa
+  question: 符号链接访问失败时，推荐的第一组证据是什么？
+  answer: '`ls -ld LINK` 与 `readlink LINK`。'
+  extra: 先证明链接对象和原始目标文本，再进入完整路径解析。
+  source:
+  - symlink(7)
+  - readlink(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-04-D01-QA-002
+  type: qa
+  question: 诊断悬空或指错的链接，下一条最有区分度的路径证据是什么？
+  answer: '`namei -l LINK`。'
+  extra: 它能展示每一级路径和符号链接展开，定位第一处失败。
+  source:
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-04-D01-QA-003
+  type: qa
+  question: '`Not a directory` 通常提示路径链中的什么问题？'
+  answer: 某个仍有后续分量的中间对象不是目录。
+  extra: 使用 `namei -l` 找到第一处普通文件或错误链接目标。
+  source:
+  - path_resolution(7)
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::output
+  - priority::P0
+- id: RHCSA-04-D01-QA-004
+  type: qa
+  question: '`Too many levels of symbolic links` 最常见的假设是什么？'
+  answer: 路径中存在直接或间接符号链接循环。
+  extra: 保留现状，用 `readlink` 和 `namei -l` 展开链，而不是无差别删除目录。
+  source:
+  - path_resolution(7)
+  - symlink(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-04-D01-QA-005
+  type: qa
+  question: 硬链接报告 `Invalid cross-device link` 时，为什么改用复制不能算同一答案？
+  answer: 复制创建独立 inode 和独立数据对象，不满足硬链接“同一对象”的终态。
+  extra: 应根据题目明确选择同文件系统位置、符号链接或复制。
+  source:
+  - link(2)
+  - Lecture-Standard
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-04-D01-QA-006
+  type: qa
+  question: 路径逐层显示权限问题后，本章的正确边界是什么？
+  answer: 记录出问题的路径分量并转到第 08 章分析目录穿越和权限，不默认执行 `chmod 777`。
+  extra: '`namei -l` 在本章只是路径证据入口。'
+  source:
+  - Chapter-RHCSA-08
+  - Lecture-Standard
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::security
+  - priority::P0
+- id: RHCSA-04-D01-QA-007
+  type: qa
+  question: 名称已经删除但磁盘空间未释放，下一步应按什么假设链调查？
+  answer: 先查其他硬链接和链接计数，再查已识别进程是否仍持有打开文件描述符。
+  extra: 不要无调查终止进程；进程取证属于运行时章节。
+  source:
+  - unlink(2)
+  - open(2)
+  - Chapter-Processes
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-04-D01-QA-008
+  type: qa
+  question: 为什么不能概括说“Linux 命令默认都会跟随符号链接”？
+  answer: 中间分量通常需要解析，但最终分量是否跟随取决于具体命令和参数。
+  extra: '`stat`/`stat -L`、`readlink`、`rm` 就体现了不同语义。'
+  source:
+  - symlink(7)
+  - stat(1)
+  - unlink(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-04-D01-QA-009
+  type: qa
+  question: 相对链接看起来文本正确却指向错误位置，首先应从哪个目录推演？
+  answer: 从符号链接所在目录，而不是当前 Shell 目录。
+  extra: 可先取得链接父目录，再结合 `readlink` 的文本推演，最后用 `namei -l` 验证。
+  source:
+  - symlink(7)
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-04-D01-QA-010
+  type: qa
+  question: '`realpath -m` 产生一个规范路径，能否证明对象存在？'
+  answer: 不能。`-m` 允许缺失分量，只做词法和链接相关的规范化。
+  extra: 存在性验收使用 `realpath -e`、`stat` 或任务要求的功能检查。
+  source:
+  - realpath(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-04-T01-QA-001
+  type: qa
+  question: 任务要求 `/srv/reporting/current` 保存相对目标 `releases/v2`。创建命令是什么？
+  answer: '`ln -s -- releases/v2 /srv/reporting/current`'
+  extra: 目标文本从链接父目录 `/srv/reporting` 解释。
+  source:
+  - Lecture-RHCSA-04-T01
+  - ln(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::task-broken-symlink
+  - card::task
+  - priority::P0
+  - task::broken-symlink
+- id: RHCSA-04-T01-QA-002
+  type: qa
+  question: 修复 `current` 前，为什么必须先执行 `ls -ld` 和 `test -L`？
+  answer: 为了确认目的名称确实是允许替换的符号链接，避免删除普通文件或目录。
+  extra: 无调查的 `ln -sf` 不符合最小修改原则。
+  source:
+  - Lecture-RHCSA-04-T01
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::task-broken-symlink
+  - card::security
+  - priority::P0
+  - task::broken-symlink
+- id: RHCSA-04-T01-QA-003
+  type: qa
+  question: 任务一修复后，证明链接原文和最终路径分别用什么？
+  answer: '`readlink /srv/reporting/current` 与 `realpath -e /srv/reporting/current/bin/report`。'
+  extra: 前者应证明原文，后者证明当前完整路径可解析。
+  source:
+  - Lecture-RHCSA-04-T01
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::task-broken-symlink
+  - card::verification
+  - priority::P0
+  - task::broken-symlink
+- id: RHCSA-04-T01-QA-004
+  type: qa
+  question: 为什么 `readlink current` 输出正确仍不能单独验收任务一？
+  answer: 它只证明保存的文本，不能证明目标分量存在，也不能证明剩余 `/bin/report` 可解析。
+  extra: 还要使用 `namei -l`、`realpath -e` 和目标对象检查。
+  source:
+  - Lecture-RHCSA-04-T01
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::task-broken-symlink
+  - card::verification
+  - priority::P0
+  - task::broken-symlink
+- id: RHCSA-04-T02-QA-001
+  type: qa
+  question: 任务二中，硬链接与源名称的核心验收关系是什么？
+  answer: 设备标识和 inode 相同，链接计数反映新增目录项。
+  extra: 名称和路径位置可以不同。
+  source:
+  - Lecture-RHCSA-04-T02
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::task-link-lifecycle
+  - card::verification
+  - priority::P0
+  - task::link-lifecycle
+- id: RHCSA-04-T02-QA-002
+  type: qa
+  question: 删除源名称后，任务二中的硬链接和符号链接分别怎样？
+  answer: 硬链接仍访问旧 inode；符号链接对象仍存在，但目标路径悬空。
+  extra: 用 `stat` 验证硬链接，用 `readlink` 与 `realpath -e` 区分链接和目标。
+  source:
+  - Lecture-RHCSA-04-T02
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::task-link-lifecycle
+  - card::output
+  - priority::P0
+  - task::link-lifecycle
+- id: RHCSA-04-T02-QA-003
+  type: qa
+  question: 在原路径创建新文件后，任务二中的符号链接与硬链接分别指向什么？
+  answer: 符号链接按名称解析到新 inode；硬链接继续引用旧 inode。
+  extra: 这是路径绑定与 inode 绑定的核心差异。
+  source:
+  - Lecture-RHCSA-04-T02
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::task-link-lifecycle
+  - card::comparison
+  - priority::P0
+  - task::link-lifecycle
+- id: RHCSA-04-T02-QA-004
+  type: qa
+  question: 任务二为什么要求 `stat -L report.soft`？
+  answer: 为了跟随符号链接并观察它当前解析到的目标 inode。
+  extra: '`stat report.soft` 只检查链接自身，不能证明目标对象身份。'
+  source:
+  - Lecture-RHCSA-04-T02
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::task-link-lifecycle
+  - card::verification
+  - priority::P0
+  - task::link-lifecycle
+- id: RHCSA-FILES-K01-CLOZE-001
+  type: cloze
+  text: 硬链接共享{{c1::同一个 inode}}；符号链接保存{{c2::目标路径文本}}。
+  extra: 两者的文件系统边界、失效方式和删除结果不同。
+  source:
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::links-core
+  - card::cloze
+  - priority::P0
+- id: RHCSA-04-K02-CLOZE-001
+  type: cloze
+  text: 绝对路径从{{c1::根目录 `/`}}开始解析；相对路径从{{c2::当前工作目录}}开始解析。
+  extra: 调查相对路径前先记录 `pwd`。
+  source:
+  - path_resolution(7)
+  - RH124-RHEL9-Ch03
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-resolution
+  - card::cloze
+  - priority::P0
+- id: RHCSA-04-K03-CLOZE-001
+  type: cloze
+  text: 目录项保存{{c1::名称到 inode 的映射}}；普通文件名{{c2::不保存在 inode 中}}。
+  extra: 这使多个硬链接名称可以引用同一对象。
+  source:
+  - inode(7)
+  - RHCSA-Course-16
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::cloze
+  - priority::P0
+- id: RHCSA-04-K03-CLOZE-002
+  type: cloze
+  text: 判断同一对象至少比较 `stat` 的{{c1::设备标识 `%d`}}和{{c2::inode `%i`}}。
+  extra: 仅比较 inode 数字可能跨文件系统误判。
+  source:
+  - stat(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::inode-dirent
+  - card::cloze
+  - priority::P0
+- id: RHCSA-04-O01-CLOZE-001
+  type: cloze
+  text: 链接原始目标用 {{c1::readlink}}；现有规范路径用 {{c2::realpath -e}}；逐层链路用 {{c3::namei -l}}。
+  extra: 三条命令回答不同层次。
+  source:
+  - readlink(1)
+  - realpath(1)
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::path-tools
+  - card::cloze
+  - priority::P0
+- id: RHCSA-04-K05-CLOZE-001
+  type: cloze
+  text: 创建一个普通文件硬链接后，inode {{c1::不变}}，硬链接计数通常{{c2::增加 1}}。
+  extra: 新名称必须位于同一文件系统。
+  source:
+  - link(2)
+  - inode(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::hard-link
+  - card::cloze
+  - priority::P0
+- id: RHCSA-04-K06-CLOZE-001
+  type: cloze
+  text: 相对符号链接目标从{{c1::符号链接所在目录}}解释，而不是从{{c2::创建命令时的工作目录}}解释。
+  extra: 移动链接本身后应重新验证目标。
+  source:
+  - symlink(7)
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::symbolic-link
+  - card::cloze
+  - priority::P0
+- id: RHCSA-04-D01-CLOZE-001
+  type: cloze
+  text: 删除最后一个名称后，若仍有进程打开文件，对象会保留到{{c1::最后一个相关文件描述符关闭}}。
+  extra: 名称状态和对象生命周期必须分开。
+  source:
+  - unlink(2)
+  - open(2)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystem-paths-types-links
+  - topic::diagnosis
+  - card::cloze
+  - priority::P1

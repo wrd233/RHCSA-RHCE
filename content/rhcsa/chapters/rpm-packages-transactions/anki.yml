@@ -1,0 +1,1833 @@
+chapter_id: RHCSA-16
+chapter_slug: rpm-packages-transactions
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+notes:
+- id: RHCSA-PACKAGES-K01-QA-001
+  type: qa
+  question: RPM 包身份中的 NEVRA 分别由哪些字段组成？
+  answer: '`Name`、`Epoch`、`Version`、`Release`、`Architecture`。'
+  extra: NEVRA 用于精确描述包身份；文件名、命令名和服务名都不是它的同义词。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::concept
+  - priority::P0
+- id: RHCSA-16-K01-QA-002
+  type: qa
+  question: RPM 身份中 `Version` 与 `Release` 分别由谁描述什么？
+  answer: '`Version` 通常对应上游软件版本；`Release` 是该上游版本的打包发行修订。'
+  extra: 同一 Version 可以有多个 Release。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-K01-QA-003
+  type: qa
+  question: Epoch 在普通查询输出中经常不显眼，为什么仍不能忽略？
+  answer: 因为 Epoch 是 RPM 版本比较的一部分；一旦设置，它会影响哪个包被判断为更新。
+  extra: 需要审计时应使用查询格式读取真实 Epoch，不自行假设为 0。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::concept
+  - priority::P1
+- id: RHCSA-16-K01-QA-004
+  type: qa
+  question: 为什么不能仅根据 `name-version-release.arch.rpm` 的文件名手工认定包身份？
+  answer: 文件可以被重命名，而且复杂 Name、Version、Release 不适合靠字符串切分可靠解析。应让 RPM 读取包头。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-K01-QA-005
+  type: qa
+  question: 需要查看本地 `./tool.rpm` 的 Name、Epoch、Version、Release 和 Architecture，应使用什么命令骨架？
+  answer: '```bash
+
+    rpm -qp --qf ''Name: %{NAME}\nEpoch: %{EPOCH}\nVersion: %{VERSION}\nRelease: %{RELEASE}\nArch: %{ARCH}\n'' ./tool.rpm
+
+    ```'
+  extra: '`-p` 将查询对象切换为包文件。'
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::command
+  - priority::P0
+- id: RHCSA-16-K01-QA-006
+  type: qa
+  question: '`rpm -q <PACKAGE>` 与 `rpm -qp <FILE.rpm>` 的对象差异是什么？'
+  answer: 前者查询本机 RPM 数据库中的已安装包；后者读取指定本地 RPM 文件的包头。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-K01-QA-007
+  type: qa
+  question: 一个 `.rpm` 文件保存在 `/tmp` 中，能否据此判断该包已经安装？
+  answer: 不能。文件存在只证明本地有一个候选包；已安装状态必须查询 RPM 数据库。
+  extra: 可用 `rpm -q <NAME>` 查询。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::output
+  - priority::P1
+- id: RHCSA-16-K01-QA-008
+  type: qa
+  question: 为什么删除同名包前应注意多版本和多架构场景？
+  answer: 因为同一个 Name 可能匹配多个已安装实例；模糊删除可能影响并行版本或不同架构。
+  extra: 内核包是常见的多版本并行示例。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-K01-QA-009
+  type: qa
+  question: RPM 查询格式中 `--qf` 的作用是什么？
+  answer: 按指定格式输出包头查询标签，便于精确审计和脚本处理。
+  extra: 可用 `rpm --querytags` 查看可用标签。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::parameter
+  - priority::P1
+- id: RHCSA-16-K01-QA-010
+  type: qa
+  question: 怎样查看当前 RPM 支持的查询标签？
+  answer: '```bash
+
+    rpm --querytags | less
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::command
+  - priority::P1
+- id: RHCSA-16-K01-CLOZE-001
+  type: cloze
+  text: NEVRA 中的字母依次代表 {{c1::Name、Epoch、Version、Release、Architecture}}。
+  extra: 它描述包的精确身份。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::nevra
+  - card::cloze
+  - priority::P0
+- id: RHCSA-16-K02-QA-001
+  type: qa
+  question: RPM 数据库主要记录什么？
+  answer: 已安装包的包头、NEVRA、文件清单、文件属性基线、依赖和脚本等元数据。
+  extra: 它记录包管理状态，不等同于应用实时状态。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::concept
+  - priority::P0
+- id: RHCSA-16-K02-QA-002
+  type: qa
+  question: '`rpm -qf /path` 成功与 `rpm -V <PACKAGE>` 无输出分别证明什么？'
+  answer: '`-qf` 证明某已安装包声明拥有该路径；`-V` 无输出表示本次可检查属性未发现与数据库基线的差异。'
+  extra: 两者都不能证明应用功能正常。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-K02-QA-003
+  type: qa
+  question: 为什么 `ls /path` 成功不能证明该文件受 RPM 管理？
+  answer: 因为文件可能由管理员、脚本、源码安装或应用运行时创建；必须用 `rpm -qf` 检查归属。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-K02-QA-004
+  type: qa
+  question: '`rpm -ql`、`rpm -qc`、`rpm -qd` 的集合关系是什么？'
+  answer: '`-ql` 列出包记录的全部路径；`-qc` 和 `-qd` 分别是配置文件与文档文件的分类视图。'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-K02-QA-005
+  type: qa
+  question: 为什么不应使用 `rpm -ql <PACKAGE> | grep /etc` 代替 `rpm -qc <PACKAGE>`？
+  answer: 配置文件不一定都在 `/etc`，而 `/etc` 下的路径也不一定被 RPM 标记为配置文件。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-K02-QA-006
+  type: qa
+  question: 某路径被人工删除后，为什么 `rpm -ql <PACKAGE>` 仍可能列出它？
+  answer: 因为 `rpm -ql` 读取 RPM 数据库中的包清单，而不是实时扫描磁盘。
+  extra: '`rpm -V` 可进一步报告路径缺失。'
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::output
+  - priority::P1
+- id: RHCSA-16-K02-QA-007
+  type: qa
+  question: RPM 文件归属与“最后修改者”有什么区别？
+  answer: 归属表示哪个已安装包声明该路径；最后修改者可能是管理员、应用、脚本或配置管理系统。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::comparison
+  - priority::P1
+- id: RHCSA-16-K02-QA-008
+  type: qa
+  question: 为什么管理脚本不应直接依赖 RPM 数据库的内部文件和后端格式？
+  answer: 内部实现可能随版本变化；稳定接口是 `rpm` 和 DNF 提供的查询与事务命令。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-K02-QA-009
+  type: qa
+  question: RPM 查询和事务普遍报数据库错误时，为什么不应立即无备份重建数据库？
+  answer: 因为需要先保留错误、判断事务中断和数据库状态，并按官方恢复流程评估；盲目重建可能丢失证据或扩大损坏。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-16-K02-CLOZE-001
+  type: cloze
+  text: '`rpm -ql` 读取的是 {{c1::RPM 数据库中的文件清单}}，不是对磁盘进行实时目录扫描。'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-database
+  - card::cloze
+  - priority::P0
+- id: RHCSA-PACKAGES-K01-QA-002
+  type: qa
+  question: 确认 `<PACKAGE>` 是否已安装并查看默认版本输出，命令是什么？
+  answer: '```bash
+
+    rpm -q <PACKAGE>
+
+    ```'
+  extra: 成功只证明 RPM 数据库有匹配记录。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P0
+- id: RHCSA-PACKAGES-K01-QA-003
+  type: qa
+  question: 列出已安装包 `<PACKAGE>` 的全部路径，命令是什么？
+  answer: '```bash
+
+    rpm -ql <PACKAGE>
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O01-QA-004
+  type: qa
+  question: 查看已安装包 `<PACKAGE>` 的详细包头信息，命令是什么？
+  answer: '```bash
+
+    rpm -qi <PACKAGE>
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O01-QA-005
+  type: qa
+  question: 只列出已安装包 `<PACKAGE>` 的配置文件，命令是什么？
+  answer: '```bash
+
+    rpm -qc <PACKAGE>
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O01-QA-006
+  type: qa
+  question: 只列出已安装包 `<PACKAGE>` 的文档文件，命令是什么？
+  answer: '```bash
+
+    rpm -qd <PACKAGE>
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O01-QA-007
+  type: qa
+  question: 从绝对路径 `/usr/bin/example` 反查所属已安装包，命令是什么？
+  answer: '```bash
+
+    rpm -qf /usr/bin/example
+
+    ```'
+  extra: '`-qf` 只查询已安装数据库，不能查尚未安装的仓库候选。'
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O01-QA-008
+  type: qa
+  question: 从命令名 `<COMMAND>` 调查提供它的已安装包，应按什么顺序？
+  answer: 先用 `command -v <COMMAND>` 得到真实外部路径，再用 `rpm -qf <PATH>` 反查包。
+  extra: 如果结果是 Shell builtin、函数或 alias，不能直接作为文件路径。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::process
+  - priority::P0
+- id: RHCSA-16-O01-QA-009
+  type: qa
+  question: 查看已安装包在安装、升级或删除时定义的 scriptlet，命令是什么？
+  answer: '```bash
+
+    rpm -q --scripts <PACKAGE>
+
+    ```'
+  extra: 查询不会执行这些脚本。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P1
+- id: RHCSA-16-O01-QA-010
+  type: qa
+  question: 查看已安装包声明的依赖，命令是什么？
+  answer: '```bash
+
+    rpm -q --requires <PACKAGE>
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P1
+- id: RHCSA-16-O01-QA-011
+  type: qa
+  question: 查看已安装包声明提供的能力，命令是什么？
+  answer: '```bash
+
+    rpm -q --provides <PACKAGE>
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::command
+  - priority::P1
+- id: RHCSA-16-O01-QA-012
+  type: qa
+  question: '`rpm -qf <PATH>` 报没有任何包拥有该文件，下一步不应直接做什么？'
+  answer: 不应直接删除或认定文件恶意；应调查它是否由管理员、应用、源码安装、运行时或未安装包创建。
+  extra: 查未安装候选包转第 17 章的 DNF 查询。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-16-O01-QA-013
+  type: qa
+  question: 用 `rpm -qc` 找到配置路径后，还需要检查什么才能证明配置可用？
+  answer: 检查路径现实、内容、权限，并运行应用真实提供的配置语法和功能验证。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::verification
+  - priority::P1
+- id: RHCSA-16-O01-QA-014
+  type: qa
+  question: 为什么 `rpm -q --scripts` 的输出不等于脚本已经执行成功？
+  answer: 它只读取包元数据；实际脚本是否在某次事务中执行及结果如何，需要事务记录和日志证据。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-O01-CLOZE-001
+  type: cloze
+  text: 从路径反查已安装包使用 {{c1::rpm -qf /absolute/path}}。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::installed-query
+  - card::cloze
+  - priority::P0
+- id: RHCSA-16-O02-QA-001
+  type: qa
+  question: 查看本地 `./package.rpm` 的详细包头信息，命令是什么？
+  answer: '```bash
+
+    rpm -qpi ./package.rpm
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O02-QA-002
+  type: qa
+  question: 列出本地 `./package.rpm` 将包含的路径，命令是什么？
+  answer: '```bash
+
+    rpm -qpl ./package.rpm
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O02-QA-003
+  type: qa
+  question: 列出本地 RPM 中被标记为配置文件的路径，命令是什么？
+  answer: '```bash
+
+    rpm -qpc ./package.rpm
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::command
+  - priority::P1
+- id: RHCSA-16-O02-QA-004
+  type: qa
+  question: 查看本地 RPM 的依赖和 scriptlet，应分别使用什么命令？
+  answer: '```bash
+
+    rpm -qp --requires ./package.rpm
+
+    rpm -qp --scripts ./package.rpm
+
+    ```'
+  extra: 查看脚本不会执行脚本。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::command
+  - priority::P1
+- id: RHCSA-16-O02-QA-005
+  type: qa
+  question: 检查本地 RPM 包文件中的摘要和数字签名，推荐命令是什么？
+  answer: '```bash
+
+    rpmkeys --checksig ./package.rpm
+
+    ```'
+  extra: '`rpm -K` 是兼容入口。'
+  source:
+  - rpmkeys(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::security
+  - priority::P0
+- id: RHCSA-16-O02-QA-006
+  type: qa
+  question: '`rpmkeys --checksig FILE.rpm` 与 `rpm -V PACKAGE` 分别验证哪一层？'
+  answer: 前者验证包文件中包含的摘要和签名；后者比较已安装文件与 RPM 数据库基线。
+  extra: ''
+  source:
+  - rpmkeys(8)
+  - rpm(8)
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-O02-QA-007
+  type: qa
+  question: 签名检查提示缺少公钥，能否直接断言包已被篡改？
+  answer: 不能。它表示当前信任库无法完成签名来源验证；仍需从可信渠道取得正确公钥并核对指纹。
+  extra: 也不能因此把包当作可信。
+  source:
+  - rpmkeys(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O02-QA-008
+  type: qa
+  question: 为什么不应从与未知 RPM 相同的未验证来源下载公钥后立即信任？
+  answer: 因为包和 key 可能同时被替换，无法建立独立信任链。应通过受控渠道核对公钥指纹。
+  extra: ''
+  source:
+  - rpmkeys(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-O02-QA-009
+  type: qa
+  question: 包未签名与签名验证失败是否等价？
+  answer: 不等价。未签名表示没有可验证签名；验证失败表示现有摘要或签名检查未通过。两者都必须按策略处理。
+  extra: ''
+  source:
+  - rpmkeys(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O02-QA-010
+  type: qa
+  question: 收到第三方本地 RPM 后，安装前的主要检查顺序是什么？
+  answer: 文件可读 → 包头和 NEVRA → 架构 → 文件/配置 → 依赖和脚本 → 签名策略 → 当前已安装版本 → DNF 事务摘要。
+  extra: ''
+  source:
+  - RH124-RHEL9-Ch14
+  - rpm(8)
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::process
+  - priority::P0
+- id: RHCSA-16-O02-QA-011
+  type: qa
+  question: 用 `rpm2cpio` 提取文件后，为什么不能说包已经安装？
+  answer: 提取不会更新 RPM 数据库、解析依赖或执行 scriptlet，只是把归档内容写到当前目录。
+  extra: ''
+  source:
+  - rpm2cpio(8)
+  - cpio(1)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-O02-QA-012
+  type: qa
+  question: 只想列出本地 RPM 的归档内容而不安装，可使用什么命令骨架？
+  answer: '```bash
+
+    rpm2cpio ./package.rpm | cpio -t
+
+    ```'
+  extra: 提取单个文件时应在隔离目录中操作并检查相对路径。
+  source:
+  - rpm2cpio(8)
+  - cpio(1)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::command
+  - priority::P2
+- id: RHCSA-16-O02-QA-013
+  type: qa
+  question: 本地 RPM 的 Architecture 为 `x86_64`，安装前至少还应与什么证据比较？
+  answer: 与目标系统架构（如 `uname -m`）及组织支持范围比较。
+  extra: '`noarch` 表示内容通常不绑定特定 CPU 架构。'
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::verification
+  - priority::P1
+- id: RHCSA-16-O02-CLOZE-001
+  type: cloze
+  text: 查询尚未安装的本地 RPM 文件时，关键选择器是 {{c1::-p}}。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::local-rpm
+  - card::cloze
+  - priority::P0
+- id: RHCSA-PACKAGES-K01-QA-005
+  type: qa
+  question: '`rpm -V <PACKAGE>` 没有输出，最低合格判断是什么？'
+  answer: 本次对所选包可检查的文件属性没有发现与 RPM 数据库基线不同的项目。
+  extra: 不能扩大为配置正确、服务运行或功能正常。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P0
+- id: RHCSA-16-O03-QA-002
+  type: qa
+  question: 验证一个已安装包的文件属性，命令是什么？
+  answer: '```bash
+
+    rpm -V <PACKAGE>
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O03-QA-003
+  type: qa
+  question: 已知一个受 RPM 管理的路径，想通过路径选择所属包并验证，命令是什么？
+  answer: '```bash
+
+    rpm -Vf /absolute/path
+
+    ```'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::command
+  - priority::P1
+- id: RHCSA-16-O03-QA-004
+  type: qa
+  question: 为什么 `rpm -Va` 不适合作为每次小变更后的默认第一条命令？
+  answer: 它验证全系统，可能产生大量预期差异并增加分析成本；应先选择最小相关包或路径。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-O03-QA-005
+  type: qa
+  question: '`rpm -V` 差异位置中的 `S` 表示什么？'
+  answer: 文件大小变化。
+  extra: 下一条证据可选择 `stat`、内容或生成逻辑。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O03-QA-006
+  type: qa
+  question: '`rpm -V` 差异位置中的 `M` 表示什么？'
+  answer: 模式或文件类型变化。
+  extra: 下一条证据可选择 `stat -c`。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P0
+- id: RHCSA-16-O03-QA-007
+  type: qa
+  question: '`rpm -V` 差异位置中的 `5` 表示什么？'
+  answer: 文件摘要变化。
+  extra: 下一条证据可选择 `diff`、受控基线。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P0
+- id: RHCSA-16-O03-QA-008
+  type: qa
+  question: '`rpm -V` 差异位置中的 `D` 表示什么？'
+  answer: 设备号变化。
+  extra: 下一条证据可选择 `stat` 和特殊文件语义。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O03-QA-009
+  type: qa
+  question: '`rpm -V` 差异位置中的 `L` 表示什么？'
+  answer: 符号链接目标变化。
+  extra: 下一条证据可选择 `readlink -f`。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O03-QA-010
+  type: qa
+  question: '`rpm -V` 差异位置中的 `U` 表示什么？'
+  answer: 所有者变化。
+  extra: 下一条证据可选择 `stat -c %U:%u`。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P0
+- id: RHCSA-16-O03-QA-011
+  type: qa
+  question: '`rpm -V` 差异位置中的 `G` 表示什么？'
+  answer: 所属组变化。
+  extra: 下一条证据可选择 `stat -c %G:%g`。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P0
+- id: RHCSA-16-O03-QA-012
+  type: qa
+  question: '`rpm -V` 差异位置中的 `T` 表示什么？'
+  answer: 修改时间变化。
+  extra: 下一条证据可选择 `stat`，不能单独证明内容变化。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O03-QA-013
+  type: qa
+  question: '`rpm -V` 差异位置中的 `P` 表示什么？'
+  answer: 文件 capability 变化。
+  extra: 下一条证据可选择 `getcap` 和安全基线。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O03-QA-014
+  type: qa
+  question: '`rpm -V` 属性位置中的 `.` 与 `?` 分别表示什么？'
+  answer: '`.` 表示该位置未发现差异；`?` 表示该项无法完成检查。'
+  extra: '`?` 不能被解释为属性正确。'
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O03-QA-015
+  type: qa
+  question: '`rpm -V` 输出中的 `missing` 表示什么？'
+  answer: RPM 数据库记录的包文件路径当前不存在。
+  extra: 应调查版本清单、挂载、符号链接和删除来源，再决定是否重装。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P0
+- id: RHCSA-16-O03-QA-016
+  type: qa
+  question: '`rpm -V` 行中的文件类别标记 `c` 通常表示什么？'
+  answer: 该路径被包标记为配置文件。
+  extra: 配置差异可能是预期变更，不能自动视为故障。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::output
+  - priority::P1
+- id: RHCSA-16-O03-QA-017
+  type: qa
+  question: 配置文件出现摘要差异时，下一条最有区分度的证据通常是什么？
+  answer: 先用 `rpm -qc` 确认配置身份，再结合 `stat`、`diff`、版本控制或配置管理记录判断变化来源。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-16-O03-QA-018
+  type: qa
+  question: 为什么不能把任何 `rpm -V` 差异直接等同于入侵？
+  answer: 合法配置、应用生成、升级、配置管理和人工变更都会产生差异；需结合时间线、日志和变更记录。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-O03-QA-019
+  type: qa
+  question: 发现关键文件 `missing` 后的调查顺序是什么？
+  answer: 确认包和当前版本 → 确认路径在 `rpm -ql` 中 → 检查挂载/链接/父目录 → 查明删除来源 → 评估 `dnf reinstall` → 再验证功能。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::process
+  - priority::P1
+- id: RHCSA-16-O03-CLOZE-001
+  type: cloze
+  text: '`rpm -V` 的九个常见属性位置依次为 {{c1::S M 5 D L U G T P}}。'
+  extra: '`5` 是历史显示字符，宜理解为文件摘要差异。'
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::rpm-verify
+  - card::cloze
+  - priority::P0
+- id: RHCSA-16-K03-QA-001
+  type: qa
+  question: 升级后出现 `.rpmnew`，常见含义是什么？
+  answer: 当前正式配置被保留，新包提供的候选配置被旁置为 `.rpmnew`，等待管理员比较和合并。
+  extra: 具体行为仍取决于包的配置标记和文件状态。
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::concept
+  - priority::P0
+- id: RHCSA-16-K03-QA-002
+  type: qa
+  question: 升级后出现 `.rpmsave`，常见含义是什么？
+  answer: 新包版本取得正式配置路径，旧的本地配置被保存为 `.rpmsave`。
+  extra: 需要迁移仍有效的本地设置。
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::concept
+  - priority::P0
+- id: RHCSA-16-K03-QA-003
+  type: qa
+  question: '`.rpmnew` 与 `.rpmsave` 的主要区别是什么？'
+  answer: '`.rpmnew` 常见为保留当前文件、旁置新版本；`.rpmsave` 常见为正式路径使用新版本、保存旧文件。'
+  extra: 不能把这一描述当作所有包的固定公式。
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-K03-QA-004
+  type: qa
+  question: 为什么看到 `.rpmnew` 后不应直接覆盖正式配置？
+  answer: 正式配置可能包含业务所需本地设置，而新版本还可能引入或废弃参数；必须先 diff、选择性合并和语法检查。
+  extra: ''
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-K03-QA-005
+  type: qa
+  question: 在 `/etc` 中定位 `.rpmnew` 和 `.rpmsave` 的命令骨架是什么？
+  answer: '```bash
+
+    find /etc -type f \( -name ''*.rpmnew'' -o -name ''*.rpmsave'' \) -print
+
+    ```'
+  extra: 优先限制到本次事务相关目录。
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::command
+  - priority::P1
+- id: RHCSA-16-K03-QA-006
+  type: qa
+  question: 处理旁置配置文件的正确流程是什么？
+  answer: 定位并确认所属事务 → `diff -u` → 识别新增/废弃参数 → 选择性合并 → 应用语法检查 → 备份和原子替换 → reload/restart → 功能验证。
+  extra: ''
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::process
+  - priority::P0
+- id: RHCSA-16-K03-QA-007
+  type: qa
+  question: 完成 `.rpmnew` 合并后，为什么还需要应用自身的配置检查？
+  answer: 文本合并成功不代表语法和语义合法；应用检查能在 reload/restart 前发现错误。
+  extra: ''
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::verification
+  - priority::P0
+- id: RHCSA-16-K03-QA-008
+  type: qa
+  question: 什么时候才适合删除 `.rpmnew` 或 `.rpmsave`？
+  answer: 完成差异审阅、迁移、语法和功能验证，并保留可回退记录之后。
+  extra: ''
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-K03-QA-009
+  type: qa
+  question: 升级事务成功但应用拒绝新参数，下一条最有区分度的证据是什么？
+  answer: 检查相关 `.rpmnew/.rpmsave`，对照当前正式配置做 diff，并运行该应用真实提供的配置语法检查。
+  extra: ''
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-16-K03-CLOZE-001
+  type: cloze
+  text: 旁置配置的处理顺序是 {{c1::diff → 选择性合并 → 语法检查 → 应用加载 → 功能验证}}。
+  extra: ''
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::config-preservation
+  - card::cloze
+  - priority::P0
+- id: RHCSA-PACKAGES-K01-QA-006
+  type: qa
+  question: RPM 与 DNF 在 RHEL 9 软件管理中的职责边界是什么？
+  answer: DNF 选择候选、解析依赖并形成事务计划；RPM 读取包、执行底层安装/升级/删除并维护 RPM 数据库。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-O04-QA-002
+  type: qa
+  question: 使用推荐路径安装本地 `./package.rpm`，命令是什么？
+  answer: '```bash
+
+    sudo dnf install ./package.rpm
+
+    ```'
+  extra: DNF 可使用已配置仓库解决依赖。
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::command
+  - priority::P0
+- id: RHCSA-16-O04-QA-003
+  type: qa
+  question: 本地 RPM 安装命令中为什么常写 `./package.rpm` 而不是只写文件名？
+  answer: '`./` 明确这是本地文件路径，避免把它解释为仓库包规格。'
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::parameter
+  - priority::P0
+- id: RHCSA-16-O04-QA-004
+  type: qa
+  question: '`dnf install`、`dnf upgrade` 与 `dnf reinstall` 的目标差异是什么？'
+  answer: '`install` 使内容进入已安装状态；`upgrade` 推进到可用较新版本；`reinstall` 重新安装当前可获得的相同包。'
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-O04-QA-005
+  type: qa
+  question: '`rpm -i`、`rpm -U`、`rpm -F` 的语义差异是什么？'
+  answer: '`-i` 安装；`-U` 安装或升级；`-F` 只更新已经安装的同名包。'
+  extra: 普通依赖事务仍优先使用 DNF。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::comparison
+  - priority::P1
+- id: RHCSA-16-O04-QA-008
+  type: qa
+  question: 为什么 `dnf history undo <ID>` 不能视为无条件回滚按钮？
+  answer: 它依赖所需旧包仍可获得、仓库和后续依赖关系允许回退；失败时需要按具体缺失版本调查。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-O04-QA-009
+  type: qa
+  question: 为什么不使用 `rpm --nodeps` 解决依赖失败？
+  answer: 它绕过依赖检查，可能让 RPM 数据库和运行环境进入不满足依赖的状态；应修复可信依赖来源。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-O04-QA-010
+  type: qa
+  question: '`rpm --force` 为什么是高风险选项？'
+  answer: 它会放宽包替换、文件冲突和旧版本等保护，可能覆盖现有文件或破坏版本关系。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-O04-QA-011
+  type: qa
+  question: 为什么不把 `dnf --nogpgcheck` 当作签名问题的默认修复？
+  answer: 它跳过来源和完整性保护，没有解决公钥、来源或包文件本身的问题。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-O04-QA-012
+  type: qa
+  question: DNF 事务摘要计划删除大量超出目标的包，最合理的动作是什么？
+  answer: 取消事务，保留摘要并调查依赖关系和真正目标，而不是加 `--allowerasing` 或 `--nodeps`。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::output
+  - priority::P0
+- id: RHCSA-16-O04-QA-013
+  type: qa
+  question: 使用 `dnf reinstall` 恢复文件后，为什么仍需运行 `rpm -V` 和应用验证？
+  answer: 重装只处理包管理的内容，配置、数据、外部依赖和运行状态仍可能不符合目标。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::verification
+  - priority::P1
+- id: RHCSA-16-O04-QA-014
+  type: qa
+  question: '`rpm --test` 的作用是什么？'
+  answer: 执行事务测试而不应用文件和数据库变更，用于观察低层事务能否通过检查。
+  extra: 它仍不能代替 DNF 的仓库依赖选择和最终功能验证。
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::parameter
+  - priority::P1
+- id: RHCSA-16-O04-QA-015
+  type: qa
+  question: 为什么第一次审阅高影响事务时不应直接添加 `-y`？
+  answer: 因为 `-y` 会自动确认，可能跳过对新增、升级和删除对象的人工审阅。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-O04-CLOZE-001
+  type: cloze
+  text: 安装本地 RPM 的推荐命令骨架是 {{c1::dnf install ./package.rpm}}。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::transactions
+  - card::cloze
+  - priority::P0
+- id: RHCSA-16-O05-QA-001
+  type: qa
+  question: 软件事务后的分层验收顺序是什么？
+  answer: 最终 NEVRA → 关键路径和归属 → `rpm -V` 与旁置配置 → 应用静态检查 → unit/进程 → 真实功能 → history 记录。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::process
+  - priority::P0
+- id: RHCSA-16-O05-QA-002
+  type: qa
+  question: DNF 显示 `Complete!` 后，包层第一条独立证据是什么？
+  answer: 用 `rpm -q` 或查询格式确认 RPM 数据库中的最终包身份。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::verification
+  - priority::P0
+- id: RHCSA-16-O05-QA-003
+  type: qa
+  question: 确认包已安装后，怎样验证一个关键文件确实由目标包管理？
+  answer: 检查路径现实，并使用 `rpm -qf <CRITICAL_PATH>` 反查归属。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::verification
+  - priority::P0
+- id: RHCSA-16-O05-QA-004
+  type: qa
+  question: 升级后为什么要同时检查 `rpm -V` 和 `.rpmnew/.rpmsave`？
+  answer: '`rpm -V` 揭示文件属性差异；旁置文件揭示配置迁移尚未处理的候选和旧版本。'
+  extra: ''
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::verification
+  - priority::P0
+- id: RHCSA-16-O05-QA-006
+  type: qa
+  question: 包提供 systemd unit 时，至少应分开检查哪些状态？
+  answer: 先确认包确实提供该 unit，再分别检查当前运行状态、持久启用状态和真实功能。
+  extra: ''
+  source:
+  - rpm(8)
+  - systemctl(1)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::verification
+  - priority::P0
+- id: RHCSA-16-O05-QA-007
+  type: qa
+  question: 为什么不能为所有应用统一编造 `<COMMAND> --config-test`？
+  answer: 不同应用的配置检查接口不同；必须从 man page、`--help` 或官方文档确认真实命令。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::boundary
+  - priority::P1
+- id: RHCSA-16-O05-QA-008
+  type: qa
+  question: 事务后保留 `dnf history info <ID>` 有什么价值？
+  answer: 它提供时间、命令和包变更的审计线索，可与文件、配置和功能验收关联。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::verification
+  - priority::P1
+- id: RHCSA-16-O05-QA-009
+  type: qa
+  question: 包层、文件层与功能层分别回答什么问题？
+  answer: 包层回答系统记录安装了什么；文件层回答路径和属性现状；功能层回答应用是否满足目标。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::comparison
+  - priority::P0
+- id: RHCSA-16-O05-QA-010
+  type: qa
+  question: 把手工包变更迁移为自动化状态时，应至少表达哪些内容？
+  answer: 目标包/版本、依赖前提、配置来源与权限、触发 reload/restart 的条件，以及包层和功能层验证。
+  extra: Ansible 模块细节归 RHCE 章节。
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::process
+  - priority::P1
+- id: RHCSA-16-O05-CLOZE-001
+  type: cloze
+  text: 事务成功后的第一层独立验证是 {{c1::查询 RPM 数据库中的最终 NEVRA}}，而不是只保留 DNF 的最后一行。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::post-transaction
+  - card::cloze
+  - priority::P0
+- id: RHCSA-16-D01-QA-001
+  type: qa
+  question: '`dnf install ./package.rpm` 失败，下一条证据链应从哪里开始？'
+  answer: 保留完整错误和摘要，然后检查包头/架构、`rpmkeys --checksig`、`rpm -qp --requires`，再区分依赖、签名、冲突或仓库问题。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-16-D01-QA-002
+  type: qa
+  question: 包显示已安装，但关键文件缺失，下一步最有区分度的证据是什么？
+  answer: 先确认当前版本清单中是否仍声明该路径：`rpm -ql <PACKAGE>`，再用 `rpm -V` 判断缺失。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-16-D01-QA-003
+  type: qa
+  question: 升级后应用无法启动且目录中出现 `.rpmnew`，优先调查什么？
+  answer: 比较正式配置与 `.rpmnew`，确认新增/废弃参数并运行应用配置语法检查。
+  extra: ''
+  source:
+  - rpm(8)
+  - dnf(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-16-D01-QA-004
+  type: qa
+  question: DNF 删除摘要超出预期，为什么“取消”是正确诊断动作？
+  answer: 因为摘要已经表明依赖影响范围不清；取消可保留系统状态，再调查依赖者和真正目标。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-16-D01-QA-005
+  type: qa
+  question: DNF 成功但命令仍找不到，应按什么顺序调查？
+  answer: '`rpm -q` → `rpm -ql` 确认是否提供命令 → `command -v`/PATH → `rpm -qf` → `stat`/`rpm -V` → Shell 缓存和解释器。'
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-16-D01-QA-006
+  type: qa
+  question: 签名检查提示缺少公钥，最小安全处理是什么？
+  answer: 暂停事务，从可信独立渠道取得正确公钥并核对指纹，再按组织策略导入和重新验证。
+  extra: ''
+  source:
+  - rpmkeys(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-16-D01-QA-007
+  type: qa
+  question: '`dnf history undo` 因旧版本不可用而失败，下一步是什么？'
+  answer: 读取具体缺失的 NEVRA，确认受信仓库或归档是否可提供，并评估后续依赖；不要反复 undo 或扩大删除。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-16-D01-QA-008
+  type: qa
+  question: '`rpm -V` 只有 `T` 差异，能否据此断言文件内容改变？'
+  answer: 不能。`T` 表示修改时间不同；应结合摘要、大小和内容证据判断。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-16-D01-QA-009
+  type: qa
+  question: 大量包同时出现文件摘要差异，为什么不应逐包重装作为第一步？
+  answer: 这可能指向磁盘、配置管理、安全事件或系统级变更；应先建立范围、时间线和共同原因。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-16-D01-QA-010
+  type: qa
+  question: 为什么不把服务 `active` 当作软件事务的最终验收？
+  answer: '`active` 只说明 unit 当前运行状态，不能证明配置、端口、数据和业务响应正确。'
+  extra: ''
+  source:
+  - systemctl(1)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-D01-QA-011
+  type: qa
+  question: 本地包 Architecture 与 `uname -m` 不一致时，为什么不应尝试 `--force`？
+  answer: 架构不匹配是对象选择问题；强行事务不会让二进制变得可执行，应选择正确架构或确认受支持的兼容机制。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-16-D01-CLOZE-001
+  type: cloze
+  text: 诊断软件事务遵循 {{c1::症状 → 当前证据 → 假设 → 最有区分度的下一条证据 → 最小修复 → 再验证}}。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::diagnosis
+  - card::cloze
+  - priority::P0
+- id: RHCSA-16-T01-QA-001
+  type: qa
+  question: 题目给出一个配置路径和关键文件路径，但没有包名。调查的第一步是什么？
+  answer: 分别使用 `rpm -qf <PATH>` 确认归属，不先按命令名或目录名猜包。
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-16-T01-QA-002
+  type: qa
+  question: 识别包后，怎样建立“身份—清单—差异”的最小证据组？
+  answer: '`rpm -q --qf` 记录 NEVRA，`rpm -ql/-qc/-qd` 建立清单，`rpm -V` 或 `rpm -Vf` 检查差异。'
+  extra: ''
+  source:
+  - rpm(8)
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-16-T01-QA-003
+  type: qa
+  question: 任务要求保留合法本地配置，为什么不能通过 `dnf reinstall` 直接完成？
+  answer: 重装可能恢复受管理文件，但不能判断哪些本地配置合法，也不能替代 diff、语法和功能验证。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-16-T01-QA-004
+  type: qa
+  question: 安装本地 RPM 的综合任务中，DNF 确认前必须核对哪些摘要信息？
+  answer: 安装/升级/删除对象、依赖和弱依赖、架构、冲突、下载/安装大小及是否超出题目目标。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-16-T01-QA-005
+  type: qa
+  question: 本地 RPM 任务完成后，最小验收矩阵包含哪些层次？
+  answer: 包文件信任 → 事务 → 最终 NEVRA → 关键文件/归属 → 配置迁移 → unit 当前/持久状态 → 真实功能 → history。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-16-T01-QA-006
+  type: qa
+  question: 综合任务中为什么不能编造服务名或端口作为验收？
+  answer: 这些对象必须来自真实包清单、unit 文件和题目环境；编造证据会让答案无法迁移和复现。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::classic-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-16-T01-CLOZE-001
+  type: cloze
+  text: 综合验收不能止于 `Complete!`，还要完成 {{c1::NEVRA、文件、配置、unit 与真实功能}} 的分层证据。
+  extra: ''
+  source:
+  - dnf(8)
+  - RHEL9-Managing-software-with-DNF
+  - RH124-RHEL9-Ch14
+  tags:
+  - exam::rhcsa
+  - chapter::rpm-packages-transactions
+  - topic::classic-task
+  - card::cloze
+  - priority::P0

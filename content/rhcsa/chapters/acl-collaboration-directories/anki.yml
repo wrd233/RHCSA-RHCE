@@ -1,0 +1,1245 @@
+chapter_id: RHCSA-09
+chapter_slug: acl-collaboration-directories
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+notes:
+- id: RHCSA-09-K01-QA-001
+  type: qa
+  question: POSIX ACL 中，access ACL 与目录 default ACL 分别控制什么？
+  answer: access ACL 参与当前对象的访问检查；default ACL 用于初始化目录内未来新对象的 access ACL。
+  extra: default ACL 不能附着在普通文件上，也不会回溯修改已有对象。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-09-K01-QA-002
+  type: qa
+  question: '`user::rwx` 与 `user:alice:rwx` 的主体有何区别？'
+  answer: '`user::` 表示文件所有者；`user:alice:` 表示 named user alice。'
+  extra: 空 qualifier 不是“所有用户”，而是 owner 条目。
+  source:
+  - acl(5)
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-09-K01-QA-003
+  type: qa
+  question: '`group::rwx` 与 `group:qa:rwx` 的主体有何区别？'
+  answer: '`group::` 表示文件记录的 owning group；`group:qa:` 表示额外 named group qa。'
+  extra: 两者都属于 group class，存在 mask 时都受其限制。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-09-K01-QA-004
+  type: qa
+  question: 哪些 ACL 条目构成基础 ACL？
+  answer: '`user::`、`group::`、`other::`。'
+  extra: named user、named group 与 mask 属于扩展结构。
+  source:
+  - acl(5)
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-09-K01-QA-005
+  type: qa
+  question: 一个 ACL 出现 named user 或 named group 时，还必须存在什么条目？
+  answer: 恰好一个 `mask::` 条目。
+  extra: mask 表示 named user、owning group 与 named group 的最大有效权限。
+  source:
+  - acl(5)
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-09-K01-QA-006
+  type: qa
+  question: 目录上存在 `default:user:auditor:r-x`，能否据此证明 auditor 现在能进入该目录？
+  answer: 不能。default ACL 只参与新对象创建，不参与当前目录的访问检查。
+  extra: 还应查看目录 access ACL 和父路径穿越权限。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-09-K01-QA-007
+  type: qa
+  question: ACL 条目中的目录 `r` 与 `x` 分别允许什么？
+  answer: '`r` 允许列出目录项名称；`x` 允许穿越目录并访问已知名称。'
+  extra: 审计只读遍历通常需要目录 `r-x`，而不是只有 `r--`。
+  source:
+  - RH124
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::comparison
+  - priority::P1
+- id: RHCSA-09-K01-QA-008
+  type: qa
+  question: ACL 检查通过是否能证明最终文件操作一定成功？
+  answer: 不能。父路径、只读挂载、SELinux 或应用策略仍可能拒绝。
+  extra: ACL 只是自主访问控制链中的一层。
+  source:
+  - RH124
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-09-K01-CLOZE-001
+  type: cloze
+  text: 普通文件只能有 {{c1::access ACL}}；目录还可以有用于新对象初始化的 {{c2::default ACL}}。
+  extra: default ACL 不控制目录自身的当前访问。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-K02-QA-001
+  type: qa
+  question: ACL 访问匹配的主要顺序是什么？
+  answer: 文件所有者 → named user → owning group/所有匹配 named groups → other。
+  extra: 某一更具体阶段匹配后，不会因为权限不足再回退到更宽的后续类别。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::process
+  - priority::P0
+- id: RHCSA-09-K02-QA-002
+  type: qa
+  question: 文件所有者的 `user::` 缺少写权限，但他同时属于具有写权限的文件组，权限会相加吗？
+  answer: 不会。owner 匹配后只按 `user::` 判断。
+  extra: 这与传统 owner/group/other 最具体类别优先一致。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::boundary
+  - priority::P0
+- id: RHCSA-09-K02-QA-003
+  type: qa
+  question: '`user:analyst:rw- #effective:r--` 表示什么？'
+  answer: analyst 条目声明读写，但 mask 只允许读，因此实际只有 `r--`。
+  extra: 名义权限不能代替 effective 权限。
+  source:
+  - getfacl(1)
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::output
+  - priority::P0
+- id: RHCSA-09-K02-QA-004
+  type: qa
+  question: ACL mask 限制哪些条目？
+  answer: 所有 named user、`group::` owning group 和所有 named group。
+  extra: '`user::` 文件所有者与 `other::` 不受 mask 限制。'
+  source:
+  - acl(5)
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::concept
+  - priority::P0
+- id: RHCSA-09-K02-QA-005
+  type: qa
+  question: named user 的 effective 权限如何计算？
+  answer: named user 条目权限与 `mask::` 的交集。
+  extra: 例如 `rw- ∩ r-- = r--`。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::comparison
+  - priority::P0
+- id: RHCSA-09-K02-QA-006
+  type: qa
+  question: 用户匹配多个组 ACL 条目时，组阶段如何判断？
+  answer: 考虑 owning group 和所有匹配 named group；只要某个匹配组条目与 mask 共同包含请求权限即可通过。
+  extra: 调查时要结合该进程的 effective GID 和 supplementary groups。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::process
+  - priority::P1
+- id: RHCSA-09-K02-QA-007
+  type: qa
+  question: named user 条目已匹配但缺少写权限，该用户能否再依靠自己所属的 named group 获得写权限？
+  answer: 不能。named user 阶段匹配后即在该阶段决定允许或拒绝。
+  extra: 不要把 ACL 各行简单相加。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::boundary
+  - priority::P0
+- id: RHCSA-09-K02-QA-008
+  type: qa
+  question: 对象具有扩展 ACL 和 mask 时，`ls -l` 的 group 三位通常对应哪个条目？
+  answer: '`mask::`，而不是简单对应 `group::`。'
+  extra: 因此必须用 `getfacl` 区分 owning group 条目和 group class 上限。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::output
+  - priority::P0
+- id: RHCSA-09-K02-QA-009
+  type: qa
+  question: 为什么对带扩展 ACL 的文件执行 `chmod g=r` 可能让 named user 失去写权限？
+  answer: 扩展 ACL 下 group mode bits 对应 mask；`chmod g=r` 会把 mask 收窄为只读。
+  extra: named user、owning group 与 named group 的 effective 上限会一起变化。
+  source:
+  - acl(5)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-09-K02-QA-010
+  type: qa
+  question: 为什么不应无条件执行 `setfacl -m m::rwx <PATH>`？
+  answer: 它会同时放宽整个 group class 的 effective 上限。
+  extra: 修复前应审阅所有 named user、owning group 和 named group 条目。
+  source:
+  - acl(5)
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::security
+  - priority::P0
+- id: RHCSA-09-K02-CLOZE-001
+  type: cloze
+  text: named user 的有效权限 = {{c1::该 user 条目}} 与 {{c2::mask}} 的交集。
+  extra: 文件 owner 和 other 不受 mask 限制。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-K02-CLOZE-002
+  type: cloze
+  text: 扩展 ACL 存在时，传统 group mode bits 对应 {{c1::ACL mask}}；因此 `chmod g=...` 可能改变多个条目的 {{c2::effective 权限}}。
+  extra: 变更后应同时检查 `ls -l` 和 `getfacl -e`。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::mask-effective
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-O01-QA-001
+  type: qa
+  question: '`ls -l` 权限字符串末尾的 `+` 能证明什么？'
+  answer: 对象具有扩展 access ACL，或目录具有 default ACL。
+  extra: 它只是线索，不能显示具体条目、mask 或目标用户的最终权限。
+  source:
+  - acl(5)
+  - ls(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::output
+  - priority::P0
+- id: RHCSA-09-O01-QA-002
+  type: qa
+  question: 保留绝对路径显示完整 ACL 的命令骨架是什么？
+  answer: '`getfacl -p <PATH>`'
+  extra: '`-p` 防止默认移除路径前导 `/`。'
+  source:
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-09-O01-QA-003
+  type: qa
+  question: '`getfacl -a` 与 `getfacl -d` 分别显示什么？'
+  answer: '`-a` 只显示 access ACL；`-d` 只显示目录 default ACL。'
+  extra: 这组参数用于分离当前状态与未来模板。
+  source:
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::parameter
+  - priority::P0
+- id: RHCSA-09-O01-QA-004
+  type: qa
+  question: '`getfacl -e` 的诊断价值是什么？'
+  answer: 强制为所有受 mask 影响的条目显示 effective 权限注释。
+  extra: 默认只在条目权限与 effective 不同时显示注释。
+  source:
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::parameter
+  - priority::P0
+- id: RHCSA-09-O01-QA-005
+  type: qa
+  question: 用户或组名称解析有疑问时，怎样让 `getfacl` 显示数值 ID？
+  answer: '`getfacl -n <PATH>`'
+  extra: 这有助于识别名称服务变化或同名歧义。
+  source:
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::parameter
+  - priority::P1
+- id: RHCSA-09-O01-QA-006
+  type: qa
+  question: 物理递归查看 `/srv/atlas` 的 ACL，避免沿目录符号链接越界，命令是什么？
+  answer: '`getfacl -R -P -p /srv/atlas`'
+  extra: '`-P` 仅与 `-R` 组合时有意义。'
+  source:
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-09-O01-QA-007
+  type: qa
+  question: '`getfacl -s` 适合什么查询？'
+  answer: 递归调查时跳过只有 owner/group/other 基础条目的对象。
+  extra: 它可降低输出噪声，但不应在需要完整基线时使用。
+  source:
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::parameter
+  - priority::P1
+- id: RHCSA-09-O01-QA-008
+  type: qa
+  question: '`getfacl` 输出中的 `# flags: -s-` 表示什么？'
+  answer: 对象的 setgid 位已设置；三个位置依次反映 setuid、setgid、sticky。
+  extra: 特殊位的完整语义属于第 08 章。
+  source:
+  - getfacl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::output
+  - priority::P1
+- id: RHCSA-09-O01-QA-009
+  type: qa
+  question: '`getfacl` 输出正确能否证明 bob 当前会话可以写文件？'
+  answer: 不能。还需确认 bob 实际进程身份、父路径和真实写入动作。
+  extra: 结构证据与功能证据必须分开。
+  source:
+  - getfacl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::boundary
+  - priority::P0
+- id: RHCSA-09-O01-CLOZE-001
+  type: cloze
+  text: 只看当前对象使用 `getfacl {{c1::-a}}`；只看未来模板使用 `getfacl {{c2::-d}}`；强制显示 effective 使用 `{{c3::-e}}`。
+  extra: 可与 `-p` 组合保留绝对路径。
+  source:
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::getfacl-evidence
+  - card::cloze
+  - priority::P0
+- id: RHCSA-USERS-O02-QA-001
+  type: qa
+  question: 访问 ACL 与目录默认 ACL 的核心区别是什么？
+  answer: 访问 ACL 控制当前对象；默认 ACL 作为新建后代的继承模板。
+  extra: 默认 ACL 不回溯修改已有对象。
+  source:
+  - RH124
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::comparison
+  - priority::P0
+- id: RHCSA-USERS-O02-QA-002
+  type: qa
+  question: 给 alice 增加当前对象 `rw` ACL 的命令骨架是什么？
+  answer: '`setfacl -m u:alice:rw <PATH>`'
+  extra: 目录穿越通常需要 `x`。
+  source:
+  - RH124
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::command
+  - priority::P0
+- id: RHCSA-USERS-O02-QA-003
+  type: qa
+  question: 给目录设置 alice 的默认 `rwx` ACL，命令骨架是什么？
+  answer: '`setfacl -m d:u:alice:rwx <DIR>`'
+  extra: 仍应创建新对象检查继承结果。
+  source:
+  - RH124
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::command
+  - priority::P0
+- id: RHCSA-USERS-O02-QA-004
+  type: qa
+  question: '`getfacl` 中出现 `#effective:r--` 表示什么？'
+  answer: 条目写得更宽，但 ACL mask 把有效权限限制为只读。
+  extra: mask 影响 group class 的多个条目。
+  source:
+  - RH124
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::output
+  - priority::P0
+- id: RHCSA-USERS-O02-QA-005
+  type: qa
+  question: 为什么不应无条件把 ACL mask 设为 rwx？
+  answer: 它会同时放宽 named users、named groups 和所属组的有效权限上限。
+  extra: 应按目标授权最小调整。
+  source:
+  - RH124
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-USERS-O02-QA-006
+  type: qa
+  question: 怎样证明默认 ACL 真正影响了新对象？
+  answer: 以目标创建身份新建对象，再对新对象运行 `getfacl` 和功能测试。
+  extra: 只看目录默认条目不够。
+  source:
+  - RH124
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::verification
+  - priority::P0
+- id: RHCSA-USERS-O02-CLOZE-001
+  type: cloze
+  text: 访问 ACL：`setfacl -m {{c1::u:alice:rw}} <PATH>`；默认 ACL 增加前缀 `{{c2::d:}}`。
+  extra: 默认 ACL 只影响新对象。
+  source:
+  - RH124
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-O02-QA-001
+  type: qa
+  question: 给 named group qa 增加只读 access ACL 的命令是什么？
+  answer: '`setfacl -m g:qa:r-- <FILE>`'
+  extra: 若是目录只读遍历，通常需要 `r-x`。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::command
+  - priority::P0
+- id: RHCSA-09-O02-QA-002
+  type: qa
+  question: '`g::rw-` 与 `g:project:rw-` 在 `setfacl` 中分别修改什么？'
+  answer: '`g::rw-` 修改 owning group 条目；`g:project:rw-` 修改 named group project 条目。'
+  extra: 空 qualifier 与有 qualifier 的对象不同。
+  source:
+  - setfacl(1)
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::syntax
+  - priority::P0
+- id: RHCSA-09-O02-QA-003
+  type: qa
+  question: '`setfacl -m` 对已存在和不存在的同主体条目分别做什么？'
+  answer: 已存在时修改；不存在时新增。
+  extra: 操作后仍需读取最终 ACL 和 mask。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::parameter
+  - priority::P0
+- id: RHCSA-09-O02-QA-004
+  type: qa
+  question: 删除 alice 的 named user entry，命令骨架是什么？
+  answer: '`setfacl -x u:alice <PATH>`'
+  extra: 删除参数描述 entry，不包含权限字段。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::command
+  - priority::P0
+- id: RHCSA-09-O02-QA-005
+  type: qa
+  question: '`setfacl -b` 与 `setfacl -k` 的区别是什么？'
+  answer: '`-b` 删除扩展 access ACL；`-k` 删除目录 default ACL。'
+  extra: 两者都不是通用排错命令。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::comparison
+  - priority::P0
+- id: RHCSA-09-O02-QA-006
+  type: qa
+  question: '`setfacl -n` 改变什么默认行为？'
+  answer: 禁止重新计算 effective rights mask，保留现有或显式 mask。
+  extra: 过窄 mask 可能让新增条目 effective 不足。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::parameter
+  - priority::P0
+- id: RHCSA-09-O02-QA-007
+  type: qa
+  question: '`setfacl --mask` 的作用是什么？'
+  answer: 即使命令中显式给了 mask，也强制根据 group class 条目重新计算 mask。
+  extra: 它与 `-n` 的方向相反。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::parameter
+  - priority::P1
+- id: RHCSA-09-O02-QA-008
+  type: qa
+  question: 默认 mask 重算通常取哪些条目权限的并集？
+  answer: owning group、所有 named user 和所有 named group。
+  extra: 这些正是受 mask 限制的条目。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::concept
+  - priority::P0
+- id: RHCSA-09-O02-QA-009
+  type: qa
+  question: '`X` 与小写 `x` 在 `setfacl` 权限字段中有什么区别？'
+  answer: '`X` 只在对象是目录或文件原本已有某个执行位时设置执行；`x` 无条件请求执行。'
+  extra: 递归目录树时 `X` 可避免给所有普通数据文件增加执行位。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::parameter
+  - priority::P1
+- id: RHCSA-09-O02-QA-010
+  type: qa
+  question: 为什么递归 `setfacl -R` 前必须先列出目标范围？
+  answer: 它会修改整棵树，且跟随策略、挂载边界和不同文件类型可能扩大影响。
+  extra: 优先物理遍历，并按目录与普通文件拆分策略。
+  source:
+  - setfacl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::security
+  - priority::P0
+- id: RHCSA-09-O02-CLOZE-001
+  type: cloze
+  text: '`setfacl {{c1::-x}} u:alice <PATH>` 删除一条 named user；`{{c2::-b}}` 清扩展 access ACL；`{{c3::-k}}` 删除目录 default ACL。'
+  extra: 三种操作的影响范围不同。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::setfacl-operations
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-O03-QA-001
+  type: qa
+  question: 父目录有 default ACL 时，新对象 ACL 的形成顺序是什么？
+  answer: 先继承父目录 default ACL 作为 access ACL，再删除创建程序请求 mode 中没有的权限。
+  extra: 最终权限不得超过创建程序请求的 mode。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::process
+  - priority::P0
+- id: RHCSA-09-O03-QA-002
+  type: qa
+  question: 目录 default ACL 含 `x`，为什么普通新文件通常仍没有执行位？
+  answer: 普通文件常以 `0666` 请求创建；创建 mode 不含 `x`，继承结果会移除执行权限。
+  extra: 新目录常以 `0777` 为上限，因此可继承穿越位。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-09-O03-QA-003
+  type: qa
+  question: 父目录存在 default ACL 时，还能否用“0666/0777 直接减 umask”准确预测新对象？
+  answer: 不能。此时按 default ACL 与创建 mode 生成，传统 umask 计算路径不再是完整模型。
+  extra: 必须创建样本并查看实际 ACL。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::comparison
+  - priority::P0
+- id: RHCSA-09-O03-QA-004
+  type: qa
+  question: 给目录设置“owner rwx、auditor r-x、owning group rwx、other 无权”的 default ACL，命令骨架是什么？
+  answer: '`setfacl -m d:u::rwx,d:u:auditor:r-x,d:g::rwx,d:m::rwx,d:o::--- <DIR>`'
+  extra: 还要单独检查或设置目录当前 access ACL。
+  source:
+  - setfacl(1)
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::command
+  - priority::P0
+- id: RHCSA-09-O03-QA-005
+  type: qa
+  question: 给父目录新增 default ACL 后，已有 `old.txt` 会自动改变吗？
+  answer: 不会。已有对象需要单独修改 access ACL。
+  extra: default ACL 只在对象创建时参与。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::boundary
+  - priority::P0
+- id: RHCSA-09-O03-QA-006
+  type: qa
+  question: 为什么要分别创建新文件和新目录验证继承？
+  answer: 两者创建 mode 与权限语义不同；新目录还应继续携带 default ACL。
+  extra: 只测试一种对象会遗漏执行/穿越和继续继承问题。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::verification
+  - priority::P0
+- id: RHCSA-09-O03-QA-007
+  type: qa
+  question: 新子目录继承策略时，`getfacl` 通常应看到哪两类条目？
+  answer: 该子目录自身的 access ACL，以及供更深层新对象继承的 default ACL。
+  extra: 普通新文件只应有 access ACL。
+  source:
+  - acl(5)
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::output
+  - priority::P1
+- id: RHCSA-09-O03-QA-008
+  type: qa
+  question: 新文件权限正确，但已有子目录中新建文件仍未继承，优先检查什么？
+  answer: 检查那个已有子目录自身是否具有 default ACL。
+  extra: 父目录后来新增的 default ACL不会回溯到旧子目录。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-09-O03-CLOZE-001
+  type: cloze
+  text: default ACL 只在对象 {{c1::创建时}} 生效；因此旧对象需要单独设置 {{c2::access ACL}}。
+  extra: 修改父目录模板不能回溯历史。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::default-inheritance
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-O04-QA-001
+  type: qa
+  question: 协作目录的 ACL 工作流应按什么顺序推进？
+  answer: 基线与授权矩阵 → 当前目录 access ACL → 已有树 → default ACL → 新对象 → 多身份允许/拒绝验证。
+  extra: 每层解决的状态不同，不能用一步替代全部。
+  source:
+  - RH124
+  - RHCSA9-Mock
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::process
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-09-O04-QA-002
+  type: qa
+  question: alice 能创建文件后，为什么还要让 bob 追加同一文件？
+  answer: 创建成功只证明 alice 对目录有创建权限；bob 追加才能证明新文件的 group class 实际可写。
+  extra: 这同时验证继承、mask 和 bob 的当前组身份。
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::verification
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-09-O04-QA-003
+  type: qa
+  question: 只读 auditor 对目录和普通文件的典型 ACL 权限分别是什么？
+  answer: 目录 `r-x`，普通文件 `r--`。
+  extra: 目录需要 `x` 才能穿越；不给目录 `w` 才能阻止创建和删除目录项。
+  source:
+  - RH124
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::comparison
+  - priority::P0
+- id: RHCSA-09-O04-QA-004
+  type: qa
+  question: 为什么协作目录验收必须包含 auditor 的拒绝测试？
+  answer: 只验证可读不能证明未获得写入或创建权限。
+  extra: 最小特权需要同时证明允许动作成功和禁止动作失败。
+  source:
+  - RH124
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::security
+  - priority::P0
+- id: RHCSA-09-O04-QA-005
+  type: qa
+  question: 按目录和普通文件分别预览 `/srv/atlas` 递归范围的命令是什么？
+  answer: '`find /srv/atlas -xdev -type d -print` 与 `find /srv/atlas -xdev -type f -print`。'
+  extra: 预览后再执行批量 ACL 修改，避免误给普通文件执行位。
+  source:
+  - find(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::command
+  - priority::P1
+- id: RHCSA-09-O04-QA-006
+  type: qa
+  question: 怎样用 bob 的实际身份验证其能否追加项目文件？
+  answer: '`sudo -u bob sh -c ''echo test >> /srv/atlas/file''`'
+  extra: 本卡只把 sudo 当作测试身份工具；sudo 授权配置属于第 10 章。
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::verification
+  - priority::P0
+- id: RHCSA-09-O04-QA-007
+  type: qa
+  question: setgid 协作目录与 default ACL 各解决什么问题？
+  answer: setgid 让新对象继承目录所属组；default ACL 初始化新对象权限和额外主体条目。
+  extra: setgid 不保证组写权限，default ACL 也不替代组归属。
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::boundary
+  - priority::P1
+- id: RHCSA-09-O04-QA-008
+  type: qa
+  question: 目录 access ACL 正确，但 auditor 仍无法读取深层文件，下一条最有区分度的证据是什么？
+  answer: '`namei -l <PATH>` 检查每一级父目录的穿越权限，再逐级 `getfacl`。'
+  extra: 不要先扩大最终文件权限。
+  source:
+  - RH124
+  - namei(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-09-O04-CLOZE-001
+  type: cloze
+  text: 协作验收至少要包含：创建者新建、另一成员 {{c1::交叉写入}}、只读主体读取成功，以及其 {{c2::写入/创建失败}}。
+  extra: 允许和拒绝证据共同证明最小授权。
+  source:
+  - RH124
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::collaboration-directory
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-O05-QA-001
+  type: qa
+  question: 把 reference 的 access ACL 替换到 target，命令骨架是什么？
+  answer: '`getfacl --access reference | setfacl --set-file=- target`'
+  extra: '`--set-file` 会替换目标 ACL，执行前应比较现有授权。'
+  source:
+  - getfacl(1)
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-backup-restore
+  - card::command
+  - priority::P0
+- id: RHCSA-09-O05-QA-002
+  type: qa
+  question: 怎样把目录当前 access ACL 作为该目录的 default ACL 输入？
+  answer: '`getfacl --access <DIR> | setfacl -d -M- <DIR>`'
+  extra: 只有当前访问策略确实适合作为未来模板时才这样复制。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-backup-restore
+  - card::command
+  - priority::P1
+- id: RHCSA-09-O05-QA-003
+  type: qa
+  question: 递归、物理遍历并保留绝对路径备份 `/srv/atlas` ACL 的命令是什么？
+  answer: '`getfacl -R -P -p /srv/atlas > /root/atlas-acl.backup`'
+  extra: 变更前还应确认文件非空且根路径正确。
+  source:
+  - getfacl(1)
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-backup-restore
+  - card::command
+  - priority::P0
+- id: RHCSA-09-O05-QA-004
+  type: qa
+  question: 不修改对象，仅预演 ACL 备份恢复结果的命令是什么？
+  answer: '`setfacl --test --restore=/root/atlas-acl.backup`'
+  extra: '`--test` 可与 `--restore` 组合。'
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-backup-restore
+  - card::command
+  - priority::P0
+- id: RHCSA-09-O05-QA-005
+  type: qa
+  question: '`setfacl --restore` 除 ACL 外还可能恢复什么？'
+  answer: 根据备份注释尝试恢复 owner、owning group，以及 setuid/setgid/sticky 位。
+  extra: 因此应先预演并在测试树验证，不能当作轻量单条 ACL 修改。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-backup-restore
+  - card::boundary
+  - priority::P0
+- id: RHCSA-09-O05-QA-006
+  type: qa
+  question: 文件内容复制成功能否证明 ACL 也已保留？
+  answer: 不能。是否保留 ACL 取决于工具、选项和目标文件系统。
+  extra: 迁移后必须重新运行 `getfacl`；复制/归档工具完整语义属于第 06 章。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-backup-restore
+  - card::boundary
+  - priority::P1
+- id: RHCSA-09-O05-QA-007
+  type: qa
+  question: ACL 备份生成后，最低限度应验证什么？
+  answer: 文件非空、包含预期根路径和对象，并能被 `setfacl --test --restore` 解析。
+  extra: 解析成功仍不等于真实恢复后的业务功能正确。
+  source:
+  - getfacl(1)
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-backup-restore
+  - card::verification
+  - priority::P1
+- id: RHCSA-09-O05-CLOZE-001
+  type: cloze
+  text: ACL 备份：`getfacl {{c1::-R -P -p}} /srv/atlas > backup`；恢复前预演：`setfacl {{c2::--test --restore=backup}}`。
+  extra: 真正恢复可能同时影响 owner、group 和特殊位。
+  source:
+  - getfacl(1)
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-backup-restore
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-D01-QA-001
+  type: qa
+  question: ACL 相关 `Permission denied` 的推荐调查顺序是什么？
+  answer: 当前进程 `id` → 父路径 `namei -l` → `getfacl -e` 选择条目与 mask → 区分旧/新对象 → 最小修复 → 真实身份重试 → 其他安全层。
+  extra: 不要从 `chmod 777` 或清空 ACL 开始。
+  source:
+  - RH124
+  - acl(5)
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-09-D01-QA-002
+  type: qa
+  question: 账号已加入 project，但当前 Shell 的 `id` 没有 project，应该先做什么？
+  answer: 刷新用户会话或创建新进程身份，再重新测试。
+  extra: 组成员关系通常在进程启动时取得，继续修改 ACL 会掩盖身份问题。
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-09-D01-QA-003
+  type: qa
+  question: 新文件 ACL 正确而旧文件缺少 auditor 条目，根因最可能是什么？
+  answer: 父目录 default ACL 只影响建立之后的新对象，未回溯旧文件。
+  extra: 对明确旧对象设置 access ACL，而不是继续改 default ACL。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-09-D01-QA-004
+  type: qa
+  question: 执行 `setfacl -m u:analyst:rw- file` 成功，但 analyst 仍只读，下一条证据是什么？
+  answer: '`getfacl -e -p file`，检查 mask 和 `#effective:`。'
+  extra: 命令成功不等于 effective 包含写权限。
+  source:
+  - getfacl(1)
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-09-D01-QA-005
+  type: qa
+  question: 父目录 default ACL 正确，为什么旧子目录中新建文件仍可能不继承？
+  answer: 旧子目录自身没有 default ACL；父目录后来新增模板不会回溯。
+  extra: 检查创建动作的直接父目录，而不只看树根。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-09-D01-QA-006
+  type: qa
+  question: ACL、身份和父路径均允许但操作仍被拒绝，下一步应如何处理？
+  answer: 保留 DAC 证据并转向只读挂载、SELinux、应用策略或其他层。
+  extra: 不要通过放宽 ACL 来“验证”非 ACL 拒绝。
+  source:
+  - RH124
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-09-D01-QA-007
+  type: qa
+  question: 为何 `setfacl -b` 不应作为 ACL 故障的默认修复？
+  answer: 它会删除全部扩展 access entries，可能破坏仍然需要的历史授权。
+  extra: 应识别具体条目或 mask 后执行最小修改。
+  source:
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::security
+  - priority::P0
+- id: RHCSA-09-D01-QA-008
+  type: qa
+  question: 修复 mask 后，为什么还要用目标用户实际追加而不只看 `getfacl`？
+  answer: '`getfacl` 只证明 ACL 结构和 effective；实际追加还能暴露身份、路径和打开文件语义。'
+  extra: 结构验证与功能验证不能互相替代。
+  source:
+  - RH124
+  - getfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-09-D01-CLOZE-001
+  type: cloze
+  text: 条目存在但不能写：先运行 `getfacl {{c1::-e}}` 看 effective；模板正确但旧文件不对：检查对象的 {{c2::创建时点}}。
+  extra: 两个症状的修复入口不同。
+  source:
+  - getfacl(1)
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::acl-diagnosis
+  - card::cloze
+  - priority::P0
+- id: RHCSA-09-C01-QA-001
+  type: qa
+  question: 已有协作目录需要“项目组可写、auditor 只读、未来对象继承”，至少要修改哪三类状态？
+  answer: 当前目录 access ACL、已有对象 access ACL、目录 default ACL。
+  extra: 若已有子目录也直接接收新对象，还要给它们建立 default ACL。
+  source:
+  - RH124
+  - RHCSA9-Mock
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::classic-task
+  - card::task
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-09-C01-QA-002
+  type: qa
+  question: 批量修改已有协作树前，最低限度的调查与回滚准备是什么？
+  answer: 列出目录/普通文件范围，并用 `getfacl -R -P -p` 保存变更前 ACL。
+  extra: 不要未经预览直接递归覆盖。
+  source:
+  - getfacl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::classic-task
+  - card::process
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-09-C01-QA-003
+  type: qa
+  question: 协作目录的完整功能验收至少包含哪些身份动作？
+  answer: 成员 A 创建、成员 B 交叉写、只读用户读取成功、只读用户写入和创建失败。
+  extra: 再读取新文件和新目录 ACL，区分结构与功能。
+  source:
+  - RH124
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-09-C02-QA-001
+  type: qa
+  question: '文件显示 `user:analyst:rw- #effective:r--`、`group:qa:r--`、`mask::r--`，目标是 analyst 与 owning group 可写而 qa 只读，最小 mask
+    修复是什么？'
+  answer: '`setfacl -m m::rw- <FILE>`'
+  extra: qa 条目本身只有 `r--`，提高上限到 `rw-` 不会让 qa 获得写权限；仍须检查完整 ACL。
+  source:
+  - acl(5)
+  - setfacl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::classic-task
+  - card::diagnosis
+  - priority::P0
+  - task::mask-repair
+- id: RHCSA-09-C02-QA-002
+  type: qa
+  question: 上一题修复 mask 后，`ls -l` 的 group 位为什么可能从 `r--` 变为 `rw-`？
+  answer: 扩展 ACL 中 group mode bits 对应 mask；这里变化表示 group class 上限恢复。
+  extra: 不能据此推断只修改了 owning group 条目。
+  source:
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::classic-task
+  - card::output
+  - priority::P0
+  - task::mask-repair
+- id: RHCSA-09-C02-QA-003
+  type: qa
+  question: 诊断 mask 时，什么情况下直接提高 mask 可能过度授权？
+  answer: 其他 named user/group 条目已经声明了更宽权限，只是此前被窄 mask 截断时。
+  extra: 应先收窄不应生效的条目，再提高公共上限。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::classic-task
+  - card::security
+  - priority::P0
+  - task::mask-repair
+- id: RHCSA-09-C01-CLOZE-001
+  type: cloze
+  text: 协作目录的时间维度：已有对象看 {{c1::access ACL}}，未来对象看 {{c2::default ACL}}；两者都要以真实身份做 {{c3::功能验证}}。
+  extra: default ACL 不能代替历史对象修复。
+  source:
+  - acl(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::acl-collaboration-directories
+  - topic::classic-task
+  - card::cloze
+  - priority::P0
+  - task::team-directory

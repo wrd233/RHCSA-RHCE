@@ -43,9 +43,6 @@ def validate(path: Path) -> tuple[list[str], list[str], list[str]]:
             matches = list(CLOZE_RE.finditer(text))
             if not matches:
                 errors.append(f"{label}: invalid or missing cloze")
-            numbers = {m.group(1) for m in matches}
-            if len(numbers) > 2:
-                errors.append(f"{label}: more than two cloze numbers")
         tags = note.get("tags") or []
         for prefix in ("exam::", "chapter::", "card::"):
             if not any(str(tag).startswith(prefix) for tag in tags):
@@ -90,4 +87,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

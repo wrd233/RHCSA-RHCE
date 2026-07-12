@@ -1,0 +1,1830 @@
+chapter_id: RHCSA-05
+chapter_slug: file-search-text-processing
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+notes:
+- id: RHCSA-FILES-O02-QA-001
+  type: qa
+  question: '`find` 的通用结构是什么？'
+  answer: '`find START... EXPRESSION`。表达式通常由全局选项、测试、动作和逻辑运算符组成。'
+  extra: 阅读命令时先分离搜索起点、对象条件和动作。
+  source:
+  - RH124 RHEL 9, Ch.15 访问 Linux 文件系统
+  - find(1)
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-expression
+  - card::syntax
+  - priority::P0
+- id: RHCSA-FILES-O02-QA-002
+  type: qa
+  question: 用 `find` 只选择普通文件的测试是什么？
+  answer: '`-type f`。'
+  extra: 目录为 `-type d`，符号链接为 `-type l`。
+  source:
+  - RH124 RHEL 9, Ch.15 访问 Linux 文件系统
+  - find(1)
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::parameter
+  - priority::P0
+- id: RHCSA-FILES-O02-QA-003
+  type: qa
+  question: '`find ... -size +10M` 中的 `+` 表示什么？'
+  answer: 对象大小大于 10 个 MiB 计数单位。
+  extra: 无符号形式按单位块取整匹配，`-10M` 表示小于 10 个单位；边界用 `stat -c %s` 抽查。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::parameter
+  - priority::P0
+- id: RHCSA-FILES-O02-QA-004
+  type: qa
+  question: '`find ... -mtime -7` 的核心语义是什么？'
+  answer: 修改时间落在最近 7 个完整 24 小时计数范围内。
+  extra: 存在取整边界；需要分钟级条件用 `-mmin`，需要精确时间用 `stat` 或参照文件比较。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::parameter
+  - priority::P0
+- id: RHCSA-FILES-O02-QA-005
+  type: qa
+  question: 为什么不推荐 `for f in $(find ...)` 处理路径？
+  answer: 命令替换结果会再次按空白分词，并可能进行通配展开，含空格、制表符或换行的文件名会被破坏。
+  extra: 使用 `-exec command -- {} +`，或使用完整 NUL 流水线。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-FILES-O02-QA-006
+  type: qa
+  question: 候选直接来自 `find`，要批量把路径作为独立参数传给命令，推荐什么动作？
+  answer: '`-exec command -- {} +`。'
+  extra: '`+` 尽可能批量调用；`{} \;` 通常逐个对象调用。'
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::command
+  - priority::P0
+- id: RHCSA-FILES-O02-QA-007
+  type: qa
+  question: '`find` 与 `xargs` 之间安全传递任意文件名的组合是什么？'
+  answer: '`find ... -print0 | xargs -0 -r command --`。'
+  extra: 生产端和消费端都使用 NUL；GNU `xargs -r` 防止空输入时仍执行命令。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::command
+  - priority::P0
+- id: RHCSA-FILES-O03-QA-001
+  type: qa
+  question: '`grep -E`、`-i`、`-n`、`-v` 分别表示什么？'
+  answer: 扩展正则、忽略大小写、显示行号、反选。
+  extra: '`-I` 不是忽略大小写，而是忽略二进制文件。'
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::parameter
+  - priority::P0
+- id: RHCSA-FILES-O03-QA-002
+  type: qa
+  question: 为什么 `uniq` 前通常先运行 `sort`？
+  answer: '`uniq` 只识别相邻的重复记录。'
+  extra: 先排序会改变原顺序；需要保留首次出现顺序时应使用显式状态方法。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::process
+  - priority::P0
+- id: RHCSA-FILES-O03-QA-003
+  type: qa
+  question: 验证文本筛选结果时，除了结果非空还应检查什么？
+  answer: 检查数量、代表性匹配、边界对象以及应被排除的反例。
+  extra: 这样才能发现模式过窄、过宽或记录结构被破坏。
+  source:
+  - RHEL 9 RHCSA/RHCE 讲义知识架构与章节编写总规范
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::preview-diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-FILES-O02-CLOZE-001
+  type: cloze
+  text: 安全路径批处理可用 `find ... {{c1::-exec command -- {} +}}`；NUL 管道使用 `{{c2::-print0}} | xargs -0 -r`。
+  extra: 两种形式都避免按空白拆分文件名。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::cloze
+  - priority::P0
+- id: RHCSA-05-K01-QA-001
+  type: qa
+  question: 在本章流水线中，“文件对象”和“路径文本”有什么区别？
+  answer: 文件对象是文件系统中的实体；路径文本是目录项组成的名称。一个对象可以有多个名称，名称也可以在对象不变时改变。
+  extra: '`find` 选择对象时通常输出路径名称，下游工具不要把显示字符串误当成永久对象身份。'
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-K01-QA-002
+  type: qa
+  question: 为什么必须先确定记录分隔符，再讨论字段分隔符？
+  answer: 字段只能在一条完整记录内部拆分；如果记录边界已经把一个对象拆成多条，后续字段处理无法恢复原对象。
+  extra: 文件名集合不能默认“一行一个路径”，任意文件名应使用 NUL。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::object-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-05-K01-QA-003
+  type: qa
+  question: '`find`、`grep` 与 `awk` 分别主要选择哪个层次的对象？'
+  answer: '`find` 选择目录树对象；`grep` 选择文本记录；`awk` 按记录和字段条件选择并转换数据。'
+  extra: 它们可以组合，但每一层的输入合同必须明确。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-K01-QA-004
+  type: qa
+  question: 批量修改前，候选清单为什么应被视为审计真源？
+  answer: 它固定并记录“准备修改谁”，便于比较执行集合、验证遗漏、调查部分失败和回滚。
+  extra: 可读预览用于人工审查；机器处理仍应保留原始 NUL 清单。
+  source:
+  - RHEL 9 RHCSA/RHCE 讲义知识架构与章节编写总规范
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::object-model
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-K01-QA-005
+  type: qa
+  question: 路径名中哪些字节不能出现，因此可作为任意文件名的安全分隔符？
+  answer: NUL 字节不能出现在文件名中，因此 NUL 可作为文件名记录分隔符。
+  extra: 斜杠也不能出现在单个路径组件中，但它承担目录分隔语义，不能作为完整路径列表分隔符。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::object-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-05-K01-QA-006
+  type: qa
+  question: 为什么“命令退出 0”不能单独证明批量文本任务完成？
+  answer: 它通常只证明命令层没有报告失败，不能证明候选集合正确、所有目标内容达到终态或范围外对象未被修改。
+  extra: 应验证集合、新状态、旧状态消失、反例和错误流。
+  source:
+  - RHEL 9 RHCSA/RHCE 讲义知识架构与章节编写总规范
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::object-model
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-K02-QA-001
+  type: qa
+  question: 省略 `find` 搜索起点时，GNU `find` 从哪里开始？
+  answer: 从当前目录 `.` 开始。
+  extra: 关键任务建议显式写出起点，避免工作目录变化导致搜索范围变化。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::parameter
+  - priority::P1
+- id: RHCSA-05-K02-QA-002
+  type: qa
+  question: 为什么 `find /etc -name *.conf` 的语义不稳定？
+  answer: Shell 可能先在当前目录展开 `*.conf`，使 `find` 收到零个、一个或多个非预期参数。
+  extra: 应写成 `find /etc -name '*.conf'`。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-K02-QA-003
+  type: qa
+  question: '`-maxdepth 1` 与 `-mindepth 1` 分别限制什么？'
+  answer: '`-maxdepth 1` 只检查起点及直接成员；`-mindepth 1` 排除起点本身。'
+  extra: 它们控制遍历层次，不替代文件类型或名称测试。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-K02-QA-004
+  type: qa
+  question: 从 `/` 查找大文件时，`-xdev` 的主要作用是什么？
+  answer: 阻止 `find` 下降到其他文件系统。
+  extra: 它可避免跨入 `/proc`、网络挂载或其他独立文件系统，但不限制结果的文件类型。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-K02-QA-005
+  type: qa
+  question: GNU `find` 默认的符号链接处理模式是什么？
+  answer: '`-P`，遍历时不跟随符号链接。'
+  extra: '`-L` 会跟随并可能改变 `-type` 的观察对象和搜索边界。'
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::concept
+  - priority::P0
+- id: RHCSA-05-K02-QA-006
+  type: qa
+  question: '`find` 标准输出为空时，下一条最有区分度的证据是什么？'
+  answer: 检查 stderr 和退出状态，并先运行只含起点和简单 `-print` 的查询。
+  extra: 这样可区分真正无匹配、起点错误、权限不足和表达式错误。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-K02-QA-007
+  type: qa
+  question: 遍历目录时，目录的哪类权限直接影响 `find` 进入已知子路径？
+  answer: 目录执行权限控制路径穿越；读取权限影响列出成员名称。
+  extra: 完整权限模型属于权限章节，本章只用于解释搜索可见性。
+  source:
+  - RH124 RHEL 9, 文件权限章节
+  - find(1)
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-K02-QA-008
+  type: qa
+  question: 为什么批量修改任务通常不应随意给 `find` 加 `-L`？
+  answer: 跟随符号链接可能进入起点之外的目标目录或修改链接目标，使实际对象集合超出预期。
+  extra: 确需跟随时必须证明边界、循环和目标身份。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::security
+  - priority::P0
+- id: RHCSA-05-O01-QA-001
+  type: qa
+  question: '`find -name` 与 `find -path` 的匹配对象分别是什么？'
+  answer: '`-name` 匹配 basename；`-path` 匹配从搜索起点形成的路径文本。'
+  extra: 两者都使用 glob 模式，不是正则表达式。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-O01-QA-002
+  type: qa
+  question: 不区分大小写匹配文件 basename 使用什么测试？
+  answer: '`-iname PATTERN`。'
+  extra: 模式仍应引用，避免 Shell 提前展开。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::parameter
+  - priority::P1
+- id: RHCSA-05-O01-QA-003
+  type: qa
+  question: 查找所有者为 `appsvc`、组为 `ops` 的普通文件，条件骨架是什么？
+  answer: '`-type f -user appsvc -group ops`。'
+  extra: 相邻测试之间默认是逻辑 AND。
+  source:
+  - RH124 RHEL 9, Ch.15 访问 Linux 文件系统
+  - find(1)
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::command
+  - priority::P0
+- id: RHCSA-05-O01-QA-004
+  type: qa
+  question: '`-nouser` 和 `-nogroup` 分别发现什么？'
+  answer: 发现 UID 或 GID 无法映射到当前用户/组数据库名称的对象。
+  extra: 不能仅凭这一结果立即删除；应调查账号生命周期、挂载和恢复场景。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-O01-QA-005
+  type: qa
+  question: '`find -perm 0640` 的语义是什么？'
+  answer: 权限模式精确匹配 0640。
+  extra: 文件类型位不属于这里的 MODE；需要“至少具备某些位”应使用 `-MODE`。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O01-QA-006
+  type: qa
+  question: '`find -perm -0600` 的语义是什么？'
+  answer: 用户读、写两个权限位都必须存在，其他权限位可以额外存在。
+  extra: 前导减号表示指定的所有位都要包含。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O01-QA-007
+  type: qa
+  question: '`find -perm /002` 的语义是什么？'
+  answer: 指定权限位中至少一个存在；这里只有 other 写位，因此匹配 other 可写对象。
+  extra: 斜杠模式是“任一指定位”，不是路径分隔符。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O01-QA-008
+  type: qa
+  question: 按字节精确复核 `find -size` 边界，推荐什么证据？
+  answer: '`stat -c ''%s %n'' FILE...`。'
+  extra: '`find -size` 按所选单位取整，边界对象应以字节数抽查。'
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-O01-QA-009
+  type: qa
+  question: 最近 90 分钟修改过的文件应优先使用哪个测试？
+  answer: '`-mmin -90`。'
+  extra: '`-mtime` 使用完整 24 小时计数，不适合分钟级要求。'
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O01-QA-010
+  type: qa
+  question: 需要表达“参照文件之后修改”的条件，使用什么测试？
+  answer: '`-newer REFERENCE`。'
+  extra: 参照文件的时间来源必须可解释；关键边界仍可用 `stat` 验证。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::command
+  - priority::P1
+- id: RHCSA-05-O01-QA-011
+  type: qa
+  question: 查找 `/usr/share` 下大于 50 MiB 且小于 100 MiB 的普通文件，命令骨架是什么？
+  answer: '`find /usr/share -type f -size +52428800c -size -104857600c -print`。'
+  extra: 两个大小测试之间是隐式 AND。
+  source:
+  - RH124 RHEL 9, Ch.15 访问 Linux 文件系统
+  - find(1)
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::command
+  - priority::P0
+- id: RHCSA-05-O01-QA-012
+  type: qa
+  question: '`find` 结果中的一个路径在稍后执行时已被替换，这说明什么边界？'
+  answer: 目录树查询与使用之间存在 TOCTOU 竞态；匹配时成立的属性不保证执行时仍成立。
+  extra: NUL 只保护名称分隔，不能消除对象替换竞态。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-O02-QA-001
+  type: qa
+  question: '`find` 相邻测试之间没有显式运算符时，默认是什么？'
+  answer: 逻辑 AND，即 `-a`。
+  extra: 这也是 `-type f -user appsvc` 可直接连接的原因。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::syntax
+  - priority::P0
+- id: RHCSA-05-O02-QA-002
+  type: qa
+  question: '`find` 中 AND 与 OR 哪个优先级更高？'
+  answer: AND 更高。
+  extra: 混合 `-a` 与 `-o` 时应显式使用转义括号。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-O02-QA-003
+  type: qa
+  question: 只选择普通 `.conf` 或 `.ini` 文件的正确表达式骨架是什么？
+  answer: '`-type f \( -name ''*.conf'' -o -name ''*.ini'' \)`。'
+  extra: 括号由 `find` 解释，因此在 Shell 中需要转义或引用。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::syntax
+  - priority::P0
+- id: RHCSA-05-O02-QA-004
+  type: qa
+  question: 为什么动作放在 OR 表达式一侧可能导致部分对象不输出？
+  answer: '`find` 使用短路求值，测试或动作的真值可能使另一分支不再执行。'
+  extra: 通常先形成完整测试，再把统一输出动作放在表达式末尾。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-O02-QA-005
+  type: qa
+  question: '`find` 没有显式动作时通常采用什么默认动作？'
+  answer: '`-print`。'
+  extra: 审计性命令建议显式写出动作。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::concept
+  - priority::P1
+- id: RHCSA-05-O02-QA-006
+  type: qa
+  question: 使用 `find -printf` 时，为什么格式中通常要显式写 `\n`？
+  answer: '`-printf` 不自动为每个对象添加换行。'
+  extra: 机器处理任意名称仍优先 `-print0`；`-printf` 主要用于可读审计。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::output
+  - priority::P1
+- id: RHCSA-05-O02-QA-007
+  type: qa
+  question: '`-exec command {} \;` 与 `-exec command {} +` 的主要差异是什么？'
+  answer: 前者通常逐个对象执行，后者尽可能把多个路径批量作为参数。
+  extra: 批量形式更高效，但子命令必须能接收多个路径。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-O02-QA-008
+  type: qa
+  question: '`-execdir` 相比 `-exec` 改变了什么？'
+  answer: 它在匹配对象所在子目录执行命令，并以相对路径传递对象。
+  extra: 这可降低部分风险，但改变工作目录并要求安全的 `PATH`，不是万能保护。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-O02-QA-009
+  type: qa
+  question: 为什么 `-ok` 不等于完整的批量变更安全流程？
+  answer: 逐项确认只能降低即时误操作，不能证明候选完整、保留审计清单或完成执行后验证。
+  extra: 大量对象逐项确认还容易产生疲劳误判。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-K03-QA-001
+  type: qa
+  question: '`locate` 为什么通常比 `find` 快？'
+  answer: 它查询预先生成的名称数据库，而不是实时遍历目录树。
+  extra: 速度来自索引，也带来新鲜度和排除范围边界。
+  source:
+  - locate(1)
+  - updatedb(8)
+  - RH124 RHEL 9, Ch.15
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::locate
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-K03-QA-002
+  type: qa
+  question: 刚创建的文件为什么可能无法被 `locate` 找到？
+  answer: 名称数据库尚未更新，或该路径被索引配置排除。
+  extra: 可在确认影响后运行 `updatedb`，最终仍用 `stat/find` 验证。
+  source:
+  - locate(1)
+  - updatedb(8)
+  - RH124 RHEL 9, Ch.15
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::locate
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-K03-QA-003
+  type: qa
+  question: '`locate` 返回的路径已经不存在，最合理的解释是什么？'
+  answer: 索引仍保留上次扫描时的名称，数据库尚未反映删除或改名。
+  extra: 候选路径应使用 `stat` 或 `test -e` 实时确认。
+  source:
+  - locate(1)
+  - updatedb(8)
+  - RH124 RHEL 9, Ch.15
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::locate
+  - card::output
+  - priority::P0
+- id: RHCSA-05-K03-QA-004
+  type: qa
+  question: '`updatedb` 执行成功能证明所有挂载点都已被索引吗？'
+  answer: 不能。实现可能按文件系统类型、挂载选项和配置排除路径。
+  extra: 具体数据库路径和更新计划具有版本差异，应查看本机手册和配置。
+  source:
+  - locate(1)
+  - updatedb(8)
+  - RH124 RHEL 9, Ch.15
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::locate
+  - card::boundary
+  - priority::P0
+- id: RHCSA-05-K03-QA-005
+  type: qa
+  question: '`locate` 候选的最小实时确认组合是什么？'
+  answer: 对具体路径运行 `stat`，或在预期根目录用限定范围的 `find` 重新查询。
+  extra: 不要把索引结果直接交给破坏性批量动作。
+  source:
+  - locate(1)
+  - updatedb(8)
+  - RH124 RHEL 9, Ch.15
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::locate
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-K04-QA-001
+  type: qa
+  question: 搜索含有字面量 `server[1]` 的记录，为什么优先使用 `grep -F`？
+  answer: '`-F` 把模式当固定字符串，不把方括号解释为正则字符集合。'
+  extra: 固定配置键或带大量元字符的字面量通常更适合 `-F`。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::command
+  - priority::P0
+- id: RHCSA-05-K04-QA-002
+  type: qa
+  question: '`grep` 与 `grep -E` 分别使用哪类正则？'
+  answer: 默认使用基本正则 BRE；`-E` 使用扩展正则 ERE。
+  extra: 新内容优先写 `grep -E`，不依赖已弃用风格的 `egrep` 名称。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-K04-QA-003
+  type: qa
+  question: 完整匹配有效行 `Listen 8080`，允许空白变化，ERE 骨架是什么？
+  answer: '`^[[:space:]]*Listen[[:space:]]+8080[[:space:]]*$`。'
+  extra: 开头和结尾锚点防止匹配注释、额外字段和 `80800`。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::syntax
+  - priority::P0
+- id: RHCSA-05-K04-QA-004
+  type: qa
+  question: POSIX 字符类 `[[:digit:]]` 相比 `[0-9]` 的主要价值是什么？
+  answer: 它表达字符类别并与 POSIX 正则和 locale 规则配合，通常比手写范围更明确。
+  extra: 需要纯 ASCII 字节边界时可局部设置 `LC_ALL=C`。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-K04-QA-005
+  type: qa
+  question: 只输出包含匹配记录的文件名，使用什么选项？
+  answer: '`grep -l`。'
+  extra: 继续输出任意文件名到 NUL 管道时使用 GNU `-Z`。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-K04-QA-006
+  type: qa
+  question: '`grep -c` 统计的是什么？'
+  answer: 每个输入中被选择的记录数，不是匹配片段总数。
+  extra: 同一行含多个匹配时，默认仍计为一条匹配记录。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::output
+  - priority::P1
+- id: RHCSA-05-K04-QA-007
+  type: qa
+  question: '`grep -o` 输出什么？'
+  answer: 只输出每个非空匹配片段，而不是完整记录。
+  extra: 它会改变记录数量，后续 `wc -l` 统计的是匹配片段数。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::output
+  - priority::P1
+- id: RHCSA-05-K04-QA-008
+  type: qa
+  question: '`grep` 退出状态 0、1、2 通常分别表示什么？'
+  answer: 0 表示有选择记录，1 表示无选择记录，2 表示错误。
+  extra: 脚本必须区分“无匹配”和“读取失败”。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::output
+  - priority::P0
+- id: RHCSA-05-K04-QA-009
+  type: qa
+  question: 为什么诊断输入错误时不应只依赖 `grep -q`？
+  answer: '`-q` 在发现匹配后可能提前成功退出，使后续输入中的某些错误不再影响最终状态。'
+  extra: 需要审计所有输入时应保留正常读取和 stderr。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-K04-QA-010
+  type: qa
+  question: 递归搜索目录时，`grep -r` 与 `-R` 的关键边界是什么？
+  answer: 两者对符号链接的跟随策略不同。
+  extra: 跨链接目录树前查看本机 `grep(1)`；能先用 `find -type f` 限定对象时通常更可控。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::comparison
+  - priority::P1
+- id: RHCSA-05-K04-QA-011
+  type: qa
+  question: 为什么不把 `grep -a` 作为所有文件的默认选项？
+  answer: 它强制把二进制数据当文本，可能产生无意义输出、控制字符和错误转换。
+  extra: 先用文件类型和内容证据确认输入确实应按文本处理。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-K04-QA-012
+  type: qa
+  question: 模式由 Shell 变量提供时，命令骨架应怎样引用？
+  answer: '`grep -E -- "$pattern" file`。'
+  extra: 双引号保持变量为一个参数；`--` 防止以连字符开头的模式被当成选项。动态正则仍需评估是否应使用 `-F`。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::command
+  - priority::P1
+- id: RHCSA-05-O03-QA-001
+  type: qa
+  question: '`cut -d: -f1,3 /etc/passwd` 的输入合同是什么？'
+  answer: 每条记录使用单字符冒号作为字段分隔符，并且需要第 1、3 字段。
+  extra: 它不理解 CSV 引号、转义或嵌套分隔。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::syntax
+  - priority::P0
+- id: RHCSA-05-O03-QA-002
+  type: qa
+  question: '`cut -s -d: -f1` 中 `-s` 有什么作用？'
+  answer: 不输出没有字段分隔符的记录。
+  extra: 是否丢弃这些记录必须符合任务要求；否则应单独记录异常。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::parameter
+  - priority::P1
+- id: RHCSA-05-O03-QA-003
+  type: qa
+  question: 为什么不推荐长期依赖 `cut -d" " -f10` 解析面向人的对齐输出？
+  answer: 连续空白数量和列布局可能随内容、locale 或版本变化，单空格并不是稳定字段合同。
+  extra: 优先选择机器可读输出或使用能够按空白字段处理并验证 `NF` 的工具。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-O03-QA-004
+  type: qa
+  question: 按冒号第 3 字段数字升序、再按第 1 字段排序，`sort` 骨架是什么？
+  answer: '`sort -t: -k3,3n -k1,1 file`。'
+  extra: '`-k3,3n` 把数字比较限定在第 3 字段，避免键延伸到行尾。'
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::command
+  - priority::P0
+- id: RHCSA-05-O03-QA-005
+  type: qa
+  question: 为什么机器可重复排序常局部使用 `LC_ALL=C`？
+  answer: 它使字符比较采用确定的字节排序规则，避免不同 locale 的整理顺序差异。
+  extra: 只对需要确定性的命令局部设置，不必改变整个用户环境。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-O03-QA-006
+  type: qa
+  question: '`sort -n` 与默认 `sort` 的差异是什么？'
+  answer: '`-n` 按数字值比较；默认按文本整理规则比较。'
+  extra: 文本排序中 `100` 可能排在 `20` 前面。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-O03-QA-007
+  type: qa
+  question: '`uniq -c` 输出的计数针对什么？'
+  answer: 针对连续相同记录形成的每一组。
+  extra: 未先排序时，分散出现的相同记录会被分成多组。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::output
+  - priority::P0
+- id: RHCSA-05-O03-QA-008
+  type: qa
+  question: 需要保留首次出现顺序并去重，可使用什么简短 `awk` 模式？
+  answer: '`awk ''!seen[$0]++''`。'
+  extra: 该方法在内存中保存已见完整记录，需评估输入规模。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::command
+  - priority::P1
+- id: RHCSA-05-O03-QA-009
+  type: qa
+  question: '`tr -d ''root''` 为什么不是删除单词 `root`？'
+  answer: '`tr` 把参数解释为字符集合，会删除 `r`、`o`、`t` 字符。'
+  extra: 删除或替换子串应使用 `sed` 或 `awk`。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-O03-QA-010
+  type: qa
+  question: 把连续空白压缩为一个空格，`tr` 骨架是什么？
+  answer: '`tr -s ''[:space:]'' '' ''`。'
+  extra: 它也会把制表符、换行等空白纳入集合；是否允许破坏记录边界必须先确认。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-O03-QA-011
+  type: qa
+  question: '`wc -l` 实际统计什么？'
+  answer: 输入中的换行数量。
+  extra: 最后一条记录没有换行时，业务记录数可能比 `wc -l` 多一。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::output
+  - priority::P0
+- id: RHCSA-05-O03-QA-012
+  type: qa
+  question: '`wc -c` 与 `wc -m` 分别统计什么？'
+  answer: '`-c` 统计字节；`-m` 统计字符。'
+  extra: 多字节编码文本中两者可能不同。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::comparison
+  - priority::P1
+- id: RHCSA-05-O04-QA-001
+  type: qa
+  question: 只打印第 10 到 20 行的 `sed` 命令骨架是什么？
+  answer: '`sed -n ''10,20p'' file`。'
+  extra: '`-n` 关闭默认输出，`p` 打印选中范围。'
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::command
+  - priority::P0
+- id: RHCSA-05-O04-QA-002
+  type: qa
+  question: 使用 `sed -n '/ERROR/p' file` 时，`-n` 的作用是什么？
+  answer: 关闭每条记录处理后的默认输出，只保留显式 `p` 的记录。
+  extra: 忘记 `-n` 通常会让匹配行打印两次。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O04-QA-003
+  type: qa
+  question: '`sed s///` 默认替换每条记录中的多少次匹配？'
+  answer: 默认只替换第一次匹配。
+  extra: 加 `g` 才替换该记录中的所有匹配。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O04-QA-004
+  type: qa
+  question: '`sed` 替换文本中的 `&` 代表什么？'
+  answer: 代表完整匹配文本。
+  extra: 捕获组引用使用 `\1`、`\2` 等。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::syntax
+  - priority::P1
+- id: RHCSA-05-O04-QA-005
+  type: qa
+  question: 处理路径替换时为什么常把 `s/old/new/` 的分隔符改为 `#`？
+  answer: 避免大量转义路径中的 `/`，提高可读性并降低转义错误。
+  extra: 例如 `s#^/opt/old#/opt/new#`。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::command
+  - priority::P1
+- id: RHCSA-05-O04-QA-006
+  type: qa
+  question: '`sed -i.rhcsa05.bak` 与 `sed -i` 的主要差异是什么？'
+  answer: 前者按指定后缀保留原文件备份；后者不生成备份。
+  extra: 批量修改默认应先预览并保留明确备份后缀。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-O04-QA-007
+  type: qa
+  question: 为什么 `sed -n -i 's/old/new/' file` 可能把文件写空？
+  answer: '`-n` 关闭默认输出，而脚本没有 `p` 等输出命令；原地写回的结果为空。'
+  extra: 这是高优先级安全边界。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-O04-QA-008
+  type: qa
+  question: 即使内容替换正确，`sed -i` 后还应验证哪些非内容边界？
+  answer: 备份、所有者、模式、ACL、扩展属性、SELinux 上下文和硬链接关系是否仍符合要求。
+  extra: 原地编辑常通过临时文件替换路径，真实影响需在目标环境确认。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::verification
+  - priority::P1
+- id: RHCSA-05-O05-QA-001
+  type: qa
+  question: '`awk` 中 `$0`、`$1` 和 `NF` 分别是什么？'
+  answer: '`$0` 是当前完整记录，`$1` 是第一个字段，`NF` 是当前记录字段数。'
+  extra: 字段如何拆分由 `FS` 决定。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::concept
+  - priority::P0
+- id: RHCSA-05-O05-QA-002
+  type: qa
+  question: '`NR` 与 `FNR` 的差异是什么？'
+  answer: '`NR` 在所有输入文件间累计；`FNR` 在每个新文件开始时重新从 1 计数。'
+  extra: 处理多个文件并需要文件内行号时使用 `FNR`。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::comparison
+  - priority::P0
+- id: RHCSA-05-O05-QA-003
+  type: qa
+  question: '`awk -F: -v OFS="\t"` 分别设置什么？'
+  answer: '`-F:` 设置输入字段分隔符为冒号；`OFS` 设置 `print` 的输出字段分隔符为制表符。'
+  extra: 输入和输出合同可以不同。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O05-QA-004
+  type: qa
+  question: '`awk ''$3 >= 1000 {print $1}'' /etc/passwd` 的模式和动作分别是什么？'
+  answer: 模式是 `$3 >= 1000`；动作是 `{print $1}`。
+  extra: 只有模式为真的记录执行动作。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::syntax
+  - priority::P0
+- id: RHCSA-05-O05-QA-005
+  type: qa
+  question: '`awk` 中正则匹配和否定匹配分别使用什么运算符？'
+  answer: '`~` 和 `!~`。'
+  extra: 例如 `$0 ~ /ERROR/`。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::parameter
+  - priority::P1
+- id: RHCSA-05-O05-QA-006
+  type: qa
+  question: 为什么从 Shell 向 `awk` 传值优先使用 `-v name="$value"`？
+  answer: 它把值作为变量传入，避免直接拼接并破坏 awk 源码或引用边界。
+  extra: 动态内容仍需判断应作为固定字符串还是正则。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::boundary
+  - priority::P0
+- id: RHCSA-05-O05-QA-007
+  type: qa
+  question: 验证冒号记录必须有 5 个字段，`awk` 条件是什么？
+  answer: '`NF != 5` 用于选择结构异常记录。'
+  extra: 异常记录应单独保存，不能静默丢弃后继续聚合。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-O05-QA-008
+  type: qa
+  question: 按用户统计记录数的关联数组骨架是什么？
+  answer: '`count[$3]++`，最终在 `END` 中遍历 `count`。'
+  extra: 数组遍历顺序不保证符合业务排序，输出后交给 `sort`。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::command
+  - priority::P0
+- id: RHCSA-05-O05-QA-009
+  type: qa
+  question: '`print` 与 `printf` 在输出合同上的主要差异是什么？'
+  answer: '`print` 自动使用 `OFS/ORS`；`printf` 完全由格式字符串控制且不自动换行。'
+  extra: 机器可读输出应显式定义字段和记录边界。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::comparison
+  - priority::P1
+- id: RHCSA-05-O05-QA-010
+  type: qa
+  question: 为什么旧异常文件在本次没有异常时可能造成误判？
+  answer: 如果 awk 从未向异常文件写入，它可能不会截断旧文件，旧内容会被误认为本次结果。
+  extra: '运行前用 `: > "$invalid"` 显式清空。'
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-O06-QA-001
+  type: qa
+  question: 普通 `xargs` 默认怎样解释空白和引号，为什么不适合任意文件名？
+  answer: 它按空白分隔项目，并对引号和反斜杠有解析规则，文件名中的这些字符可能被改变。
+  extra: 任意文件名使用 `xargs -0`。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-O06-QA-002
+  type: qa
+  question: GNU `xargs -r` 解决什么问题？
+  answer: 输入没有任何项目时不运行子命令。
+  extra: 批量修改若缺少 `-r`，空集合也可能执行一次裸命令。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O06-QA-003
+  type: qa
+  question: '`grep -lZ` 中 `-Z` 的作用是什么？'
+  answer: 把每个输出文件名后的终止符改为 NUL。
+  extra: 这样结果可继续交给 `xargs -0`。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::parameter
+  - priority::P0
+- id: RHCSA-05-O06-QA-004
+  type: qa
+  question: '`xargs -n 20` 的语义是什么？'
+  answer: 每次构造子命令时最多使用 20 个输入项目。
+  extra: 实际还受系统命令行大小限制。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::parameter
+  - priority::P1
+- id: RHCSA-05-O06-QA-005
+  type: qa
+  question: '`xargs -I {}` 的主要代价是什么？'
+  answer: 它采用逐记录替换模式，通常降低批量效率，并改变空白/记录处理规则。
+  extra: 只在占位符必须位于命令中间等场景使用。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::boundary
+  - priority::P1
+- id: RHCSA-05-O06-QA-006
+  type: qa
+  question: 为什么不把 `xargs -P` 作为批量修改默认答案？
+  answer: 并行会打乱顺序、并发修改共享资源并放大失败恢复复杂度。
+  extra: 只有已证明操作幂等、顺序无关和资源可承受时才评估。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::security
+  - priority::P0
+- id: RHCSA-05-O06-QA-007
+  type: qa
+  question: 文件名以 `-` 开头时，子命令参数边界怎样处理？
+  answer: 尽量使用绝对路径或 `./` 前缀，并在支持的命令中用 `--` 结束选项。
+  extra: NUL 保持名称完整，但不会自动阻止子命令把参数解析为选项。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::boundary
+  - priority::P0
+- id: RHCSA-05-O06-QA-008
+  type: qa
+  question: NUL 流水线能否消除选择后对象被替换的竞态？
+  answer: 不能。NUL 只解决记录边界和文件名完整性。
+  extra: 执行时仍应重新评估对象身份、链接跟随和目录可写性。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::boundary
+  - priority::P0
+- id: RHCSA-05-D01-QA-001
+  type: qa
+  question: '`find` 复杂表达式结果过多时，第一步怎样缩小问题？'
+  answer: 移除动作和后半条件，从起点与简单 `-print` 开始，逐个加入测试并记录每步数量。
+  extra: 优先检查 OR 括号、`-type`、`-name/-path` 和链接跟随。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::preview-diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-05-D01-QA-002
+  type: qa
+  question: 为什么验证筛选模式必须包含反例？
+  answer: 正例只能证明模式能匹配某些目标，反例用于证明模式没有把不应处理的内容纳入。
+  extra: 配置替换至少准备注释行、相似值和额外字段等反例。
+  source:
+  - RHEL 9 RHCSA/RHCE 讲义知识架构与章节编写总规范
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::preview-diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-D01-QA-003
+  type: qa
+  question: '`uniq` 后仍出现“看起来相同”的记录，下一条证据是什么？'
+  answer: 观察不可见字符和尾随空白，例如使用 `sed -n l` 或字节级工具。
+  extra: 也要确认重复记录是否在输入中相邻。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::preview-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-05-D01-QA-004
+  type: qa
+  question: 批量动作只处理部分对象时，应保留哪四类证据？
+  answer: 原始候选清单、子命令 stderr/退出状态、执行批次信息、修改后重新生成的未完成对象清单。
+  extra: 不要只重复执行整条命令。
+  source:
+  - RHEL 9 RHCSA/RHCE 讲义知识架构与章节编写总规范
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::preview-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-05-D01-QA-005
+  type: qa
+  question: 预览集合与执行集合为什么应来自同一个机器可读清单？
+  answer: 重新运行条件可能因目录树变化或命令重写而产生不同集合。
+  extra: 保存 NUL 清单可让人工审查和实际执行引用同一组对象。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::preview-diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-D01-QA-006
+  type: qa
+  question: 文本批量任务的最小验收矩阵包含哪些维度？
+  answer: 候选集合、目标新状态、旧状态消失、范围外反例、备份/回退材料、stderr 与退出状态。
+  extra: 每个维度回答不同问题，不能用一个 `grep` 结果代替全部。
+  source:
+  - RHEL 9 RHCSA/RHCE 讲义知识架构与章节编写总规范
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::preview-diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-05-T01-QA-001
+  type: qa
+  question: 配置批量替换任务中，元数据候选和内容候选为什么要分两阶段生成？
+  answer: 先用 `find` 限定对象和读取范围，再用 `grep` 判断内容，可减少 I/O 并使每层条件独立验证。
+  extra: 两阶段都保持 NUL 清单。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::classic-tasks
+  - card::process
+  - priority::P0
+- id: RHCSA-05-T01-QA-002
+  type: qa
+  question: 空白可变但必须完整匹配 `Listen 8080` 的 ERE 是什么？
+  answer: '`^[[:space:]]*Listen[[:space:]]+8080[[:space:]]*$`。'
+  extra: 它排除注释、`80800` 和额外字段。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::classic-tasks
+  - card::syntax
+  - priority::P0
+- id: RHCSA-05-T01-QA-003
+  type: qa
+  question: 配置候选已经保存为 NUL 清单，批量备份修改的命令骨架是什么？
+  answer: '`xargs -0 -r sed -i.SUFFIX -E ''s/OLD/NEW/'' -- < candidates.nul`。'
+  extra: 执行前必须先用不带 `-i` 的 `sed` 预览。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::classic-tasks
+  - card::command
+  - priority::P0
+- id: RHCSA-05-T01-QA-004
+  type: qa
+  question: 验证配置修改时，为什么只检查 `Listen 8081` 存在还不够？
+  answer: 还要证明旧有效行消失、每个候选都成功、备份存在，以及注释和范围外文件未变。
+  extra: 这是“新状态、旧状态、集合、反例”分层验证。
+  source:
+  - RHEL 9 RHCSA/RHCE 讲义知识架构与章节编写总规范
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::classic-tasks
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-T02-QA-001
+  type: qa
+  question: 结构化日志聚合前，为什么要先检查 `NF` 和数字字段？
+  answer: 否则缺字段或非数字数据会进入错误用户、被隐式当作 0，导致统计悄然失真。
+  extra: 异常记录应带 `FNR` 保存到单独清单。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::classic-tasks
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-T02-QA-002
+  type: qa
+  question: '`awk` 关联数组聚合后，为什么还要把输出交给 `sort`？'
+  answer: 数组遍历顺序不保证符合用户名或计数排序要求。
+  extra: 排序规则和 locale 应显式定义。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::classic-tasks
+  - card::process
+  - priority::P0
+- id: RHCSA-05-T02-QA-003
+  type: qa
+  question: 聚合报告的两个关键恒等式是什么？
+  answer: 总失败记录数等于各用户次数之和；总失败字节数等于各用户字节总量之和。
+  extra: 同时还应核对有效、异常、注释和空行对总输入的覆盖关系。
+  source:
+  - RHEL 9 RHCSA/RHCE 讲义知识架构与章节编写总规范
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::classic-tasks
+  - card::verification
+  - priority::P0
+- id: RHCSA-05-K02-CLOZE-001
+  type: cloze
+  text: GNU `find` 默认从省略的起点 {{c1::.}} 开始；`{{c2::-xdev}}` 阻止下降到其他文件系统。
+  extra: 关键任务建议显式写起点。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-boundary
+  - card::cloze
+  - priority::P1
+- id: RHCSA-05-O01-CLOZE-001
+  type: cloze
+  text: '`find -perm MODE` 是{{c1::精确匹配}}；`-perm -MODE` 要求{{c2::所有指定权限位都存在}}；`-perm /MODE` 要求{{c3::至少一个指定权限位存在}}。'
+  extra: 只训练筛选语义，完整权限模型在权限章节。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-tests
+  - card::cloze
+  - priority::P0
+- id: RHCSA-05-O02-CLOZE-001
+  type: cloze
+  text: '`find` 中隐式运算符是 {{c1::-a/AND}}，且其优先级{{c2::高于}} `-o/OR`。'
+  extra: 复杂 OR 表达式应显式括号。
+  source:
+  - find(1)
+  - GNU Findutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::find-actions
+  - card::cloze
+  - priority::P0
+- id: RHCSA-05-K04-CLOZE-001
+  type: cloze
+  text: '`grep` 正常退出状态：有匹配={{c1::0}}，无匹配={{c2::1}}，错误={{c3::2}}。'
+  extra: 不要把无匹配和读取失败混为一谈。
+  source:
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::grep-regex
+  - card::cloze
+  - priority::P0
+- id: RHCSA-05-O03-CLOZE-001
+  type: cloze
+  text: '`uniq` 只折叠{{c1::相邻}}重复记录；`wc -l` 统计{{c2::换行数量}}。'
+  extra: 两者都依赖明确的记录合同。
+  source:
+  - cut(1)
+  - sort(1)
+  - uniq(1)
+  - tr(1)
+  - wc(1)
+  - GNU coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::fields-coreutils
+  - card::cloze
+  - priority::P0
+- id: RHCSA-05-O04-CLOZE-001
+  type: cloze
+  text: '`sed` 的 `{{c1::-n}}` 关闭默认输出，替换标志 `{{c2::g}}` 表示替换当前记录内的所有匹配。'
+  extra: 忘记 -n 配合 p 会产生重复输出。
+  source:
+  - sed(1)
+  - GNU sed manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::sed
+  - card::cloze
+  - priority::P0
+- id: RHCSA-05-O05-CLOZE-001
+  type: cloze
+  text: awk 中完整记录={{c1::$0}}，字段数={{c2::NF}}，累计记录号={{c3::NR}}，当前文件记录号={{c4::FNR}}。
+  extra: 字段分隔由 FS 控制。
+  source:
+  - gawk(1)
+  - GNU awk manual
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::awk
+  - card::cloze
+  - priority::P0
+- id: RHCSA-05-O06-CLOZE-001
+  type: cloze
+  text: NUL 路径链路：`find {{c1::-print0}}` → `grep -l{{c2::Z}}` → `xargs -{{c3::0}} -r`。
+  extra: 每一段都必须保持同一记录协议。
+  source:
+  - xargs(1)
+  - find(1)
+  - GNU Findutils manual
+  - grep(1)
+  - GNU grep manual
+  - RHCSA Course 07 文本处理工具
+  tags:
+  - exam::rhcsa
+  - chapter::file-search-text-processing
+  - topic::nul-xargs
+  - card::cloze
+  - priority::P0

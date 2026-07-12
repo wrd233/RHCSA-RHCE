@@ -1,0 +1,1562 @@
+chapter_id: RHCSA-22
+chapter_slug: block-devices-partitions-signatures
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+notes:
+- id: RHCSA-FILESYSTEMS-QA-001
+  type: qa
+  question: 写操作前，怎样显式查看块设备拓扑、类型、签名标识和挂载点？
+  answer: '`lsblk -o NAME,PATH,SIZE,TYPE,PKNAME,FSTYPE,UUID,PARTUUID,MOUNTPOINTS`'
+  extra: 实际调查可继续加入 `MAJ:MIN`、`MODEL`、`SERIAL`、`WWN`、`PTTYPE` 和 `PTUUID`。默认列不是稳定接口。
+  source:
+  - RH124-RHEL9-Ch15
+  - lsblk(8)
+  - legacy::RHCSA-FILESYSTEMS
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::command
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-002
+  type: qa
+  question: '`wipefs /dev/vdb` 与 `wipefs -a /dev/vdb` 的区别是什么？'
+  answer: 前者列出可识别签名及偏移；后者删除可识别签名。
+  extra: 调查时不得加 `-a`。`wipefs -a` 不是空盘检查，也不是安全擦除。
+  source:
+  - wipefs(8)
+  - legacy::RHCSA-FILESYSTEMS
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::comparison
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-003
+  type: qa
+  question: 为什么 `lsblk` 中 `FSTYPE` 为空不能充分证明设备可以安全覆盖？
+  answer: 设备仍可能包含分区表、未识别或冲突签名，也可能正被 Swap、LVM、RAID、device-mapper 或其他上层对象使用。
+  extra: 继续检查 `parted`/`fdisk`、`blkid -p`、`wipefs`、挂载和上层归属。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - wipefs(8)
+  - legacy::RHCSA-FILESYSTEMS
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::boundary
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-004
+  type: qa
+  question: 在已经确认可丢弃的新磁盘上建立 GPT 的 `parted` 命令骨架是什么？
+  answer: '`parted -s <DISK> mklabel gpt`'
+  extra: '`mklabel` 会替换分区布局。执行前必须重新确认设备身份、签名、占用和数据保留要求。'
+  source:
+  - RH134-RHEL9-Ch5
+  - parted(8)
+  - legacy::RHCSA-FILESYSTEMS
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::command
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-005
+  type: qa
+  question: 使用 `parted` 从 1 MiB 开始创建约 2 GiB 的 GPT 分区，命令骨架是什么？
+  answer: '`parted -s <DISK> mkpart data 1MiB 2049MiB`'
+  extra: 这里的 2049 MiB 是绝对终点；`mkpart` 不创建文件系统。
+  source:
+  - RH134-RHEL9-Ch5
+  - GNU-Parted-manual
+  - legacy::RHCSA-FILESYSTEMS
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::command
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-006
+  type: qa
+  question: 分区表已经写入后，请求内核重读并等待设备事件，应使用什么？
+  answer: '`partprobe <DISK>`，随后执行 `udevadm settle`。'
+  extra: '`partprobe` 负责通知内核；`udevadm settle` 只等待已有事件完成。再用 `lsblk` 验证。'
+  source:
+  - partprobe(8)
+  - udevadm(8)
+  - legacy::RHCSA-FILESYSTEMS
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::process
+  - priority::P0
+- id: RHCSA-22-K01-QA-001
+  type: qa
+  question: '`lsblk` 的 `TYPE=disk` 与 `TYPE=part` 分别说明什么？'
+  answer: '`disk` 表示整块磁盘类块设备；`part` 表示由分区表描述并被内核识别的分区设备。'
+  extra: 两者都可能承载签名；`part` 不等于已经有文件系统。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-K01-QA-002
+  type: qa
+  question: 为什么 `/dev/sdb` 或 `/dev/vdb` 不能作为长期不变的业务身份？
+  answer: 它们是当前探测顺序和驱动生成的枚举名，硬件、控制器或虚拟机配置变化后可能改变。
+  extra: 破坏性操作前应重新核对容量、父子关系、序列号、WWN 和持久链接。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K01-QA-003
+  type: qa
+  question: NVMe 的整盘和第 1 分区常见名称分别是什么？
+  answer: 整盘如 `/dev/nvme0n1`；第 1 分区如 `/dev/nvme0n1p1`。
+  extra: '`p` 用于分隔磁盘编号与分区编号。'
+  source:
+  - RH124-RHEL9-Ch15
+  - lsblk(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::syntax
+  - priority::P0
+- id: RHCSA-22-K01-QA-004
+  type: qa
+  question: MMC 的整盘和第 2 分区常见名称分别是什么？
+  answer: 整盘如 `/dev/mmcblk0`；第 2 分区如 `/dev/mmcblk0p2`。
+  extra: 不要套用 `/dev/sda2` 的命名规则。
+  source:
+  - RH124-RHEL9-Ch15
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::syntax
+  - priority::P1
+- id: RHCSA-22-K01-QA-005
+  type: qa
+  question: '`lsblk` 的 `PKNAME` 字段回答什么问题？'
+  answer: 它显示当前设备的父内核设备名。
+  extra: 对分区和映射层，父子关系可帮助确认操作对象属于哪块磁盘。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::output
+  - priority::P0
+- id: RHCSA-22-K01-QA-006
+  type: qa
+  question: '`MAJ:MIN` 能替代设备序列号作为永久身份吗？'
+  answer: 不能。它是当前内核分配的主次设备号，适合区分当前设备节点，不是跨重启或跨主机的永久硬件身份。
+  extra: 可与路径和树形关系交叉检查。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::boundary
+  - priority::P1
+- id: RHCSA-22-K01-QA-007
+  type: qa
+  question: 破坏性写入前，`MODEL`、`SERIAL`、`WWN` 三类字段的价值是什么？
+  answer: 它们提供型号和设备级身份线索，可用于区分同名或同容量磁盘。
+  extra: 虚拟磁盘可能缺少其中部分字段，缺失时要使用其他证据组合。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::verification
+  - priority::P0
+- id: RHCSA-22-K01-QA-008
+  type: qa
+  question: 两块磁盘容量相同，是否可以只凭大小选择目标盘？
+  answer: 不可以。
+  extra: 继续核对父子关系、型号、序列/WWN、控制器路径、现有布局和题目指定来源。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K01-QA-009
+  type: qa
+  question: 为什么讲义和脚本应显式指定 `lsblk -o` 列？
+  answer: '`lsblk` 的默认输出列和顺序可能随 util-linux 版本变化。'
+  extra: 显式列能让题目、脚本和审计结果更稳定。
+  source:
+  - lsblk(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K01-QA-010
+  type: qa
+  question: 目标系统不支持讲义中的某个 `lsblk` 列时，最稳妥的处理是什么？
+  answer: 用 `lsblk --help` 查看本机支持的列，移除或替换不支持字段，并保留核心身份与拓扑字段。
+  extra: 不要退回默认输出后按固定位置猜列。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-22-K01-QA-011
+  type: qa
+  question: '`MOUNTPOINTS` 与 `MOUNTPOINT` 的输出差异应怎样理解？'
+  answer: '`MOUNTPOINTS` 可展示一个设备的多个挂载点；`MOUNTPOINT` 通常只展示一个值。'
+  extra: 写入前优先使用能暴露多挂载关系的视图。
+  source:
+  - lsblk(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::comparison
+  - priority::P1
+- id: RHCSA-22-K01-QA-012
+  type: qa
+  question: '`lsblk` 能否单独证明设备没有被 LVM 或 RAID 使用？'
+  answer: 不能。
+  extra: 它可提供线索，但仍应使用 `pvs`、`/proc/mdstat`、holders 等上层证据。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K01-CLOZE-001
+  type: cloze
+  text: NVMe 整盘常写作 {{c1::/dev/nvme0n1}}，其第 1 分区常写作 {{c2::/dev/nvme0n1p1}}。
+  extra: 分区编号前的 `p` 用于消除数字歧义。
+  source:
+  - RH124-RHEL9-Ch15
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::device-identity
+  - card::cloze
+  - priority::P0
+- id: RHCSA-22-K02-QA-001
+  type: qa
+  question: 分区表属于磁盘还是某个分区？
+  answer: 属于整块磁盘。
+  extra: 分区条目再描述磁盘中的地址范围。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::concept
+  - priority::P0
+- id: RHCSA-22-K02-QA-002
+  type: qa
+  question: MBR 为什么常被描述为最多四个主分区？
+  answer: 传统 MBR 分区表只有四个主要表项。
+  extra: 需要更多分区时，可使用扩展分区容纳逻辑分区。
+  source:
+  - RH134-RHEL9-Ch5
+  - RHCSA-Course-21
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::concept
+  - priority::P0
+- id: RHCSA-22-K02-QA-003
+  type: qa
+  question: MBR 的约 2 TiB 限制为什么要注明 512 字节逻辑扇区背景？
+  answer: 该限制来自 32 位扇区地址与扇区大小的组合。
+  extra: 不要把 2 TiB 脱离扇区大小解释为所有设备上的绝对上限。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::boundary
+  - priority::P1
+- id: RHCSA-22-K02-QA-004
+  type: qa
+  question: GPT 为什么在磁盘末尾还保留备份元数据？
+  answer: 用于在主 GPT 头或主分区条目数组损坏时提供冗余。
+  extra: 本章不展开 GPT 修复，但删除或缩小磁盘时要意识到末尾存在备份结构。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::concept
+  - priority::P1
+- id: RHCSA-22-K02-QA-005
+  type: qa
+  question: GPT 的保护性 MBR 主要解决什么问题？
+  answer: 让只理解 MBR 的旧工具看到磁盘已被占用，降低误判为空盘并覆盖的风险。
+  extra: 它不把 GPT 磁盘转换成普通 MBR 磁盘。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::concept
+  - priority::P1
+- id: RHCSA-22-K02-QA-006
+  type: qa
+  question: '`PTTYPE=gpt` 能证明什么？'
+  answer: 当前探测到的整盘分区表类型是 GPT。
+  extra: 它不能证明分区内容、挂载状态或数据健康。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::output
+  - priority::P0
+- id: RHCSA-22-K02-QA-007
+  type: qa
+  question: '`PTUUID` 与 `PARTUUID` 的区别是什么？'
+  answer: '`PTUUID` 标识整盘分区表；`PARTUUID` 标识分区表中的某个分区条目。'
+  extra: 删除重建分区可能改变 `PARTUUID`；重建分区表通常也会改变 `PTUUID`。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-K02-QA-008
+  type: qa
+  question: GPT 的 `PARTLABEL` 能否保证全局唯一？
+  answer: 不能。
+  extra: 它是可读的分区名称，可修改并可能重复；唯一性应依赖 `PARTUUID` 等标识。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K02-QA-009
+  type: qa
+  question: 在已有数据盘上执行 `mklabel gpt` 的本质是什么？
+  answer: 重建整盘分区表布局，使原分区条目失去正常访问入口。
+  extra: 不是无害地“启用 GPT 显示”。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K02-QA-010
+  type: qa
+  question: GPT 常见 128 个分区条目是否表示格式只能有 128 个分区？
+  answer: 不是。
+  extra: 128 是常见工具初始化选择，GPT 格式本身可配置更多条目。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::boundary
+  - priority::P2
+- id: RHCSA-22-K02-CLOZE-001
+  type: cloze
+  text: '{{c1::PTUUID}} 标识整盘分区表，{{c2::PARTUUID}} 标识其中的单个分区条目。'
+  extra: 两者都不同于文件系统 UUID。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-tables
+  - card::cloze
+  - priority::P0
+- id: RHCSA-22-K03-QA-001
+  type: qa
+  question: '`parted mkpart data 1MiB 2049MiB` 中的 2049 MiB 表示大小还是绝对终点？'
+  answer: 表示绝对终点。
+  extra: 从 1 MiB 到 2049 MiB 的名义跨度约 2048 MiB。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::geometry
+  - card::parameter
+  - priority::P0
+- id: RHCSA-22-K03-QA-002
+  type: qa
+  question: '`fdisk` 中输入 `+512M` 通常表达什么？'
+  answer: 从当前起点开始创建约 512 MiB 的相对大小。
+  extra: 写入后仍应检查实际扇区和显示大小。
+  source:
+  - fdisk(8)
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::geometry
+  - card::parameter
+  - priority::P0
+- id: RHCSA-22-K03-QA-003
+  type: qa
+  question: MiB 与 MB 的区别是什么？
+  answer: MiB 是 2^20 字节；MB 是 10^6 字节。
+  extra: 题目对大小敏感时应显式使用要求的单位。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::geometry
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-K03-QA-004
+  type: qa
+  question: 为什么常把第一个分区从 1 MiB 开始？
+  answer: 1 MiB 起点通常能满足常见物理扇区和擦除块的对齐要求，并预留前部元数据空间。
+  extra: 它是通用的安全默认，不是所有设备唯一正确的起点。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::geometry
+  - card::concept
+  - priority::P0
+- id: RHCSA-22-K03-QA-005
+  type: qa
+  question: 查看逻辑扇区、物理扇区和最优 I/O 大小，可用什么？
+  answer: 例如 `lsblk -o NAME,LOG-SEC,PHY-SEC,MIN-IO,OPT-IO,ALIGNMENT`，并结合 `fdisk -l`。
+  extra: 具体列是否可用以本机 `lsblk --help` 为准。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::geometry
+  - card::command
+  - priority::P1
+- id: RHCSA-22-K03-QA-006
+  type: qa
+  question: 分区类型设置为 LVM 后，为什么 `pvs` 仍可能没有该分区？
+  answer: 分区类型只修改分区表元数据；尚未执行 `pvcreate`。
+  extra: LVM 生命周期归第 25 章。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-types
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-K03-QA-007
+  type: qa
+  question: 分区类型设置为 Swap 后，是否已经形成可启用的 Swap？
+  answer: 没有。
+  extra: 还需要 `mkswap` 写入 Swap 签名，并由第 24 章处理启用和持久性。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-types
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-K03-QA-008
+  type: qa
+  question: 为什么 MBR 的类型代码 `82` 不能作为 GPT 场景的通用答案？
+  answer: MBR 使用十六进制类型代码，GPT 使用 GUID 类型和工具别名，表达体系不同。
+  extra: 先确认分区表类型，再在本机工具中列出类型。
+  source:
+  - RHCSA9-Mock
+  - fdisk(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-types
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K03-QA-009
+  type: qa
+  question: '`parted mkpart` 中给出 `xfs` 是否会创建 XFS？'
+  answer: 不会。
+  extra: 它只提供分区用途/兼容提示；真正创建文件系统需要独立 `mkfs.xfs`，归第 23 章。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-types
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K03-QA-010
+  type: qa
+  question: 为什么写入后要用扇区或实际大小验证，而不是只看输入命令？
+  answer: 工具可能根据设备边界和对齐规则调整最终扇区。
+  extra: 验收应关注实际范围是否满足题目允许的误差。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::geometry
+  - card::verification
+  - priority::P0
+- id: RHCSA-22-K03-QA-011
+  type: qa
+  question: 题目要求 512 MiB 分区时，看到 511 MiB 是否必然错误？
+  answer: 不必然。
+  extra: 需检查工具单位、扇区边界和评分容差；以实际扇区数和题目要求综合判断。
+  source:
+  - RHCSA9-Mock
+  - fdisk(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::geometry
+  - card::output
+  - priority::P1
+- id: RHCSA-22-K03-CLOZE-001
+  type: cloze
+  text: 分区{{c1::类型}}只描述预期用途；文件系统、Swap 或 LVM 的{{c2::内容签名}}必须由各自工具另行创建。
+  extra: 类型与内容是两个状态维度。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::partition-types
+  - card::cloze
+  - priority::P0
+- id: RHCSA-22-K04-QA-001
+  type: qa
+  question: 设备签名在存储识别中扮演什么角色？
+  answer: 它是位于特定偏移的魔数和元数据，使工具能够识别文件系统、Swap、LVM、RAID 等内容。
+  extra: 签名不是完整数据，但删除它可能使正常工具无法识别原内容。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::concept
+  - priority::P0
+- id: RHCSA-22-K04-QA-002
+  type: qa
+  question: 一个设备为什么可能同时存在多种签名？
+  answer: 设备被重复用于不同用途时，新的元数据可能没有覆盖所有旧签名位置。
+  extra: 需要判断当前有效对象与历史残留，不能直接全清。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-22-K04-QA-003
+  type: qa
+  question: '`blkid <DEVICE>` 与 `blkid -p <DEVICE>` 的主要区别是什么？'
+  answer: 普通模式适合读取常见属性；`-p` 对指定设备进行低层探测，更适合冲突或不确定签名调查。
+  extra: 普通模式无输出不能证明空盘。
+  source:
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-K04-QA-004
+  type: qa
+  question: 怎样让 `blkid -p` 以便于逐行判断的形式输出？
+  answer: '`blkid -p -o export <DEVICE>`。'
+  extra: 输出字段依赖实际签名，不得编造 UUID。
+  source:
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::command
+  - priority::P0
+- id: RHCSA-22-K04-QA-005
+  type: qa
+  question: '`wipefs <DEVICE>` 默认执行什么？'
+  answer: 列出可识别签名、类型和偏移。
+  extra: 默认不清除签名。
+  source:
+  - wipefs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::command
+  - priority::P0
+- id: RHCSA-22-K04-QA-006
+  type: qa
+  question: '`wipefs -a <DEVICE>` 的风险是什么？'
+  answer: 删除设备上所有可识别签名，可能破坏分区表、文件系统或其他元数据的访问入口。
+  extra: 它不是安全擦除整盘数据，也不是调查命令。
+  source:
+  - wipefs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K04-QA-007
+  type: qa
+  question: 在已获授权前，怎样预览 `wipefs -a` 会处理哪些签名？
+  answer: 使用 `wipefs -n -a <DEVICE>` 进行 no-act 模拟。
+  extra: 仍需确认设备身份、占用和上层归属。
+  source:
+  - wipefs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::command
+  - priority::P1
+- id: RHCSA-22-K04-QA-008
+  type: qa
+  question: '`LVM2_member` 说明了什么，不能说明什么？'
+  answer: 说明探测到 LVM PV 类签名；不能单独说明该 PV 当前属于哪个 VG、是否活动或是否可删除。
+  extra: 继续使用 `pvs`/`vgs` 等上层证据。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::output
+  - priority::P0
+- id: RHCSA-22-K04-QA-009
+  type: qa
+  question: '`linux_raid_member` 出现时，下一步最有区分度的证据是什么？'
+  answer: 检查 `/proc/mdstat` 和相应 RAID 管理信息，确认它是否属于活动阵列。
+  extra: 未确认前不得清除签名。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-22-K04-QA-010
+  type: qa
+  question: '`/dev/disk/by-id/` 主要稳定在哪个维度？'
+  answer: 设备序列、WWN 或后端生成的设备标识。
+  extra: 虚拟磁盘克隆、序列缺失或后端配置变化仍可能改变。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::persistent-ids
+  - card::concept
+  - priority::P0
+- id: RHCSA-22-K04-QA-011
+  type: qa
+  question: '`/dev/disk/by-path/` 主要稳定在哪个维度？'
+  answer: 控制器、端口和拓扑路径。
+  extra: 设备换端口或控制器路径变化时链接可能改变。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::persistent-ids
+  - card::concept
+  - priority::P1
+- id: RHCSA-22-K04-QA-012
+  type: qa
+  question: '`/dev/disk/by-partuuid/` 链接在什么情况下通常会改变？'
+  answer: 删除并重建分区、重建分区表或显式更改分区条目标识时。
+  extra: 它稳定的是分区条目，不是文件系统内容。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::persistent-ids
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K04-QA-013
+  type: qa
+  question: '`by-partlabel` 为什么不适合作为唯一身份依据？'
+  answer: 分区名称可修改且可能重复。
+  extra: 它适合提高可读性，唯一性仍需 `PARTUUID` 或设备身份证据。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::persistent-ids
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K04-QA-014
+  type: qa
+  question: 清除签名是否等同于安全擦除原数据？
+  answer: 不等同。
+  extra: 它通常只删除识别元数据；原数据区可能仍存在，但正常工具可能无法定位和识别。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-K04-CLOZE-001
+  type: cloze
+  text: '`wipefs` 默认用于{{c1::列出签名}}；加入 `-a` 才会{{c2::删除可识别签名}}。'
+  extra: 命令名不能替代参数语义判断。
+  source:
+  - wipefs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::signatures
+  - card::cloze
+  - priority::P0
+- id: RHCSA-22-O01-QA-001
+  type: qa
+  question: 破坏性存储操作前的五步调查顺序是什么？
+  answer: 设备身份 → 分区布局 → 内容签名 → 当前占用/上层归属 → 题目或变更授权。
+  extra: 任一步不明确都应停止。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::process
+  - priority::P0
+- id: RHCSA-22-O01-QA-002
+  type: qa
+  question: 为什么要分别对整盘和现有分区执行 `wipefs`/`blkid -p`？
+  answer: 分区表签名位于整盘，而文件系统、LVM、RAID 等签名可能位于分区或整盘。
+  extra: 只查一个层可能遗漏高风险内容。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::verification
+  - priority::P0
+- id: RHCSA-22-O01-QA-003
+  type: qa
+  question: 检查目标设备是否被当前挂载，优先用什么证据？
+  answer: 结合 `lsblk ... MOUNTPOINTS` 与 `findmnt --source <DEVICE>`。
+  extra: 目录未出现在一个输出中仍不能排除 Swap 或其他上层使用。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::command
+  - priority::P0
+- id: RHCSA-22-O01-QA-004
+  type: qa
+  question: 检查目标设备是否作为 Swap 使用，使用什么？
+  answer: '`swapon --show`。'
+  extra: '`blkid` 只证明签名，不证明当前已启用。'
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::command
+  - priority::P0
+- id: RHCSA-22-O01-QA-005
+  type: qa
+  question: 检查目标设备是否为 LVM PV，使用什么？
+  answer: '`pvs`，必要时定制 `pv_name,vg_name,pv_uuid` 等字段。'
+  extra: 只看到分区类型为 LVM 不能替代 `pvs`。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::command
+  - priority::P0
+- id: RHCSA-22-O01-QA-006
+  type: qa
+  question: '`/sys/class/block/<DEV>/holders/` 有条目通常说明什么？'
+  answer: 有其他内核块设备对象持有或依赖该设备。
+  extra: 继续识别 device-mapper、LVM、加密或 RAID 层，不能直接覆盖。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::output
+  - priority::P1
+- id: RHCSA-22-O01-QA-007
+  type: qa
+  question: 什么条件下可以进入 `mklabel` 或删除分区？
+  answer: 身份一致、现状已记录、没有需保留数据、没有活动使用者，并且题目/变更单明确授权。
+  extra: 缺少任一条件都不是安全放行。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-O01-QA-008
+  type: qa
+  question: 为什么保存变更前 `parted`、`fdisk` 和 `wipefs` 输出有价值？
+  answer: 可比较变更前后状态、证明选中的设备和原布局，并支持事故分析或恢复评估。
+  extra: 存储布局变更通常不像文本配置那样容易回滚。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::preflight
+  - card::process
+  - priority::P1
+- id: RHCSA-22-O02-QA-001
+  type: qa
+  question: '`parted <DISK> unit MiB print` 同时做了什么？'
+  answer: 以 MiB 为显示单位，打印指定磁盘的分区表和条目。
+  extra: 只读查看，不创建分区。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::command
+  - priority::P0
+- id: RHCSA-22-O02-QA-002
+  type: qa
+  question: '`parted -s` 的 `-s` 表示什么？'
+  answer: 脚本/非交互模式，避免交互提示并按命令参数执行。
+  extra: 非交互不代表安全；设备路径错误仍会直接写入。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::parameter
+  - priority::P0
+- id: RHCSA-22-O02-QA-003
+  type: qa
+  question: 在 GPT 磁盘上创建名为 `data`、范围 1MiB 到 2049MiB 的分区，命令是什么？
+  answer: '`parted -s <DISK> mkpart data 1MiB 2049MiB`'
+  extra: 创建后用 `parted print` 与 `lsblk` 验证。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::command
+  - priority::P0
+- id: RHCSA-22-O02-QA-004
+  type: qa
+  question: '`parted -s <DISK> set 2 lvm on` 改变什么？'
+  answer: 把第 2 分区的用途类型/flag 设置为 LVM。
+  extra: 不创建 LVM PV。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::parameter
+  - priority::P0
+- id: RHCSA-22-O02-QA-005
+  type: qa
+  question: 删除第 3 个分区条目的 `parted` 骨架是什么？
+  answer: '`parted -s <DISK> rm 3`'
+  extra: 执行前确认父磁盘、编号、挂载和上层归属。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::command
+  - priority::P0
+- id: RHCSA-22-O02-QA-006
+  type: qa
+  question: 为什么说 `parted` 与 `fdisk` 的提交模型不同？
+  answer: '`parted` 的多数修改命令立即写入磁盘；交互式 `fdisk` 多数修改在 `w` 前仅为候选布局。'
+  extra: 不能把 `fdisk q` 的撤销经验套到已执行的 `parted` 命令。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-O02-QA-007
+  type: qa
+  question: '`parted` 创建分区后，最小验证链是什么？'
+  answer: '`parted <DISK> print` → `partprobe <DISK>` → `udevadm settle` → `lsblk`。'
+  extra: 若磁盘表和内核视图不一致，进入同步诊断。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::process
+  - priority::P0
+- id: RHCSA-22-O02-QA-008
+  type: qa
+  question: 不确定 `mkpart` 参数时，应先查看什么？
+  answer: '`parted <DISK> help mkpart`、`parted --help` 或 `man parted`。'
+  extra: 版本差异以考试机本地帮助为准。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::parted
+  - card::help
+  - priority::P1
+- id: RHCSA-22-O03-QA-001
+  type: qa
+  question: '`fdisk -l <DISK>` 与 `fdisk <DISK>` 的区别是什么？'
+  answer: 前者只读列出布局；后者进入交互式编辑会话。
+  extra: 进入交互后先用 `p` 打印候选布局。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::fdisk
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-O03-QA-002
+  type: qa
+  question: '`fdisk` 交互中的 `p`、`n`、`t`、`d` 分别做什么？'
+  answer: 打印候选布局、新建分区、修改分区类型、删除候选分区条目。
+  extra: 最终是否写盘由 `w` 决定。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::fdisk
+  - card::syntax
+  - priority::P0
+- id: RHCSA-22-O03-QA-003
+  type: qa
+  question: '`fdisk` 中 `w` 与 `q` 的区别是什么？'
+  answer: '`w` 写入分区表并退出；`q` 放弃本次尚未写入的候选修改并退出。'
+  extra: '`q` 不能撤销其他工具已经写入的变化。'
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::fdisk
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-O03-QA-004
+  type: qa
+  question: '`fdisk` 创建固定大小分区时，为什么常接受默认起始扇区？'
+  answer: 工具通常已根据设备拓扑选择对齐良好的起点。
+  extra: 随后使用 `+SIZE` 指定大小并在写盘后验证。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::fdisk
+  - card::parameter
+  - priority::P0
+- id: RHCSA-22-O03-QA-005
+  type: qa
+  question: 修改分区类型前，怎样避免把 MBR 代码套到 GPT？
+  answer: 先查看当前磁盘标签类型，再在 `fdisk` 提示中列出可用类型，按名称/别名或对应代码选择。
+  extra: 写盘前用 `p` 核对。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::fdisk
+  - card::process
+  - priority::P0
+- id: RHCSA-22-O03-QA-006
+  type: qa
+  question: 在 `fdisk` 会话中发现选错磁盘，最安全的动作是什么？
+  answer: 在未写盘时使用 `q` 退出。
+  extra: 不要通过继续删除或新建来“修正”错误设备。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::fdisk
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-O03-QA-007
+  type: qa
+  question: 为什么 `fdisk` 最后一次 `p` 不能替代写盘后的验证？
+  answer: 它显示当前交互候选布局；只有 `w` 后从外部重新读取，才能证明磁盘实际状态。
+  extra: 使用 `fdisk -l`、`parted print` 和 `lsblk` 复核。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::fdisk
+  - card::verification
+  - priority::P0
+- id: RHCSA-22-O03-QA-008
+  type: qa
+  question: 为什么不建议脚本依赖 `fdisk -l` 的固定空格和列位置？
+  answer: 人类可读输出格式可能随 util-linux 版本、设备类型和本地化变化。
+  extra: 脚本应使用更稳定的机器接口或显式字段工具。
+  source:
+  - fdisk(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::fdisk
+  - card::boundary
+  - priority::P1
+- id: RHCSA-22-O04-QA-001
+  type: qa
+  question: '`parted print` 已看到新分区，但 `lsblk` 未出现节点，最合理的初始假设是什么？'
+  answer: 磁盘分区表已更新，但内核尚未采用新布局。
+  extra: 先运行 `partprobe`，不要重复创建。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-22-O04-QA-002
+  type: qa
+  question: '`partprobe <DISK>` 会修改磁盘分区表吗？'
+  answer: 不会。
+  extra: 它通知内核重新读取已经存在的分区表变化。
+  source:
+  - partprobe(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-O04-QA-003
+  type: qa
+  question: '`udevadm settle` 会主动创建分区表或请求内核重读吗？'
+  answer: 不会。
+  extra: 它只等待当前 udev 事件处理完成。
+  source:
+  - udevadm(8)
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-O04-QA-004
+  type: qa
+  question: 查看 `/dev/vdb1` 的 udev 属性，命令是什么？
+  answer: '`udevadm info --query=property --name=/dev/vdb1`'
+  extra: 可核对分区 UUID、名称和父设备属性，实际字段依设备而定。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::command
+  - priority::P0
+- id: RHCSA-22-O04-QA-005
+  type: qa
+  question: 怎样验证 udev 已为分区生成 `PARTUUID` 链接？
+  answer: 查看 `ls -l /dev/disk/by-partuuid/`，并与 `lsblk ... PARTUUID` 对照。
+  extra: 链接缺失时先检查分区是否有标识和事件是否完成。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::verification
+  - priority::P0
+- id: RHCSA-22-O04-QA-006
+  type: qa
+  question: '`partprobe` 报设备忙时，下一步是什么？'
+  answer: 调查挂载、Swap、LVM、RAID、device-mapper 和 holders，确定哪一层阻止重读。
+  extra: 不重复 `mklabel`，也不默认强制重启。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-22-O04-QA-007
+  type: qa
+  question: 重启能否作为新分区节点未出现的默认修复？
+  answer: 不能。
+  extra: 先证明分区表正确、设备未使用并尝试安全重读；生产环境需要重启时应进入维护决策。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-O04-CLOZE-001
+  type: cloze
+  text: '{{c1::partprobe}} 请求内核重读分区表；{{c2::udevadm settle}} 等待设备事件处理完成。'
+  extra: 两者解决不同层次。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::kernel-udev
+  - card::cloze
+  - priority::P0
+- id: RHCSA-22-D01-QA-001
+  type: qa
+  question: '`parted` 和 `fdisk -l` 都没有显示刚创建的分区，首先检查什么？'
+  answer: 检查是否选错设备、命令失败，或交互式 `fdisk` 未执行 `w` 写盘。
+  extra: 此时 `partprobe` 不能同步一个并不存在的新布局。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-sync
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-22-D01-QA-002
+  type: qa
+  question: 磁盘表有新分区、内核树没有时，下一条最有区分度的证据是什么？
+  answer: 运行 `partprobe <DISK>` 并保留其返回，再重新检查 `lsblk`。
+  extra: 不要重复 `mkpart`。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-sync
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-22-D01-QA-003
+  type: qa
+  question: 观察内核和 udev 设备事件，可使用什么？
+  answer: '`udevadm monitor --kernel --udev --property`。'
+  extra: 只在正常触发事件时观察，不为产生事件重复破坏性写入。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-sync
+  - card::command
+  - priority::P1
+- id: RHCSA-22-D01-QA-004
+  type: qa
+  question: 查看最近块设备相关内核信息，可从哪里开始？
+  answer: 例如 `journalctl -k --since "-10 min"`，再结合具体设备名筛选。
+  extra: 日志时间窗口按实际变更时间调整。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-sync
+  - card::command
+  - priority::P1
+- id: RHCSA-22-D01-QA-005
+  type: qa
+  question: 分区同步问题的四层再验证是什么？
+  answer: 磁盘表正确 → 内核节点正确 → udev 属性/链接正确 → 内容签名没有非预期变化。
+  extra: 任一层失败都不能声明完成。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-sync
+  - card::verification
+  - priority::P0
+- id: RHCSA-22-D02-QA-001
+  type: qa
+  question: 普通 `blkid` 无输出时，下一步最有区分度的两条命令是什么？
+  answer: '`blkid -p -o export <DEVICE>` 和 `wipefs <DEVICE>`。'
+  extra: 它们分别提供低层探测和签名偏移视图。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-signatures
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-22-D02-QA-002
+  type: qa
+  question: 发现 XFS 与 LVM 历史签名同时存在时，能否直接 `wipefs -a`？
+  answer: 不能。
+  extra: 先用挂载、`pvs` 和其他上层证据判断哪个对象当前有效，并确认题目授权。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-signatures
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-D02-QA-003
+  type: qa
+  question: 签名清除前为什么要记录偏移？
+  answer: 偏移有助于区分不同元数据，并支持定向处理和事后审计。
+  extra: 清除后再次运行 `wipefs` 验证。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-signatures
+  - card::process
+  - priority::P1
+- id: RHCSA-22-D02-QA-004
+  type: qa
+  question: 清除一个历史签名后，为什么还要重新检查分区表？
+  answer: 清除目标可能位于整盘并包含 GPT/MBR 元数据；误删会影响布局访问。
+  extra: 用 `parted print`、`lsblk` 和 `wipefs` 交叉验证。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-signatures
+  - card::verification
+  - priority::P0
+- id: RHCSA-22-D02-QA-005
+  type: qa
+  question: 未获得丢弃数据授权时，签名调查的正确终点是什么？
+  answer: 记录签名、归属和风险，停止写入并报告需要决策的对象。
+  extra: “发现旧签名”不自动授权清除。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-signatures
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-D03-QA-001
+  type: qa
+  question: '`PARTTYPE` 为 LVM，但 `FSTYPE` 为空，是否矛盾？'
+  answer: 不矛盾。
+  extra: 只设置了分区用途类型，还没有创建 LVM PV 内容签名。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-conflicts
+  - card::output
+  - priority::P0
+- id: RHCSA-22-D03-QA-002
+  type: qa
+  question: '`PARTTYPE` 为 Swap，但探测到 XFS 签名，最合理的处理是什么？'
+  answer: 停止并调查该分区是误改类型、旧签名残留还是仍有有效数据。
+  extra: 改类型不会转换内容，清签名也不是自动修复。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-conflicts
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-22-D03-QA-003
+  type: qa
+  question: '`parted` 与 `lsblk` 输出不一致时，为什么不能简单认定一个工具错误？'
+  answer: 两者可能分别反映磁盘分区表和内核/udev 当前视图，读取层次不同。
+  extra: 先同步内核并检查设备路径。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-conflicts
+  - card::comparison
+  - priority::P0
+- id: RHCSA-22-D03-QA-004
+  type: qa
+  question: 存储命令返回 0 能证明哪些内容？
+  answer: 最多证明该命令按其接口成功执行。
+  extra: 不能自动证明设备选对、边界正确、内核已同步或业务数据安全。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-conflicts
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-D03-QA-005
+  type: qa
+  question: 什么是本章最重要的停止条件？
+  answer: 设备身份、已有内容、当前占用或授权范围中任一项无法由证据确认。
+  extra: 停止比尝试 `--force` 或全量清签名更正确。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::diagnosis-conflicts
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-T01-QA-001
+  type: qa
+  question: 经典任务要求在 `/dev/vdb` 创建 GPT 前，第一组命令应完成什么？
+  answer: 确认设备身份，并记录现有分区表、签名和占用。
+  extra: 不能从 `mklabel gpt` 开始。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-22-T01-QA-002
+  type: qa
+  question: 在 GPT 盘上创建 `data` 约 2 GiB 和 `future-lvm` 约 1 GiB 的 `parted` 骨架是什么？
+  answer: '`mkpart data 1MiB 2049MiB`；`mkpart future-lvm 2049MiB 3073MiB`；随后 `set 2 lvm on`。'
+  extra: 具体设备使用题目确认后的路径。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::classic-task
+  - card::command
+  - priority::P0
+- id: RHCSA-22-T01-QA-003
+  type: qa
+  question: 经典任务为何要求 `PARTUUID` 验收，而不要求文件系统 UUID？
+  answer: 本章只创建分区条目，没有创建文件系统。
+  extra: 文件系统 UUID 属于第 23 章。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::classic-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-T01-QA-004
+  type: qa
+  question: 创建分区后，如何证明没有越界创建文件系统或 PV？
+  answer: 检查 `blkid -p`、`wipefs`、`lsblk FSTYPE` 和 `pvs`，确认没有非预期内容签名或 PV。
+  extra: 分区类型为 LVM 不等于 PV。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-22-T02-QA-001
+  type: qa
+  question: 诊断任务中 `parted print` 有分区而 `lsblk` 无节点，最小修复链是什么？
+  answer: '`partprobe <DISK>` → `udevadm settle` → 重新 `lsblk`。'
+  extra: 失败时进入占用和内核日志调查。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-22-T02-QA-002
+  type: qa
+  question: 诊断任务禁止重新 `mklabel` 的原因是什么？
+  answer: 当前症状是视图不同步或占用，重建分区表会扩大为布局破坏。
+  extra: 先证明磁盘表是否正确。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::classic-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-T02-QA-003
+  type: qa
+  question: 诊断任务禁止格式化的原因是什么？
+  answer: 格式化会写入新的文件系统签名，覆盖证据并可能破坏现有内容。
+  extra: 本章目标是调查分区和签名，不是创建文件系统。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::classic-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-22-T02-QA-004
+  type: qa
+  question: 完成诊断后，报告应区分哪些状态？
+  answer: 磁盘表状态、内核节点状态、udev 属性/链接状态、内容签名和当前占用状态。
+  extra: 不要用“已解决”掩盖某一层仍未验证。
+  source:
+  - RH134-RHEL9-Ch5
+  - util-linux-man-pages
+  tags:
+  - exam::rhcsa
+  - chapter::block-devices-partitions-signatures
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+status: integrated

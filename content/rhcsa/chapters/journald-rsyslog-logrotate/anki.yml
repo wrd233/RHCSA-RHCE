@@ -1,0 +1,1551 @@
+chapter_id: RHCSA-13
+chapter_slug: journald-rsyslog-logrotate
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+notes:
+- id: RHCSA-SERVICES-O02-QA-001
+  model: RedHat-QA
+  type: qa
+  question: 只查看当前 boot 中 `sshd.service` 的 journal 记录，命令骨架是什么？
+  answer: '```bash
+
+    journalctl -u sshd.service -b --no-pager
+
+    ```'
+  extra: '`-u` 选择 unit，`-b` 把范围限定为当前启动。'
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::command
+  - priority::P0
+- id: RHCSA-SERVICES-O02-QA-002
+  model: RedHat-QA
+  type: qa
+  question: 系统已经保留多个 boot。查看上一次启动中 `sshd.service` 的日志，命令是什么？
+  answer: '```bash
+
+    journalctl -u sshd.service -b -1 --no-pager
+
+    ```'
+  extra: 先用 `journalctl --list-boots` 确认上一次 boot 确实可查询。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::command
+  - priority::P0
+- id: RHCSA-SERVICES-O02-QA-003
+  model: RedHat-QA
+  type: qa
+  question: '`journalctl -b -1` 没有结果，能否直接断定上一次启动没有发生任何事件？'
+  answer: 不能。还可能是 journal 未持久保存、旧 boot 已被清理，或当前用户读取权限不足。
+  extra: 下一步先查看 `--list-boots`、有效 `Storage=`、持久目录和磁盘占用。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-persistence
+  - card::boundary
+  - priority::P0
+- id: RHCSA-SERVICES-O02-QA-004
+  model: RedHat-QA
+  type: qa
+  question: 修改 `/etc/rsyslog.d/*.conf` 后，应用配置前应先运行什么静态检查？
+  answer: '```bash
+
+    rsyslogd -N1
+
+    ```'
+  extra: 它证明配置可解析，不证明 selector 命中、文件可写或远端可达。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::verification
+  - priority::P0
+- id: RHCSA-SERVICES-O02-QA-005
+  model: RedHat-QA
+  type: qa
+  question: 为验证 `local0.notice` 路由，怎样生成带唯一标识的测试事件？
+  answer: '```bash
+
+    TEST_ID="rhcsa13-$(date +%s)"
+
+    logger -p local0.notice -t exam-audit "$TEST_ID"
+
+    ```'
+  extra: 唯一正文避免把历史消息误判为本次结果。
+  source:
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logger-testing
+  - card::command
+  - priority::P0
+- id: RHCSA-SERVICES-O02-QA-006
+  model: RedHat-QA
+  type: qa
+  question: 使用 `journalctl --since` 查不到已知事件时，第一步应怎样调整调查？
+  answer: 先放宽或移除时间条件，确认 boot、tag/unit 与当前时间时区，再逐步重新增加过滤条件。
+  extra: 不要立即断定事件不存在，也不要直接修改时间同步配置。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-13-K01-QA-001
+  model: RedHat-QA
+  type: qa
+  question: journald 与 rsyslog 的核心职责分别是什么？
+  answer: journald 负责从多种来源收集并保存结构化 journal；rsyslog 负责根据规则筛选消息并执行写文件、转发等 action。
+  extra: 两者可以同时参与同一条消息的处理链。
+  source:
+  - RHEL 9 Configuring basic system settings Ch.6
+  - systemd-journald.service(8)
+  - rsyslog official documentation
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-K01-QA-002
+  model: RedHat-QA
+  type: qa
+  question: journal 与 `/var/log/*.log` 文本文件有什么关键区别？
+  answer: journal 是带索引和字段的结构化存储，由 journald 管理；普通文本日志由应用或 rsyslog 写入，通常由 logrotate 管理生命周期。
+  extra: 一条消息可能同时存在于两侧，也可能只存在一侧。
+  source:
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-K01-QA-003
+  model: RedHat-QA
+  type: qa
+  question: '`journalctl` 中没有目标消息，是否能证明系统没有任何相关日志？'
+  answer: 不能。应用可能直接写自己的文本日志，消息也可能已被清理、属于其他 boot，或被过滤条件排除。
+  extra: 下一步应确认应用日志路径、boot、时间、字段和保留状态。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::object-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-13-K01-QA-004
+  model: RedHat-QA
+  type: qa
+  question: “当前可读”“跨重启持久”“仍被保留”分别是什么状态？
+  answer: 当前可读说明记录仍在当前 journal；跨重启持久说明记录写入持久存储；仍被保留说明尚未被容量、时间或 vacuum 策略删除。
+  extra: 三个状态必须分别验证。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::state-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-K01-QA-005
+  model: RedHat-QA
+  type: qa
+  question: syslog facility 与 severity 分别表示什么？
+  answer: facility 表示消息类别或子系统；severity 表示严重级别。rsyslog selector 通常用两者共同选择消息。
+  extra: '`local0` 到 `local7` 常用于自定义应用路由。'
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::facility-severity
+  - card::concept
+  - priority::P1
+- id: RHCSA-13-K01-QA-006
+  model: RedHat-QA
+  type: qa
+  question: syslog severity 数字与严重程度是什么关系？
+  answer: 数字越小越严重：`emerg(0)` 最严重，`debug(7)` 最不严重。
+  extra: 普通 selector 中 `notice` 通常还匹配比 notice 更严重的级别。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::facility-severity
+  - card::concept
+  - priority::P0
+- id: RHCSA-13-K01-CLOZE-001
+  model: RedHat-Cloze
+  type: cloze
+  text: journal 由 {{c1::journald}} 管理自身轮转和 vacuum；普通文本日志通常由 {{c2::logrotate}} 管理轮转与保留。
+  extra: 两者作用对象不同。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::object-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-13-O01-QA-001
+  model: RedHat-QA
+  type: qa
+  question: 列出当前 journal 中可查询的所有启动轮次，命令是什么？
+  answer: '```bash
+
+    journalctl --list-boots
+
+    ```'
+  extra: 输出包含 boot 序号、boot ID 和时间范围。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::command
+  - priority::P0
+- id: RHCSA-13-O01-QA-002
+  model: RedHat-QA
+  type: qa
+  question: '`journalctl -b` 与 `journalctl -b -1` 分别选择什么？'
+  answer: '`-b` 选择当前 boot；`-b -1` 选择上一次仍可查询的 boot。'
+  extra: 没有 `-1` 结果时应先查看 `--list-boots`。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O01-QA-003
+  model: RedHat-QA
+  type: qa
+  question: 只看当前 boot 的内核 warning 及更严重消息，命令是什么？
+  answer: '```bash
+
+    journalctl -k -b -p warning --no-pager
+
+    ```'
+  extra: '`-k` 选内核消息，`-b` 限当前启动。'
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::command
+  - priority::P1
+- id: RHCSA-13-O01-QA-004
+  model: RedHat-QA
+  type: qa
+  question: 查看某 unit 最近 10 分钟的日志，命令骨架是什么？
+  answer: '```bash
+
+    journalctl -u <UNIT> --since "-10 min" --no-pager
+
+    ```'
+  extra: 第一轮通常不急于加入 priority 过滤。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::command
+  - priority::P0
+- id: RHCSA-13-O01-QA-005
+  model: RedHat-QA
+  type: qa
+  question: '`journalctl -u <UNIT>` 与 `_SYSTEMD_UNIT=<UNIT>` 的关系是什么？'
+  answer: '`-u` 是按 unit 选择的便捷接口；直接字段匹配允许与其他字段组合并精确表达查询。'
+  extra: 并非所有记录都一定具有 `_SYSTEMD_UNIT`。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::comparison
+  - priority::P1
+- id: RHCSA-13-O01-QA-006
+  model: RedHat-QA
+  type: qa
+  question: '`journalctl -t exam-audit` 按哪个字段过滤？'
+  answer: 按 `SYSLOG_IDENTIFIER=exam-audit` 过滤。
+  extra: '`logger -t exam-audit` 可生成对应标识。'
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O01-QA-007
+  model: RedHat-QA
+  type: qa
+  question: 为什么不应长期只用 `_PID=<PID>` 识别一次历史故障？
+  answer: PID 会在进程退出后复用。应结合 boot、unit、时间、UID 和可执行文件确认身份。
+  extra: 短时间重现问题时 PID 仍可作为一个过滤维度。
+  source:
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::boundary
+  - priority::P1
+- id: RHCSA-13-O01-QA-008
+  model: RedHat-QA
+  type: qa
+  question: journal 字段匹配中，同一字段多个值和不同字段分别怎样组合？
+  answer: 同一字段多个值通常形成 OR；不同字段之间形成 AND。显式 `+` 可连接两组表达式形成 OR。
+  extra: 复杂表达式应先分别验证每个分支。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::syntax
+  - priority::P1
+- id: RHCSA-13-O01-QA-009
+  model: RedHat-QA
+  type: qa
+  question: '`journalctl -p warning` 的范围是什么？'
+  answer: 选择 warning 以及更严重的级别，即 severity 数字 0 到 4。
+  extra: 它不是只选择恰好 warning。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O01-QA-010
+  model: RedHat-QA
+  type: qa
+  question: '`-n`、`-r` 和 `-f` 分别改变什么？'
+  answer: '`-n` 限制最近条数；`-r` 让最新记录在前；`-f` 持续跟随新记录。'
+  extra: 它们主要影响结果范围或呈现，不改变底层 journal。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::comparison
+  - priority::P1
+- id: RHCSA-13-O01-QA-011
+  model: RedHat-QA
+  type: qa
+  question: 一个组合了 boot、unit、PID、priority 和时间的查询为空，下一步最稳妥的做法是什么？
+  answer: 按相反顺序逐个移除最窄条件，确认每个单独条件能否匹配，再重建查询。
+  extra: 继续叠加条件会进一步隐藏证据。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-13-O01-CLOZE-001
+  model: RedHat-Cloze
+  type: cloze
+  text: 查看可用启动轮次用 {{c1::journalctl --list-boots}}；查看上一次启动用 {{c2::journalctl -b -1}}。
+  extra: 只有 journal 中仍保留该 boot 时，`-b -1` 才有结果。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-query
+  - card::cloze
+  - priority::P0
+- id: RHCSA-13-O02-QA-001
+  model: RedHat-QA
+  type: qa
+  question: 查看一条 journal 记录的全部结构化字段，命令骨架是什么？
+  answer: '```bash
+
+    journalctl <MATCH> -n 1 -o verbose
+
+    ```'
+  extra: 先用宽条件找到记录，再查看字段。
+  source:
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-fields
+  - card::command
+  - priority::P0
+- id: RHCSA-13-O02-QA-002
+  model: RedHat-QA
+  type: qa
+  question: '`MESSAGE` 与 `_SYSTEMD_UNIT` 分别是什么性质的字段？'
+  answer: '`MESSAGE` 是消息正文，通常由客户端提供；`_SYSTEMD_UNIT` 是 journal 侧补充的可信归属字段。'
+  extra: 审计身份应优先结合下划线可信字段。
+  source:
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-fields
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-O02-QA-003
+  model: RedHat-QA
+  type: qa
+  question: '`_BOOT_ID` 字段的主要用途是什么？'
+  answer: 标识一条记录属于哪次系统启动，可用于跨 boot 查询和关联。
+  extra: boot ID 与 `--list-boots` 输出对应。
+  source:
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-fields
+  - card::concept
+  - priority::P1
+- id: RHCSA-13-O02-QA-004
+  model: RedHat-QA
+  type: qa
+  question: '`SYSLOG_IDENTIFIER`、`_COMM` 和 `_EXE` 分别回答什么？'
+  answer: '`SYSLOG_IDENTIFIER` 是客户端标识；`_COMM` 是短命令名；`_EXE` 是可执行文件路径。'
+  extra: 三者可能不同，调查时不要把 tag 当作唯一进程身份。
+  source:
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-fields
+  - card::comparison
+  - priority::P1
+- id: RHCSA-13-O02-QA-005
+  model: RedHat-QA
+  type: qa
+  question: '`-o verbose` 与 `-o cat` 适合什么场景？'
+  answer: '`verbose` 用于发现全部字段；`cat` 只输出消息正文，适合提取文本但会丢失时间和来源上下文。'
+  extra: 不要用 `cat` 输出做完整审计证据。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-output
+  - card::comparison
+  - priority::P1
+- id: RHCSA-13-O02-QA-006
+  model: RedHat-QA
+  type: qa
+  question: 需要把 journal 交给程序解析时，优先选择哪类输出？
+  answer: 使用 `-o json` 或 `-o json-pretty` 等结构化输出，并由下游正确解析。
+  extra: 不要依赖默认短格式的空格切分。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-output
+  - card::output
+  - priority::P1
+- id: RHCSA-13-O02-QA-007
+  model: RedHat-QA
+  type: qa
+  question: 发现一条记录具有 `_SYSTEMD_UNIT=app.service`，能否据此证明应用功能正常？
+  answer: 不能。它只证明记录的 unit 归属；还需验证监听、请求、数据或其他业务终态。
+  extra: 日志证据不能替代外部功能验证。
+  source:
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-fields
+  - card::boundary
+  - priority::P0
+- id: RHCSA-13-O02-QA-008
+  model: RedHat-QA
+  type: qa
+  question: 枚举 journal 中出现过的 `SYSLOG_IDENTIFIER` 值，命令是什么？
+  answer: '```bash
+
+    journalctl -F SYSLOG_IDENTIFIER
+
+    ```'
+  extra: '`-F` 可用于确认真实字段值，避免凭空猜测。'
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-fields
+  - card::command
+  - priority::P1
+- id: RHCSA-13-O02-CLOZE-001
+  model: RedHat-Cloze
+  type: cloze
+  text: 用于发现 journal 全部字段的输出格式是 {{c1::-o verbose}}；只显示消息正文的是 {{c2::-o cat}}。
+  extra: 输出格式改变呈现，不改变记录内容。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-output
+  - card::cloze
+  - priority::P1
+- id: RHCSA-13-O03-QA-001
+  model: RedHat-QA
+  type: qa
+  question: '`Storage=volatile` 与 `Storage=persistent` 的核心区别是什么？'
+  answer: '`volatile` 只使用 `/run/log/journal`，重启后丢失；`persistent` 尝试使用 `/var/log/journal` 保存跨重启记录。'
+  extra: 持久目录不可用时仍需检查实际回退状态。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-persistence
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-O03-QA-002
+  model: RedHat-QA
+  type: qa
+  question: '`Storage=auto` 的有效结果由什么决定？'
+  answer: 是否存在并可使用持久 journal 目录；可用时持久，否则使用运行时存储。
+  extra: 不能只读到 `auto` 就断言一定持久或一定易失。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-persistence
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-O03-QA-003
+  model: RedHat-QA
+  type: qa
+  question: 管理员为 journald 建立持久化 drop-in 的推荐路径是什么？
+  answer: '`/etc/systemd/journald.conf.d/*.conf`，例如 `/etc/systemd/journald.conf.d/60-persistent.conf`。'
+  extra: 避免直接修改 `/usr/lib` 下的 vendor 配置。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-persistence
+  - card::configuration
+  - priority::P0
+- id: RHCSA-13-O03-QA-004
+  model: RedHat-QA
+  type: qa
+  question: 在支持的 systemd 版本上，怎样查看 journald 主配置与 drop-in 的合并结果？
+  answer: '```bash
+
+    systemd-analyze cat-config systemd/journald.conf
+
+    ```'
+  extra: 若目标版本不支持，则直接检查各配置来源。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-persistence
+  - card::command
+  - priority::P1
+- id: RHCSA-13-O03-QA-005
+  model: RedHat-QA
+  type: qa
+  question: '`SystemMaxUse=` 与 `RuntimeMaxUse=` 分别限制什么？'
+  answer: '`SystemMaxUse` 限制持久 journal 使用量；`RuntimeMaxUse` 限制运行时 journal 使用量。'
+  extra: 不要把其中一个当作两种存储的共同上限。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-retention
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O03-QA-006
+  model: RedHat-QA
+  type: qa
+  question: '`MaxRetentionSec=` 能保证日志一定保留到该时间吗？'
+  answer: 不能。它是最长保留时间边界，容量和可用空间限制可能让记录更早被清理。
+  extra: 保留策略需要同时考虑时间和空间。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-retention
+  - card::parameter
+  - priority::P1
+- id: RHCSA-13-O03-QA-007
+  model: RedHat-QA
+  type: qa
+  question: 启用持久存储并重启 journald 后，哪个命令请求把运行时记录刷新到持久存储？
+  answer: '```bash
+
+    journalctl --flush
+
+    ```'
+  extra: 它不能恢复重启前已经丢失的记录。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-persistence
+  - card::command
+  - priority::P0
+- id: RHCSA-13-O03-QA-008
+  model: RedHat-QA
+  type: qa
+  question: 怎样严格证明 journal 已跨重启持久？
+  answer: 重启前写入唯一事件；安全重启后用 `journalctl --list-boots` 确认历史 boot，并用 `journalctl -b -1 -t <TAG>` 找到该事件。
+  extra: 当前 boot 中能查询到事件不等于跨重启验证完成。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-persistence
+  - card::verification
+  - priority::P0
+- id: RHCSA-13-O03-QA-009
+  model: RedHat-QA
+  type: qa
+  question: 查看 journal 当前磁盘占用，命令是什么？
+  answer: '```bash
+
+    journalctl --disk-usage
+
+    ```'
+  extra: 它显示当前活动和归档 journal 的占用，不解释保留是否合理。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-retention
+  - card::command
+  - priority::P0
+- id: RHCSA-13-O03-QA-010
+  model: RedHat-QA
+  type: qa
+  question: '`--vacuum-time`、`--vacuum-size` 和 `--vacuum-files` 分别按什么清理？'
+  answer: 分别按归档记录年龄、总归档大小和归档文件数量清理。
+  extra: 执行前应确认审计与故障调查要求。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-retention
+  - card::comparison
+  - priority::P1
+- id: RHCSA-13-O03-QA-011
+  model: RedHat-QA
+  type: qa
+  question: 为什么不能把 vacuum 当作磁盘紧张时的默认第一步？
+  answer: vacuum 会删除历史证据。应先确认占用来源、保留要求和异常日志速率，再做最小清理。
+  extra: 排障或审计期间尤其要避免无条件删除。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-retention
+  - card::security
+  - priority::P0
+- id: RHCSA-13-O03-CLOZE-001
+  model: RedHat-Cloze
+  type: cloze
+  text: '`Storage=persistent` 使用 {{c1::/var/log/journal}}；`Storage=volatile` 使用 {{c2::/run/log/journal}}。'
+  extra: 实际状态还受目录可用性和配置覆盖影响。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::journal-persistence
+  - card::cloze
+  - priority::P0
+- id: RHCSA-13-O04-QA-001
+  model: RedHat-QA
+  type: qa
+  question: '`logger -p local0.notice` 中 `-p` 设置什么？'
+  answer: 设置 syslog facility 和 severity。
+  extra: 它不指定目标文件，目标由 rsyslog 规则决定。
+  source:
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logger-testing
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O04-QA-002
+  model: RedHat-QA
+  type: qa
+  question: '`logger -t exam-audit` 的作用是什么？'
+  answer: 把 `SYSLOG_IDENTIFIER`/tag 设置为 `exam-audit`，便于 journal 和文本日志检索。
+  extra: tag 不是进程可信身份。
+  source:
+  - logger(1)
+  - RH124 Ch.11
+  - systemd.journal-fields(7)
+  - journalctl(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logger-testing
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O04-QA-003
+  model: RedHat-QA
+  type: qa
+  question: '`logger -i` 与 `logger -s` 分别做什么？'
+  answer: '`-i` 在消息中带上 logger PID；`-s` 同时把消息写到标准错误。'
+  extra: 二者都不证明 rsyslog action 成功。
+  source:
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logger-testing
+  - card::parameter
+  - priority::P1
+- id: RHCSA-13-O04-QA-004
+  model: RedHat-QA
+  type: qa
+  question: 从文件逐行发送 syslog 测试消息，命令骨架是什么？
+  answer: '```bash
+
+    logger -f <FILE> -p local1.notice -t batch-test
+
+    ```'
+  extra: 发送前确认文件中没有敏感内容。
+  source:
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logger-testing
+  - card::command
+  - priority::P1
+- id: RHCSA-13-O04-QA-005
+  model: RedHat-QA
+  type: qa
+  question: 为什么测试消息正文应包含唯一 ID？
+  answer: 避免历史同名消息或其他管理员测试被误认为本次结果，并可跨 journal、本地文件和远端追踪。
+  extra: 每次修复后应生成新的 ID。
+  source:
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logger-testing
+  - card::verification
+  - priority::P0
+- id: RHCSA-13-O04-QA-006
+  model: RedHat-QA
+  type: qa
+  question: '`logger` 返回成功能证明什么，不能证明什么？'
+  answer: 只能证明本地发送调用没有立即失败；不能证明 selector 命中、目标文件写入或远端接收。
+  extra: 最终证据必须在目标层。
+  source:
+  - logger(1)
+  - RH124 Ch.11
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logger-testing
+  - card::boundary
+  - priority::P0
+- id: RHCSA-13-O05-QA-001
+  model: RedHat-QA
+  type: qa
+  question: 传统 rsyslog 本地文件规则的基本骨架是什么？
+  answer: '```text
+
+    facility.priority    /path/to/logfile
+
+    ```'
+  extra: 左侧选择消息，右侧执行文件写入 action。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::syntax
+  - priority::P0
+- id: RHCSA-13-O05-QA-002
+  model: RedHat-QA
+  type: qa
+  question: '`local0.notice` 与 `local0.=notice` 有什么区别？'
+  answer: 前者匹配 notice 以及更严重的 local0 消息；后者只匹配恰好 notice。
+  extra: 普通 selector priority 是阈值语义。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-O05-QA-003
+  model: RedHat-QA
+  type: qa
+  question: 传统 selector 中 `cron.none` 常用于什么？
+  answer: 从一个组合 selector 的目标中排除 cron facility 消息。
+  extra: 应结合整行规则阅读，不能单独作为 action。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::parameter
+  - priority::P1
+- id: RHCSA-13-O05-QA-004
+  model: RedHat-QA
+  type: qa
+  question: 自定义 rsyslog 规则通常放在哪里？
+  answer: '`/etc/rsyslog.d/*.conf`，主入口是 `/etc/rsyslog.conf`。'
+  extra: 确认主配置确实 include 该目录。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::configuration
+  - priority::P0
+- id: RHCSA-13-O05-QA-005
+  model: RedHat-QA
+  type: qa
+  question: '`rsyslogd -N1` 通过后，能否断定目标文件会收到消息？'
+  answer: 不能。它只检查配置可解析；还需验证规则加载、selector 命中、路径权限和 action 结果。
+  extra: 用唯一 `logger` 事件完成动态验证。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::boundary
+  - priority::P0
+- id: RHCSA-13-O05-QA-006
+  model: RedHat-QA
+  type: qa
+  question: 本地 rsyslog 路由最小动态验证链是什么？
+  answer: 写唯一事件；确认 journal 中出现；确认目标文件出现同一 ID；检查文件权限。
+  extra: journal 有而文件无时进入 rsyslog 层。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::verification
+  - priority::P0
+- id: RHCSA-13-O05-QA-007
+  model: RedHat-QA
+  type: qa
+  question: journal 有 TEST_ID，但目标文件没有。下一条最有区分度的证据是什么？
+  answer: 先运行 `rsyslogd -N1` 并检查 selector 的 facility/severity 与配置文件是否被 include。
+  extra: 随后再查 rsyslog 服务日志、路径权限和 SELinux。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-13-O05-QA-008
+  model: RedHat-QA
+  type: qa
+  question: 为什么写入自定义文件后消息仍可能出现在 `/var/log/messages`？
+  answer: rsyslog 通常继续处理后续规则，同一消息可以命中多个 action。
+  extra: 只有明确 stop 逻辑才阻止后续处理。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::boundary
+  - priority::P1
+- id: RHCSA-13-O05-QA-009
+  model: RedHat-QA
+  type: qa
+  question: 自定义日志路径因 SELinux 拒绝写入时，默认修复是否应关闭 SELinux？
+  answer: 不应。应确认 AVC、路径标签和策略，使用正确文件上下文或规则。
+  extra: 完整 SELinux 文件规则归第 29 章。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::security
+  - priority::P0
+- id: RHCSA-13-O05-CLOZE-001
+  model: RedHat-Cloze
+  type: cloze
+  text: rsyslog 变更先用 {{c1::rsyslogd -N1}} 检查语法，再用带唯一 ID 的 {{c2::logger}} 消息验证 action。
+  extra: 服务 active 不能替代消息级验收。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-local
+  - card::cloze
+  - priority::P0
+- id: RHCSA-13-O06-QA-001
+  model: RedHat-QA
+  type: qa
+  question: 传统 rsyslog 转发 action 中 `@` 与 `@@` 分别代表什么？
+  answer: '`@` 使用 UDP，`@@` 使用 TCP。'
+  extra: 两者都需要接收端最终验收。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-remote
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-O06-QA-002
+  model: RedHat-QA
+  type: qa
+  question: TCP 514 连接成功能否证明远端日志已落盘？
+  answer: 不能。它只证明部分网络和监听条件；接收规则、解析和文件 action 仍可能失败。
+  extra: 最终按同一 TEST_ID 在接收端验证。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-remote
+  - card::boundary
+  - priority::P0
+- id: RHCSA-13-O06-QA-003
+  model: RedHat-QA
+  type: qa
+  question: 远端 TCP forwarding 为什么常配置 action queue？
+  answer: 远端暂时不可用时，队列可缓冲消息并降低对本地日志处理的阻塞。
+  extra: 队列容量、持久化和丢弃策略仍需单独设计。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-remote
+  - card::concept
+  - priority::P1
+- id: RHCSA-13-O06-QA-004
+  model: RedHat-QA
+  type: qa
+  question: 远端日志不见了，应按什么层次调查？
+  answer: 客户端事件→客户端规则→名称解析→协议/端口→网络/防火墙→服务端监听→接收规则→最终落盘。
+  extra: 每层选择一条可区分的证据，不要只重启服务。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-13-O06-QA-005
+  model: RedHat-QA
+  type: qa
+  question: 远端转发的最终验收证据是什么？
+  answer: 接收端 journal 或目标文件中出现与客户端生成完全相同的唯一 TEST_ID。
+  extra: 客户端 journal 和服务状态只是中间证据。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-remote
+  - card::verification
+  - priority::P0
+- id: RHCSA-13-O06-QA-006
+  model: RedHat-QA
+  type: qa
+  question: 本章为什么不把 TLS、证书和完整磁盘队列作为 RHCSA 最小答案？
+  answer: 这些属于生产级可靠与安全扩展，需要更多对象和验证；本章只建立远端转发入口和证据链。
+  extra: 不能在未配置时声称传输已加密或可靠。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::rsyslog-remote
+  - card::boundary
+  - priority::P1
+- id: RHCSA-13-O07-QA-001
+  model: RedHat-QA
+  type: qa
+  question: logrotate 是常驻写日志服务吗？
+  answer: 不是。它在被 timer 或其他调度入口调用时读取配置和状态，判断并执行轮转。
+  extra: 文件写入由应用或 rsyslog 完成。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate
+  - card::concept
+  - priority::P0
+- id: RHCSA-13-O07-QA-002
+  model: RedHat-QA
+  type: qa
+  question: logrotate 的主配置和常见片段目录是什么？
+  answer: 主配置是 `/etc/logrotate.conf`，片段通常位于 `/etc/logrotate.d/`。
+  extra: 全局配置通常 include 片段目录。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate
+  - card::configuration
+  - priority::P0
+- id: RHCSA-13-O07-QA-003
+  model: RedHat-QA
+  type: qa
+  question: logrotate 状态文件解决什么问题？
+  answer: 记录上次轮转时间，使 daily、weekly、monthly 等条件能够跨多次调用判断。
+  extra: 默认状态路径应在目标 RHEL 9 环境确认。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-state
+  - card::concept
+  - priority::P0
+- id: RHCSA-13-O07-QA-004
+  model: RedHat-QA
+  type: qa
+  question: '`size`、`minsize` 与 `maxsize` 的核心区别是什么？'
+  answer: '`size` 按大小独立触发；`minsize` 要同时满足时间和最小大小；`maxsize` 可在时间尚未到时因过大提前轮转。'
+  extra: 与时间选项组合时应读 man page 和 debug 结果。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-policy
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-O07-QA-005
+  model: RedHat-QA
+  type: qa
+  question: '`rotate 7` 表示什么？'
+  answer: 最多保留七个旧轮转版本，超过后删除更旧版本。
+  extra: 它不表示保留七天，实际时间取决于轮转频率。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-policy
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O07-QA-006
+  model: RedHat-QA
+  type: qa
+  question: '`compress` 与 `delaycompress` 的关系是什么？'
+  answer: '`compress` 压缩旧日志；`delaycompress` 把最近一次归档的压缩推迟到下一轮。'
+  extra: 后者常用于写入进程可能短暂继续访问上一个文件的情况。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-policy
+  - card::comparison
+  - priority::P1
+- id: RHCSA-13-O07-QA-007
+  model: RedHat-QA
+  type: qa
+  question: '`missingok` 与 `notifempty` 分别避免什么？'
+  answer: '`missingok` 允许日志文件缺失；`notifempty` 避免轮转空文件。'
+  extra: 它们不会修复路径或写入问题。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-policy
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O07-QA-008
+  model: RedHat-QA
+  type: qa
+  question: '`create 0640 root root` 在什么时候做什么？'
+  answer: 轮转后、执行 postrotate 前创建新的同名活动文件，并设置模式、所有者和组。
+  extra: 权限必须匹配实际写入进程。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-policy
+  - card::parameter
+  - priority::P0
+- id: RHCSA-13-O07-QA-009
+  model: RedHat-QA
+  type: qa
+  question: '`logrotate -d` 与 `logrotate -f` 有什么根本区别？'
+  answer: '`-d` 只输出调试决策，不修改文件或状态；`-f` 强制执行真实轮转。'
+  extra: '`-f` 只能在明确测试对象上谨慎使用。'
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-testing
+  - card::comparison
+  - priority::P0
+- id: RHCSA-13-O07-QA-010
+  model: RedHat-QA
+  type: qa
+  question: 怎样用独立状态文件强制测试一个自包含的 logrotate 片段？
+  answer: '```bash
+
+    logrotate -s /tmp/test.status -f /etc/logrotate.d/<NAME>
+
+    ```'
+  extra: 该命令会真实改变目标文件；片段必须自包含。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-testing
+  - card::command
+  - priority::P1
+- id: RHCSA-13-O07-QA-011
+  model: RedHat-QA
+  type: qa
+  question: 文件很大但 logrotate 显示“不需要轮转”，下一步最有区分度的证据是什么？
+  answer: 运行 `logrotate -d /etc/logrotate.conf`，检查目标是否匹配、时间/大小组合和状态文件中的上次轮转时间。
+  extra: 不要先无条件 `-f`。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-13-O07-QA-012
+  model: RedHat-QA
+  type: qa
+  question: 为什么 rename/create 轮转后写入进程可能仍写旧归档？
+  answer: 进程仍持有指向旧 inode 的打开文件描述符；目录项改名不会自动改变该描述符。
+  extra: 需要应用支持的 reopen/reload。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-reopen
+  - card::concept
+  - priority::P0
+- id: RHCSA-13-O07-QA-013
+  model: RedHat-QA
+  type: qa
+  question: '`copytruncate` 的主要风险是什么？'
+  answer: 复制与截断之间存在很小的时间窗口，期间写入的日志可能丢失。
+  extra: 它是无法让应用 reopen 时的兼容方案，不是默认首选。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-reopen
+  - card::boundary
+  - priority::P0
+- id: RHCSA-13-O07-QA-014
+  model: RedHat-QA
+  type: qa
+  question: 怎样证明轮转后写入者已经切换到新活动文件？
+  answer: 轮转后生成新的唯一 TEST_ID，并确认它进入新的同名活动文件，而不是旧归档。
+  extra: 只看到 `.1` 或 `.gz` 不足以证明。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  - logger(1)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-reopen
+  - card::verification
+  - priority::P0
+- id: RHCSA-13-O07-QA-015
+  model: RedHat-QA
+  type: qa
+  question: logrotate 配置正确但从未自动执行，应检查哪些入口？
+  answer: 检查 `logrotate.timer`、`logrotate.service` 的调用记录和调度状态。
+  extra: timer 完整机制归第 15 章。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-state
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-13-O07-CLOZE-001
+  model: RedHat-Cloze
+  type: cloze
+  text: 解释轮转决策用 {{c1::logrotate -d}}；强制真实轮转用 {{c2::logrotate -f}}。
+  extra: '`-f` 会改变文件，不应在未知生产对象上随意执行。'
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::logrotate-testing
+  - card::cloze
+  - priority::P0
+- id: RHCSA-13-D01-QA-001
+  model: RedHat-QA
+  type: qa
+  question: journal 有测试消息、目标文件没有时，最小调查链是什么？
+  answer: '`rsyslogd -N1`→检查 selector 与 include→检查 rsyslog 服务日志→检查路径权限/SELinux→修复后生成新 TEST_ID。'
+  extra: 不要用旧测试消息验收新配置。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-13-D01-QA-002
+  model: RedHat-QA
+  type: qa
+  question: 只能看到当前 boot 时，最小调查链是什么？
+  answer: '`--list-boots`→有效 `Storage=`→`/var/log/journal`→`--disk-usage`→容量/保留配置→权限。'
+  extra: 修改持久化不能恢复已丢失历史。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-13-D01-QA-003
+  model: RedHat-QA
+  type: qa
+  question: 已生成轮转归档，但新活动文件不增长时，优先假设什么？
+  answer: 写入进程仍持有旧 inode；检查并执行应用支持的 reopen/reload，再发送新 TEST_ID。
+  extra: 不要仅靠重建空文件。
+  source:
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-13-D01-QA-004
+  model: RedHat-QA
+  type: qa
+  question: journal 占用过高时，为什么应先调查异常日志速率？
+  answer: 如果某服务持续产生日志，仅 vacuum 会暂时释放空间，根因仍会快速填满磁盘。
+  extra: 应同时检查来源、保留和容量边界。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-13-D01-QA-005
+  model: RedHat-QA
+  type: qa
+  question: 本章本地路由经典任务的验收矩阵是什么？
+  answer: 静态语法→唯一事件进入 journal→同一事件进入文件→权限正确→轮转决策→真实测试轮转→轮转后新事件进入新活动文件。
+  extra: 任何单一 active 状态都不足。
+  source:
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-13-D01-QA-006
+  model: RedHat-QA
+  type: qa
+  question: persistent journal 经典任务中，当前阶段与重启后分别验证什么？
+  answer: 当前验证有效配置、唯一事件和磁盘占用；重启后验证 `--list-boots` 和 `-b -1` 中的重启前事件。
+  extra: 无 live 重启时必须标记未执行。
+  source:
+  - journald.conf(5)
+  - systemd-journald.service(8)
+  - RH124 Ch.11
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-13-D01-QA-007
+  model: RedHat-QA
+  type: qa
+  question: 日志查询或服务命令执行成功，是否等于业务终态正确？
+  answer: 不等于。还需验证目标事件、文件/远端 action、轮转后写入和业务功能。
+  extra: 证据必须与题目终态逐项对应。
+  source:
+  - RH124 Ch.11
+  - journalctl(1)
+  - RHEL 9 Configuring basic system settings Ch.6
+  - rsyslog.conf(5)
+  - rsyslog official documentation
+  - RH124 Ch.11
+  - logrotate(8)
+  - RH124 Ch.11
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::boundary
+  - card::boundary
+  - priority::P0
+- id: RHCSA-13-D01-CLOZE-001
+  model: RedHat-Cloze
+  type: cloze
+  text: 稳定日志诊断遵循：{{c1::症状}} → {{c2::当前证据}} → {{c3::假设}} → {{c4::下一条最有区分度的证据}} → {{c5::最小修复}} → {{c6::再验证}}。
+  extra: 修复后使用新的唯一事件。
+  source:
+  - RHEL9-RHCSA-RHCE lecture architecture specification
+  tags:
+  - exam::rhcsa
+  - chapter::journald-rsyslog-logrotate
+  - topic::diagnosis
+  - card::cloze
+  - priority::P0

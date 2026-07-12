@@ -1,0 +1,1435 @@
+chapter_id: RHCSA-08
+chapter_slug: unix-permissions-umask-special-bits
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCSA-USERS-K02-QA-001
+  type: qa
+  question: 目录的 `r`、`w`、`x` 分别控制什么？
+  answer: '`r` 枚举目录项名称；`w` 修改目录项（创建、删除、改名）；`x` 搜索/穿越并访问已知名称。'
+  extra: 目录修改通常需要 `w+x`；这与普通文件的 `rwx` 语义不同。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::file-directory-semantics
+  - card::comparison
+  - priority::P0
+- id: RHCSA-USERS-K02-QA-002
+  type: qa
+  question: 删除一个文件主要取决于文件自身写权限还是父目录权限？
+  answer: 主要取决于父目录的写与执行权限。
+  extra: sticky 位可能继续限制删除者身份；文件自身 `w` 主要控制内容修改。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::parent-directory-control
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-USERS-K02-QA-003
+  type: qa
+  question: 用户既是文件 owner 又属于文件 group 时，权限会相加吗？
+  answer: 不会。匹配 owner 后只使用 owner 权限类，不再借用 group 或 other。
+  extra: owner、group、other 三类只选择一类。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::dac-selection
+  - card::concept
+  - priority::P0
+- id: RHCSA-USERS-K02-QA-004
+  type: qa
+  question: '`umask` 为 `0027`，程序按常见模式创建普通文件和目录时，结果是什么？'
+  answer: 普通文件通常为 `0640`，目录通常为 `0750`。
+  extra: 计算是请求模式按位清除 mask；程序可以主动请求更窄权限。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-calculation
+  - card::calculation
+  - priority::P0
+- id: RHCSA-USERS-K02-QA-005
+  type: qa
+  question: 只在当前 shell 执行 `umask 0027` 能否证明持久策略已配置？
+  answer: 不能。它只改变当前 shell 及其后代。
+  extra: 持久配置后应建立新登录会话，再创建文件和目录样本验证。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-persistence
+  - card::verification
+  - priority::P0
+- id: RHCSA-USERS-K02-QA-006
+  type: qa
+  question: 目录 setgid 位解决什么问题？
+  answer: 让目录中新建对象继承该目录的 group。
+  extra: 它不自动保证 group write，也不回溯修改已有对象。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::setgid-directory
+  - card::concept
+  - priority::P0
+- id: RHCSA-USERS-K02-QA-007
+  type: qa
+  question: 把 `/srv/project` 配为 owner/group 可完全访问、other 无权限，且新对象继承 group，应设置什么模式？
+  answer: '`chmod 2770 /srv/project`'
+  extra: 前导 `2` 是 setgid；还需设置正确 group，并验证创建者 umask。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::command
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-USERS-K02-QA-008
+  type: qa
+  question: 目录 sticky 位的核心效果是什么？
+  answer: 在公共可写目录中限制删除/改名，通常只允许文件 owner、目录 owner 或特权主体操作。
+  extra: 典型公共临时目录模式为 `1777`；sticky 不控制文件内容读取。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::sticky-directory
+  - card::concept
+  - priority::P0
+- id: RHCSA-USERS-O01-QA-001
+  type: qa
+  question: setgid 协作目录中，新文件 group 正确但组员仍不能写，优先检查什么？
+  answer: 检查创建进程的 `umask`；若目录存在 default ACL，再转入 ACL 继承与 mask。
+  extra: setgid 只负责 group 继承。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::diagnosis
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-USERS-O01-QA-002
+  type: qa
+  question: 怎样用 bob 的实际身份测试其能否向项目文件追加内容？
+  answer: '`sudo -u bob sh -c ''echo test >> /srv/project/file''`'
+  extra: 实际写入比只看 mode 更能暴露身份、路径和文件权限问题。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::actual-user-test
+  - card::verification
+  - priority::P0
+- id: RHCSA-USERS-D01-QA-001
+  type: qa
+  question: '`Permission denied` 的推荐分层调查顺序是什么？'
+  answer: 目标进程 `id` → 父路径 `namei -l` → 对象 `stat` → 判断选中的 owner/group/other → 最小修复 → 实际用户重试；DAC 正确后再看 ACL 和 SELinux。
+  extra: 不要从 `chmod 777` 开始。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::permission-denied
+  - card::process
+  - priority::P0
+- id: RHCSA-USERS-C01-QA-001
+  type: qa
+  question: 不用 ACL 建立团队协作目录时，关键配置与验证骨架是什么？
+  answer: 目录目标 group → `2770` setgid → 创建者使用允许组写的 umask → 用户 A 创建 → 用户 B 修改 → 非成员负向测试。
+  extra: 每一层分别解决 group 继承、创建 mode 和真实功能。
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::process
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-USERS-K02-CLOZE-001
+  type: cloze
+  text: 协作目录 setgid 模式常写 `{{c1::2770}}`；公共可写且限制互删的目录常写 `{{c2::1777}}`。
+  extra: '`2`=setgid，`1`=sticky。'
+  source:
+  - RH124 Ch.7
+  - repository users-permissions@39e873d
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::special-bits
+  - card::cloze
+  - priority::P0
+- id: RHCSA-08-K01-QA-001
+  type: qa
+  question: 传统权限检查使用用户名字符串还是进程凭据？
+  answer: 使用访问进程的有效 UID、有效 GID 和附加组等凭据。
+  extra: 名称只是 UID/GID 的可读映射。
+  source:
+  - path_resolution(7)
+  - credentials(7)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::dac-selection
+  - card::concept
+  - priority::P0
+- id: RHCSA-08-K01-QA-002
+  type: qa
+  question: 判断某用户对文件的传统权限时，owner/group/other 的选择顺序是什么？
+  answer: 有效 UID 命中 owner 就用 owner；否则有效 GID或附加组命中文件 group 就用 group；否则用 other。
+  extra: 命中某一类后不会因权限不足而回退。
+  source:
+  - path_resolution(7)
+  - inode(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::dac-selection
+  - card::process
+  - priority::P0
+- id: RHCSA-08-K01-QA-003
+  type: qa
+  question: 文件为 `-r--rw---- alice project data`，alice 也属于 project。alice 能写吗？
+  answer: 不能。alice 命中 owner，只使用 `r--`。
+  extra: group 的 `rw-` 不会与 owner 相加。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::dac-selection
+  - card::output
+  - priority::P1
+- id: RHCSA-08-K01-QA-004
+  type: qa
+  question: '`id alice` 与在 alice 当前登录 shell 中执行 `id` 分别证明什么？'
+  answer: 前者查询账号应有身份；后者显示当前进程实际携带的身份。
+  extra: 组成员刚变更时，两者可能暂时不同。
+  source:
+  - id(1)
+  - RH124 Ch.6-7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::identity-state
+  - card::comparison
+  - priority::P0
+- id: RHCSA-08-K01-QA-005
+  type: qa
+  question: 用户已被加入 project 组，但旧 shell 仍无法使用 group 权限，最可能原因是什么？
+  answer: 现有进程的附加组集合未刷新。
+  extra: 重新建立登录会话后再验证。
+  source:
+  - RH124 Ch.6-7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::identity-state
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-08-K01-QA-006
+  type: qa
+  question: 为什么不能用 root 成功读取文件来证明普通用户权限正确？
+  answer: 特权进程可以绕过许多普通 DAC 检查，root 成功不是普通用户功能证据。
+  extra: 必须以题目指定用户重试原始动作。
+  source:
+  - capabilities(7)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::dac-selection
+  - card::boundary
+  - priority::P1
+- id: RHCSA-08-K01-QA-007
+  type: qa
+  question: “能访问文件”为什么不是合格的权限验收目标？
+  answer: 因为读取、写入、执行、创建、删除和穿越需要检查的对象与权限位不同。
+  extra: 应把目标改写成具体动作。
+  source:
+  - RH124 Ch.7
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::dac-selection
+  - card::comparison
+  - priority::P1
+- id: RHCSA-08-K02-QA-001
+  type: qa
+  question: 普通文件的 `r`、`w`、`x` 分别控制什么？
+  answer: 读取内容、修改/截断内容、把文件作为程序直接执行。
+  extra: 直接执行还受格式、解释器、挂载和其他安全层影响。
+  source:
+  - RH124 Ch.7
+  - inode(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::file-semantics
+  - card::comparison
+  - priority::P0
+- id: RHCSA-08-K02-QA-002
+  type: qa
+  question: 用户对目录只有 `--x`，但知道其中某文件的准确名称，可能发生什么？
+  answer: 不能枚举目录名称，但若后续对象权限允许，可能通过准确名称继续访问。
+  extra: '`x` 是 search/穿越。'
+  source:
+  - RH124 Ch.7
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::directory-semantics
+  - card::output
+  - priority::P0
+- id: RHCSA-08-K02-QA-003
+  type: qa
+  question: 用户对目录只有 `r--`，执行 `ls DIR` 可能看到名称，为何仍无法读取条目元数据？
+  answer: 因为缺少目录 `x`，不能搜索条目并继续路径解析。
+  extra: 通常只读目录需要 `r+x`。
+  source:
+  - RH124 Ch.7
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::directory-semantics
+  - card::output
+  - priority::P0
+- id: RHCSA-08-K02-QA-004
+  type: qa
+  question: 修改文件内容与删除文件名分别主要检查哪个对象？
+  answer: 改内容主要检查文件 `w`；删除文件名主要检查父目录 `w+x`。
+  extra: sticky 位可能继续限制删除。
+  source:
+  - RH124 Ch.7
+  - unlink(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::parent-directory-control
+  - card::comparison
+  - priority::P0
+- id: RHCSA-08-K02-QA-005
+  type: qa
+  question: 文件是只读 `0444`，用户仍能删除它，最合理的传统权限解释是什么？
+  answer: 用户对父目录具有 `w+x`，删除的是目录项。
+  extra: 文件自身 `w` 不是删除的主要控制点。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::parent-directory-control
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-08-K02-QA-006
+  type: qa
+  question: 读取 `/a/b/c.txt` 时，传统权限至少要满足怎样的路径条件？
+  answer: 对 `/`、`/a`、`/a/b` 均有 search (`x`)，并对 `c.txt` 有读取权限。
+  extra: 任一级父目录缺 `x` 都会阻断。
+  source:
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::path-traversal
+  - card::process
+  - priority::P0
+- id: RHCSA-08-K02-QA-007
+  type: qa
+  question: 在目录中创建新文件通常需要哪两个普通权限位？
+  answer: 父目录的 `w+x`。
+  extra: '`w` 修改目录项，`x` 允许搜索并完成路径操作。'
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::directory-semantics
+  - card::comparison
+  - priority::P1
+- id: RHCSA-08-K02-QA-008
+  type: qa
+  question: 脚本没有执行位，但 `bash script.sh` 可以运行。这能否证明脚本满足“可直接执行”要求？
+  answer: 不能。解释器读取脚本绕过了脚本自身的直接执行检查。
+  extra: 应按题意验证 `./script.sh`。
+  source:
+  - bash(1)
+  - execve(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::file-semantics
+  - card::boundary
+  - priority::P1
+- id: RHCSA-08-O01-QA-001
+  type: qa
+  question: 查看目录本身而不是其内容的长格式命令是什么？
+  answer: '`ls -ld <DIR>`'
+  extra: '`ls -l <DIR>` 默认列出目录内容。'
+  source:
+  - ls(1)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O01-QA-002
+  type: qa
+  question: 同时显示对象类型、符号 mode、八进制 mode、owner/group 的 `stat` 骨架是什么？
+  answer: '`stat -c ''%F | %A | %a | %U:%G | %n'' <PATH>`'
+  extra: 需要数字 UID/GID 时再加入 `%u:%g`。
+  source:
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O01-QA-003
+  type: qa
+  question: 逐级显示完整路径每个分量的类型、owner/group 和 mode，用什么命令？
+  answer: '`namei -l <ABSOLUTE_PATH>`'
+  extra: 结合目标用户 `id` 判断每一级选中的权限类。
+  source:
+  - namei(1)
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::path-traversal
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O01-QA-004
+  type: qa
+  question: '`-rwsr-xr-x` 中 owner 执行位显示 `s`，表示什么？'
+  answer: setuid 已设置，且 owner execute 也已设置。
+  extra: 八进制特殊位含 `4`。
+  source:
+  - ls(1)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::special-output
+  - card::output
+  - priority::P0
+- id: RHCSA-08-O01-QA-005
+  type: qa
+  question: '`-rwSr-xr-x` 中大写 `S` 表示什么？'
+  answer: setuid 已设置，但 owner execute 未设置。
+  extra: 大写不是更强，而是相应执行位缺失。
+  source:
+  - ls(1)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::special-output
+  - card::output
+  - priority::P0
+- id: RHCSA-08-O01-QA-006
+  type: qa
+  question: '`drwxrwxrwt` 中最后的 `t` 表示什么？'
+  answer: sticky 已设置，且 other execute/search 也存在。
+  extra: 典型公共可写目录常见该形式。
+  source:
+  - ls(1)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::special-output
+  - card::output
+  - priority::P0
+- id: RHCSA-08-O01-QA-007
+  type: qa
+  question: '`ls -l` 权限串末尾出现 `+` 时，应得出什么最小结论？'
+  answer: 对象存在扩展 ACL；传统 mode 不是完整授权证据。
+  extra: 完整 ACL 解释留给第 09 章。
+  source:
+  - ls(1)
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::evidence
+  - card::boundary
+  - priority::P1
+- id: RHCSA-08-O01-QA-008
+  type: qa
+  question: 为什么 `stat` 显示 `0660 alice:project` 仍不能证明 bob 能写？
+  answer: bob 可能没有当前组身份、父路径缺 `x`，或仍受 ACL/SELinux 等限制。
+  extra: 最终应以 bob 实际写入验证。
+  source:
+  - RH124 Ch.7
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::evidence
+  - card::verification
+  - priority::P0
+- id: RHCSA-08-O02-QA-001
+  type: qa
+  question: '`chmod` 符号模式的核心结构是什么？'
+  answer: '`chmod [ugoa][+-=][rwxXst] <PATH>`'
+  extra: who、操作符和权限集合分别表达对象类别、增删替换和位。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-symbolic
+  - card::syntax
+  - priority::P0
+- id: RHCSA-08-O02-QA-002
+  type: qa
+  question: 只给 group 增加写权限，不改变其他位，命令是什么？
+  answer: '`chmod g+w <PATH>`'
+  extra: 这是增量修改。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-symbolic
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O02-QA-003
+  type: qa
+  question: 删除 other 的全部普通权限，命令是什么？
+  answer: '`chmod o-rwx <PATH>`'
+  extra: 随后用 `stat` 检查精确终态。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-symbolic
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O02-QA-004
+  type: qa
+  question: '`chmod g=rw file` 与 `chmod g+rw file` 的区别是什么？'
+  answer: '`=` 用 `rw` 替换 group 权限；`+` 只添加 r/w，保留 group 已有其他位。'
+  extra: 精确替换与增量修改要按任务选择。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-symbolic
+  - card::comparison
+  - priority::P1
+- id: RHCSA-08-O02-QA-005
+  type: qa
+  question: '`rwxr-x---` 的八进制模式是什么？'
+  answer: '`0750`'
+  extra: owner 7，group 5，other 0。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-octal
+  - card::calculation
+  - priority::P0
+- id: RHCSA-08-O02-QA-006
+  type: qa
+  question: 把普通文件精确设为 owner 读写、group 只读、other 无权限，命令是什么？
+  answer: '`chmod 0640 <FILE>`'
+  extra: 八进制表达整个 mode 终态。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-octal
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O02-QA-007
+  type: qa
+  question: 符号模式中的大写 `X` 何时添加执行/search 位？
+  answer: 对象是目录，或该对象原本任一类别已有执行位时。
+  extra: 适合目录树，但仍需盘点已有可执行文件。
+  source:
+  - chmod(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-X
+  - card::parameter
+  - priority::P0
+- id: RHCSA-08-O02-QA-008
+  type: qa
+  question: 递归给组增加读写并允许穿越目录，为何通常评估 `g+rwX` 而不是 `g+rwx`？
+  answer: '`X` 不会无条件把普通、原本不可执行的数据文件变成可执行。'
+  extra: 有任一执行位的文件仍可能被 `X` 添加 group execute。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-X
+  - card::comparison
+  - priority::P0
+- id: RHCSA-08-O02-QA-009
+  type: qa
+  question: 为什么脚本中不推荐省略 `chmod` 的 who 部分，例如只写 `chmod +x file`？
+  answer: 省略 who 时当前 umask 可能影响被修改的类别，终态不够明确。
+  extra: 显式写 `a+x`、`u+x` 等更可预测。
+  source:
+  - chmod(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-symbolic
+  - card::boundary
+  - priority::P1
+- id: RHCSA-08-O02-QA-010
+  type: qa
+  question: 权限故障时为什么不应先执行 `chmod 777`？
+  answer: 它会无差别开放权限并掩盖主体、路径、所有权、ACL 或 SELinux 的真实问题。
+  extra: 应定位第一处阻断并做最小修改。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-security
+  - card::security
+  - priority::P0
+- id: RHCSA-08-O03-QA-001
+  type: qa
+  question: 只把文件 owner 改为 alice，命令是什么？
+  answer: '`chown alice <FILE>`'
+  extra: 操作后用 `stat` 核对 UID。
+  source:
+  - chown(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::ownership
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O03-QA-002
+  type: qa
+  question: 只把文件 group 改为 project，可用哪两种等价骨架？
+  answer: '`chown :project <FILE>` 或 `chgrp project <FILE>`。'
+  extra: 推荐冒号语法，避免旧式点号歧义。
+  source:
+  - chown(1)
+  - chgrp(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::ownership
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O03-QA-003
+  type: qa
+  question: 同时把 owner/group 改为 alice:project，命令是什么？
+  answer: '`chown alice:project <PATH>`'
+  extra: 这是所有权修改，不自动改变 mode。
+  source:
+  - chown(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::ownership
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O03-QA-004
+  type: qa
+  question: 普通用户能否把自己文件的 owner 任意改给另一个用户？
+  answer: 通常不能；任意转让 owner 需要特权。
+  extra: 普通 owner 通常只能把 group 改到自己所属的组。
+  source:
+  - chown(1)
+  - chown(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::ownership
+  - card::boundary
+  - priority::P0
+- id: RHCSA-08-O03-QA-005
+  type: qa
+  question: '`chmod` 与 `chown` 分别改变什么？'
+  answer: '`chmod` 改 mode bits；`chown` 改 owner/group UID/GID。'
+  extra: 一种操作不会自动补齐另一种状态。
+  source:
+  - chmod(1)
+  - chown(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::ownership
+  - card::comparison
+  - priority::P1
+- id: RHCSA-08-O03-QA-006
+  type: qa
+  question: 为什么 `chown` 或写入特权可执行文件后要重新检查 setuid/setgid？
+  answer: 内核或工具可能出于安全原因清除这些特殊位。
+  extra: 用 `stat` 重新读取 mode。
+  source:
+  - chown(2)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::ownership
+  - card::boundary
+  - priority::P1
+- id: RHCSA-08-O03-QA-007
+  type: qa
+  question: 执行 `chown -R` 前至少要确认哪些范围风险？
+  answer: 绝对路径、挂载点/其他文件系统、符号链接、子对象是否都应改变，以及依赖旧所有权的服务。
+  extra: 先建立清单再递归。
+  source:
+  - chown(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::ownership-recursive
+  - card::security
+  - priority::P0
+- id: RHCSA-08-O03-QA-008
+  type: qa
+  question: 为什么推荐 `chown owner:group` 而不是旧式 `owner.group`？
+  answer: 点号可以出现在用户名中，可能产生解析歧义；冒号更明确。
+  extra: RH124 也推荐冒号形式。
+  source:
+  - chown(1)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::ownership
+  - card::syntax
+  - priority::P1
+- id: RHCSA-08-K03-QA-001
+  type: qa
+  question: '`umask` 的正确权限模型是什么？'
+  answer: 最终 mode = 程序请求 mode 按位清除 umask 中为 1 的位。
+  extra: 可写为 `requested & ~umask`。
+  source:
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-08-K03-QA-002
+  type: qa
+  question: 为什么 `umask 0000` 通常不会让新普通文件自动具有执行位？
+  answer: 普通文件创建程序通常只请求 `0666`，请求中没有执行位。
+  extra: umask 只能清除，不能增加。
+  source:
+  - umask(2)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-08-K03-QA-003
+  type: qa
+  question: '`umask 0007` 下，按常见请求创建文件和目录，结果是什么？'
+  answer: 文件 `0660`，目录 `0770`。
+  extra: 适合 owner/group 协作并屏蔽 other。
+  source:
+  - umask(2)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-calculation
+  - card::calculation
+  - priority::P0
+- id: RHCSA-08-K03-QA-004
+  type: qa
+  question: '`umask 0077` 下，按常见请求创建文件和目录，结果是什么？'
+  answer: 文件 `0600`，目录 `0700`。
+  extra: 仅 owner 可访问。
+  source:
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-calculation
+  - card::calculation
+  - priority::P0
+- id: RHCSA-08-K03-QA-005
+  type: qa
+  question: 为什么不能把 umask 计算理解成普通八进制减法？
+  answer: 真实算法是逐位清除；mask 不会通过借位影响其他权限位。
+  extra: 使用 `requested & ~mask` 或逐位表。
+  source:
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-08-K03-QA-006
+  type: qa
+  question: 程序请求 `0600`、umask 为 `0022` 时，最终模式是什么？
+  answer: '`0600`。'
+  extra: umask 不会把程序未请求的 group/other 权限加回来。
+  source:
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-08-K03-QA-007
+  type: qa
+  question: 父目录存在 default ACL 时，为什么不能只按 umask 表推断新对象权限？
+  answer: 创建会进入 default ACL 继承路径，并受 ACL mask/请求 mode 等限制。
+  extra: 完整机制归第 09 章。
+  source:
+  - umask(2)
+  - acl(5)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-acl-boundary
+  - card::boundary
+  - priority::P0
+- id: RHCSA-08-O04-QA-001
+  type: qa
+  question: 查看当前 shell 数值 umask 的命令是什么？
+  answer: '`umask`'
+  extra: 它是当前进程状态。
+  source:
+  - bash(1)
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-operation
+  - card::command
+  - priority::P0
+- id: RHCSA-08-O04-QA-002
+  type: qa
+  question: 以符号形式查看当前 shell 创建权限允许集合的命令是什么？
+  answer: '`umask -S`'
+  extra: 其输出不是 mask 数字本身。
+  source:
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-operation
+  - card::command
+  - priority::P1
+- id: RHCSA-08-O04-QA-003
+  type: qa
+  question: 验证 `umask 0007` 的最小样本流程是什么？
+  answer: 在同一 shell 设置 mask，分别创建新文件和新目录，再用 `stat` 检查 mode。
+  extra: 旧对象不受 umask 影响。
+  source:
+  - RH124 Ch.7
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-08-O04-QA-004
+  type: qa
+  question: 验证用户持久 umask 的完整链路是什么？
+  answer: 修改与目标会话匹配的配置来源 → 建立新登录会话 → 执行 `umask` → 创建文件/目录 → `stat`。
+  extra: 只看配置文件或当前 shell 都不够。
+  source:
+  - bash(1)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-persistence
+  - card::process
+  - priority::P0
+- id: RHCSA-08-O04-QA-005
+  type: qa
+  question: 为什么不能宣称把 umask 写入某一个文件就会覆盖所有服务和任务？
+  answer: 登录 shell、非登录 shell、PAM、systemd service 和应用自身可能使用不同初始化路径。
+  extra: 先明确目标会话入口。
+  source:
+  - bash(1)
+  - pam_umask(8)
+  - systemd.exec(5)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-persistence
+  - card::boundary
+  - priority::P1
+- id: RHCSA-08-O04-QA-006
+  type: qa
+  question: 为什么验证 umask 时应删除旧样本并重新创建？
+  answer: umask 只在对象创建时作用，已有对象不会随 mask 改变。
+  extra: 对旧文件执行 `stat` 不能证明新策略。
+  source:
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-operation
+  - card::verification
+  - priority::P1
+- id: RHCSA-08-K04-QA-001
+  type: qa
+  question: 四位八进制 mode 的首位中，`4`、`2`、`1` 分别表示什么？
+  answer: setuid、setgid、sticky。
+  extra: 它们可组合。
+  source:
+  - chmod(1)
+  - inode(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::special-bits
+  - card::calculation
+  - priority::P0
+- id: RHCSA-08-K04-QA-002
+  type: qa
+  question: setuid 普通可执行文件运行时主要改变进程哪项身份？
+  answer: 有效 UID 通常取文件 owner。
+  extra: 真实 UID 仍用于表示发起用户。
+  source:
+  - execve(2)
+  - credentials(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::setuid
+  - card::concept
+  - priority::P0
+- id: RHCSA-08-K04-QA-003
+  type: qa
+  question: setgid 普通可执行文件运行时主要改变什么？
+  answer: 有效 GID 通常取文件 group。
+  extra: 不要与 setgid 目录组继承混为一谈。
+  source:
+  - execve(2)
+  - credentials(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::setgid-file
+  - card::concept
+  - priority::P1
+- id: RHCSA-08-K04-QA-004
+  type: qa
+  question: 怎样验证 setgid 目录真正实现了组继承？
+  answer: 以目标普通用户在目录中新建文件/子目录，再用 `stat` 检查新对象 group。
+  extra: 只看目录 `2770` 不够。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::setgid-directory
+  - card::verification
+  - priority::P0
+- id: RHCSA-08-K04-QA-005
+  type: qa
+  question: setgid 目录中新建子目录通常还会继承什么特殊状态？
+  answer: 新子目录通常继承父目录 group，并保留 setgid 位。
+  extra: 这样更深层对象继续继承组。
+  source:
+  - inode(7)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::setgid-directory
+  - card::output
+  - priority::P1
+- id: RHCSA-08-K04-QA-006
+  type: qa
+  question: sticky 目录限制的是文件内容写入还是目录项删除/重命名？
+  answer: 主要限制公共可写目录中的删除和重命名。
+  extra: 内容读写仍看文件自身权限。
+  source:
+  - inode(7)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::sticky-directory
+  - card::comparison
+  - priority::P0
+- id: RHCSA-08-K04-QA-007
+  type: qa
+  question: 目录模式 `1777` 表达什么？
+  answer: 所有用户可读/写/穿越目录，且 sticky 限制互相删除或改名。
+  extra: 典型用于公共临时目录。
+  source:
+  - chmod(1)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::sticky-directory
+  - card::output
+  - priority::P0
+- id: RHCSA-08-K04-QA-008
+  type: qa
+  question: '`drwxrwxr-T` 中 `T` 表示什么？'
+  answer: sticky 已设置，但 other search/execute 未设置。
+  extra: 是否正确取决于任务终态；大写通常提示缺少相应 `x`。
+  source:
+  - ls(1)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::special-output
+  - card::output
+  - priority::P0
+- id: RHCSA-08-K04-QA-009
+  type: qa
+  question: 为什么不应把 setuid shell 脚本当作普通提权方案？
+  answer: Linux 通常忽略脚本 setuid 语义，且解释器/可修改内容会带来严重安全风险。
+  extra: 本章只理解机制，不设计自定义 setuid 工具。
+  source:
+  - execve(2)
+  - capabilities(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::setuid
+  - card::security
+  - priority::P1
+- id: RHCSA-08-O05-QA-001
+  type: qa
+  question: 传统权限协作目录中，setgid 与 `umask 0007` 分别解决什么？
+  answer: setgid 解决新对象 group 继承；`0007` 让典型新对象保留 owner/group 权限并屏蔽 other。
+  extra: 两者不能互相替代。
+  source:
+  - RH124 Ch.7
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::process
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-08-O05-QA-002
+  type: qa
+  question: 一次创建 `/srv/techdocs` 并设为 `root:techdocs 2770` 的命令骨架是什么？
+  answer: '`install -d -o root -g techdocs -m 2770 /srv/techdocs`'
+  extra: 已有目录应先调查并做最小变更。
+  source:
+  - install(1)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::command
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-08-O05-QA-003
+  type: qa
+  question: 协作目录中为什么要用用户 A 创建、用户 B 修改？
+  answer: 它同时验证创建者身份、组继承、文件 group write 和第二成员实际组身份。
+  extra: 单用户测试无法证明协作。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::verification
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-08-O05-QA-004
+  type: qa
+  question: 协作目录为什么还需要非成员负向测试？
+  answer: 确认 other 没有被意外授予穿越、创建或写入能力。
+  extra: 正向成功不代表最小权限。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::verification
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-08-O05-QA-005
+  type: qa
+  question: 目录后来加上 setgid，已有文件会自动改成目录 group 吗？
+  answer: 不会。setgid 影响之后创建的新对象，已有对象需要单独迁移。
+  extra: 迁移前先盘点 owner/group/mode。
+  source:
+  - inode(7)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::boundary
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-08-O05-QA-006
+  type: qa
+  question: 新文件 mode 为 `0644`、group 已继承 techdocs，导致 bob 不能写。最小调查方向是什么？
+  answer: 检查创建进程实际 umask 或 default ACL，而不是重复设置目录 setgid。
+  extra: 组继承已经成功，缺的是新文件 group write。
+  source:
+  - RH124 Ch.7
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::diagnosis
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-08-D01-QA-001
+  type: qa
+  question: 最终文件 `0640 root:analysts`，dana 属于 analysts 但 `cat` 失败。下一条最有区分度的证据是什么？
+  answer: '`namei -l <完整路径>`，逐级检查父目录 search 权限。'
+  extra: 最终文件 group read 已支持读取假设。
+  source:
+  - namei(1)
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::permission-denied
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-08-D01-QA-002
+  type: qa
+  question: '`namei -l` 显示中间目录为 `drwxr----- root analysts`，dana 属于 analysts。阻断位是什么？'
+  answer: group 缺少 `x`，因此不能穿越。
+  extra: group `r` 只能枚举名称，不能继续路径解析。
+  source:
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::permission-denied
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-08-D01-QA-003
+  type: qa
+  question: 只给 analysts 增加 `/srv/reports` 的穿越能力，最小命令是什么？
+  answer: '`chmod g+x /srv/reports`'
+  extra: 不要无关地修改最终文件或 other。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::permission-denied
+  - card::command
+  - priority::P0
+- id: RHCSA-08-D01-QA-004
+  type: qa
+  question: 最小修复后应怎样再验证？
+  answer: 用同一个目标用户重做原始动作，再用非授权用户做负向测试。
+  extra: 保持主体、路径和动作一致。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::permission-denied
+  - card::verification
+  - priority::P0
+- id: RHCSA-08-D01-QA-005
+  type: qa
+  question: '`id`、`namei` 和 `stat` 均表明传统权限允许，但操作仍被拒绝，下一步是什么？'
+  answer: 检查 ACL/mask，再检查 SELinux AVC 与上下文等其他安全层。
+  extra: 不要继续无目的放宽 mode。
+  source:
+  - acl(5)
+  - selinux(8)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::permission-denied
+  - card::boundary
+  - priority::P0
+- id: RHCSA-08-D02-QA-001
+  type: qa
+  question: 为什么 `chmod -R 777 <DIR>` 是高风险修复？
+  answer: 它会给所有对象和主体开放权限，并可能把数据文件变成可执行，掩盖真正阻断点。
+  extra: 还可能破坏整个目录树的安全边界。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::recursive-risk
+  - card::security
+  - priority::P0
+- id: RHCSA-08-D02-QA-002
+  type: qa
+  question: 递归修改前，用什么 `find` 骨架记录类型、mode、owner/group 和路径？
+  answer: '`find <DIR> -xdev -printf ''%y %m %u:%g %p\n''`'
+  extra: 是否使用 `-xdev` 取决于任务是否允许跨文件系统。
+  source:
+  - find(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::recursive-risk
+  - card::command
+  - priority::P1
+- id: RHCSA-08-D02-QA-003
+  type: qa
+  question: 为什么目录树权限迁移常把目录和普通文件分开处理？
+  answer: 目录需要 search `x`，普通数据文件通常不应无条件获得执行位。
+  extra: 可用 `find -type d` 与 `find -type f` 限定。
+  source:
+  - find(1)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::recursive-risk
+  - card::comparison
+  - priority::P0
+- id: RHCSA-08-D02-QA-004
+  type: qa
+  question: 递归 `chmod/chown` 时为何必须明确符号链接策略？
+  answer: 跟随链接可能把变更扩散到目录树外；不跟随又可能与任务目标不同。
+  extra: 查看 man page 中 `-H/-L/-P` 等行为。
+  source:
+  - chown(1)
+  - chmod(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::recursive-risk
+  - card::boundary
+  - priority::P0
+- id: RHCSA-08-D02-QA-005
+  type: qa
+  question: 递归变更后为什么不能只检查根目录？
+  answer: 根目录正确不能证明所有子对象的 mode、owner/group 和对象类型都正确。
+  extra: 应全量静态核对并做多层、多身份功能抽样。
+  source:
+  - find(1)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::recursive-risk
+  - card::verification
+  - priority::P1
+- id: RHCSA-08-C01-QA-001
+  type: qa
+  question: 任务要求 `root:techdocs 2770`、新文件 `0660`、新目录 `2770`。配置与验收顺序是什么？
+  answer: 确认用户组 → 创建/修复目录 owner/group/mode → 配置新登录 umask `0007` → alice 创建 → `stat` → bob 修改 → carol 负向测试。
+  extra: 不使用 ACL 或 `777`。
+  source:
+  - RH124 Ch.7
+  - RHCSA9 Mock
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::classic-team-directory
+  - card::task
+  - priority::P0
+  - task::team-directory
+- id: RHCSA-08-C01-QA-002
+  type: qa
+  question: 经典协作任务中，alice 新文件为 `alice:techdocs 0660`，但 bob 仍写失败，下一条证据是什么？
+  answer: 以 bob 实际身份执行 `id`，再用 `namei -l` 检查路径。
+  extra: 文件静态 group/mode 已正确，先验证主体和路径。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::classic-team-directory
+  - card::diagnosis
+  - priority::P1
+  - task::team-directory
+- id: RHCSA-08-C02-QA-001
+  type: qa
+  question: 文件本身 group 可读，但目标组员读取失败。最小完整诊断链是什么？
+  answer: 目标用户 `id` → `stat` 最终文件 → `namei -l` 路径 → 找第一处缺 `x` → 最小修改 → 同用户复验 → 非成员负向测试。
+  extra: 不要直接改成 world-readable。
+  source:
+  - path_resolution(7)
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::classic-path-diagnosis
+  - card::task
+  - priority::P0
+  - task::path-diagnosis
+- id: RHCSA-08-C02-QA-002
+  type: qa
+  question: 路径诊断任务明确“不使用 ACL/SELinux”。这意味着发现 mode 正确后应怎样记录？
+  answer: 记录传统 DAC 未发现阻断，并把 ACL/SELinux 标为任务边界外的后续证据，而不是编造修复。
+  extra: 本章也未执行 live test。
+  source:
+  - chapter-work-order
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::classic-path-diagnosis
+  - card::boundary
+  - priority::P1
+  - task::path-diagnosis
+- id: RHCSA-08-K01-CLOZE-001
+  type: cloze
+  text: 传统 DAC 中，若有效 UID 命中对象 owner，则只使用 {{c1::owner}} 位，不会继续借用 {{c2::group 或 other}}。
+  extra: 权限类不叠加。
+  source:
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::dac-selection
+  - card::cloze
+  - priority::P0
+- id: RHCSA-08-K02-CLOZE-001
+  type: cloze
+  text: 目录的 `r` 用于 {{c1::枚举名称}}，`w` 用于 {{c2::修改目录项}}，`x` 用于 {{c3::搜索/穿越}}。
+  extra: 创建、删除和改名通常需要 `w+x`。
+  source:
+  - RH124 Ch.7
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::directory-semantics
+  - card::cloze
+  - priority::P0
+- id: RHCSA-08-O02-CLOZE-001
+  type: cloze
+  text: 八进制权限中，`r={{c1::4}}`、`w={{c2::2}}`、`x={{c3::1}}`。
+  extra: 每类权限分别求和。
+  source:
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::chmod-octal
+  - card::cloze
+  - priority::P0
+- id: RHCSA-08-K03-CLOZE-001
+  type: cloze
+  text: 新对象传统权限的基本公式是 `{{c1::requested mode}} & ~{{c2::umask}}`。
+  extra: umask 只能清除权限位。
+  source:
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-08-K03-CLOZE-002
+  type: cloze
+  text: 典型请求下，`umask 0007` 得到文件 `{{c1::0660}}`、目录 `{{c2::0770}}`。
+  extra: 适合传统组协作。
+  source:
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::umask-calculation
+  - card::cloze
+  - priority::P0
+- id: RHCSA-08-K04-CLOZE-001
+  type: cloze
+  text: 特殊位显示中，小写 `s/t` 表示相应 {{c1::执行/search 位也存在}}；大写 `S/T` 表示 {{c2::相应执行/search 位缺失}}。
+  extra: 大写通常需要进一步核对。
+  source:
+  - ls(1)
+  - chmod(1)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::special-output
+  - card::cloze
+  - priority::P0
+- id: RHCSA-08-O05-CLOZE-001
+  type: cloze
+  text: setgid 目录负责新对象的 {{c1::group 继承}}；创建进程的 umask 负责限制新对象的 {{c2::普通权限位}}。
+  extra: 两者解决不同问题。
+  source:
+  - RH124 Ch.7
+  - umask(2)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::team-directory
+  - card::cloze
+  - priority::P0
+- id: RHCSA-08-D01-CLOZE-001
+  type: cloze
+  text: 路径不可达诊断优先使用 `{{c1::namei -l}}` 找第一处缺少目录 `{{c2::x}}` 的分量。
+  extra: 最终文件可读不代表路径可达。
+  source:
+  - namei(1)
+  - path_resolution(7)
+  tags:
+  - exam::rhcsa
+  - chapter::unix-permissions-umask-special-bits
+  - topic::permission-denied
+  - card::cloze
+  - priority::P0
+status: integrated

@@ -1,0 +1,912 @@
+chapter_id: RHCSA-26
+chapter_slug: nfs-client
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+live_test: not_performed
+notes:
+- id: RHCSA-NFS-QA-001
+  type: qa
+  question: 在需要查询传统 NFS MOUNT 服务公布的 export 列表时，常用什么命令？
+  answer: '`showmount -e <SERVER>`'
+  extra: NFSv4-only 服务器可能不提供 MOUNT 服务；无结果不能直接证明没有 NFSv4 export。
+  source:
+  - RH134 RHEL 9, Ch.7, p.196
+  - showmount(8)
+  - rpcinfo(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::discovery
+  - card::command
+  - priority::P0
+- id: RHCSA-NFS-QA-002
+  type: qa
+  question: 要确认路径 `/srv/project` 当前实际来自哪个挂载源，应优先使用什么？
+  answer: '`findmnt -T /srv/project`'
+  extra: 目录存在不代表它当前是独立挂载点；可用 `-o SOURCE,TARGET,FSTYPE,OPTIONS` 定制证据。
+  source:
+  - nfsstat(8)
+  - findmnt(8)
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::current-mount
+  - card::verification
+  - priority::P0
+- id: RHCSA-NFS-QA-003
+  type: qa
+  question: NFS export 的 `root_squash` 核心效果是什么？
+  answer: 把来自客户端 UID/GID 0 的请求映射为服务端匿名身份。
+  extra: 它防止客户端 root 自动获得共享上的服务端 root 权限；不要默认用 `no_root_squash` 修复写入失败。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::identity
+  - card::security
+  - priority::P0
+- id: RHCSA-NFS-QA-004
+  type: qa
+  question: NFS 持久挂载在 `/etc/fstab` 中的源字段骨架是什么？
+  answer: '`<SERVER>:/<EXPORT-PATH>`'
+  extra: 源字段后还需要本地挂载点、类型 `nfs`、选项和最后两个数字字段。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::syntax
+  - priority::P0
+- id: RHCSA-NFS-QA-005
+  type: qa
+  question: NFS fstab 条目中的 `_netdev` 表达什么？
+  answer: 该挂载依赖网络，应按远程文件系统处理相关顺序。
+  extra: 它不保证 DNS、服务器或 export 一定可用，也不替代功能验证。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::parameter
+  - priority::P0
+- id: RHCSA-NFS-QA-006
+  type: qa
+  question: 怎样证明一个 NFS fstab 条目能够独立建立挂载？
+  answer: 静态核对后卸载当前挂载，通过 `mount /挂载点` 或 `mount -a` 重建，再用 `findmnt` 核对。
+  extra: 最后仍要按目标用户进行读写测试。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::verification
+  - priority::P0
+- id: RHCSA-NFS-QA-012
+  type: qa
+  question: NFS 挂载报 `access denied by server` 时，客户端对挂载点执行 `chmod 777` 能修复吗？
+  answer: 通常不能。应核对远端源路径、export 允许的客户端范围、读写模式和 `sec=`。
+  extra: 该报错表明服务端拒绝了请求，修复应落在源路径或服务端 export 策略层。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::mount-failure
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-NFS-QA-013
+  type: qa
+  question: NFS 当前挂载成功能否证明系统重启后仍会挂载？
+  answer: 不能。当前挂载和持久声明是不同状态维度。
+  extra: 还要核对 fstab，并通过卸载后按配置重建；真实重启属于更高层验证。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::state-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-NFS-QA-014
+  type: qa
+  question: 查看当前 NFS 挂载实际版本和 NFS 专属选项，使用什么命令？
+  answer: '`nfsstat -m`'
+  extra: 与 `findmnt` 交叉检查源、目标和文件系统类型。
+  source:
+  - nfsstat(8)
+  - findmnt(8)
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::current-mount
+  - card::command
+  - priority::P0
+- id: RHCSA-NFS-QA-018
+  type: qa
+  question: NFS 客户端综合任务的推荐验收层次是什么？
+  answer: 名称/路由 → 协议与远端源 → 当前挂载 → 持久重建 → 目标身份功能。
+  extra: 每一层使用独立证据，不能用局部成功代替终态。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::evidence-chain
+  - card::process
+  - priority::P0
+- id: RHCSA-26-K01-QA-001
+  type: qa
+  question: NFS 任务中，export、远端源和本地挂载点分别是什么？
+  answer: export 是服务端授权目录；远端源是客户端引用的 `server:/path`；挂载点是接入该远端文件系统的本地目录。
+  extra: 三者路径可能不同，不能互相替代。
+  source:
+  - RH134 RHEL 9, Ch.7, pp.196-198
+  - mount.nfs(8)
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-26-K01-QA-002
+  type: qa
+  question: 把 NFS 挂载到一个原本非空的本地目录时，原内容是否被删除？
+  answer: 不会。原内容在挂载期间被遮蔽，卸载后重新可见。
+  extra: 该通用挂载机制主归属 RHCSA-24；本章只用于解释 NFS 现象。
+  source:
+  - mount(8)
+  - RHCSA-24 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::object-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-26-K01-QA-003
+  type: qa
+  question: '`showmount -e` 成功、`findmnt` 有结果、fstab 有条目和用户能写，分别证明哪个状态层？'
+  answer: 依次证明传统 export 信息可查询、当前挂载存在、持久声明存在、指定身份功能成功。
+  extra: 这些证据不能互相替代。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::state-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-26-K01-QA-004
+  type: qa
+  question: 客户端引用 NFS 源时，主机名和远端路径之间使用什么分隔？
+  answer: 冒号：`server:/path`。
+  extra: '`/path` 属于服务端 NFS 名称空间，不是客户端本地路径。'
+  source:
+  - RH134 RHEL 9, Ch.7, pp.196-198
+  - mount.nfs(8)
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::object-model
+  - card::syntax
+  - priority::P0
+- id: RHCSA-26-K02-QA-001
+  type: qa
+  question: 题目要求使用 NFSv4.2 时，挂载选项怎样写？
+  answer: '`-o vers=4.2`'
+  extra: 操作后仍用 `nfsstat -m` 确认实际挂载版本。
+  source:
+  - RH134 RHEL 9, Ch.7, pp.196-198
+  - mount.nfs(8)
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::protocol
+  - card::parameter
+  - priority::P0
+- id: RHCSA-26-K02-QA-002
+  type: qa
+  question: NFSv3 与 NFSv4 在客户端调查入口上的关键区别是什么？
+  answer: v3 通常还要调查 rpcbind、MOUNT 和辅助 RPC；v4 主路径更集中，常通过 TCP 2049 访问。
+  extra: 具体端口和服务端配置仍应读取真实证据。
+  source:
+  - RH134 RHEL 9, Ch.7, p.196
+  - showmount(8)
+  - rpcinfo(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::protocol
+  - card::comparison
+  - priority::P0
+- id: RHCSA-26-K02-QA-003
+  type: qa
+  question: '`showmount -e server` 超时，已知服务器是 NFSv4-only。能否据此断定没有 export？'
+  answer: 不能。`showmount` 依赖传统 MOUNT 服务，v4-only 服务器可能不提供。
+  extra: 继续检查名称、TCP 2049、已知 v4 路径和实际 `mount` 报错。
+  source:
+  - RH134 RHEL 9, Ch.7, p.196
+  - showmount(8)
+  - rpcinfo(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::protocol
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-26-K02-QA-004
+  type: qa
+  question: 需要检查 NFSv3 服务器通过 rpcbind 注册了哪些 RPC 程序时，可用什么命令？
+  answer: '`rpcinfo -p <SERVER>`'
+  extra: 它主要帮助调查 v3/RPC 链路，不证明 export 授权或文件权限。
+  source:
+  - RH134 RHEL 9, Ch.7, p.196
+  - showmount(8)
+  - rpcinfo(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::protocol
+  - card::command
+  - priority::P1
+- id: RHCSA-26-K02-QA-005
+  type: qa
+  question: 未明确版本的普通 NFS 挂载，是否必须先写 `vers=4.2`？
+  answer: 不必须。客户端可以协商；只有题目要求、兼容性控制或诊断时才固定版本。
+  extra: 实际结果用 `nfsstat -m` 读取。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::protocol
+  - card::boundary
+  - priority::P1
+- id: RHCSA-26-K03-QA-001
+  type: qa
+  question: 常见 `sec=sys` NFS 访问中，服务端权限判断主要依据什么身份信息？
+  answer: 客户端请求携带的数值 UID、主 GID 和附加组。
+  extra: 用户名主要是显示和目录服务映射层；数值不一致会造成权限异常。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::identity
+  - card::concept
+  - priority::P0
+- id: RHCSA-26-K03-QA-002
+  type: qa
+  question: 两端都显示用户 `project1`，但 NFS 文件权限异常。下一条最有区分度的证据是什么？
+  answer: 比较两端 `project1` 的数值 UID、GID 和附加组，并用 `ls -ln` 查看文件数值属主。
+  extra: 同名不等于同一数值身份。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::identity
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-26-K03-QA-003
+  type: qa
+  question: 挂载前本地挂载点的 owner/mode 与挂载后看到的根目录权限分别来自哪里？
+  answer: 挂载前来自客户端本地目录；挂载后看到的根目录权限来自远端文件系统。
+  extra: 本地父目录仍需允许用户沿路径到达挂载点。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::identity
+  - card::comparison
+  - priority::P1
+- id: RHCSA-26-K03-QA-004
+  type: qa
+  question: 客户端 root 创建的 NFS 文件显示为匿名数值 UID/GID，最可能说明什么？
+  answer: 服务端对该 export 应用了 `root_squash` 或等价的 root 匿名映射。
+  extra: 先确认这是否符合安全设计，不要立即启用 `no_root_squash`。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::identity
+  - card::output
+  - priority::P0
+- id: RHCSA-26-O01-QA-001
+  type: qa
+  question: 在 RHEL 9 客户端安装 NFS 挂载和诊断工具，使用什么包？
+  answer: '`nfs-utils`'
+  extra: 可用 `rpm -q nfs-utils` 查询，缺失时使用 `dnf install nfs-utils`。
+  source:
+  - RH134 RHEL 9, Ch.7, pp.196-198
+  - mount.nfs(8)
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::client-setup
+  - card::command
+  - priority::P0
+- id: RHCSA-26-O01-QA-002
+  type: qa
+  question: 把 `storage.example.com:/exports/project` 临时挂载到 `/srv/project` 的命令骨架是什么？
+  answer: '`mount -t nfs storage.example.com:/exports/project /srv/project`'
+  extra: 先确认目标没有错误挂载，并在操作后读取实际状态。
+  source:
+  - RH134 RHEL 9, Ch.7, pp.196-198
+  - mount.nfs(8)
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::manual-mount
+  - card::command
+  - priority::P0
+- id: RHCSA-26-O01-QA-003
+  type: qa
+  question: 手工建立 NFS 挂载前的最小调查顺序是什么？
+  answer: 检查 `nfs-utils` → 解析服务器 → 检查已有挂载 → 确认远端源/版本边界 → 创建挂载点。
+  extra: 先建立基线，避免叠加挂载或覆盖已有配置。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::manual-mount
+  - card::process
+  - priority::P0
+- id: RHCSA-26-O01-QA-004
+  type: qa
+  question: 安装 `nfs-utils` 并成功执行 `showmount`，能否证明目标用户可以写共享？
+  answer: 不能。还要建立当前挂载并以目标用户执行实际写入。
+  extra: 软件、发现、挂载和功能是不同层。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::manual-mount
+  - card::boundary
+  - priority::P1
+- id: RHCSA-26-O02-QA-001
+  type: qa
+  question: 按任意路径定位其所属挂载，并定制显示源、目标、类型和选项，命令是什么？
+  answer: '`findmnt -T <PATH> -o SOURCE,TARGET,FSTYPE,OPTIONS`'
+  extra: '`-T` 可传入挂载点下的文件路径。'
+  source:
+  - nfsstat(8)
+  - findmnt(8)
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::current-mount
+  - card::command
+  - priority::P0
+- id: RHCSA-26-O02-QA-002
+  type: qa
+  question: '`findmnt -T /srv/project` 无结果，但目录存在。可以得出什么结论？'
+  answer: 只能说明该路径当前没有被识别为单独挂载；目录存在本身不证明 NFS 已挂载。
+  extra: 继续检查父挂载和预期配置。
+  source:
+  - nfsstat(8)
+  - findmnt(8)
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::current-mount
+  - card::output
+  - priority::P0
+- id: RHCSA-26-O02-QA-003
+  type: qa
+  question: 查看 NFS 当前状态时，`findmnt` 与 `nfsstat -m` 的侧重点有什么不同？
+  answer: '`findmnt` 精确映射源、目标、类型和通用选项；`nfsstat -m` 展示 NFS 专属版本和协商参数。'
+  extra: 两者互补，均不替代功能测试。
+  source:
+  - nfsstat(8)
+  - findmnt(8)
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::current-mount
+  - card::comparison
+  - priority::P0
+- id: RHCSA-26-O02-QA-004
+  type: qa
+  question: '`findmnt` 显示挂载选项包含 `rw`，能否证明 `project1` 一定可以创建文件？'
+  answer: 不能。`rw` 说明挂载未被客户端按只读方式建立，服务端 export 和文件权限仍可能拒绝。
+  extra: 使用 `id`、`ls -ln` 和目标用户实际写入验证。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::current-mount
+  - card::boundary
+  - priority::P0
+- id: RHCSA-26-O03-QA-001
+  type: qa
+  question: 把 `storage.example.com:/exports/project` 持久挂载到 `/srv/project` 的 fstab 行是什么？
+  answer: '`storage.example.com:/exports/project /srv/project nfs defaults,_netdev 0 0`'
+  extra: 空白数量可变，但六字段和源/目标必须准确。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::syntax
+  - priority::P0
+- id: RHCSA-26-O03-QA-002
+  type: qa
+  question: 编辑 `/etc/fstab` 后，静态核对条目的推荐命令是什么？
+  answer: '`findmnt --verify --verbose`'
+  extra: 静态核对通过后再重建挂载和进行功能测试。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::command
+  - priority::P0
+- id: RHCSA-26-O03-QA-003
+  type: qa
+  question: '`findmnt --verify` 与卸载后 `mount -a` 分别证明什么？'
+  answer: 前者检查 fstab 解析和可核对问题；后者证明配置能够实际建立当前挂载。
+  extra: 二者都不能证明目标用户读写成功。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::comparison
+  - priority::P0
+- id: RHCSA-26-O03-QA-004
+  type: qa
+  question: NFS fstab 中添加 `_netdev` 后，是否等于远端不可用时启动一定不等待？
+  answer: 不等于。`_netdev` 主要表达网络依赖和远程挂载排序。
+  extra: 失败处理仍受网络、systemd、NFS 重试和其他选项影响。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::boundary
+  - priority::P1
+- id: RHCSA-26-O03-QA-005
+  type: qa
+  question: 手工挂载正确，但 `mount /srv/project` 按 fstab 失败。优先比较什么？
+  answer: 比较 fstab 的源、目标、类型和选项，并运行 `findmnt --verify --verbose`。
+  extra: 手工命令成功不能证明持久条目没有拼写或字段错误。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-26-D01-QA-001
+  type: qa
+  question: NFS `mount` 失败时，为什么应先保留完整原始错误？
+  answer: 名称失败、无路由、超时、连接拒绝和服务端拒绝分别指向不同层。
+  extra: 错误文本决定下一条最有区分度的证据。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::mount-failure
+  - card::process
+  - priority::P1
+- id: RHCSA-26-D01-QA-002
+  type: qa
+  question: 服务器可以解析并能到达，但 `mount` 报 `access denied by server`。下一步调查什么？
+  answer: 远端路径、export 允许的客户端地址/网段、`ro/rw`、`sec=` 以及服务端是否加载最新配置。
+  extra: 不要把它归因于本地挂载点 mode。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::mount-failure
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-26-D01-QA-003
+  type: qa
+  question: NFS 连接“被拒绝”和“超时”通常分别提示什么方向？
+  answer: 被拒绝通常说明目标主动拒绝或无监听；超时更可能涉及过滤、路由、服务无响应或丢包。
+  extra: 仍需结合版本和服务端证据，不能单凭一句错误定论。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::mount-failure
+  - card::comparison
+  - priority::P1
+- id: RHCSA-26-D01-QA-004
+  type: qa
+  question: 确认 TCP 2049 可连接，能否证明 NFSv3 完整可用？
+  answer: 不能。v3 还可能依赖 rpcbind、MOUNT 和其他辅助 RPC 服务。
+  extra: 按服务端真实注册和防火墙配置调查。
+  source:
+  - RH134 RHEL 9, Ch.7, p.196
+  - showmount(8)
+  - rpcinfo(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::mount-failure
+  - card::boundary
+  - priority::P0
+- id: RHCSA-26-D02-QA-001
+  type: qa
+  question: 要查看用户 `opsuser` 的 UID、主 GID 和附加组，使用什么命令？
+  answer: '`id opsuser`'
+  extra: 权限诊断必须固定目标用户，不用 root 结果替代。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::permission
+  - card::command
+  - priority::P0
+- id: RHCSA-26-D02-QA-002
+  type: qa
+  question: 要避免用户名映射掩盖问题，怎样查看 NFS 目录的数值属主？
+  answer: '`ls -ldn <PATH>` 或 `stat -c "uid=%u gid=%g ..." <PATH>`'
+  extra: 与 `id` 和服务端数值身份比较。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::permission
+  - card::command
+  - priority::P0
+- id: RHCSA-26-D02-QA-003
+  type: qa
+  question: 用户主 GID 与目录组不同，但他应通过附加组写入。下一条证据是什么？
+  answer: 用 `id <USER>` 确认附加组，并用 `getent group <GROUP>` 核对组成员和 GID。
+  extra: 只看 `/etc/passwd` 的主 GID 会漏掉附加组。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::permission
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-26-D02-QA-004
+  type: qa
+  question: NFS 权限问题中，为什么不应先执行 `chmod 777`？
+  answer: 它扩大所有身份权限，掩盖 UID/GID、组、export 读写模式或 root 映射的真正原因。
+  extra: 应做最小权限修复并以目标用户复验。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::permission
+  - card::boundary
+  - priority::P0
+- id: RHCSA-26-D03-QA-001
+  type: qa
+  question: NFS hard 挂载在服务器暂时失联时，文件操作通常怎样表现？
+  answer: 请求超时后继续重试，调用进程可能长时间等待服务器恢复。
+  extra: 这优先保护请求完成，但会影响可用性和排错体验。
+  source:
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::remote-unavailable
+  - card::concept
+  - priority::P0
+- id: RHCSA-26-D03-QA-002
+  type: qa
+  question: 为什么不把 `soft` 作为所有 NFS 挂载的默认“防卡死”选项？
+  answer: 重试耗尽后它会向应用返回 I/O 错误，可能带来部分失败或数据完整性风险。
+  extra: 只有在应用容错和数据语义评估后才考虑。
+  source:
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::remote-unavailable
+  - card::boundary
+  - priority::P0
+- id: RHCSA-26-D03-QA-003
+  type: qa
+  question: NFS 服务器失联，访问进程处于不可中断 I/O 等待。反复 `kill -9` 是否可靠？
+  answer: 不可靠。D 状态任务通常要等内核 I/O 条件变化；应优先恢复网络或服务器。
+  extra: 不要再运行会访问同一挂载点的大范围命令。
+  source:
+  - nfs(5)
+  - RHCSA-11 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::remote-unavailable
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-26-D03-QA-004
+  type: qa
+  question: 远端 NFS 不可用时的推荐恢复顺序是什么？
+  answer: 确认当前源 → 恢复名称/网络/NFS 服务 → 正常停止使用者 → 普通卸载或重建 → 数据与应用复验。
+  extra: 强制或 lazy 卸载只作已评估风险的应急分支。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::remote-unavailable
+  - card::process
+  - priority::P0
+- id: RHCSA-26-D03-QA-005
+  type: qa
+  question: 正常卸载 NFS 挂载前，怎样查看哪些进程正在使用挂载点？
+  answer: '`fuser -vm <MOUNT_POINT>`'
+  extra: 先让 Shell 离开挂载目录并正常停止应用。
+  source:
+  - fuser(1)
+  - umount(8)
+  - RH134 RHEL 9, Ch.7, p.198
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::remote-unavailable
+  - card::command
+  - priority::P1
+- id: RHCSA-26-T01-QA-001
+  type: qa
+  question: 题目要求持久挂载 NFS 并验证业务用户可写。完成 `mount` 后还缺哪些关键验收？
+  answer: 读取当前源/版本；写入并静态核对 fstab；卸载后按配置重建；用业务用户执行真实写入。
+  extra: 不要用 root 成功或命令退出码代替终态。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-26-T01-QA-002
+  type: qa
+  question: 配置持久 NFS 挂载时，推荐的完整操作顺序是什么？
+  answer: 基线调查 → 临时挂载 → 读回状态 → 写 fstab → 静态核对 → 卸载重建 → 目标身份功能测试。
+  extra: 每步只改变必要对象。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-26-T02-QA-001
+  type: qa
+  question: 服务器可达、挂载已成功，但 `opsuser` 写入失败。下一条最有区分度的证据组合是什么？
+  answer: '`id opsuser`、`ls -ldn`、`findmnt` 选项，以及服务端远端目录数值属主和 export `ro/rw`。'
+  extra: 把身份、文件权限和 export 模式分开。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::classic-task
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-26-H01-QA-001
+  type: qa
+  question: 需要查看 NFS 客户端挂载选项的完整本地说明，应打开哪个手册页？
+  answer: '`man 5 nfs`'
+  extra: 挂载程序本身可查 `man 8 mount.nfs`。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::help
+  - card::command
+  - priority::P1
+- id: RHCSA-26-H01-QA-002
+  type: qa
+  question: 需要确认 `showmount` 的限制和参数，应打开哪个手册页？
+  answer: '`man 8 showmount`'
+  extra: 特别关注它依赖 MOUNT 协议及列表准确性边界。
+  source:
+  - showmount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::help
+  - card::command
+  - priority::P1
+- id: RHCSA-26-K01-CLOZE-001
+  type: cloze
+  text: NFS 客户端源的基本格式是 {{c1::<server>:/<export-path>}}，本地接入目录称为 {{c2::挂载点}}。
+  extra: 远端路径属于服务端 NFS 名称空间。
+  source:
+  - RH134 RHEL 9, Ch.7, pp.196-198
+  - mount.nfs(8)
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::object-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-26-K02-CLOZE-001
+  type: cloze
+  text: '{{c1::showmount}} 查询传统 {{c2::MOUNT}} 协议信息，因此 NFSv4-only 服务器无结果并不等于没有 export。'
+  extra: 继续使用版本对应的网络和实际挂载证据。
+  source:
+  - RH134 RHEL 9, Ch.7, p.196
+  - showmount(8)
+  - rpcinfo(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::protocol
+  - card::cloze
+  - priority::P0
+- id: RHCSA-26-O03-CLOZE-001
+  type: cloze
+  text: NFS fstab 条目中，{{c1::_netdev}} 表达网络依赖；它不证明服务器可达，也不替代 {{c2::目标用户功能测试}}。
+  extra: 当前、持久和功能状态必须分开验收。
+  source:
+  - RH134 RHEL 9, Ch.7, p.197
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::persistent
+  - card::cloze
+  - priority::P0
+- id: RHCSA-26-K03-CLOZE-001
+  type: cloze
+  text: 常见 `sec=sys` 权限判断要比较客户端进程的数值 {{c1::UID/GID 与附加组}}，而不是只比较 {{c2::用户名文本}}。
+  extra: 使用 `id`、`getent` 和 `ls -ln` 建立证据。
+  source:
+  - RHEL 9 Configuring and using network file services
+  - exports(5)
+  - id(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::identity
+  - card::cloze
+  - priority::P0
+- id: RHCSA-26-D03-CLOZE-001
+  type: cloze
+  text: NFS 默认 hard 语义可能让请求持续 {{c1::重试并等待}}；把所有挂载改成 soft 可能引入 {{c2::I/O 错误和数据完整性风险}}。
+  extra: 选项必须根据应用容错和数据语义评估。
+  source:
+  - nfs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::remote-unavailable
+  - card::cloze
+  - priority::P0
+- id: RHCSA-26-T01-CLOZE-001
+  type: cloze
+  text: 一个完整 NFS 客户端验收链是：远端信息 → {{c1::当前挂载}} → {{c2::持久重建}} → {{c3::目标身份功能}}。
+  extra: 任何一层成功都不能自动证明下一层。
+  source:
+  - nfs(5)
+  - mount.nfs(8)
+  - RHCSA-26 lecture
+  tags:
+  - exam::rhcsa
+  - chapter::nfs-client
+  - topic::evidence-chain
+  - card::cloze
+  - priority::P0

@@ -1,0 +1,993 @@
+chapter_id: RHCSA-02
+chapter_slug: io-redirection-pipelines
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+note_models:
+  qa: RedHat-QA
+  cloze: RedHat-Cloze
+notes:
+- id: RHCSA-SHELL-O01-QA-001
+  type: qa
+  question: 交互式 Bash 中，stdin、stdout、stderr 对应哪些文件描述符？
+  answer: '`stdin`、`stdout`、`stderr` 分别对应文件描述符 `0`、`1`、`2`。'
+  extra: 描述符编号是进程访问端点的入口，不等同于键盘或屏幕本身。
+  source:
+  - RH124 Ch.5 pp.112-118
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SHELL-O01-QA-002
+  type: qa
+  question: 将 stdout 写入文件时，`>` 与 `>>` 的区别是什么？
+  answer: '`>` 以覆盖方式打开目标；`>>` 在文件末尾追加。目标不存在时两者都可尝试创建。'
+  extra: 覆盖打开可能在目标命令真正运行前截断已有文件。
+  source:
+  - RH124 Ch.5 pp.112-118
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::file-redirection
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SHELL-O01-QA-003
+  type: qa
+  question: 只把命令的 stderr 覆盖保存到 `error.log`，而保留 stdout 原端点，命令骨架是什么？
+  answer: '```bash
+
+    command 2> error.log
+
+    ```'
+  extra: '`2` 选择 stderr；不要把 `2>` 理解成第二次重定向。'
+  source:
+  - RH124 Ch.5 pp.112-118
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::file-redirection
+  - card::command
+  - priority::P0
+- id: RHCSA-SHELL-O01-QA-004
+  type: qa
+  question: 把 stdout 和 stderr 都覆盖写入 `all.log`，优先展示文件描述符关系的写法是什么？
+  answer: '```bash
+
+    command > all.log 2>&1
+
+    ```'
+  extra: 先让 FD 1 指向文件，再让 FD 2 复制 FD 1 当前端点。
+  source:
+  - RH124 Ch.5 pp.112-118
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-duplication
+  - card::syntax
+  - priority::P0
+- id: RHCSA-SHELL-O01-QA-005
+  type: qa
+  question: '`command >all.log 2>&1` 与 `command 2>&1 >all.log` 为什么不同？'
+  answer: 重定向从左到右应用。前者先改变 FD 1，再让 FD 2 复制它，两个流都进文件；后者先让 FD 2 指向原 stdout（通常为终端），随后只改变 FD 1。
+  extra: 判断时要逐步追踪每个描述符当前端点。
+  source:
+  - RH124 Ch.5 pp.112-118
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-duplication
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SHELL-O01-QA-006
+  type: qa
+  question: 普通 `A | B` 默认连接哪两个通道？
+  answer: 把 `A` 的 stdout（FD 1）连接到 `B` 的 stdin（FD 0）。
+  extra: stderr 默认旁路，不会自动进入管道。
+  source:
+  - RH124 Ch.5 pp.112-118
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-SHELL-O01-QA-007
+  type: qa
+  question: 既要把上游数据保存到 `evidence.log`，又要继续传给下游命令，命令骨架是什么？
+  answer: '```bash
+
+    producer | tee evidence.log | consumer
+
+    ```'
+  extra: 需要追加旧证据时使用 `tee -a evidence.log`。
+  source:
+  - RH124 Ch.5 pp.112-118
+  - tee(1)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::tee
+  - card::command
+  - priority::P0
+- id: RHCSA-SHELL-O01-QA-008
+  type: qa
+  question: Bash 中 `$?` 与 `${PIPESTATUS[@]}` 对一条管道分别回答什么？
+  answer: '`$?` 是整条管道的单一汇总状态；`${PIPESTATUS[@]}` 按从左到右保存各阶段状态。'
+  extra: 状态数组会被后续简单命令更新，必须立即复制。
+  source:
+  - bash(1) Pipelines
+  - 'Bash Variables: PIPESTATUS'
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SHELL-O01-CLOZE-001
+  type: cloze
+  text: 要把 stdout 和 stderr 都覆盖写入同一文件，先写 {{c1::`> all.log`}}，再写 {{c2::`2>&1`}}。
+  extra: 顺序反过来时，stderr 会保留复制时的原 stdout 端点。
+  source:
+  - RH124 Ch.5 pp.112-118
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-duplication
+  - card::cloze
+  - priority::P0
+- id: RHCSA-SHELL-D01-QA-002
+  type: qa
+  question: 执行 `cat data.txt > data.txt` 后文件变空，最直接的机制是什么？
+  answer: Shell 在 `cat` 读取前先以覆盖方式打开并截断同一个目标文件，所以命令随后读到的已是空文件。
+  extra: 应写入不同路径，验证后再进行受控替换，不能把普通重定向当作安全原地编辑。
+  source:
+  - bash(1) Redirections
+  - RH124 Ch.5
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-02-K01-QA-001
+  type: qa
+  question: 为什么不能把 stdout 简单定义为“屏幕”？
+  answer: stdout 是 FD 1 对应的数据通道；它可以连接终端、文件、管道或其他端点。
+  extra: 屏幕只是交互式 Shell 中常见的继承端点。
+  source:
+  - RH124 Ch.5
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-02-K01-QA-002
+  type: qa
+  question: stderr 有文字是否必然说明命令退出状态非零？
+  answer: 不必然。stderr 是数据通道，退出状态是数值结果，程序可以写 stderr 后仍返回 0。
+  extra: 反过来，命令也可以没有错误文字却返回非零。
+  source:
+  - bash(1)
+  - RH124 Ch.5
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-02-K01-QA-003
+  type: qa
+  question: '`cat input.txt` 与 `cat < input.txt` 的输入对象有何不同？'
+  answer: 前者由 `cat` 根据参数打开文件；后者由 Shell 先把 FD 0 指向文件，`cat` 从 stdin 读取。
+  extra: 两者可得到相同内容，但对象关系和错误来源不同。
+  source:
+  - cat(1)
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-model
+  - card::comparison
+  - priority::P1
+- id: RHCSA-02-K01-QA-004
+  type: qa
+  question: 为什么目标文件打开失败时，命令主体可能根本没有运行？
+  answer: 因为 Shell 通常在启动命令前先处理重定向；若无法建立目标 FD，执行不会进入正常命令主体。
+  extra: 排错时应区分 Shell 的重定向错误与程序自身错误。
+  source:
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-model
+  - card::process
+  - priority::P1
+- id: RHCSA-02-K01-CLOZE-001
+  type: cloze
+  text: 标准输入、标准输出、标准错误的文件描述符依次是 {{c1::0}}、{{c2::1}}、{{c3::2}}。
+  extra: 编号表示通道入口，不是固定设备。
+  source:
+  - RH124 Ch.5
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-02-O01-QA-001
+  type: qa
+  question: 用 `printf` 产生一行确定的 stdout，推荐的命令骨架是什么？
+  answer: '```bash
+
+    printf ''%s\n'' ''DATA:alpha''
+
+    ```'
+  extra: 显式格式字符串比依赖不同实现的 `echo` 更可判定。
+  source:
+  - printf builtin
+  - RH124 Ch.5
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::controlled-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-02-O01-QA-002
+  type: qa
+  question: 怎样让一次 `printf` 的文字沿 stderr 输出？
+  answer: '```bash
+
+    printf ''%s\n'' ''WARN:beta'' >&2
+
+    ```'
+  extra: 这里是把该命令的 stdout 复制到 FD 2 当前端点。
+  source:
+  - bash(1) Redirections
+  - printf builtin
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::controlled-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-02-O01-QA-003
+  type: qa
+  question: 需要同时构造 stdout、stderr 和明确的退出状态 7，怎样写最小受控命令？
+  answer: '```bash
+
+    bash -c ''printf "DATA\n"; printf "WARN\n" >&2; exit 7''
+
+    ```'
+  extra: 适合验证分流、合并顺序和状态保存。
+  source:
+  - bash(1)
+  - printf builtin
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::controlled-evidence
+  - card::task
+  - priority::P1
+- id: RHCSA-02-O01-QA-004
+  type: qa
+  question: 为什么验证原命令状态时不能先运行 `cat output.log`？
+  answer: 因为 `$?` 只保留最近前台命令或管道的汇总状态；先运行 `cat` 后得到的是 `cat` 的状态。
+  extra: 原命令结束后应立即执行 `command_rc=$?`。
+  source:
+  - bash(1) Special Parameters
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::controlled-evidence
+  - card::verification
+  - priority::P1
+- id: RHCSA-02-O02-QA-001
+  type: qa
+  question: 分别覆盖保存 stdout 到 `out.log`、stderr 到 `err.log` 的骨架是什么？
+  answer: '```bash
+
+    command > out.log 2> err.log
+
+    ```'
+  extra: 两个流保留独立证据，便于后续判断。
+  source:
+  - RH124 Ch.5
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::file-redirection
+  - card::command
+  - priority::P0
+- id: RHCSA-02-O02-QA-002
+  type: qa
+  question: 只把 stderr 追加到 `err.log` 的骨架是什么？
+  answer: '```bash
+
+    command 2>> err.log
+
+    ```'
+  extra: stdout 保持原端点。
+  source:
+  - RH124 Ch.5
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::file-redirection
+  - card::command
+  - priority::P0
+- id: RHCSA-02-O02-QA-003
+  type: qa
+  question: 命令最终返回非零，但 `> report.txt` 使旧文件变空，这是否矛盾？
+  answer: 不矛盾。Shell 可在命令主体运行前先以覆盖方式打开并截断目标。
+  extra: 退出状态描述命令结果，不能反推打开目标前没有副作用。
+  source:
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::file-redirection
+  - card::output
+  - priority::P1
+- id: RHCSA-02-O02-QA-004
+  type: qa
+  question: 未知错误调查中，为什么不应默认使用 `2>/dev/null`？
+  answer: 它会丢弃 stderr 证据，使错误类型、路径或权限问题不可见。
+  extra: 只有已确认该错误与当前目标无关时才考虑静默丢弃。
+  source:
+  - RH124 Ch.5
+  - null(4)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::file-redirection
+  - card::boundary
+  - priority::P1
+- id: RHCSA-02-O02-QA-005
+  type: qa
+  question: 路径可写但普通 `>` 拒绝覆盖已有文件，除权限外应检查哪个 Shell 状态？
+  answer: 检查是否启用了 `noclobber`（`set -C`）。
+  extra: 不要先删除文件或扩大权限；本章只要求识别该边界。
+  source:
+  - bash(1) The Set Builtin
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::file-redirection
+  - card::diagnosis
+  - priority::P2
+- id: RHCSA-02-O02-CLOZE-001
+  type: cloze
+  text: stdout 覆盖使用 {{c1::`>`}}，stdout 追加使用 {{c2::`>>`}}；stderr 覆盖使用 {{c3::`2>`}}，stderr 追加使用 {{c4::`2>>`}}。
+  extra: 数字选择描述符，双大于号表示追加。
+  source:
+  - RH124 Ch.5
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::file-redirection
+  - card::cloze
+  - priority::P0
+- id: RHCSA-02-K02-QA-001
+  type: qa
+  question: '`2>&1` 中的 `&1` 表示什么？'
+  answer: 表示文件描述符 1，而不是名为 `1` 的文件。整个语法让 FD 2 复制 FD 1 当前端点。
+  extra: 复制发生后，之后再改变 FD 1 不会自动追随。
+  source:
+  - bash(1) Duplicating File Descriptors
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-duplication
+  - card::concept
+  - priority::P0
+- id: RHCSA-02-K02-QA-002
+  type: qa
+  question: 运行 `command 2>&1 >out.log` 时，为什么 stderr 仍可能显示在终端？
+  answer: '`2>&1` 先复制了当时仍指向终端的 FD 1；随后 `>out.log` 只改变 FD 1，FD 2 仍指向原终端。'
+  extra: 从左到右追踪端点即可判断。
+  source:
+  - RH124 Ch.5
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-duplication
+  - card::output
+  - priority::P0
+- id: RHCSA-02-K02-QA-003
+  type: qa
+  question: '`&>all.log` 与 `>all.log 2>&1` 在本章如何取舍？'
+  answer: 在 Bash 中都可合并覆盖两个流；本章优先显式 FD 写法以展示顺序，并兼顾其他 Bourne 风格 Shell。
+  extra: 不要把 Bash 简写误写成所有 `/bin/sh` 都支持的标准语法。
+  source:
+  - RH124 Ch.5
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-duplication
+  - card::comparison
+  - priority::P1
+- id: RHCSA-02-K02-CLOZE-001
+  type: cloze
+  text: '`2>&1` 复制的是执行到该位置时 {{c1::FD 1 当前指向的端点}}。'
+  extra: 因此重定向顺序具有语义。
+  source:
+  - bash(1) Duplicating File Descriptors
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::fd-duplication
+  - card::cloze
+  - priority::P0
+- id: RHCSA-02-K03-QA-001
+  type: qa
+  question: 管道把左侧输出作为右侧命令的“参数”吗？
+  answer: 不。普通管道把左侧 stdout 连接到右侧 stdin；数据不是自动转换成命令行参数。
+  extra: 右侧程序必须具备从 stdin 读取的行为。
+  source:
+  - RH124 Ch.5
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-02-K03-QA-002
+  type: qa
+  question: 显式把命令的 stdout 和 stderr 都送入下一阶段，骨架是什么？
+  answer: '```bash
+
+    producer 2>&1 | consumer
+
+    ```'
+  extra: Bash 的 `producer |& consumer` 是简写。
+  source:
+  - RH124 Ch.5
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-model
+  - card::command
+  - priority::P0
+- id: RHCSA-02-K03-QA-003
+  type: qa
+  question: '`producer >saved.txt | consumer` 中，为什么 consumer 可能没有输入？'
+  answer: 管道先建立，但 producer 自身的 `>saved.txt` 随后把 FD 1 改向文件，覆盖了原管道写端。
+  extra: 数据进入 saved.txt，而不是下游 stdin。
+  source:
+  - RH124 Ch.5
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-model
+  - card::output
+  - priority::P0
+- id: RHCSA-02-K03-QA-004
+  type: qa
+  question: 为什么不能把管道理解为“一行一条记录且立即到达”？
+  answer: 管道传递字节流；读取粒度、行处理和缓冲由具体程序决定。
+  extra: RHCSA 常见文本工具按行工作，但这不是管道对象本身的保证。
+  source:
+  - pipe(7)
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-model
+  - card::boundary
+  - priority::P2
+- id: RHCSA-02-K03-QA-005
+  type: qa
+  question: 普通 `|` 与 Bash `|&` 的通道差异是什么？
+  answer: '`|` 只连接 stdout；`|&` 在 Bash 中把 stdout 和 stderr 一起连接到下一阶段，等价于 `2>&1 |` 的简写。'
+  extra: 首选显式写法训练 FD 模型。
+  source:
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-model
+  - card::comparison
+  - priority::P1
+- id: RHCSA-02-K03-CLOZE-001
+  type: cloze
+  text: 普通管道把左侧的 {{c1::stdout / FD 1}} 连接到右侧的 {{c2::stdin / FD 0}}；{{c3::stderr / FD 2}} 默认旁路。
+  extra: 需要合流时显式写 `2>&1 |`。
+  source:
+  - RH124 Ch.5
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-02-O03-QA-001
+  type: qa
+  question: '`tee -a evidence.log` 中 `-a` 的作用是什么？'
+  answer: 以追加方式写入文件，而不是覆盖既有内容。
+  extra: 它不改变 tee 继续向 stdout 写数据的行为。
+  source:
+  - tee(1)
+  - RH124 Ch.5
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::tee
+  - card::parameter
+  - priority::P0
+- id: RHCSA-02-O03-QA-002
+  type: qa
+  question: '`A | tee before.log | B` 中，before.log 能证明什么？'
+  answer: 证明数据到达 tee 所在位置，即 B 处理前的流被记录。
+  extra: 不能单独证明 A、tee、B 都成功，也不能证明 B 的输出正确。
+  source:
+  - tee(1)
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::tee
+  - card::verification
+  - priority::P0
+- id: RHCSA-02-O03-QA-003
+  type: qa
+  question: '`A | tee before.log | B | tee after.log` 中两个文件的取证位置有何不同？'
+  answer: before.log 记录 B 前的数据；after.log 记录 B 的 stdout。
+  extra: 比较内容可判断数据变化，但仍要检查阶段状态。
+  source:
+  - tee(1)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::tee
+  - card::comparison
+  - priority::P1
+- id: RHCSA-02-O03-QA-004
+  type: qa
+  question: 管道终端有数据但 `evidence.log` 缺失，下一条最有区分度的证据是什么？
+  answer: 立即检查 tee 对应的 `PIPESTATUS` 位置，并核对目标路径、权限和空间。
+  extra: 不要因 tee 是辅助命令而忽略其独立失败。
+  source:
+  - tee(1)
+  - bash(1) PIPESTATUS
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::tee
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-02-O03-QA-005
+  type: qa
+  question: 为什么“文件中有 payload”不能证明整条管道成功？
+  answer: 它只证明 payload 到达 tee 且文件写入成功；上游或中间阶段仍可能返回非零。
+  extra: 必须结合 `$?`、`PIPESTATUS` 或 `pipefail`。
+  source:
+  - tee(1)
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::tee
+  - card::boundary
+  - priority::P1
+- id: RHCSA-02-O03-CLOZE-001
+  type: cloze
+  text: '`tee file` 默认 {{c1::覆盖}}文件；`tee -a file` {{c2::追加}}文件；两者都继续把数据写到 {{c3::stdout}}。'
+  extra: tee 是真实管道阶段。
+  source:
+  - tee(1)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::tee
+  - card::cloze
+  - priority::P0
+- id: RHCSA-02-O04-QA-001
+  type: qa
+  question: Bash 默认如何确定一条普通管道的退出状态？
+  answer: 默认采用最后一个命令的退出状态。
+  extra: 因此上游或中间失败可能被最后阶段成功掩盖。
+  source:
+  - bash(1) Pipelines
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::concept
+  - priority::P0
+- id: RHCSA-02-O04-QA-002
+  type: qa
+  question: 三阶段管道结束后，`${PIPESTATUS[@]}` 的数组位置如何对应？
+  answer: 按管道从左到右对应阶段 1、阶段 2、阶段 3。
+  extra: 数组属于 Bash，必须在后续简单命令更新前复制。
+  source:
+  - 'Bash Variables: PIPESTATUS'
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::output
+  - priority::P0
+- id: RHCSA-02-O04-QA-003
+  type: qa
+  question: 怎样在不先运行其他验证命令的情况下，同时保存管道 `$?` 和 `PIPESTATUS`？
+  answer: '```bash
+
+    pipeline_rc=$? stage_rc=("${PIPESTATUS[@]}")
+
+    ```'
+  extra: 两者在同一个赋值命令展开，随后再用 printf 展示。
+  source:
+  - bash(1) Assignments
+  - 'Bash Variables: PIPESTATUS'
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::command
+  - priority::P0
+- id: RHCSA-02-O04-QA-004
+  type: qa
+  question: 在当前 Bash 中开启和关闭 `pipefail` 的命令分别是什么？
+  answer: '```bash
+
+    set -o pipefail
+
+    set +o pipefail
+
+    ```'
+  extra: 它是当前 Shell 的行为状态，临时调查后应恢复。
+  source:
+  - bash(1) The Set Builtin
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::configuration
+  - priority::P0
+- id: RHCSA-02-O04-QA-005
+  type: qa
+  question: 启用 `pipefail` 后，有多个非零阶段时管道取哪个状态？
+  answer: 取最右侧非零阶段的状态；所有阶段均为零时才返回零。
+  extra: 不是第一个非零，也不是所有状态的列表。
+  source:
+  - bash(1) The Set Builtin
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::concept
+  - priority::P0
+- id: RHCSA-02-O04-QA-006
+  type: qa
+  question: '`pipefail` 为什么不能替代 `PIPESTATUS`？'
+  answer: pipefail 只改变单一汇总状态；PIPESTATUS 才能展示每个阶段的独立状态。
+  extra: 需要定位多个失败阶段时仍要保存数组。
+  source:
+  - bash(1) Pipelines
+  - 'Bash Variables: PIPESTATUS'
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::comparison
+  - priority::P0
+- id: RHCSA-02-O04-QA-007
+  type: qa
+  question: 结果文件存在且 `$?` 为 0，但怀疑中间阶段失败，下一步应怎样取证？
+  answer: 在可重现条件下重新运行，结束后立即复制 `PIPESTATUS`；需要可靠汇总时在受控范围启用 pipefail。
+  extra: 已有文件无法反推出过去未保存的逐阶段退出值。
+  source:
+  - bash(1) Pipelines
+  - 'Bash Variables: PIPESTATUS'
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-02-O04-QA-008
+  type: qa
+  question: 为什么本章不把 `set -euo pipefail` 当作所有脚本的默认答案？
+  answer: '`set -e` 与条件、函数和管道存在复杂交互；本章只训练 pipefail 的汇总语义。'
+  extra: 完整脚本错误策略应在 Shell 脚本章节结合上下文设计。
+  source:
+  - bash(1) The Set Builtin
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::boundary
+  - priority::P1
+- id: RHCSA-02-O04-CLOZE-001
+  type: cloze
+  text: Bash 默认管道状态来自 {{c1::最后一个阶段}}；启用 pipefail 后，状态来自 {{c2::最右侧非零阶段}}。
+  extra: 逐阶段定位仍使用 PIPESTATUS。
+  source:
+  - bash(1) Pipelines
+  - bash(1) The Set Builtin
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::cloze
+  - priority::P0
+- id: RHCSA-02-O04-CLOZE-002
+  type: cloze
+  text: 管道后必须在运行任何其他简单命令前复制 {{c1::`$?`}} 和 {{c2::`${PIPESTATUS[@]}`}}。
+  extra: 后续命令会更新这些状态。
+  source:
+  - 'Bash Variables: PIPESTATUS'
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::pipeline-status
+  - card::cloze
+  - priority::P0
+- id: RHCSA-02-O05-QA-001
+  type: qa
+  question: 向 `cat` 提供两行 here-document 的基本骨架是什么？
+  answer: '```bash
+
+    cat <<EOF
+
+    line one
+
+    line two
+
+    EOF
+
+    ```'
+  extra: 结束词应单独成行并与开始处一致。
+  source:
+  - bash(1) Here Documents
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::here-document
+  - card::syntax
+  - priority::P0
+- id: RHCSA-02-O05-QA-002
+  type: qa
+  question: '`<<EOF` 与 `<<''EOF''` 对正文展开有何差异？'
+  answer: 未引用 delimiter 时正文可能发生变量、命令和算术展开；引用 delimiter 时相关展开被抑制，正文按字面量传入。
+  extra: 结束行仍写裸 `EOF`。
+  source:
+  - bash(1) Here Documents
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::here-document
+  - card::comparison
+  - priority::P0
+- id: RHCSA-02-O05-QA-003
+  type: qa
+  question: '`<<-EOF` 会删除哪些缩进？'
+  answer: 只删除 here-document 行和结束词前的 TAB，不删除普通空格。
+  extra: 编辑器把 TAB 转为空格时可能导致结束词不匹配。
+  source:
+  - bash(1) Here Documents
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::here-document
+  - card::boundary
+  - priority::P0
+- id: RHCSA-02-O05-QA-004
+  type: qa
+  question: Shell 一直等待 here-document 结束，优先检查什么？
+  answer: 检查结束词拼写、是否单独成行、尾随空格，以及使用 `<<-` 时缩进是否真为 TAB。
+  extra: 必要时选择不易出现在正文中的 delimiter。
+  source:
+  - bash(1) Here Documents
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::here-document
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-02-O05-QA-005
+  type: qa
+  question: 怎样验证 quoted here-document 保留 `$HOME` 和 `$(hostname)` 字面量？
+  answer: '```bash
+
+    cat > evidence.txt <<''EOF''
+
+    $HOME
+
+    $(hostname)
+
+    EOF
+
+    cat evidence.txt
+
+    ```'
+  extra: 验收文件内容，而不是只看命令是否结束。
+  source:
+  - bash(1) Here Documents
+  - cat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::here-document
+  - card::verification
+  - priority::P1
+- id: RHCSA-02-O05-CLOZE-001
+  type: cloze
+  text: 引用 here-document 的开始 delimiter，例如 {{c1::`<<'EOF'`}}，可抑制正文中的相关展开。
+  extra: 结束 delimiter 行仍写 `EOF`。
+  source:
+  - bash(1) Here Documents
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::here-document
+  - card::cloze
+  - priority::P0
+- id: RHCSA-02-D01-QA-001
+  type: qa
+  question: 命令运行后终端没有输出，第一步应判断哪些对象？
+  answer: 先标出该命令的 FD 1 和 FD 2 当前端点，再检查目标文件、管道下游和保存状态。
+  extra: 终端为空不能直接证明命令未执行。
+  source:
+  - RH124 Ch.5
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-02-D01-QA-003
+  type: qa
+  question: 只想保存 stdout，但错误仍显示在终端，这通常说明什么？
+  answer: stderr 仍保持原端点；`>` 默认只改变 FD 1。
+  extra: 需要保存 stderr 时显式使用 `2>`，不要反复修改 stdout 重定向。
+  source:
+  - RH124 Ch.5
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-02-D01-QA-004
+  type: qa
+  question: '`tee` 后文件为空时，怎样区分上游无数据与 tee 写入失败？'
+  answer: 同时检查 tee 前后可见数据、tee 对应的 PIPESTATUS 位置，以及文件路径和权限。
+  extra: 单看空文件不能区分数据路径和写入失败。
+  source:
+  - tee(1)
+  - 'Bash Variables: PIPESTATUS'
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-02-D01-QA-005
+  type: qa
+  question: '`combined-b.log` 中没有 WARN，能否断言命令没有产生 stderr？'
+  answer: 不能。使用 `2>&1 >combined-b.log` 时 stderr 可能仍发往原终端，只是没有进入该文件。
+  extra: 必须结合重定向顺序和终端证据判断。
+  source:
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::diagnosis
+  - card::output
+  - priority::P1
+- id: RHCSA-02-W01-QA-001
+  type: qa
+  question: 交付一份管道调查证据时，除输出文件外至少还应记录什么？
+  answer: 记录运行命令、工作目录和用户、stdout/stderr 路径、管道汇总状态、逐阶段状态及证据边界。
+  extra: 文件内容不能替代执行上下文和状态。
+  source:
+  - Project lecture standard
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::work-migration
+  - card::process
+  - priority::P1
+- id: RHCSA-02-W01-QA-002
+  type: qa
+  question: 真实调查中，什么时候更适合分开保存 stdout/stderr，什么时候可合并？
+  answer: 需要区分业务数据与诊断信息时分开保存；需要完整单一记录且明确接受混流时可合并。
+  extra: 合并应是有意的证据设计，不是默认省事写法。
+  source:
+  - RH124 Ch.5
+  - Operational extension
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::work-migration
+  - card::comparison
+  - priority::P1
+- id: RHCSA-02-T01-QA-001
+  type: qa
+  question: 受控命令返回 7。要求分别覆盖保存 stdout/stderr，并在验证文件前保留状态，核心命令序列是什么？
+  answer: '```bash
+
+    command > stdout.log 2> stderr.log
+
+    command_rc=$?
+
+    cat stdout.log
+
+    cat stderr.log
+
+    ```'
+  extra: 实际将 `command` 替换为题目给定受控命令；赋值必须紧跟执行。
+  source:
+  - RH124 Ch.5
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::classic-task-1
+  - card::task
+  - priority::P0
+- id: RHCSA-02-T01-QA-002
+  type: qa
+  question: 用 `>combined-a.log 2>&1` 执行同时产生 DATA/WARN 的命令，文件应包含哪些流？
+  answer: 应同时包含 stdout 的 DATA 和 stderr 的 WARN。
+  extra: 这是 FD 路由预期，不是本会话声称的 RHEL 9 实测输出。
+  source:
+  - bash(1) Redirections
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::classic-task-1
+  - card::output
+  - priority::P0
+- id: RHCSA-02-T02-QA-001
+  type: qa
+  question: 三阶段调查管道结束后，要求既保留数据又定位中间失败，最小证据组合是什么？
+  answer: 保存 `pipeline_rc=$? stage_rc=("${PIPESTATUS[@]}")`，并用 `cat` 验证 tee 文件；需要可靠汇总时在受控范围启用 pipefail 后重试。
+  extra: 内容、汇总状态和逐阶段状态三个层次都必须存在。
+  source:
+  - bash(1) Pipelines
+  - tee(1)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::classic-task-2
+  - card::task
+  - priority::P0
+- id: RHCSA-02-T02-QA-002
+  type: qa
+  question: 中间阶段正常转发 payload 但返回 9，tee 文件含 payload。正确结论是什么？
+  answer: 数据到达 tee 并被写入，但中间阶段失败；不能把文件有数据扩大为整条管道成功。
+  extra: 默认 `$?` 还可能只反映最后 tee 阶段。
+  source:
+  - bash(1) Pipelines
+  - tee(1)
+  tags:
+  - exam::rhcsa
+  - chapter::io-redirection-pipelines
+  - topic::classic-task-2
+  - card::boundary
+  - priority::P0
+status: integrated

@@ -1,0 +1,1141 @@
+chapter_id: RHCSA-28
+chapter_slug: selinux-model-context-avc
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+notes:
+- id: RHCSA-SELINUX-K01-QA-001
+  type: qa
+  question: 普通 Unix 权限允许一次访问时，为什么 RHEL 9 仍可能拒绝它？
+  answer: 因为 SELinux 会在 DAC 允许之后继续按安全策略检查进程域、目标对象类型、对象类别和请求行为。
+  extra: DAC 拒绝时 SELinux 不替它放行；DAC 允许也不代表 SELinux 一定允许。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::decision-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-SELINUX-K01-QA-002
+  type: qa
+  question: 在 RHCSA 常见服务访问问题中，SELinux 安全上下文的哪个字段最需要优先关注？
+  answer: '`type` 字段。'
+  extra: 对进程而言 type 常称为 domain；对文件等对象而言，它描述策略用途。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::concept
+  - priority::P0
+- id: RHCSA-SELINUX-K01-QA-003
+  type: qa
+  question: '`httpd_t` 与 `httpd_sys_content_t` 分别描述什么？'
+  answer: '`httpd_t` 是 httpd 进程域；`httpd_sys_content_t` 是适合由 Web 服务读取的内容对象类型。'
+  extra: 策略还会结合对象类别和具体 permission 判断。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SELINUX-K01-QA-004
+  type: qa
+  question: SELinux 安全上下文通常由哪四部分组成？
+  answer: SELinux user、role、type 和 level/range。
+  extra: RHCSA 服务题通常优先关注第三段 type，但不能把其他字段当作不存在。
+  source:
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::concept
+  - priority::P0
+- id: RHCSA-SELINUX-O01-QA-001
+  type: qa
+  question: 如何查看 SELinux 当前运行模式？
+  answer: '```bash
+
+    getenforce
+
+    ```'
+  extra: 输出可能为 `Enforcing`、`Permissive` 或 `Disabled`。
+  source:
+  - RH134
+  - getenforce(8)
+  - RHEL9-Using-SELinux-2.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::command
+  - priority::P0
+- id: RHCSA-SELINUX-O01-QA-002
+  type: qa
+  question: 需要同时比较 SELinux 当前模式和配置文件中的启动模式时，应优先使用什么命令？
+  answer: '```bash
+
+    sestatus
+
+    ```'
+  extra: 重点比较 `Current mode` 与 `Mode from config file`，并检查加载的策略名。
+  source:
+  - sestatus(8)
+  - RHEL9-Using-SELinux-2.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::command
+  - priority::P0
+- id: RHCSA-SELINUX-O01-QA-003
+  type: qa
+  question: '`setenforce 0` 改变什么，又不改变什么？'
+  answer: 它把当前模式临时切到 Permissive，但不修改 `/etc/selinux/config` 中的持久模式。
+  extra: 它也不能把 `Disabled` 的系统直接切回启用状态。
+  source:
+  - RH134
+  - setenforce(8)
+  - RHEL9-Using-SELinux-1.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SELINUX-O01-QA-004
+  type: qa
+  question: 服务在 `setenforce 0` 后恢复正常，能否认为 SELinux 问题已经修复？
+  answer: 不能。这只说明 SELinux enforcement 参与了失败路径，仍需查看 AVC 并修正具体策略条件。
+  extra: 最终要恢复题目要求的模式，并重新验证业务。
+  source:
+  - RHEL9-Using-SELinux-1.5
+  - RHEL9-Using-SELinux-5.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::permissive-boundary
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-SELINUX-O01-QA-005
+  type: qa
+  question: RHEL 9 中，SELinux 持久启动模式主要记录在哪个文件？
+  answer: '`/etc/selinux/config`。'
+  extra: '`SELINUX=enforcing` 等值管理持久计划；修改文件不会立即改变当前模式。'
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-2.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::configuration
+  - priority::P0
+- id: RHCSA-SELINUX-O01-QA-006
+  type: qa
+  question: 题目要求 SELinux 当前和重启后都为 Enforcing，至少应分别验证哪两个状态？
+  answer: 当前模式为 Enforcing；配置文件中的持久模式也为 Enforcing。
+  extra: 可用 `sestatus` 同时观察两个维度，并用 `getenforce` 快速确认当前模式。
+  source:
+  - RHEL9-Using-SELinux-2.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::verification
+  - priority::P0
+- id: RHCSA-SELINUX-K02-QA-001
+  type: qa
+  question: Web 服务访问失败时，在深入 SELinux 前应先用证据确认哪些前置层？
+  answer: 服务配置与状态、目标路径和普通权限、实际监听与请求路径，以及相关网络过滤层。
+  extra: 各层回答不同问题，不能由“服务 active”一个结论代替。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-5.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-first
+  - card::process
+  - priority::P0
+- id: RHCSA-SELINUX-K02-QA-002
+  type: qa
+  question: 查看近期 SELinux AVC 拒绝的核心命令是什么？
+  answer: '```bash
+
+    ausearch -m AVC,USER_AVC -ts recent -i
+
+    ```'
+  extra: 需要更完整时可加入 `SELINUX_ERR,USER_SELINUX_ERR`；无结果先重新触发并检查 Audit 链。
+  source:
+  - RHEL9-Using-SELinux-5.1
+  - ausearch(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::ausearch
+  - card::command
+  - priority::P0
+- id: RHCSA-SELINUX-K02-QA-003
+  type: qa
+  question: 阅读一条 AVC 拒绝时，优先提炼哪三个核心对象和一个行为？
+  answer: source domain、target type、object class，以及 denied permission。
+  extra: 再用命令名、路径、PID、时间和事件序号关联业务动作。
+  source:
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::output
+  - priority::P0
+- id: RHCSA-SELINUX-O02-QA-001
+  type: qa
+  question: '`ls -Z` 能证明什么，不能证明什么？'
+  answer: 它能显示对象当前 SELinux 上下文，但不能证明持久文件上下文规则已经存在。
+  extra: 当前标签正确也不能单独证明重启终态或业务功能正确。
+  source:
+  - RH134
+  - ls(1)
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::context-query
+  - card::verification
+  - priority::P0
+- id: RHCSA-SELINUX-K04-QA-001
+  type: qa
+  question: '`audit2why` 在 SELinux 排错中的合适定位是什么？'
+  answer: 它是帮助解释 AVC 拒绝原因的辅助工具，输出是线索而不是绝对结论。
+  extra: 仍需结合上下文、标准策略入口和业务目标判断。
+  source:
+  - audit2why(1)
+  - RHEL9-Using-SELinux-5.2
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::audit2why
+  - card::concept
+  - priority::P1
+- id: RHCSA-SELINUX-K04-QA-002
+  type: qa
+  question: 为什么不应把 `audit2allow` 作为看到 AVC 后的第一修复手段？
+  answer: 拒绝通常源于误标签或非标准目录、端口、行为未按已有策略配置；自动生成规则可能掩盖误配置并扩大权限。
+  extra: 应先检查标准文件类型、端口类型、Boolean 和应用配置。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  - audit2allow(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-boundary
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-SELINUX-K04-QA-003
+  type: qa
+  question: SELinux 服务故障的通用证据推进骨架是什么？
+  answer: 确认前置层 → 记录模式并重新触发 → 查 AVC → 识别 domain、type、class 和 permission → 分类标准入口 → 最小持久修复 → 恢复 Enforcing 并综合验证。
+  extra: 已有可靠证据时可从中间切入，但不能跳过结论依赖的状态。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-Chapter-5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-first
+  - card::process
+  - priority::P0
+- id: RHCSA-SELINUX-EXTRA-QA-002
+  type: qa
+  question: '`Permissive` 与 `Disabled` 的关键区别是什么？'
+  answer: Permissive 仍加载策略、维护标签并记录拒绝；Disabled 不加载策略，也不会正常维护持久对象标签。
+  extra: 排错优先使用有限的 Permissive 诊断窗口，而不是 Disabled。
+  source:
+  - RHEL9-Using-SELinux-1.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SELINUX-O01-CLOZE-001
+  type: cloze
+  text: '`setenforce {{c1::0}}` 临时切换到 Permissive；`setenforce {{c2::1}}` 临时切换到 Enforcing。'
+  extra: 两者都不修改 `/etc/selinux/config`，也不能从 Disabled 直接启用 SELinux。
+  source:
+  - setenforce(8)
+  - RHEL9-Using-SELinux-1.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::cloze
+  - priority::P0
+- id: RHCSA-SELINUX-K01-CLOZE-001
+  type: cloze
+  text: SELinux 安全上下文通常包含 user、role、{{c1::type}} 和 level；进程的 type 常称为 {{c2::domain}}。
+  extra: RHCSA 服务题最常从第三段进入策略判断。
+  source:
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::cloze
+  - priority::P0
+- id: RHCSA-28-K01-QA-001
+  type: qa
+  question: DAC、SELinux MAC 和应用自身授权分别回答什么问题？
+  answer: DAC 判断 Linux 身份和传统权限；SELinux MAC 判断策略身份对目标类型/类别/行为是否允许；应用授权判断业务自身规则。
+  extra: 三层都可能产生拒绝，不能互相替代。
+  source:
+  - RH134
+  - selinux(8)
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::decision-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-28-K01-QA-002
+  type: qa
+  question: 把一次 SELinux 访问判断压缩成最小四元组，应写出哪四项？
+  answer: source domain、target type、object class、requested permission。
+  extra: 策略基于该组合以及其他约束作出允许或拒绝决定。
+  source:
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::decision-model
+  - card::syntax
+  - priority::P0
+- id: RHCSA-28-K01-QA-003
+  type: qa
+  question: 将“`httpd_t` 对 `var_t:file` 请求 `read` 被拒绝”拆解时，`file` 属于哪个维度？
+  answer: object class（对象类别）。
+  extra: '`var_t` 是 target type，`read` 是 requested permission。'
+  source:
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::decision-model
+  - card::output
+  - priority::P0
+- id: RHCSA-28-K01-QA-004
+  type: qa
+  question: '`chmod 777` 为什么不是 SELinux 拒绝的通用修复？'
+  answer: 它只放宽 DAC 权限，不能改变 SELinux domain、type、class 与 permission 的策略决定。
+  extra: 还会扩大普通权限范围，因此既可能无效也不安全。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::decision-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-28-K01-QA-005
+  type: qa
+  question: 已确认 SELinux policy 允许目标访问，能否直接宣布业务终态正确？
+  answer: 不能。仍需验证应用配置、服务状态、监听、网络过滤和最终请求。
+  extra: SELinux 允许只证明安全链中的一个局部状态。
+  source:
+  - RHEL9-Knowledge-Architecture
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::decision-model
+  - card::verification
+  - priority::P1
+- id: RHCSA-28-K01-QA-006
+  type: qa
+  question: RHEL 常见 `targeted` policy 的名称能否证明所有进程都受到相同强度的限制？
+  answer: 不能。不同 domain 的允许集合不同，某些进程可能处于较宽松的 unconfined domain。
+  extra: 策略名说明加载的 policy，不替代 `ps -Z` 对目标进程的观察。
+  source:
+  - RHEL9-Using-SELinux-1.1
+  - selinux(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::decision-model
+  - card::concept
+  - priority::P1
+- id: RHCSA-28-K02-QA-001
+  type: qa
+  question: SELinux user 与 Linux 登录用户是同一个身份字段吗？
+  answer: 不是。Linux 用户参与 DAC；SELinux user 属于安全上下文并参与 MAC 身份映射。
+  extra: 两者可有关联，但不能只凭用户名字符串互相推断。
+  source:
+  - RHEL9-Using-SELinux-3
+  - selinux(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::comparison
+  - priority::P0
+- id: RHCSA-28-K02-QA-002
+  type: qa
+  question: 上下文 `system_u:system_r:httpd_t:s0` 中，httpd 的策略身份是哪一段？
+  answer: 第三段 `httpd_t`，它是进程 domain。
+  extra: '`system_u` 是 SELinux user，`system_r` 是 role，`s0` 是 level。'
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::output
+  - priority::P0
+- id: RHCSA-28-K02-QA-003
+  type: qa
+  question: 文件上下文 `system_u:object_r:httpd_sys_content_t:s0` 中，哪一段描述对象用途？
+  answer: 第三段 `httpd_sys_content_t`。
+  extra: 文件对象常见 `object_r` role；服务访问判断通常优先关注 type。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::output
+  - priority::P0
+- id: RHCSA-28-K02-QA-004
+  type: qa
+  question: 看到 level 为 `s0:c123,c456` 时，为什么不能把冒号后的类别误认为新的上下文字段？
+  answer: level/range 本身可以包含类别列表；上下文仍是 user、role、type、level 四个主字段。
+  extra: 本章只要求正确识别结构，不配置 MLS/MCS。
+  source:
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::boundary
+  - priority::P1
+- id: RHCSA-28-K02-QA-005
+  type: qa
+  question: 进程命令名是 `httpd`，能否直接认定它运行在 `httpd_t`？
+  answer: 不能，应使用 `ps -Z` 查看进程当前上下文。
+  extra: 命令名不等于 domain；异常启动方式可能导致未进入预期 domain。
+  source:
+  - ps(1)
+  - selinux(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-28-K02-QA-006
+  type: qa
+  question: 看到管理员 Shell 为 `unconfined_t`，能否认为 SELinux 已关闭？
+  answer: 不能。`unconfined_t` 是一个 domain；是否启用和当前模式应由 `getenforce` 或 `sestatus` 判断。
+  extra: domain 与系统模式是独立维度。
+  source:
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::comparison
+  - priority::P1
+- id: RHCSA-28-K02-CLOZE-001
+  type: cloze
+  text: 对进程而言安全上下文第三段通常称为 {{c1::domain}}；对文件等目标对象而言通常称为 {{c2::type}}。
+  extra: 两者都位于 `user:role:type:level` 的第三段。
+  source:
+  - selinux(8)
+  - RHEL9-Using-SELinux-1.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::security-context
+  - card::cloze
+  - priority::P1
+- id: RHCSA-28-O01-QA-001
+  type: qa
+  question: '`sestatus` 显示 `Current mode: permissive`、`Mode from config file: enforcing`，应怎样解读？'
+  answer: 当前未执行 SELinux 拒绝，但配置文件计划下次按 Enforcing 启动。
+  extra: 两个状态不一致，当前业务成功不能证明 Enforcing 下会成功。
+  source:
+  - sestatus(8)
+  - RHEL9-Using-SELinux-2.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::output
+  - priority::P0
+- id: RHCSA-28-O01-QA-002
+  type: qa
+  question: 系统为 `Disabled` 时，为什么 `setenforce 1` 不能直接启用 SELinux？
+  answer: 因为没有加载 SELinux policy；`setenforce` 只在已启用状态下切换 Enforcing 与 Permissive。
+  extra: 重新启用通常涉及持久配置、重启和可能的重新标记，属于启动恢复边界。
+  source:
+  - setenforce(8)
+  - RHEL9-Using-SELinux-2.4
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::boundary
+  - priority::P0
+- id: RHCSA-28-O01-QA-003
+  type: qa
+  question: Enforcing 与 Permissive 都会记录 AVC，它们的关键差异是什么？
+  answer: Enforcing 执行不允许的拒绝；Permissive 记录本应发生的拒绝但允许操作继续。
+  extra: Permissive 中可能出现更多后续 AVC，因为应用能继续执行。
+  source:
+  - RHEL9-Using-SELinux-1.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::comparison
+  - priority::P0
+- id: RHCSA-28-O01-QA-004
+  type: qa
+  question: 为什么不应把 `SELINUX=disabled` 当作服务题的最终解法？
+  answer: 它移除 SELinux 保护并使持久对象不被正常标记，今后重新启用还可能需要重新标记。
+  extra: 应修正具体策略条件并保持题目要求的 Enforcing。
+  source:
+  - RHEL9-Using-SELinux-1.5
+  - RHEL9-Using-SELinux-2.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::security
+  - priority::P0
+- id: RHCSA-28-O01-QA-005
+  type: qa
+  question: 切到 Permissive 后同一业务错误仍存在，最稳妥的结论是什么？
+  answer: 当前症状不是只靠取消 SELinux 拒绝就能消失，应优先检查其他层。
+  extra: 仍可保留和分析相关 AVC，因为系统可能同时存在多个偏差。
+  source:
+  - RHEL9-Using-SELinux-5.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::permissive-boundary
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-28-O01-CLOZE-001
+  type: cloze
+  text: '`sestatus` 中 {{c1::Current mode}} 描述当前执行状态，{{c2::Mode from config file}} 描述配置文件中的启动计划。'
+  extra: 两者必须分别验证。
+  source:
+  - sestatus(8)
+  - RHEL9-Using-SELinux-2.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::mode-state
+  - card::cloze
+  - priority::P0
+- id: RHCSA-28-O02-QA-001
+  type: qa
+  question: 如何浏览系统当前进程及其 SELinux 上下文？
+  answer: '```bash
+
+    ps -eZ
+
+    ```'
+  extra: 需要更多身份字段时可使用 `ps -e -o label,pid,ppid,user,comm,args`。
+  source:
+  - ps(1)
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::context-query
+  - card::command
+  - priority::P0
+- id: RHCSA-28-O02-QA-002
+  type: qa
+  question: 已精确确认 PID 1842 是目标进程，怎样查看它的 SELinux domain？
+  answer: '```bash
+
+    ps -Z -p 1842
+
+    ```'
+  extra: 从完整上下文第三段读取 domain；PID 选择错误会让后续结论失效。
+  source:
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::context-query
+  - card::command
+  - priority::P0
+- id: RHCSA-28-O02-QA-003
+  type: qa
+  question: 查看 `/srv/exam-site` 目录对象本身的上下文时，为什么使用 `ls -Zd`？
+  answer: '`-Z` 显示 SELinux 上下文，`-d` 避免列出目录内容，直接显示目录对象本身。'
+  extra: 目录本身和目录内文件可能具有不同 type。
+  source:
+  - ls(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::context-query
+  - card::parameter
+  - priority::P0
+- id: RHCSA-28-O02-QA-004
+  type: qa
+  question: 如何查看 `/srv/exam-site/index.html` 当前完整上下文？
+  answer: '```bash
+
+    ls -lZ /srv/exam-site/index.html
+
+    ```'
+  extra: 当前 type 用于与 AVC 的 `tcontext` 对照。
+  source:
+  - ls(1)
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::context-query
+  - card::command
+  - priority::P0
+- id: RHCSA-28-O02-QA-005
+  type: qa
+  question: '`ls -Zd /srv/exam-site` 与 `ls -lZ /srv/exam-site` 分别查看什么？'
+  answer: 前者查看目录本身；后者列出目录中各条目的上下文。
+  extra: 服务遍历目录和读取文件可能产生不同 `tclass` 与 permission。
+  source:
+  - ls(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::context-query
+  - card::comparison
+  - priority::P1
+- id: RHCSA-28-O02-QA-006
+  type: qa
+  question: 如何查看当前 Shell 进程的 SELinux 上下文？
+  answer: '```bash
+
+    id -Z
+
+    ```'
+  extra: 它不能代替 `ps -Z` 查询目标服务进程。
+  source:
+  - id(1)
+  - selinux(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::context-query
+  - card::command
+  - priority::P1
+- id: RHCSA-28-O02-QA-007
+  type: qa
+  question: '`ps -Z` 显示 httpd 为 `httpd_t`，这一证据不能单独证明哪些终态？'
+  answer: 不能证明目标文件 type 正确、SELinux policy 允许、服务监听正常或页面访问成功。
+  extra: 它只证明该进程当前 domain。
+  source:
+  - ps(1)
+  - RHEL9-Knowledge-Architecture
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::context-query
+  - card::verification
+  - priority::P0
+- id: RHCSA-28-K03-QA-001
+  type: qa
+  question: 'AVC 中 `avc: denied { open read }` 的花括号表示什么？'
+  answer: 表示这次事件中被策略拒绝的 requested permission 集合。
+  extra: 仍需结合 `tclass` 和目标上下文判断对象与语义。
+  source:
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::output
+  - priority::P0
+- id: RHCSA-28-K03-QA-002
+  type: qa
+  question: AVC 的 `scontext` 和 `tcontext` 分别指向什么？
+  answer: '`scontext` 是发起访问的主体上下文；`tcontext` 是目标对象上下文。'
+  extra: 第一轮通常提取两者第三段 domain/type。
+  source:
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::output
+  - priority::P0
+- id: RHCSA-28-K03-QA-003
+  type: qa
+  question: '`tclass=file` 与 `tclass=dir` 为什么不能忽略？'
+  answer: 它们说明目标对象类别不同，允许集合和 permission 语义也可能不同。
+  extra: 目录 `search` 与文件 `read` 是常见的两类独立拒绝。
+  source:
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::output
+  - priority::P0
+- id: RHCSA-28-K03-QA-004
+  type: qa
+  question: AVC 中 `denied { name_bind }` 且 `tclass=tcp_socket`，应把拒绝分类到哪一类入口？
+  answer: SELinux 端口类型调查。
+  extra: 本章只做分类；`semanage port` 的完整配置归第 29 章。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::output
+  - priority::P0
+  - bridge::rhcsa-29
+- id: RHCSA-28-K03-QA-005
+  type: qa
+  question: '`comm="httpd"` 能否单独证明 source domain 是 `httpd_t`？'
+  answer: 不能。命令短名称不是 SELinux domain，应读取 `scontext` 并用 `ps -Z` 交叉验证。
+  extra: 异常启动方式可能导致 domain 与命令名预期不一致。
+  source:
+  - RHEL9-Using-SELinux-5.5
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::output
+  - priority::P1
+- id: RHCSA-28-K03-QA-006
+  type: qa
+  question: AVC 中 PID 与 source domain 哪一个更适合作为长期策略身份？
+  answer: source domain。
+  extra: PID 只标识当时的进程实例，之后可能退出或被复用。
+  source:
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::comparison
+  - priority::P1
+- id: RHCSA-28-K03-QA-007
+  type: qa
+  question: AVC 字段 `permissive=1` 表示什么？
+  answer: 策略会拒绝该请求，但当前 permissive 路径未执行拒绝。
+  extra: 业务可能继续执行并产生后续更多 AVC。
+  source:
+  - RHEL9-Using-SELinux-1.5
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::output
+  - priority::P0
+- id: RHCSA-28-K03-QA-008
+  type: qa
+  question: 为什么同一次访问的路径和可执行文件信息可能不全在单独一条 AVC 行中？
+  answer: 一个 Audit 事件可由 AVC、SYSCALL、PATH 等多条记录组成，它们共享相同事件序号。
+  extra: '`ausearch` 会按事件组织输出，比只 grep 单行更可靠。'
+  source:
+  - ausearch(8)
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::output
+  - priority::P1
+- id: RHCSA-28-K03-QA-009
+  type: qa
+  question: 怎样把一条长 AVC 翻译成一句可操作的判断？
+  answer: 写成“source domain 对 target type:class 请求 permission，被策略拒绝”，再补充业务对象和模式。
+  extra: 例如：`httpd_t` 对 `var_t:file` 请求 `open/read`，在 enforcing 路径被拒绝。
+  source:
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::process
+  - priority::P0
+- id: RHCSA-28-K03-CLOZE-001
+  type: cloze
+  text: AVC 中 {{c1::scontext}} 表示主体上下文，{{c2::tcontext}} 表示目标上下文，{{c3::tclass}} 表示目标对象类别。
+  extra: 再结合 `denied { permission }` 还原访问请求。
+  source:
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::avc-anatomy
+  - card::cloze
+  - priority::P0
+- id: RHCSA-28-O03-QA-001
+  type: qa
+  question: '`ausearch` 中 `-m AVC,USER_AVC` 的作用是什么？'
+  answer: 按 Audit 消息类型筛选 SELinux AVC 与用户空间 AVC 事件。
+  extra: 需要更完整时可加入 `SELINUX_ERR,USER_SELINUX_ERR`。
+  source:
+  - ausearch(8)
+  - RHEL9-Using-SELinux-5.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::ausearch
+  - card::parameter
+  - priority::P0
+- id: RHCSA-28-O03-QA-002
+  type: qa
+  question: '`ausearch -ts recent` 解决什么问题？'
+  answer: 限制查询开始时间，减少旧事件干扰，使结果更接近刚刚重新触发的动作。
+  extra: 复杂调查可使用明确日期时间，但仍应先记录复现时刻。
+  source:
+  - ausearch(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::ausearch
+  - card::parameter
+  - priority::P0
+- id: RHCSA-28-O03-QA-003
+  type: qa
+  question: '`ausearch -i` 与 `ausearch --raw` 的主要用途分别是什么？'
+  answer: '`-i` 把部分字段解释为人类可读形式；`--raw` 保留原始记录供其他解析工具使用。'
+  extra: 向 `audit2why` 传递时优先使用 raw 输出。
+  source:
+  - ausearch(8)
+  - audit2why(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::ausearch
+  - card::comparison
+  - priority::P0
+- id: RHCSA-28-O03-QA-004
+  type: qa
+  question: 如何把近期原始 AVC 交给 `audit2why` 辅助解释？
+  answer: '```bash
+
+    ausearch -m AVC,USER_AVC -ts recent --raw | audit2why
+
+    ```'
+  extra: 输出是分析线索，不直接等于应执行的修复。
+  source:
+  - ausearch(8)
+  - audit2why(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::audit2why
+  - card::command
+  - priority::P0
+- id: RHCSA-28-O03-QA-005
+  type: qa
+  question: Audit 查询无结果且系统安装了 setroubleshoot 组件时，可用哪个 Journal 入口辅助检查？
+  answer: '```bash
+
+    journalctl -t setroubleshoot
+
+    ```'
+  extra: 没有该输出不能证明不存在 AVC，Audit 仍是主要原始证据。
+  source:
+  - RHEL9-Using-SELinux-5.1
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::journal-evidence
+  - card::command
+  - priority::P1
+- id: RHCSA-28-O03-QA-006
+  type: qa
+  question: '`ausearch` 没有结果时，第一轮应检查哪些条件？'
+  answer: 是否重新触发、时间范围是否正确、`auditd` 是否运行，以及 Journal/内核消息是否有相关记录。
+  extra: 只有这些检查后才考虑 dontaudit 等高级边界。
+  source:
+  - RHEL9-Using-SELinux-5.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::journal-evidence
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-28-O03-QA-007
+  type: qa
+  question: 为什么不建议第一轮直接用很多 PID、命令名和路径条件过度过滤 `ausearch`？
+  answer: 命令名可能截断、PID 可能变化、路径信息可能位于配套记录，过度过滤会漏掉完整事件。
+  extra: 先保留近期消息类型结果，再按事件序号缩小。
+  source:
+  - ausearch(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::ausearch
+  - card::boundary
+  - priority::P1
+- id: RHCSA-28-O03-QA-008
+  type: qa
+  question: 临时使用 `semodule -DB` 让 dontaudit 拒绝可见后，调查结束必须执行什么？
+  answer: '```bash
+
+    semodule -B
+
+    ```'
+  extra: 这是高级诊断步骤，必须成对恢复，不是每次无 AVC 的默认操作。
+  source:
+  - RHEL9-Using-SELinux-5.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::dontaudit
+  - card::security
+  - priority::P2
+- id: RHCSA-28-O03-QA-009
+  type: qa
+  question: '`audit2why` 建议可能需要允许规则时，下一步为什么仍要检查标准策略入口？'
+  answer: 工具只分析现有拒绝；错误标签、端口或未启用的预置 Boolean 可能比新增 allow 规则更小、更正确。
+  extra: 应先证明业务需求和标准入口不适用，才考虑自定义策略。
+  source:
+  - audit2why(1)
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::audit2why
+  - card::boundary
+  - priority::P0
+- id: RHCSA-28-D01-QA-001
+  type: qa
+  question: 系统为 Enforcing，服务请求失败，但近期没有相关 AVC。下一条最有区分度的证据是什么？
+  answer: 确认刚刚是否重新触发、查询时间范围和 `auditd` 状态，再查 setroubleshoot Journal 或内核消息。
+  extra: 不要仅凭“无 AVC”立即关闭 SELinux或宣称 SELinux 无关。
+  source:
+  - RHEL9-Using-SELinux-5.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-first
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-28-D01-QA-002
+  type: qa
+  question: Permissive 下页面成功且 AVC 显示 `httpd_t` 对 `var_t:file` 的 read 被拒绝，下一步应分类到哪里？
+  answer: 持久文件上下文规则调查。
+  extra: 本章先记录当前 type 和证据；第 29 章再建立规则并应用。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-first
+  - card::diagnosis
+  - priority::P0
+  - bridge::rhcsa-29
+- id: RHCSA-28-D01-QA-003
+  type: qa
+  question: AVC 显示 `name_bind`、`tclass=tcp_socket`，为什么不应先改文件标签？
+  answer: 拒绝对象是网络 socket 与端口绑定，不是文件/目录访问，应进入端口类型调查。
+  extra: 根据 class 和 permission 选择配置入口。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-first
+  - card::diagnosis
+  - priority::P0
+  - bridge::rhcsa-29
+- id: RHCSA-28-D01-QA-004
+  type: qa
+  question: 目标文件 type 看似正确，但业务需要 httpd 主动连接数据库，AVC 指向网络连接行为。应考虑哪类标准入口？
+  answer: 检查策略是否提供与该业务语义匹配的 SELinux Boolean。
+  extra: 不要盲目开启所有 httpd Boolean；完整操作归第 29 章。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-first
+  - card::diagnosis
+  - priority::P1
+  - bridge::rhcsa-29
+- id: RHCSA-28-D01-QA-005
+  type: qa
+  question: 一个可审计的 Permissive 诊断窗口至少应记录哪些内容？
+  answer: 切换前模式、复现时间和动作、业务变化、新增 AVC、恢复 Enforcing 的时间，以及最终当前/持久模式。
+  extra: 这样才能区分诊断变量与最终状态。
+  source:
+  - RHEL9-Knowledge-Architecture
+  - RHEL9-Using-SELinux-5.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::permissive-boundary
+  - card::process
+  - priority::P0
+- id: RHCSA-28-D01-QA-006
+  type: qa
+  question: 完成 AVC 分类后，为什么还要再次执行 `getenforce` 和 `sestatus`？
+  answer: 确认诊断过程没有把系统遗留在 Permissive，并验证当前与持久模式都满足目标。
+  extra: 模式恢复是独立验收项。
+  source:
+  - RHEL9-Using-SELinux-2.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-first
+  - card::verification
+  - priority::P0
+- id: RHCSA-28-D01-QA-007
+  type: qa
+  question: 本章完成“文件上下文问题”的分类后，为什么不能直接声称页面已经修复？
+  answer: 因为尚未建立持久文件规则、应用规则并重新验证业务；这些操作属于第 29 章。
+  extra: 诊断终态与业务修复终态必须分开。
+  source:
+  - RHEL9-Knowledge-Architecture
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-first
+  - card::boundary
+  - priority::P0
+- id: RHCSA-28-D01-QA-008
+  type: qa
+  question: 真实变更单中，SELinux 拒绝的最小证据包应包含哪些核心内容？
+  answer: 复现时间、当前/持久模式、目标进程上下文、目标对象上下文、原始 Audit 事件、四元翻译、分类和下一步验证。
+  extra: 避免只保存工具摘要而丢失原始 AVC。
+  source:
+  - RHEL9-Knowledge-Architecture
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::evidence-package
+  - card::process
+  - priority::P1
+- id: RHCSA-28-T01-QA-001
+  type: qa
+  question: 经典任务中，当前为 Permissive、配置文件为 Enforcing。页面访问成功能证明什么？
+  answer: 只能证明当前请求在未执行 SELinux 拒绝时可以继续；不能证明 Enforcing 下 policy 允许。
+  extra: 还要收集 AVC 并恢复 Enforcing。
+  source:
+  - RHCSA-28-T01
+  - RHEL9-Using-SELinux-1.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-28-T01-QA-002
+  type: qa
+  question: 经典任务中，怎样取得 httpd 主 PID 并查看其 SELinux 上下文？
+  answer: '```bash
+
+    main_pid=$(systemctl show httpd.service -p MainPID --value)
+
+    ps -Z -p "$main_pid"
+
+    ```'
+  extra: 若 MainPID 为 0，应先调查服务状态，不能继续假设进程存在。
+  source:
+  - RHCSA-28-T01
+  - systemctl(1)
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::classic-task
+  - card::command
+  - priority::P0
+- id: RHCSA-28-T01-QA-003
+  type: qa
+  question: 经典任务中，为什么要同时执行 `ls -Zd /srv/exam-site` 和 `ls -lZ /srv/exam-site/index.html`？
+  answer: 分别记录目录对象和目标文件的当前上下文，避免遗漏目录 class 的拒绝。
+  extra: 二者仍不能证明持久 fcontext 规则存在。
+  source:
+  - RHCSA-28-T01
+  - ls(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-28-T01-QA-004
+  type: qa
+  question: 经典任务的 AVC 显示 `httpd_t`、`var_t`、`tclass=file`、`denied { open read }`。一句话结论是什么？
+  answer: '`httpd_t` 对 `var_t:file` 请求 `open/read` 时被策略拒绝，问题应分类到文件上下文。'
+  extra: 本章不执行具体文件规则修复。
+  source:
+  - RHCSA-28-T01
+  - RHEL9-Using-SELinux-5.5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::classic-task
+  - card::output
+  - priority::P0
+- id: RHCSA-28-T01-QA-005
+  type: qa
+  question: 经典任务为什么禁止使用 `chcon`，即使它可能让页面暂时可访问？
+  answer: 本任务只训练当前上下文和 AVC 证据；`chcon` 会改变当前标签且不能证明持久规则，容易污染诊断。
+  extra: 持久修复在第 29 章完成。
+  source:
+  - RHCSA-28-T01
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::classic-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-28-T01-QA-006
+  type: qa
+  question: 经典任务的最终模式验收命令组是什么？
+  answer: '```bash
+
+    setenforce 1
+
+    getenforce
+
+    sestatus
+
+    grep -E ''^[[:space:]]*SELINUX(=|TYPE=)'' /etc/selinux/config
+
+    ```'
+  extra: 目标是当前和持久均为 Enforcing；页面尚未修复应如实记录。
+  source:
+  - RHCSA-28-T01
+  - setenforce(8)
+  - sestatus(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-model-context-avc
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+status: integrated

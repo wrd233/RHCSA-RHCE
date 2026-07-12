@@ -1,0 +1,1395 @@
+chapter_id: RHCSA-01
+chapter_slug: shell-parsing-expansion
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+notes:
+- id: RHCSA-SHELL-K01-QA-001
+  type: qa
+  question: 需要完全保留字面文本与需要允许变量展开时，分别怎样选择单引号和双引号？
+  answer: 完全保留字面文本使用单引号；允许参数展开或命令替换但仍希望保持一个参数时使用双引号。
+  extra: 双引号同时抑制普通词拆分和路径名展开；单引号阻止普通 Shell 展开。
+  source:
+  - 'RH124: Shell 扩展'
+  - 'bash(1): Quoting'
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::comparison
+  - priority::P0
+  - id::preserved
+- id: RHCSA-SHELL-K01-QA-002
+  type: qa
+  question: 路径变量可能包含空格时，为什么通常写成 `"$path"`？
+  answer: 双引号使参数展开结果保持为一个参数，防止值中的空白触发词拆分，也防止值中的 glob 字符再次进行路径名展开。
+  extra: 引用只能保护参数边界，不能证明路径存在、可访问或操作安全。
+  source:
+  - 'RH124: Shell 变量'
+  - 'bash(1): Word Splitting'
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::parameter
+  - priority::P0
+  - id::preserved
+- id: RHCSA-SHELL-K01-QA-003
+  type: qa
+  question: 捕获 `date +%F` 输出到变量 `today` 的推荐写法是什么？
+  answer: '`today=$(date +%F)`'
+  extra: '`$(...)` 比反引号更清晰且易于嵌套；显示变量时仍推荐 `"$today"`。'
+  source:
+  - 'RH124: Command Substitution'
+  - 'bash(1): Command Substitution'
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::expansion
+  - card::command
+  - priority::P0
+  - id::preserved
+- id: RHCSA-SHELL-K01-QA-004
+  type: qa
+  question: '`$?` 保存什么？什么时候读取才有意义？'
+  answer: 它保存最近一条命令或命令列表的退出状态；必须在任何其他命令覆盖它之前读取或赋给普通变量。
+  extra: 状态 0 通常只说明该命令按自身定义成功，不能自动证明完整任务终态。
+  source:
+  - RH124
+  - 'bash(1): Special Parameters'
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::exit-status
+  - card::output
+  - priority::P0
+  - id::preserved
+- id: RHCSA-SHELL-K01-QA-005
+  type: qa
+  question: '`cmd1 && cmd2` 与 `cmd1 || cmd2` 的执行条件分别是什么？'
+  answer: '`&&` 只在左侧状态为 0 时执行右侧；`||` 只在左侧状态非零时执行右侧。'
+  extra: '`;` 表示无条件顺序执行。'
+  source:
+  - 'bash(1): Lists'
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-lists
+  - card::comparison
+  - priority::P0
+  - id::preserved
+- id: RHCSA-SHELL-K01-CLOZE-001
+  type: cloze
+  text: 命令替换使用 `{{c1::$(command)}}`；最近命令或列表的退出状态使用 `{{c2::$?}}`。
+  extra: 前者处理输出文本，后者读取状态码。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::expansion
+  - card::cloze
+  - priority::P0
+  - id::preserved
+- id: RHCSA-01-K01-QA-001
+  type: qa
+  question: 在 Shell 层，命令的“选项”和“普通参数”有什么共同点？
+  answer: 它们首先都是最终参数列表中的字符串；目标程序再按自身接口决定哪些字符串是选项、路径或其他参数。
+  extra: Shell 负责边界和展开，不负责理解每个程序的业务选项。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::argv-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-K01-QA-002
+  type: qa
+  question: 命令 `ls -l /etc/hosts` 形成的前三个 argv 项分别是什么？
+  answer: '`argv[0]=ls`、`argv[1]=-l`、`argv[2]=/etc/hosts`。'
+  extra: 这是参数模型，不表示已经验证文件存在或命令成功。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::argv-model
+  - card::output
+  - priority::P1
+- id: RHCSA-01-K01-QA-003
+  type: qa
+  question: 如何判断名称 `printf` 当前会解析成 builtin、函数、alias 还是外部命令？
+  answer: '`type printf`；要尽可能列出所有入口，使用 `type -a printf`。'
+  extra: '`type` 解释当前 Shell 的名称解析，单独查路径不能覆盖 builtin 或函数。'
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-resolution
+  - card::command
+  - priority::P0
+- id: RHCSA-01-K01-QA-004
+  type: qa
+  question: 你需要同时查看新 Bash 收到的参数数量和每个参数边界，使用什么只读骨架？
+  answer: '```bash
+
+    bash -c ''
+
+    printf "argc=%s\n" "$#"
+
+    printf "arg=<%s>\n" "$@"
+
+    '' _ <ARGUMENTS...>
+
+    ```'
+  extra: '`_` 占据新 Bash 的 `$0`，其后的参数进入 `$1`、`$2`……。'
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::argv-model
+  - card::command
+  - priority::P0
+- id: RHCSA-01-K01-QA-005
+  type: qa
+  question: 为什么命令源码中的语法引号通常不会出现在目标程序收到的参数中？
+  answer: 引号主要控制 Shell 解析和展开，随后作为语法字符被移除；最终参数保留引号内的数据，而不是语法引号本身。
+  extra: 若参数本身需要引号字符，必须把引号作为数据另行引用或转义。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::argv-model
+  - card::concept
+  - priority::P1
+- id: RHCSA-01-K01-QA-006
+  type: qa
+  question: 未引用空格与引用中的空格在词边界上有什么区别？
+  answer: 未引用空格通常分隔 Shell 词；引号中的空格属于同一个词的数据。
+  extra: 变量展开结果中的空格还可能在后续词拆分阶段产生多个参数。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::argv-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-01-K01-QA-007
+  type: qa
+  question: 反斜杠紧接换行在 Bash 输入中表示什么？
+  answer: 它表示续行；反斜杠和换行都被移除，使下一物理行继续当前命令。
+  extra: 这与把字面换行字符传入参数不是同一件事。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::argv-model
+  - card::syntax
+  - priority::P1
+- id: RHCSA-01-K01-QA-008
+  type: qa
+  question: '`type name` 成功能证明什么，不能证明什么？'
+  answer: 能证明当前 Shell 找到了名称解析入口；不能证明参数正确、命令执行成功或最终业务终态正确。
+  extra: 继续用参数观察、退出状态和目标对象查询完成分层验证。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-resolution
+  - card::boundary
+  - priority::P1
+- id: RHCSA-01-K02-QA-001
+  type: qa
+  question: 只需要保护紧随其后的一个空格或美元符号时，应使用什么？
+  answer: 使用反斜杠，例如 `alpha\ beta` 或 `\$HOME`。
+  extra: 反斜杠只保护下一个字符，不自动保护后续整段文本。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::syntax
+  - priority::P0
+- id: RHCSA-01-K02-QA-002
+  type: qa
+  question: 单引号内部的 `$`、`*` 和反斜杠会怎样处理？
+  answer: 都按字面字符保留，不进行普通参数展开、命令替换或路径名展开。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-K02-QA-003
+  type: qa
+  question: 为什么不能在单引号内部直接写反斜杠加单引号来表示字面单引号？
+  answer: 单引号内部所有字符都按字面处理，反斜杠不能在那里结束或转义单引号；必须结束引用、插入受保护的单引号、再开始引用。
+  extra: 常见拼接形式：`'don'\''t'`。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::boundary
+  - priority::P1
+- id: RHCSA-01-K02-QA-004
+  type: qa
+  question: 双引号中仍会发生哪些本章核心展开？
+  answer: 参数展开和命令替换仍会发生。
+  extra: 普通词拆分和路径名展开被抑制，因此结果通常保持为一个参数。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-K02-QA-005
+  type: qa
+  question: 变量 `value="one two *"` 时，`"$value"` 为什么仍是一个参数？
+  answer: 双引号允许读取变量值，但抑制展开结果的词拆分和路径名展开。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::verification
+  - priority::P0
+- id: RHCSA-01-K02-QA-006
+  type: qa
+  question: 双引号中的反斜杠能否无条件转义任意字符？
+  answer: 不能。它只在有限字符前具有特殊转义作用；其他字符前的反斜杠可能被保留为数据。
+  extra: 不要用大量反斜杠代替清晰的引用结构。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::boundary
+  - priority::P1
+- id: RHCSA-01-K02-QA-007
+  type: qa
+  question: 相邻的已引用和未引用片段会形成多个参数吗？
+  answer: 不会，只要中间没有词分隔，它们会拼接成同一个 Shell 词。
+  extra: 例如 `"$prefix"-'report'\ final` 仍可形成一个参数。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::output
+  - priority::P1
+- id: RHCSA-01-K02-QA-008
+  type: qa
+  question: 要把字面 `$HOME` 作为参数传入，最直接的形式是什么？
+  answer: '`''$HOME''`。'
+  extra: '`"$HOME"` 会展开成当前主目录。'
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::command
+  - priority::P0
+- id: RHCSA-01-K02-QA-009
+  type: qa
+  question: 为什么 `"$path"` 不能证明路径操作一定安全？
+  answer: 它只保证参数边界；路径是否存在、权限是否足够、目标对象是否正确仍需独立验证。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::boundary
+  - priority::P1
+- id: RHCSA-01-K02-CLOZE-001
+  type: cloze
+  text: 完全保留字面文本优先使用 {{c1::单引号}}；允许变量展开但保持一个参数优先使用 {{c2::双引号}}。
+  extra: 反斜杠适合局部保护下一个字符。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::quoting
+  - card::cloze
+  - priority::P0
+- id: RHCSA-01-K03-QA-001
+  type: qa
+  question: 本章用于判断参数数量的核心展开链是什么？
+  answer: 参数展开/命令替换 → 未引用结果的词拆分 → 路径名展开 → 形成最终参数。
+  extra: 引用上下文从解析阶段就影响这些步骤，不能理解为最后才加引号。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::expansion-order
+  - card::process
+  - priority::P0
+- id: RHCSA-01-K03-QA-002
+  type: qa
+  question: 为什么写 `"${name}01"` 而不是 `"$name01"`？
+  answer: 花括号明确变量名边界；后者会尝试读取名为 `name01` 的变量。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::parameter-expansion
+  - card::syntax
+  - priority::P0
+- id: RHCSA-01-K03-QA-003
+  type: qa
+  question: 未引用的空变量展开与双引号中的空变量展开在参数数量上可能有什么差异？
+  answer: 未引用的空展开可能不产生参数；双引号中的空展开会保留一个空参数。
+  extra: 空字符串与“没有参数”是不同的 argv 状态。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::parameter-expansion
+  - card::comparison
+  - priority::P0
+- id: RHCSA-01-K03-QA-004
+  type: qa
+  question: 命令替换 `$(command)` 取得的是命令的什么结果？
+  answer: 取得命令的标准输出文本，并移除结果末尾连续的换行。
+  extra: 退出状态是另一维度，仍由 `$?` 或条件列表处理。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-substitution
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-K03-QA-005
+  type: qa
+  question: 为什么推荐 `$(command)` 而不是反引号？
+  answer: 它更易读、与单引号不易混淆，并且更容易嵌套。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-substitution
+  - card::comparison
+  - priority::P1
+- id: RHCSA-01-K03-QA-006
+  type: qa
+  question: 期望命令替换结果保持一个参数时，推荐怎样写？
+  answer: '`"$(command)"`。'
+  extra: 未引用结果还可能进行词拆分和路径名展开。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-substitution
+  - card::parameter
+  - priority::P0
+- id: RHCSA-01-K03-QA-007
+  type: qa
+  question: '`result=$(cd /tmp; pwd)` 为什么不会改变父 Shell 当前目录？'
+  answer: 命令替换在子 Shell 环境执行，`cd` 的修改不反向保留；父 Shell只接收捕获的输出。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-substitution
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-K03-QA-008
+  type: qa
+  question: 变量 `value="one two"` 时，未引用 `$value` 为什么可能变成两个参数？
+  answer: 参数展开后，未引用结果依据 `IFS` 进行词拆分。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::word-splitting
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-K03-QA-009
+  type: qa
+  question: '`IFS` 在本章诊断中回答什么问题？'
+  answer: 它帮助解释未引用展开结果按什么分隔符进行词拆分。
+  extra: 本章不把自定义 IFS 当作常规命令构造方法。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::word-splitting
+  - card::configuration
+  - priority::P1
+- id: RHCSA-01-K03-QA-010
+  type: qa
+  question: 路径名展开由目标程序还是 Shell 执行？
+  answer: 由 Shell 在执行目标程序之前完成，程序收到的是匹配后的路径列表或未匹配的字面模式。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::globbing
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-K03-QA-011
+  type: qa
+  question: Bash 默认情况下，一个没有匹配项的 glob 通常会怎样？
+  answer: 通常保留为原字面模式并传给命令。
+  extra: '`nullglob`、`failglob` 等选项可改变行为，真实环境应查询当前选项。'
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::globbing
+  - card::output
+  - priority::P0
+- id: RHCSA-01-K03-QA-012
+  type: qa
+  question: 为什么普通 `*` 通常不会匹配 `.hidden`？
+  answer: 路径名展开默认要求模式显式匹配名称开头的点；`dotglob` 等状态可改变行为。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::globbing
+  - card::output
+  - priority::P1
+- id: RHCSA-01-K03-QA-013
+  type: qa
+  question: 目录变量 `dir` 可能含空格，但仍要匹配其中 `.txt` 文件，正确骨架是什么？
+  answer: '`"$dir"/*.txt`。'
+  extra: 引用目录变量，保留模式部分未引用。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::globbing
+  - card::command
+  - priority::P0
+- id: RHCSA-01-K03-QA-014
+  type: qa
+  question: '`"$dir/*.txt"` 为什么不会执行 glob？'
+  answer: 星号位于双引号内，被当作字面字符。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::globbing
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-K03-QA-015
+  type: qa
+  question: '`$dir/*.txt` 在 `dir` 含空格时为什么不安全？'
+  answer: 目录变量的未引用展开可能先被词拆分，使路径模式产生错误边界。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::globbing
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-K03-QA-016
+  type: qa
+  question: 大括号展开 `{a,b}` 与 glob 字符类 `[ab]` 的核心区别是什么？
+  answer: '`{a,b}` 按语法生成字符串，不检查文件存在；`[ab]` 是路径名模式的一部分，用于匹配一个字符。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::brace-tilde
+  - card::comparison
+  - priority::P1
+- id: RHCSA-01-K03-QA-017
+  type: qa
+  question: 为什么 `"~/logs"` 通常不会展开成主目录路径？
+  answer: 波浪号被双引号保护后按字面处理。需要稳定的引用路径可使用 `"$HOME/logs"`。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::brace-tilde
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-01-K03-CLOZE-001
+  type: cloze
+  text: 未引用展开结果先可能进行 {{c1::词拆分}}，随后再进行 {{c2::路径名展开}}。
+  extra: 双引号可抑制这两个阶段对变量或命令替换结果的普通影响。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::expansion-order
+  - card::cloze
+  - priority::P0
+- id: RHCSA-01-O01-QA-001
+  type: qa
+  question: 创建当前 Shell 变量 `mode` 并赋值 `test` 的正确形式是什么？
+  answer: '`mode=test`。'
+  extra: '`=` 两侧不能加入用于分隔的空格。'
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::syntax
+  - priority::P0
+- id: RHCSA-01-O01-QA-002
+  type: qa
+  question: '`mode = test` 为什么不是变量赋值？'
+  answer: 空格使它被解析成命令名 `mode` 和参数 `=`、`test`。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-O01-QA-003
+  type: qa
+  question: '`set`、`export -p` 和 `env` 分别主要显示什么？'
+  answer: '`set` 看当前 Bash 变量和函数；`export -p` 看带导出属性的名称；`env` 看当前进程环境。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::comparison
+  - priority::P0
+- id: RHCSA-01-O01-QA-004
+  type: qa
+  question: 把已有变量 `mode` 标记为后续子进程可继承，使用什么？
+  answer: '`export mode`。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::command
+  - priority::P0
+- id: RHCSA-01-O01-QA-005
+  type: qa
+  question: 一步设置并导出 `mode=production` 的写法是什么？
+  answer: '`export mode=production`。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::command
+  - priority::P0
+- id: RHCSA-01-O01-QA-006
+  type: qa
+  question: 父 Shell 中能打印变量值，为什么子命令仍可能看不到？
+  answer: 变量可能存在但没有导出属性，因此未进入子进程初始环境。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-O01-QA-007
+  type: qa
+  question: 怎样用新 Bash 验证变量 `scope` 是否真正被继承？
+  answer: '`bash -c ''printf "scope=<%s>\n" "$scope"''`。'
+  extra: 先后在 export 前后执行，比较子进程证据。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::verification
+  - priority::P0
+- id: RHCSA-01-O01-QA-008
+  type: qa
+  question: 子 Bash 内把 `value` 改成新值，父 Shell 的变量会同步改变吗？
+  answer: 不会。子进程继承的是启动时的环境副本，不能反向修改父 Shell。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-O01-QA-009
+  type: qa
+  question: 只想给一条命令临时提供 `MODE=test`，可以使用什么骨架？
+  answer: '`MODE=test command` 或 `env MODE=test command`。'
+  extra: 这不等价于把普通变量永久导出给当前 Shell 后续所有命令。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::command
+  - priority::P0
+- id: RHCSA-01-O01-QA-010
+  type: qa
+  question: '`unset name` 与 `export -n name` 的区别是什么？'
+  answer: '`unset` 删除变量；`export -n` 取消导出属性但可保留当前 Shell 中的值。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::comparison
+  - priority::P1
+- id: RHCSA-01-O01-QA-011
+  type: qa
+  question: 在当前终端执行 `export EDITOR=vim` 能否证明新登录也会自动得到该值？
+  answer: 不能。它只改变当前 Shell 及其后续子进程；新会话初始值取决于启动模式和启动文件。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::boundary
+  - priority::P0
+- id: RHCSA-01-O01-QA-012
+  type: qa
+  question: 为什么不应把“环境变量”理解为全操作系统共享的可变表？
+  answer: 环境属于进程；子进程启动时从父进程获得副本，不同进程和独立 Shell 可以拥有不同值。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-O01-QA-013
+  type: qa
+  question: 验证 export 操作后，最完整的最小证据链是什么？
+  answer: 父 Shell 中检查值 → `export -p` 检查导出属性 → 新 `bash -c` 检查子进程实际可见性。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::verification
+  - priority::P0
+- id: RHCSA-01-O01-QA-014
+  type: qa
+  question: 为什么不应默认把口令或令牌广泛导出到环境中？
+  answer: 环境可能被同一用户的诊断工具、转储或日志间接读取；应限制敏感值的传播范围。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::variables-environment
+  - card::security
+  - priority::P2
+- id: RHCSA-01-O02-QA-001
+  type: qa
+  question: 构造复杂命令时，为什么应先写目标 argv 而不是先拼整行字符串？
+  answer: 目标 argv 明确每个参数的数量和边界，可据此决定哪些变量要引用、哪些模式允许展开，减少数据与 Shell 语法混淆。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::safe-construction
+  - card::process
+  - priority::P0
+- id: RHCSA-01-O02-QA-002
+  type: qa
+  question: 变量值来自外部或可能含空格时，本章的默认引用策略是什么？
+  answer: 默认使用 `"$value"`，只有明确需要多参数或 glob 语义时才有证据地省略引号。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::safe-construction
+  - card::parameter
+  - priority::P0
+- id: RHCSA-01-O02-QA-003
+  type: qa
+  question: 为什么不能依赖“当前变量值没有空格”而长期省略引号？
+  answer: 参数结构会依赖当前数据碰巧简单；值一旦出现空白或 glob 字符，参数数量或匹配集合就可能改变。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::safe-construction
+  - card::boundary
+  - priority::P1
+- id: RHCSA-01-O02-QA-004
+  type: qa
+  question: 执行批量修改前，怎样先验证 `"$dir"/*.conf` 的实际参数集合？
+  answer: 把目标命令替换成参数观察器，检查 `argc` 和每个 `arg`，确认没有字面模式或额外文件。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::safe-construction
+  - card::verification
+  - priority::P0
+- id: RHCSA-01-O02-QA-005
+  type: qa
+  question: 为什么本章不推荐把整条命令存入字符串后交给 `eval`？
+  answer: '`eval` 会再次解析字符串，使数据中的空格、引号、分号或替换语法重新获得 Shell 含义，扩大错误和注入风险。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::safe-construction
+  - card::security
+  - priority::P0
+- id: RHCSA-01-O02-QA-006
+  type: qa
+  question: 参数观察器显示正确后，为什么仍要检查目标对象终态？
+  answer: 正确 argv 只证明 Shell 传参符合设计；目标程序可能因权限、对象状态或业务规则失败。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::safe-construction
+  - card::verification
+  - priority::P0
+- id: RHCSA-01-O02-QA-007
+  type: qa
+  question: “变量默认双引号”有哪些明确例外边界？
+  answer: 只有任务明确要求一个变量产生多个字段或作为模式参与 glob 时才考虑未引用，并应先用参数观察器验证。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::safe-construction
+  - card::boundary
+  - priority::P1
+- id: RHCSA-01-K04-QA-001
+  type: qa
+  question: 怎样安全保存刚执行命令的退出状态？
+  answer: '```bash
+
+    command
+
+    status=$?
+
+    ```'
+  extra: 赋值必须紧跟目标命令。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::exit-status
+  - card::command
+  - priority::P0
+- id: RHCSA-01-K04-QA-002
+  type: qa
+  question: 为什么在读取 `$?` 前执行一次 `printf` 会造成误判？
+  answer: '`$?` 会被最近执行的 `printf` 状态覆盖，不再代表原目标命令。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::exit-status
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-K04-QA-003
+  type: qa
+  question: 退出状态 0 能证明什么？
+  answer: 只证明命令按自身约定报告成功。
+  extra: 不能自动证明文件内容、服务功能、持久状态或完整考试任务都正确。
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::exit-status
+  - card::boundary
+  - priority::P0
+- id: RHCSA-01-K04-QA-004
+  type: qa
+  question: '`a; b` 中，`a` 失败时 `b` 是否执行？'
+  answer: 执行；分号表示无条件顺序。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-lists
+  - card::output
+  - priority::P0
+- id: RHCSA-01-K04-QA-005
+  type: qa
+  question: '`false; true` 这个列表的最终状态通常来自哪条命令？'
+  answer: 来自最后实际执行的 `true`，因此最终状态为 0。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-lists
+  - card::output
+  - priority::P1
+- id: RHCSA-01-K04-QA-006
+  type: qa
+  question: '`false && command` 中右侧命令会执行吗？'
+  answer: 不会；左侧非零使 `&&` 短路。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-lists
+  - card::output
+  - priority::P0
+- id: RHCSA-01-K04-QA-007
+  type: qa
+  question: '`true || command` 中右侧命令会执行吗？'
+  answer: 不会；左侧为 0 使 `||` 短路。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-lists
+  - card::output
+  - priority::P0
+- id: RHCSA-01-K04-QA-008
+  type: qa
+  question: '`a && b || c` 为什么不是严格的 if/else？'
+  answer: 它按 `(a && b) || c` 左结合；不仅 a 失败会执行 c，a 成功但 b 失败也会执行 c。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-lists
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-K04-QA-009
+  type: qa
+  question: 被 `&&` 或 `||` 短路跳过的命令是否产生自己的输出和副作用？
+  answer: 不会，因为它没有实际执行。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-lists
+  - card::concept
+  - priority::P1
+- id: RHCSA-01-K04-QA-010
+  type: qa
+  question: 命令状态验证后还应做什么？
+  answer: 使用目标对象的查询接口验证当前状态、持久状态或功能状态，范围取决于任务要求。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::exit-status
+  - card::verification
+  - priority::P0
+- id: RHCSA-01-K04-CLOZE-001
+  type: cloze
+  text: '`a {{c1::&&}} b` 在 a 成功时执行 b；`a {{c2::||}} b` 在 a 失败时执行 b。'
+  extra: '`;` 则无条件继续。'
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::command-lists
+  - card::cloze
+  - priority::P0
+- id: RHCSA-01-K05-QA-001
+  type: qa
+  question: '`( list )` 中变量和 `cd` 修改在结束后会保留到父 Shell 吗？'
+  answer: 不会；圆括号列表在子 Shell 环境执行。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-K05-QA-002
+  type: qa
+  question: '`{ list; }` 中变量和 `cd` 修改是否保留？'
+  answer: 会；花括号列表在当前 Shell 中执行。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::concept
+  - priority::P0
+- id: RHCSA-01-K05-QA-003
+  type: qa
+  question: 花括号分组为什么常写成 `{ command1; command2; }`？
+  answer: '`{` 和 `}` 需要词边界，且在 `}` 前必须用分号或换行终止列表。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::syntax
+  - priority::P0
+- id: RHCSA-01-K05-QA-004
+  type: qa
+  question: 圆括号和花括号分组的退出状态怎样决定？
+  answer: 来自分组中最后实际执行的命令。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::output
+  - priority::P1
+- id: RHCSA-01-K05-QA-005
+  type: qa
+  question: 命令替换与普通圆括号分组的主要目的有什么不同？
+  answer: 命令替换在子 Shell 中执行并捕获标准输出用于替换；普通圆括号主要隔离一组命令的执行环境。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::comparison
+  - priority::P0
+- id: RHCSA-01-K05-QA-006
+  type: qa
+  question: 需要临时 `cd /tmp` 执行几条命令但不改变当前目录，应选什么结构？
+  answer: '`( cd /tmp; ... )`。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::command
+  - priority::P0
+- id: RHCSA-01-K05-QA-007
+  type: qa
+  question: 需要让变量赋值在分组后继续保留，应选什么结构？
+  answer: '`{ variable=value; ...; }` 或直接在当前 Shell 执行。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::command
+  - priority::P0
+- id: RHCSA-01-K05-QA-008
+  type: qa
+  question: 分组与重定向、管道的完整结合为什么留到下一章？
+  answer: 它们涉及标准输入输出、文件描述符和管道进程模型，不属于本章的参数与状态主对象。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::boundary
+  - priority::P2
+- id: RHCSA-01-K05-CLOZE-001
+  type: cloze
+  text: 需要隔离当前目录和变量修改时使用 {{c1::`( ... )`}}；需要在当前 Shell 保留修改时使用 {{c2::`{ ...; }`}}。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::grouping-subshell
+  - card::cloze
+  - priority::P0
+- id: RHCSA-01-D01-QA-001
+  type: qa
+  question: 一个含空格路径被拆成多个参数时，下一条最有区分度的证据是什么？
+  answer: 用参数观察器分别测试未引用和 `"$path"`，比较 `argc` 与每个参数边界。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-D01-QA-002
+  type: qa
+  question: 目标程序收到字面 `*.txt` 时，首批应检查哪些状态？
+  answer: 模式是否被引用、路径前缀是否正确、是否存在匹配项、glob 是否被 `set -f` 关闭，以及相关 shopt 选项。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-D01-QA-003
+  type: qa
+  question: glob 匹配集合不确定时，为什么不应直接交给删除或批量权限命令？
+  answer: 模式可能匹配过多、过少或保留为字面参数；应先枚举最终 argv，避免对错误对象集合执行破坏性操作。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::security
+  - priority::P0
+- id: RHCSA-01-D01-QA-004
+  type: qa
+  question: 父 Shell 有变量但子进程看不到时，推荐证据链是什么？
+  answer: 检查父 Shell 值 → `export -p` 检查导出属性 → 新 `bash -c` 检查实际继承。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-D01-QA-005
+  type: qa
+  question: 括号内 `cd` 成功但后续目录未改变，应先判断什么？
+  answer: 判断是否使用了 `( ... )`、`$(...)` 或另一个 `bash -c`，以及目标是否本来就要求隔离修改。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-D01-QA-006
+  type: qa
+  question: 退出状态总显示打印命令成功时，最小修复是什么？
+  answer: 把 `status=$?` 立即放在目标命令之后，再执行任何 `printf`。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-D01-QA-007
+  type: qa
+  question: '`a && b || c` 执行 c 时，应区分哪两种原因？'
+  answer: a 失败，或 a 成功但 b 失败。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-01-D01-QA-008
+  type: qa
+  question: 参数完全正确但命令行为仍异常时，为什么要运行 `type -a name`？
+  answer: 当前名称可能被 alias、函数或 builtin 覆盖，实际执行入口与预期外部命令不同。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-01-D01-QA-009
+  type: qa
+  question: 本章通用诊断链的第一步和最后一步分别是什么？
+  answer: 第一步用证据确认实际入口和参数；最后一步在最小修复后重新验证参数、状态和目标终态。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::diagnosis
+  - card::process
+  - priority::P1
+- id: RHCSA-01-T01-QA-001
+  type: qa
+  question: 经典任务中要把字面 `$HOME` 作为第一个参数，应怎样引用？
+  answer: '`''$HOME''`。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-01-T01-QA-002
+  type: qa
+  question: 经典任务中要生成一个 `nightly report-YYYY-MM-DD` 参数，命令片段是什么？
+  answer: '`"$label-$(date +%F)"`。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-01-T01-QA-003
+  type: qa
+  question: 经典任务中 `work` 含空格，要匹配两个 `.txt` 文件，命令片段是什么？
+  answer: '`"$work"/*.txt`。'
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-01-T01-QA-004
+  type: qa
+  question: 经典任务的参数观察器最终应显示多少个参数？
+  answer: 4 个：字面 `$HOME`、一个日期标签和两个 `.txt` 路径。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-01-T01-QA-005
+  type: qa
+  question: 经典任务为什么禁止使用 `eval`？
+  answer: 任务训练的是正确的词边界和引用；`eval` 会二次解析并掩盖或放大参数构造错误。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::classic-task
+  - card::security
+  - priority::P0
+- id: RHCSA-01-T01-QA-006
+  type: qa
+  question: 经典任务中如何无破坏地生成明确成功和失败状态？
+  answer: 使用 Bash builtin `true` 和 `false`，并分别紧跟 `status=$?`。
+  extra: ''
+  source:
+  - RH124
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::shell-parsing-expansion
+  - topic::classic-task
+  - card::command
+  - priority::P1

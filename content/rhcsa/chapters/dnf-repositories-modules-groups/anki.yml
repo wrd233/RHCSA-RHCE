@@ -1,0 +1,1604 @@
+chapter_id: RHCSA-17
+chapter_slug: dnf-repositories-modules-groups
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+validation: static
+status: integrated
+notes:
+- id: RHCSA-PACKAGES-O01-QA-001
+  type: qa
+  question: repo 文件默认位于哪个目录？
+  answer: '`/etc/yum.repos.d/*.repo`'
+  extra: 每个仓库 section ID 应在已加载配置中唯一。
+  source:
+  - RH124
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::path
+  - priority::P0
+- id: RHCSA-PACKAGES-O01-QA-002
+  type: qa
+  question: repo 的 `baseurl`、`enabled`、`gpgcheck`、`gpgkey` 分别表达什么？
+  answer: 仓库内容根、默认启用状态、包签名校验策略、可信公钥入口。
+  extra: '`baseurl` 应指向包含 `repodata` 的仓库根；四个字段不能互相替代。'
+  source:
+  - RH124
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::parameter
+  - priority::P0
+- id: RHCSA-PACKAGES-O01-QA-003
+  type: qa
+  question: '`dnf repolist --all` 能证明什么，不能证明什么？'
+  answer: 能证明仓库配置被 DNF 识别及其 enabled/disabled 状态；不能充分证明 URL、元数据或包签名可用。
+  extra: 真实刷新使用 `dnf makecache --refresh`。
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-PACKAGES-O01-QA-004
+  type: qa
+  question: 强制重新检查并刷新启用仓库元数据的命令是什么？
+  answer: '`dnf makecache --refresh`'
+  extra: 它会暴露 DNS、TLS、HTTP、仓库根和元数据校验错误。
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::command
+  - priority::P0
+- id: RHCSA-PACKAGES-O01-QA-005
+  type: qa
+  question: 限定从 `exam-baseos` 查询 `bash` 候选的命令骨架是什么？
+  answer: '`dnf repoquery --repo exam-baseos bash`'
+  extra: 这证明指定仓库提供该候选，不证明整个仓库或最终事务一定成功。
+  source:
+  - RH124
+  - repoquery
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::command
+  - priority::P0
+- id: RHCSA-PACKAGES-O01-QA-006
+  type: qa
+  question: GPG 校验失败时，为什么不能直接设置 `gpgcheck=0`？
+  answer: 这会移除要求的包签名安全属性，而不是修复错误 key、错误来源或损坏内容。
+  extra: 应核对 `gpgkey`、签名者、仓库来源和完整错误。
+  source:
+  - RH124
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::gpg-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-PACKAGES-O02-QA-001
+  type: qa
+  question: 从命令名 `semanage` 反查仓库中哪个包提供它，使用什么命令？
+  answer: '`dnf provides ''*/semanage''`'
+  extra: 通配模式应引用，避免 Shell 提前展开。
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::command
+  - priority::P0
+- id: RHCSA-PACKAGES-O02-QA-003
+  type: qa
+  question: 为什么执行 `dnf remove` 前必须阅读 Transaction Summary？
+  answer: 事务可能连带删除依赖或影响其他已完成的软件能力，实际影响不能由目标包名推断。
+  extra: 摘要异常时应取消并调查依赖、组或模块状态。
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transactions
+  - card::boundary
+  - priority::P0
+- id: RHCSA-PACKAGES-O02-QA-004
+  type: qa
+  question: 查看 DNF 事务列表和指定事务详情分别使用什么？
+  answer: '`dnf history` 与 `dnf history info <ID>`。'
+  extra: '`undo/rollback` 仍受当前仓库中旧版本可用性和后续依赖约束。'
+  source:
+  - RH124
+  - RHEL9 DNF history documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::history
+  - card::command
+  - priority::P1
+- id: RHCSA-PACKAGES-O02-QA-005
+  type: qa
+  question: 为什么 DNF 事务成功不能证明 Web 服务题已经完成？
+  answer: 事务只证明软件包层；仍需验证配置、服务当前/持久状态、监听和访问结果。
+  extra: 不要把局部成功扩大为业务终态。
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transaction-boundary
+  - card::verification
+  - priority::P0
+- id: RHCSA-PACKAGES-K02-QA-001
+  type: qa
+  question: 查看模块流与模块详情分别使用什么命令？
+  answer: '`dnf module list` 与 `dnf module info <module>:<stream>`。'
+  extra: 实际可用流和 profile 由当前 RHEL 9 仓库元数据决定。
+  source:
+  - RH124
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::command
+  - priority::P0
+- id: RHCSA-PACKAGES-K02-QA-002
+  type: qa
+  question: '`dnf module reset <module>` 会自动删除该模块已安装包吗？'
+  answer: 通常不会；它重置显式流选择，不等于卸载软件内容。
+  extra: 重置后应分别检查 module 状态和 RPM 已安装状态。
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::boundary
+  - priority::P0
+- id: RHCSA-PACKAGES-K02-QA-003
+  type: qa
+  question: 查询和安装软件包组的命令骨架是什么？
+  answer: '`dnf group list/info` 与 `dnf group install <group-name-or-id>`。'
+  extra: 组安装后仍需验证代表包和相关服务终态。
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::command
+  - priority::P0
+- id: RHCSA-PACKAGES-D01-QA-001
+  type: qa
+  question: 下载 `repodata/repomd.xml` 返回 404，优先检查什么？
+  answer: '`baseurl` 是否指向真正包含 `repodata` 的仓库根，以及变量是否被错误展开。'
+  extra: 清理本地缓存不能修复错误 URL。
+  source:
+  - RH124
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::metadata-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-PACKAGES-D01-QA-002
+  type: qa
+  question: DNF 报依赖冲突或包被过滤，下一步应收集哪些证据？
+  answer: 完整错误和事务摘要、`repoquery` 的依赖/提供关系、启用仓库、exclude 和 module 状态。
+  extra: 先定位缺失或冲突对象，不先使用 `--allowerasing`。
+  source:
+  - RH124
+  - dnf(8)
+  - repoquery
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::dependency-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-PACKAGES-D01-QA-003
+  type: qa
+  question: 为什么 `--allowerasing` 不是依赖冲突的第一尝试？
+  answer: 它允许求解器删除冲突包，可能破坏其他任务；必须先理解将删除什么以及冲突来源。
+  extra: 先查仓库、架构、版本流、exclude 和依赖缺口。
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::dependency-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-PACKAGES-O01-CLOZE-001
+  type: cloze
+  text: repo 配置可见性用 {{c1::dnf repolist --all}}；真实刷新元数据用 {{c2::dnf makecache --refresh}}。
+  extra: '`repolist` 不充分证明 URL 和元数据可用。'
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::cloze
+  - priority::P0
+- id: RHCSA-17-QA-001
+  type: qa
+  question: 仓库定义、仓库内容和 DNF 缓存分别是什么？
+  answer: 定义是客户端 `.repo` section；内容是服务端或本地的 RPM 与 `repodata`；缓存是客户端保存的元数据/下载副本。
+  extra: 修改一层不会自动修复另外两层。
+  source:
+  - RH124
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-002
+  type: qa
+  question: 一个目录中只有 RPM 文件，为什么还不能称为可用 DNF 仓库？
+  answer: DNF 还需要通过 `repodata/repomd.xml` 读取包和依赖元数据。
+  extra: 普通目录可用 `createrepo_c` 生成基础元数据。
+  source:
+  - createrepo_c(8)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-17-QA-003
+  type: qa
+  question: '`repodata/repomd.xml` 在仓库中承担什么角色？'
+  answer: 它是仓库元数据入口，记录其他元数据文件的位置和校验信息。
+  extra: 它不是 RPM 包本身。
+  source:
+  - dnf(8)
+  - createrepo_c(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-model
+  - card::concept
+  - priority::P1
+- id: RHCSA-17-QA-004
+  type: qa
+  question: '`repoquery` 有结果、依赖可解、事务已提交三者有什么区别？'
+  answer: '`repoquery` 证明候选元数据可见；依赖可解证明求解器能生成计划；事务提交才改变已安装状态。'
+  extra: 三者需分别取证。
+  source:
+  - dnf(8)
+  - repoquery
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-005
+  type: qa
+  question: 仓库中存在某 RPM，但普通 DNF 查询无结果，至少有哪些候选过滤层？
+  answer: 仓库启用范围、架构、exclude/include、priority、module filtering 和元数据缓存。
+  extra: 不要仅凭服务端文件列表判断客户端候选。
+  source:
+  - dnf.conf(5)
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-model
+  - card::verification
+  - priority::P0
+- id: RHCSA-17-QA-006
+  type: qa
+  question: 为什么“DNF 返回成功”不能直接写成“软件功能已完成”？
+  answer: DNF 只覆盖软件事务；配置、服务、监听、安全策略和外部功能仍需各自验证。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-CLOZE-007
+  type: cloze
+  text: DNF 证据链通常是：{{c1::仓库定义}} → {{c2::元数据}} → {{c3::候选与依赖求解}} → {{c4::事务}}。
+  extra: 后续再交接到 RPM 已安装状态与应用功能。
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-model
+  - card::cloze
+  - priority::P1
+- id: RHCSA-17-QA-008
+  type: qa
+  question: repo section ID、`name` 和 `.repo` 文件名分别用于什么？
+  answer: section ID 是命令行稳定标识；`name` 是显示名称；文件名只是配置载体。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-009
+  type: qa
+  question: '`baseurl` 的正确目标是什么？'
+  answer: 能够在其下找到 `repodata/repomd.xml` 的仓库内容根。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::parameter
+  - priority::P0
+- id: RHCSA-17-QA-010
+  type: qa
+  question: '`baseurl`、`mirrorlist`、`metalink` 的核心区别是什么？'
+  answer: '`baseurl` 直接列仓库根；`mirrorlist` 返回镜像 URL 列表；`metalink` 还可带镜像和完整性相关元数据。'
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::comparison
+  - priority::P1
+- id: RHCSA-17-QA-011
+  type: qa
+  question: '`enabled=0` 后，如何只在当前命令临时启用 `testrepo`？'
+  answer: '`dnf --enablerepo=testrepo <command>`'
+  extra: 该选项不修改持久 repo 文件。
+  source:
+  - dnf(8)
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::parameter
+  - priority::P0
+- id: RHCSA-17-QA-012
+  type: qa
+  question: '`--enablerepo` 与 repo 文件中的 `enabled=1` 有什么状态边界？'
+  answer: '`--enablerepo` 只覆盖当前命令；`enabled=1` 是持久默认状态。'
+  extra: ''
+  source:
+  - dnf(8)
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-013
+  type: qa
+  question: 用 Shell here-document 写含 `$releasever` 的 repo 文件时，怎样防止 Shell 提前展开？
+  answer: 使用单引号保护的结束标记，例如 `<<'EOF'`。
+  extra: 让 `$releasever` 留给 DNF 解析。
+  source:
+  - bash(1)
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::syntax
+  - priority::P0
+- id: RHCSA-17-QA-014
+  type: qa
+  question: '`$releasever` 与 `$basearch` 在 repo URL 中分别表达什么？'
+  answer: RHEL/DNF 识别的发行版本变量与基础架构变量。
+  extra: 具体展开值应从目标系统读取，不硬编码猜测。
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::parameter
+  - priority::P1
+- id: RHCSA-17-QA-015
+  type: qa
+  question: '`gpgcheck=1` 与 `gpgkey=` 分别保证什么？'
+  answer: '`gpgcheck=1` 要求包签名校验；`gpgkey` 提供可取得受信任公钥的位置。'
+  extra: key 路径存在不代表一定匹配包签名。
+  source:
+  - dnf.conf(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-016
+  type: qa
+  question: TLS 校验成功与 GPG 包签名成功是否等价？
+  answer: 不等价。TLS 验证传输通道/服务器身份；GPG 验证软件包签名者和内容完整性。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-017
+  type: qa
+  question: HTTPS 证书错误时，为什么不应默认设置 `sslverify=0`？
+  answer: 这会移除 TLS 身份验证，掩盖时间、CA、主机名或服务器证书链问题。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-CLOZE-018
+  type: cloze
+  text: repo 中 {{c1::enabled}} 控制默认参与，{{c2::gpgcheck}} 控制包签名校验，{{c3::gpgkey}} 指向公钥入口。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-definition
+  - card::cloze
+  - priority::P0
+- id: RHCSA-17-QA-019
+  type: qa
+  question: 配置一个新仓库后，推荐的最小验证顺序是什么？
+  answer: 读取 repo 文件 → `dnf repolist --all` → `dnf makecache --refresh` → `dnf repoquery --repo <id> <代表包>`。
+  extra: ''
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::process
+  - priority::P0
+- id: RHCSA-17-QA-020
+  type: qa
+  question: '`repolist --all` 显示仓库 enabled，但 `makecache --refresh` 失败，说明什么？'
+  answer: 配置被识别，但传输、仓库根、TLS 或元数据层仍有问题。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::output
+  - priority::P0
+- id: RHCSA-17-QA-021
+  type: qa
+  question: '`dnf makecache --refresh` 中 `--refresh` 的目的是什么？'
+  answer: 把元数据视为过期并重新检查/获取，而不是只依赖现有缓存。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::parameter
+  - priority::P1
+- id: RHCSA-17-QA-022
+  type: qa
+  question: 什么时候 `dnf clean metadata` 有价值，什么时候无效？
+  answer: 本地缓存与新配置不一致时有价值；错误 URL、DNS、TLS 或服务端 404 时不能修复根因。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-023
+  type: qa
+  question: '`dnf clean metadata` 与 `dnf clean all` 有何范围差异？'
+  answer: '`metadata` 只清元数据；`all` 清除更广的缓存。应按证据选择最小范围。'
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::comparison
+  - priority::P1
+- id: RHCSA-17-QA-024
+  type: qa
+  question: 为什么要在 BaseOS 和 AppStream 仓库各查询一个代表包？
+  answer: 分别证明两个仓库内容与题目预期相符，避免只验证 ID 可见而未验证内容。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-17-QA-025
+  type: qa
+  question: 指定仓库查询一个代表包成功，不能证明哪些内容？
+  answer: 不能证明所有 RPM、依赖、包组、模块元数据和签名都完整。
+  extra: ''
+  source:
+  - repoquery
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::boundary
+  - priority::P1
+- id: RHCSA-17-QA-026
+  type: qa
+  question: 为什么不应为了“干净环境”先删除 `/etc/yum.repos.d/` 中所有文件？
+  answer: 会破坏已有有效来源和其他任务状态，且不属于新增仓库的最小变更。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::process
+  - priority::P0
+- id: RHCSA-17-CLOZE-027
+  type: cloze
+  text: 仓库的四层验证是：{{c1::配置}}、{{c2::元数据}}、{{c3::内容候选}}、{{c4::事务}}。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::repo-verification
+  - card::cloze
+  - priority::P1
+- id: RHCSA-17-QA-028
+  type: qa
+  question: 只知道软件用途描述时，优先使用什么 DNF 查询？
+  answer: '`dnf search <keywords>`。'
+  extra: ''
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::command
+  - priority::P0
+- id: RHCSA-17-QA-029
+  type: qa
+  question: 只知道准确文件路径 `/usr/bin/rsync` 时，怎样查询提供包？
+  answer: '`dnf provides /usr/bin/rsync`。'
+  extra: ''
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::command
+  - priority::P0
+- id: RHCSA-17-QA-030
+  type: qa
+  question: 为什么 `dnf provides '*/tool'` 的模式应加引号？
+  answer: 避免 Shell 先按当前目录文件名展开通配符。
+  extra: ''
+  source:
+  - bash(1)
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::syntax
+  - priority::P0
+- id: RHCSA-17-QA-031
+  type: qa
+  question: '`dnf list --installed` 与 `dnf list --available` 分别查询什么？'
+  answer: 前者查询已安装列表视图；后者查询仓库可用候选。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-032
+  type: qa
+  question: 怎样查看仓库候选包的文件列表而无需先安装？
+  answer: '`dnf repoquery -l <package>`。'
+  extra: ''
+  source:
+  - repoquery
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::command
+  - priority::P1
+- id: RHCSA-17-QA-033
+  type: qa
+  question: 怎样查看候选包声明的依赖？
+  answer: '`dnf repoquery --requires <package>`。'
+  extra: ''
+  source:
+  - repoquery
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::command
+  - priority::P1
+- id: RHCSA-17-QA-034
+  type: qa
+  question: 怎样查找哪些候选声明依赖某能力？
+  answer: '`dnf repoquery --whatrequires <capability>`。'
+  extra: ''
+  source:
+  - repoquery
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::command
+  - priority::P1
+- id: RHCSA-17-QA-035
+  type: qa
+  question: 查询多个同名候选时，最少应比较哪些维度？
+  answer: 版本/发行号、架构、来源仓库，以及是否受模块或排除规则影响。
+  extra: ''
+  source:
+  - repoquery
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::verification
+  - priority::P0
+- id: RHCSA-17-QA-036
+  type: qa
+  question: '`dnf provides` 返回多个包时，为什么不能机械安装第一项？'
+  answer: 结果可能来自旧版本、不同架构、兼容包或非目标仓库，需确认路径和候选身份。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-CLOZE-037
+  type: cloze
+  text: 描述查包用 {{c1::dnf search}}；路径/命令反查用 {{c2::dnf provides}}；来源与依赖深入查询用 {{c3::dnf repoquery}}。
+  extra: ''
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-query
+  - card::cloze
+  - priority::P0
+- id: RHCSA-17-QA-038
+  type: qa
+  question: '`dnf install` 与 `dnf reinstall` 的核心区别是什么？'
+  answer: install 选择并安装候选；reinstall 重新安装已安装包的相应构建。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transactions
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-039
+  type: qa
+  question: 为什么未知应用故障不应先执行 `dnf reinstall`？
+  answer: 故障可能位于配置、数据、权限或服务状态，重装包不能自动修复这些对象。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transactions
+  - card::boundary
+  - priority::P1
+- id: RHCSA-17-QA-040
+  type: qa
+  question: 检查可用更新但不直接升级，使用什么？
+  answer: '`dnf check-upgrade`。'
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transactions
+  - card::command
+  - priority::P0
+- id: RHCSA-17-QA-041
+  type: qa
+  question: 考试只要求更新 `httpd` 时，为什么不应无参数执行 `dnf upgrade`？
+  answer: 无参数升级可能改变大量无关系统包，扩大风险和验收范围。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transactions
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-042
+  type: qa
+  question: 怎样让 DNF 生成安装事务摘要但默认不提交？
+  answer: '`dnf install --assumeno <package>`。'
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transactions
+  - card::command
+  - priority::P0
+- id: RHCSA-17-QA-043
+  type: qa
+  question: 安装事务摘要出现将删除多个已有包时，下一步是什么？
+  answer: 取消事务，调查冲突包、仓库、模块流和依赖；不要直接接受。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transactions
+  - card::output
+  - priority::P0
+- id: RHCSA-17-QA-044
+  type: qa
+  question: '`dnf history info <ID>` 主要能回答什么？'
+  answer: 该事务的命令、时间、动作和涉及的软件包变化。
+  extra: ''
+  source:
+  - RHEL9 DNF history documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::history
+  - card::concept
+  - priority::P1
+- id: RHCSA-17-QA-045
+  type: qa
+  question: 为什么 `dnf history undo` 可能失败？
+  answer: 需要重新求解且旧版本必须仍可从当前仓库取得；后续依赖变化也会影响结果。
+  extra: ''
+  source:
+  - RHEL9 DNF history documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::history
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-046
+  type: qa
+  question: '`history undo <ID>` 与 `history rollback <ID>` 的目标差异是什么？'
+  answer: undo 尝试反向执行一个事务；rollback 尝试回到指定事务之后的历史状态。
+  extra: ''
+  source:
+  - RHEL9 DNF history documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::history
+  - card::comparison
+  - priority::P1
+- id: RHCSA-17-CLOZE-047
+  type: cloze
+  text: 变更前预览可用 `dnf ... {{c1::--assumeno}}`；事后审计使用 `dnf {{c2::history info <ID>}}`。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::transactions
+  - card::cloze
+  - priority::P1
+- id: RHCSA-17-QA-048
+  type: qa
+  question: module、stream、profile 和 RPM 分别是什么？
+  answer: module 是软件栈；stream 是版本线；profile 是安装用例包集合；RPM 是实际安装单元。
+  extra: ''
+  source:
+  - RH124
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-049
+  type: qa
+  question: 启用一个 module stream 会立即安装软件包吗？
+  answer: 不会；enable 主要选择活动 stream 并改变候选集合。
+  extra: ''
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::concept
+  - priority::P0
+- id: RHCSA-17-QA-050
+  type: qa
+  question: 安装 module profile 会改变什么？
+  answer: 选择相应 stream/profile 并提交 profile 中软件包的安装事务。
+  extra: ''
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::concept
+  - priority::P0
+- id: RHCSA-17-QA-051
+  type: qa
+  question: 只查看当前启用的模块流，使用什么命令？
+  answer: '`dnf module list --enabled`。'
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::command
+  - priority::P0
+- id: RHCSA-17-QA-052
+  type: qa
+  question: 只查看有已安装内容的模块，使用什么命令？
+  answer: '`dnf module list --installed`。'
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::command
+  - priority::P1
+- id: RHCSA-17-QA-053
+  type: qa
+  question: 显式安装模块流中的指定 profile，命令骨架是什么？
+  answer: '`dnf module install <module>:<stream>/<profile>`。'
+  extra: ''
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::command
+  - priority::P0
+- id: RHCSA-17-QA-054
+  type: qa
+  question: '`module reset` 与 `module disable` 的区别是什么？'
+  answer: reset 清除显式 stream 选择；disable 阻止该模块的 streams 作为模块候选。
+  extra: ''
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-055
+  type: qa
+  question: 题目未指定模块流时，为什么不应主动 reset/enable？
+  answer: 会改变候选集合和后续更新行为，扩大任务范围。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-056
+  type: qa
+  question: 仓库存在包但被 module filtering 隐藏时，下一条高区分度证据是什么？
+  answer: '`dnf module list` 和 `dnf module provides <package-or-path>`，结合普通 repoquery。'
+  extra: ''
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-057
+  type: qa
+  question: 切换 module stream 前应按什么流程？
+  answer: 记录 enabled/installed → 查询目标 stream/profile → 预览事务 → 检查升级/降级/删除 → 提交后分层验证。
+  extra: ''
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::process
+  - priority::P1
+- id: RHCSA-17-QA-058
+  type: qa
+  question: 为什么不能背诵“RHEL 9 一定有某个固定 stream”？
+  answer: 可用流由 RHEL 小版本和当前 AppStream 元数据决定，必须在目标系统查询。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::boundary
+  - priority::P1
+- id: RHCSA-17-CLOZE-059
+  type: cloze
+  text: 模块操作中，{{c1::enable}} 选择 stream，{{c2::install}} 安装 profile，{{c3::reset}} 不等于卸载包。
+  extra: ''
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::modules
+  - card::cloze
+  - priority::P0
+- id: RHCSA-17-QA-060
+  type: qa
+  question: package group 与 environment group 有什么关系？
+  answer: 包组是一组相关包；环境组可组合多个包组和额外包来表达更大系统环境。
+  extra: ''
+  source:
+  - RH124
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::concept
+  - priority::P0
+- id: RHCSA-17-QA-061
+  type: qa
+  question: 组成员的 mandatory、default、optional 分别表示什么？
+  answer: 必要成员、普通组安装默认成员、仅显式选择时安装的可选成员。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-062
+  type: qa
+  question: 怎样列出隐藏包组？
+  answer: '`dnf group list --hidden`。'
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::command
+  - priority::P0
+- id: RHCSA-17-QA-063
+  type: qa
+  question: 安装包组前，为什么先运行 `dnf group info`？
+  answer: 确认实际 group ID、成员分类和当前仓库提供的内容，而不是靠组名猜包集合。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::verification
+  - priority::P0
+- id: RHCSA-17-QA-064
+  type: qa
+  question: 为什么组显示名称不适合作为跨语言环境的唯一稳定标识？
+  answer: 显示名可能本地化；group ID 通常更稳定，应从实际输出读取。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::boundary
+  - priority::P1
+- id: RHCSA-17-QA-065
+  type: qa
+  question: 部分成员包已安装，是否等于整个包组已安装？
+  answer: 不一定。包实际状态与 DNF 的组安装/原因记录是不同维度。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::comparison
+  - priority::P1
+- id: RHCSA-17-QA-066
+  type: qa
+  question: 为什么 `dnf group install` 成功仍不能证明组内服务可用？
+  answer: 它只完成软件集合事务；服务配置、启动和功能仍需独立验收。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-CLOZE-067
+  type: cloze
+  text: 包组成员常分为 {{c1::mandatory}}、{{c2::default}}、{{c3::optional}} 和 conditional。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::groups
+  - card::cloze
+  - priority::P1
+- id: RHCSA-17-QA-068
+  type: qa
+  question: DNF 仓库 `priority` 的数值方向是什么？
+  answer: 数值越小，仓库优先级越高。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::priority-filters
+  - card::parameter
+  - priority::P0
+- id: RHCSA-17-QA-069
+  type: qa
+  question: '`cost` 主要用于什么？'
+  answer: 在同类来源中表达访问成本偏好，较低 cost 通常更受偏好。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::priority-filters
+  - card::concept
+  - priority::P1
+- id: RHCSA-17-QA-070
+  type: qa
+  question: '`excludepkgs` 与 `includepkgs` 分别怎样影响候选？'
+  answer: exclude 隐藏匹配包；include 把该仓库候选限制到匹配集合。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::priority-filters
+  - card::comparison
+  - priority::P0
+- id: RHCSA-17-QA-071
+  type: qa
+  question: 怎样临时验证某包是否被指定仓库的 exclude 隐藏？
+  answer: '`dnf --disableexcludes=<repoid> repoquery <package>`。'
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::priority-filters
+  - card::command
+  - priority::P1
+- id: RHCSA-17-QA-072
+  type: qa
+  question: 为什么 `--disableexcludes` 不应成为持久安装默认参数？
+  answer: 它绕过既有内容治理策略；应先证明排除是否错误，再修正配置或按要求保留。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::priority-filters
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-073
+  type: qa
+  question: 限定只启用 AppStream 后依赖失败，最可能遗漏什么？
+  answer: BaseOS 或其他正确依赖仓库也被当前命令禁用了。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::priority-filters
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-074
+  type: qa
+  question: 怎样区分 priority、exclude 与 module filtering？
+  answer: 依次比较限定 repo 查询、普通查询、禁用 exclude 后查询和 module list/provides，每次只改变一个变量。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::priority-filters
+  - card::process
+  - priority::P1
+- id: RHCSA-17-QA-075
+  type: qa
+  question: 怎样快速判断目录是否已有普通 DNF 仓库元数据入口？
+  answer: 检查是否存在 `<dir>/repodata/repomd.xml`。
+  extra: ''
+  source:
+  - createrepo_c(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::verification
+  - priority::P0
+- id: RHCSA-17-QA-076
+  type: qa
+  question: 为 `/srv/repo/custom` 中的 RPM 生成元数据，使用什么？
+  answer: '`createrepo_c /srv/repo/custom`。'
+  extra: ''
+  source:
+  - createrepo_c(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::command
+  - priority::P0
+- id: RHCSA-17-QA-077
+  type: qa
+  question: 目录新增 RPM 后，怎样更新已有元数据？
+  answer: '`createrepo_c --update /srv/repo/custom`。'
+  extra: ''
+  source:
+  - createrepo_c(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::command
+  - priority::P1
+- id: RHCSA-17-QA-078
+  type: qa
+  question: 本机绝对路径 `/srv/repo/custom` 的 repo `baseurl` 怎样写？
+  answer: '`baseurl=file:///srv/repo/custom`。'
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::syntax
+  - priority::P0
+- id: RHCSA-17-QA-079
+  type: qa
+  question: 为什么本地仓库不能因为“文件在本机”就关闭 GPG 校验？
+  answer: 本地位置不证明来源和内容可信，仍应按任务验证签名。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-080
+  type: qa
+  question: 本地 repo ID 可见但 `makecache` 报无法读取路径，先检查什么？
+  answer: '`file:///` 路径、挂载状态、文件存在和父目录遍历/读取权限。'
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-081
+  type: qa
+  question: 普通 `createrepo_c` 对模块仓库有什么限制？
+  answer: 它不会自动重建完整模块 stream/profile 元数据；模块语义需额外保留或注入。
+  extra: ''
+  source:
+  - createrepo_c(8)
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-082
+  type: qa
+  question: 普通包查询成功，为什么仍不能证明本地仓库含包组或模块元数据？
+  answer: 包、group/comps 和 module metadata 是不同元数据类型，应分别用 group/module 查询验证。
+  extra: ''
+  source:
+  - createrepo_c(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::comparison
+  - priority::P1
+- id: RHCSA-17-CLOZE-083
+  type: cloze
+  text: 普通 RPM 目录通过 {{c1::createrepo_c}} 生成 {{c2::repodata/repomd.xml}} 后，才具备基础 DNF 仓库入口。
+  extra: ''
+  source:
+  - createrepo_c(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::cloze
+  - priority::P1
+- id: RHCSA-17-QA-084
+  type: qa
+  question: 新仓库完全不出现在 `dnf repolist --all`，优先检查什么？
+  answer: '`.repo` 文件名/可读性、INI section、重复 ID 和语法错误。'
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::metadata-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-085
+  type: qa
+  question: 为什么 `repomd.xml` 404 时 `dnf clean all` 不是修复？
+  answer: 404 表示请求到达了不存在的服务器路径；删除客户端缓存不会创建正确路径。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::metadata-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-086
+  type: qa
+  question: DNF 报 could not resolve host 时，本章的下一条证据是什么？
+  answer: '`getent hosts <repo-host>`；确认是名称解析层后转交 DNS 章节。'
+  extra: ''
+  source:
+  - getent(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::network-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-087
+  type: qa
+  question: HTTPS 报 certificate not yet valid 时，优先核对什么？
+  answer: 系统时间/时区和证书主机名/链，不关闭 `sslverify`。
+  extra: ''
+  source:
+  - timedatectl(1)
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::tls-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-088
+  type: qa
+  question: 报 public key not installed 时，最少核对哪些对象？
+  answer: repo 的 `gpgkey`、key 文件、包实际签名者和仓库来源。
+  extra: ''
+  source:
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::gpg-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-089
+  type: qa
+  question: 导入任意找到的 GPG key 为什么不可靠？
+  answer: 无法证明该 key 属于仓库发布者，可能把错误来源错误地纳入信任。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::gpg-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-090
+  type: qa
+  question: 元数据 checksum mismatch 时，合理调查顺序是什么？
+  answer: 确认服务端/镜像是否一致和 URL 是否改变，再按需清 metadata 并 refresh。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::metadata-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-17-QA-091
+  type: qa
+  question: 仓库元数据成功但包无匹配项，推荐的排查顺序是什么？
+  answer: 包名/架构 → 指定 repo 内容 → exclude/include → module filtering → 缓存。
+  extra: ''
+  source:
+  - dnf(8)
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::package-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-092
+  type: qa
+  question: '`nothing provides <capability>` 时，下一条高价值查询是什么？'
+  answer: '`dnf repoquery --whatprovides <capability>`，并检查提供者仓库是否启用。'
+  extra: ''
+  source:
+  - repoquery
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::dependency-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-093
+  type: qa
+  question: 事务摘要显示 `Removing dependent packages`，应怎样判断？
+  answer: 把将删除的包视为风险证据，取消并调查依赖/模块/仓库，不直接接受。
+  extra: ''
+  source:
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::dependency-diagnosis
+  - card::output
+  - priority::P0
+- id: RHCSA-17-QA-094
+  type: qa
+  question: 自建仓库普通包可查询，但 `dnf group list` 没有预期组，最可能缺什么？
+  answer: comps/group 元数据；普通 `createrepo_c` 不能从包名自动推导组。
+  extra: ''
+  source:
+  - createrepo_c(8)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-095
+  type: qa
+  question: 自建仓库普通包可查询，但模块流不存在，最可能缺什么？
+  answer: 模块元数据，而不是普通 primary metadata。
+  extra: ''
+  source:
+  - RHEL9 modular content documentation
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::local-repository
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-17-QA-096
+  type: qa
+  question: 仓库故障的通用证据链是什么？
+  answer: 症状 → 当前证据 → 假设 → 最有区分度的下一条证据 → 最小修复 → 再验证。
+  extra: ''
+  source:
+  - RHEL9 chapter writing specification
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::diagnosis-process
+  - card::process
+  - priority::P0
+- id: RHCSA-17-CLOZE-097
+  type: cloze
+  text: 404 主要查 {{c1::baseurl/仓库根}}；TLS 错查 {{c2::时间与 CA}}；GPG 错查 {{c3::key 与签名来源}}。
+  extra: ''
+  source:
+  - RH124
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::diagnosis-process
+  - card::cloze
+  - priority::P0
+- id: RHCSA-17-QA-098
+  type: qa
+  question: 题目要求配置 BaseOS/AppStream 并安装 `httpd`，完整软件层验收顺序是什么？
+  answer: repo 文件 → `repolist --all` → `makecache --refresh` → 两仓库代表包 `repoquery` → 事务预览/安装 → RPM 状态 → history。
+  extra: 服务 active/enabled 和 HTTP 功能属于后续层。
+  source:
+  - RHCSA9-Mock
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-17-QA-099
+  type: qa
+  question: 仓库可见但 `repomd.xml` 404，最小修复流程是什么？
+  answer: 读取完整 URL → 确认包含 `repodata` 的根 → 只修正 `baseurl` → `makecache --refresh` → 限定 repo 查询代表包。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-17-QA-100
+  type: qa
+  question: 元数据成功但安装报 GPG key 不匹配，最小修复流程是什么？
+  answer: 检查 `gpgcheck/gpgkey` 和完整错误 → 核对发布者 key/来源 → 修正 key 或仓库 → 保持校验重新预览和安装。
+  extra: ''
+  source:
+  - RH124
+  - dnf.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-17-QA-101
+  type: qa
+  question: 真实服务器修改仓库前，建议保存哪四类基线？
+  answer: repo 列表、目标 repo 文件、enabled/installed module 状态、最近 DNF history。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::work-migration
+  - card::process
+  - priority::P1
+- id: RHCSA-17-QA-102
+  type: qa
+  question: 为什么不应把带密码的仓库 URL 直接写入公开 Git 或 Anki？
+  answer: 会泄露访问凭据；应使用组织的凭据管理和受限配置方式。
+  extra: ''
+  source:
+  - RHEL9 operations practice
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::work-migration
+  - card::boundary
+  - priority::P0
+- id: RHCSA-17-QA-103
+  type: qa
+  question: 为后续 Ansible 自动化，手工阶段应保留哪些目标字段？
+  answer: repo ID/URL/enabled/GPG 字段、包或组、模块 stream/profile、验证入口。
+  extra: ''
+  source:
+  - RH294 interface
+  tags:
+  - exam::rhcsa
+  - chapter::dnf-repositories-modules-groups
+  - topic::work-migration
+  - card::comparison
+  - priority::P1

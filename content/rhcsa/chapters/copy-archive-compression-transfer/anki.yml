@@ -1,0 +1,1683 @@
+chapter_id: RHCSA-06
+chapter_slug: copy-archive-compression-transfer
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+note_models:
+  qa: RedHat-QA
+  cloze: RedHat-Cloze
+notes:
+- id: RHCSA-06-K01-QA-001
+  type: qa
+  question: 复制或同步一个数据集合时，至少应把哪三个状态维度分开？
+  answer: 字节内容、名称与目录层级、元数据。
+  extra: 摘要相同只证明字节；路径、类型、模式、所有者、时间戳、ACL 和安全上下文仍需独立证据。
+  source:
+  - RH124 Ch.3
+  - RH124 Ch.13
+  - cp(1)
+  - mv(1)
+  - install(1)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::object-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-06-K01-QA-002
+  type: qa
+  question: “复制目录本身”和“复制目录内容”有什么终态差异？
+  answer: 复制目录本身会在目标下形成源目录这一层；复制目录内容则让源的成员直接进入既定目标目录。
+  extra: 执行前应先写出预期目录树，不能只看命令是否包含斜杠。
+  source:
+  - RH124 Ch.3
+  - RH124 Ch.13
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-06-K01-QA-003
+  type: qa
+  question: 文件的 SHA-256 相同，能否证明它们权限、所有者和时间戳也相同？
+  answer: 不能。SHA-256 只证明被比较的字节内容相同。
+  extra: 使用 `stat`、ACL/xattr 工具或其他目标端证据检查元数据。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::object-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-06-K01-QA-004
+  type: qa
+  question: 一条复制命令退出状态为 0，至少还应验证哪些层次？
+  answer: 目标层级和类型、成员集合、普通文件字节，以及任务要求的模式、所有者、组和时间戳；远端任务还应验证远端实际落点。
+  extra: 退出状态只证明命令按自身规则完成，不证明交付终态。
+  source:
+  - RH124 Ch.3
+  - RH124 Ch.13
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::object-model
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-K01-QA-005
+  type: qa
+  question: 复制目录前，哪条证据最能区分“目标不存在、目标是文件、目标是目录”？
+  answer: '`stat -- TARGET`，或使用 `test -e/-f/-d` 分别判断。'
+  extra: 目标存在状态会改变源操作数的最终层级解释。
+  source:
+  - stat(1)
+  - test(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::object-model
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-06-K01-QA-006
+  type: qa
+  question: '`cp -a` 或 `rsync -a` 已写入命令，为什么仍要在目标端验证属性？'
+  answer: 因为保留选项表达的是保留意图；执行身份、目标文件系统、协议和工具选项决定属性能否实际落地。
+  extra: 尤其是所有者、ACL、扩展属性和 SELinux 上下文。
+  source:
+  - cp(1)
+  - rsync(1)
+  - tar(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::object-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-FILES-K01-QA-007
+  type: qa
+  question: '`sha256sum` 能证明什么，不能证明什么？'
+  answer: 它能高置信度证明被比较的字节是否相同；不能证明路径、模式、所有者、时间戳、ACL、SELinux 上下文或来源真实性。
+  extra: 这是从旧章保留的稳定提取目标。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::object-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-06-K01-QA-008
+  type: qa
+  question: '`file`、`tar -tf` 和 `sha256sum` 分别回答什么问题？'
+  answer: '`file` 识别外层格式；`tar -tf` 查看归档成员和路径；`sha256sum` 对整个归档文件或指定成员字节建立摘要。'
+  extra: 三条证据不能互相替代。
+  source:
+  - file(1)
+  - tar(1)
+  - sha256sum(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::object-model
+  - card::comparison
+  - priority::P1
+- id: RHCSA-06-O01-QA-001
+  type: qa
+  question: 把 `/srv/source/` 的全部成员（包括隐藏成员）直接复制到已有 `/srv/destination/`，常用命令是什么？
+  answer: '```bash
+
+    cp -a /srv/source/. /srv/destination/
+
+    ```'
+  extra: '`SOURCE/.` 避免 `SOURCE/*` 漏掉点号开头的成员。'
+  source:
+  - cp(1)
+  - RH124 Ch.3
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O01-QA-002
+  type: qa
+  question: '`cp -R` 与 `cp -a` 的主要区别是什么？'
+  answer: '`-R` 主要提供递归复制；`-a` 在递归基础上请求尽可能保留链接、模式、所有权、时间戳和扩展属性等归档语义。'
+  extra: '`-a` 仍不替代目标端属性验证。'
+  source:
+  - cp(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::comparison
+  - priority::P0
+- id: RHCSA-06-O01-QA-003
+  type: qa
+  question: 复制一个关键配置文件后，如何分别验证内容和目标模式？
+  answer: '```bash
+
+    sha256sum SOURCE TARGET
+
+    stat -c "%a %U %G %n" TARGET
+
+    ```'
+  extra: 摘要检查字节；`stat` 检查模式、所有者和组。
+  source:
+  - sha256sum(1)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-O01-QA-004
+  type: qa
+  question: 为什么不应把 `cp -f` 作为覆盖问题的默认答案？
+  answer: 它会在缺少调查和备份策略时强制替换目标，可能破坏已有有效数据。
+  extra: 先检查目标、明确覆盖授权，再选择交互、备份、跳过或替换策略。
+  source:
+  - cp(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-O01-QA-005
+  type: qa
+  question: '`cp -i` 适合什么场景，为什么通常不适合无人值守脚本？'
+  answer: 它适合人工操作时在覆盖前询问；无人值守时交互提示会使结果不确定或阻塞。
+  extra: 脚本应使用可预测的目标检查和明确覆盖策略。
+  source:
+  - cp(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::parameter
+  - priority::P1
+- id: RHCSA-06-O01-QA-006
+  type: qa
+  question: 目标中缺少 `.env`，已确认源存在。下一条最有区分度的证据是什么？
+  answer: '比较源和目标第一层成员，确认命令是否使用了 `SOURCE/*`：
+
+    ```bash
+
+    find SOURCE -mindepth 1 -maxdepth 1 -printf "%P\n" | sort
+
+    find TARGET -mindepth 1 -maxdepth 1 -printf "%P\n" | sort
+
+    ```'
+  extra: Shell 的普通 `*` 不匹配点号开头成员。
+  source:
+  - bash(1)
+  - find(1)
+  - cp(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-O01-QA-007
+  type: qa
+  question: 同一文件系统内 `mv` 与跨文件系统 `mv` 的故障边界有何不同？
+  answer: 同一文件系统通常主要是重命名目录项；跨文件系统通常需要复制目标再删除源，失败时可能出现目标已部分存在而源仍在。
+  extra: 重要跨文件系统移动后应同时检查两端。
+  source:
+  - mv(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::concept
+  - priority::P0
+- id: RHCSA-06-O01-QA-008
+  type: qa
+  question: 移动完成后，只看到目标路径存在是否足够？
+  answer: 不够。还应确认源路径是否按要求消失，并验证目标内容和必要元数据。
+  extra: 跨文件系统移动尤其不能只看目标出现。
+  source:
+  - mv(1)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-O01-QA-009
+  type: qa
+  question: '`stat -c "%F %N" link` 显示对象是 symbolic link。复制目录树时首先要决定什么？'
+  answer: 决定要复制链接对象本身，还是解引用并复制其指向内容。
+  extra: 无意解引用可能把源集合之外的大量内容带入目标。
+  source:
+  - cp(1)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::output
+  - priority::P1
+- id: RHCSA-FILES-O01-QA-003
+  type: qa
+  question: 将 `/src/` 的全部内容（包括隐藏成员）归档式复制到已有 `/dest/` 的命令是什么？
+  answer: '```bash
+
+    cp -a /src/. /dest/
+
+    ```'
+  extra: 保留旧 ID；主要提取目标未改变。
+  source:
+  - cp(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O01-QA-011
+  type: qa
+  question: 把单个源文件复制到已有目录和复制到不存在的路径，目标名称分别怎样确定？
+  answer: 复制到已有目录时使用源基名；复制到不存在的路径时，该路径本身成为新文件名。
+  extra: 目标存在状态必须在执行前确认。
+  source:
+  - cp(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::comparison
+  - priority::P1
+- id: RHCSA-06-O01-QA-012
+  type: qa
+  question: '`cp -u` 能否替代字节校验？'
+  answer: 不能。它依据更新时间等规则决定是否复制，不证明两个文件的字节一定相同。
+  extra: 需要内容证明时使用摘要或有针对性的比较。
+  source:
+  - cp(1)
+  - sha256sum(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-O01-CLOZE-001
+  type: cloze
+  text: 把源目录全部成员直接复制到已有目标目录时，常用源写法是 `SOURCE/{{c1::.}}`，而不是 `SOURCE/{{c2::*}}`。
+  extra: 前者包含点号成员；后者由 Shell 展开，通常遗漏隐藏成员。
+  source:
+  - cp(1)
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::copy-move
+  - card::cloze
+  - priority::P0
+- id: RHCSA-FILES-O01-QA-002
+  type: qa
+  question: 把 `app.conf` 部署为 `/etc/myapp/app.conf`，创建缺失父目录并设置模式 `0640`，命令是什么？
+  answer: '```bash
+
+    install -D -m 0640 app.conf /etc/myapp/app.conf
+
+    ```'
+  extra: 保留旧 ID；`install` 是文件部署工具，不是软件包安装器。
+  source:
+  - install(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::install
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O02-QA-002
+  type: qa
+  question: '`install -D` 与 `install -d` 分别做什么？'
+  answer: '`-D` 在部署文件时创建缺失的父目录；`-d` 把参数本身作为要创建的目录。'
+  extra: 创建目录时可同时用 `-m` 指定目录模式。
+  source:
+  - install(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::install
+  - card::comparison
+  - priority::P0
+- id: RHCSA-06-O02-QA-003
+  type: qa
+  question: '`install -m 0640` 中的模式描述源还是目标？'
+  answer: 描述目标文件的模式。
+  extra: '`install` 面向明确部署终态，不是自动继承源全部属性。'
+  source:
+  - install(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::install
+  - card::parameter
+  - priority::P0
+- id: RHCSA-06-O02-QA-004
+  type: qa
+  question: 创建 `/etc/myapp` 目录并设置模式 `0750` 的命令是什么？
+  answer: '```bash
+
+    install -d -m 0750 /etc/myapp
+
+    ```'
+  extra: '`-d` 创建目录；不要用部署文件的 `-D` 语义替代。'
+  source:
+  - install(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::install
+  - card::command
+  - priority::P1
+- id: RHCSA-06-O02-QA-005
+  type: qa
+  question: 普通用户执行 `install -o root` 时，为什么可能失败？
+  answer: 因为设置任意目标所有者需要相应特权。
+  extra: 参数存在不代表当前身份能够实现目标。
+  source:
+  - install(1)
+  - chown(2)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::install
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-O02-QA-006
+  type: qa
+  question: '`install` 命令无错误后，最小的内容与属性验证组合是什么？'
+  answer: '```bash
+
+    sha256sum SOURCE TARGET
+
+    stat -c "%U %G %a %n" TARGET
+
+    ```'
+  extra: 内容和目标属性必须分开验证。
+  source:
+  - install(1)
+  - sha256sum(1)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::install
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-O02-QA-007
+  type: qa
+  question: 为什么 `install` 常比“`cp` 后再 `chmod`”更适合部署脚本？
+  answer: 它能在一次明确操作中表达目标路径、父目录创建和目标模式，减少中间状态并提高终态可读性。
+  extra: 仍应进行目标端验证。
+  source:
+  - install(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::install
+  - card::comparison
+  - priority::P1
+- id: RHCSA-06-O02-QA-008
+  type: qa
+  question: 目标配置文件内容和模式均正确，服务仍不工作。本章下一步边界是什么？
+  answer: 本章只能证明文件部署终态；下一步应转向应用配置验证、服务重载和日志，而不是重复复制。
+  extra: 服务控制和日志分别属于后续章节。
+  source:
+  - install(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::install
+  - card::boundary
+  - priority::P1
+- id: RHCSA-FILES-O04-QA-001
+  type: qa
+  question: '`tar` 的 `-c`、`-t`、`-x` 和 `-f` 分别表示什么？'
+  answer: '`-c` 创建，`-t` 列出成员，`-x` 提取，`-f` 指定归档文件。'
+  extra: '`-c/-t/-x` 是主要操作，通常一次选择一个。'
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::parameter
+  - priority::P0
+- id: RHCSA-FILES-O04-QA-002
+  type: qa
+  question: '`tar` 的 `-z`、`-j`、`-J` 分别选择哪种压缩算法？'
+  answer: '`-z` 为 gzip，`-j` 为 bzip2，`-J` 为 xz。'
+  extra: 注意 `j` 与 `J` 大小写。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::parameter
+  - priority::P0
+- id: RHCSA-FILES-O04-QA-003
+  type: qa
+  question: '`tar -C /srv -cf app.tar app` 中 `-C /srv` 的作用是什么？'
+  answer: 让后续成员路径从 `/srv` 解释，因此归档成员以 `app/...` 开头。
+  extra: '`-C` 具有位置语义，只影响其后的路径参数。'
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::parameter
+  - priority::P0
+- id: RHCSA-06-K02-QA-004
+  type: qa
+  question: 归档与压缩的本质区别是什么？
+  answer: 归档把多个成员及其元数据组织成一个成员序列；压缩只改变一个文件或字节流的表示大小。
+  extra: 多文件目录通常先 tar，再选择 gzip/bzip2/xz。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::concept
+  - priority::P0
+- id: RHCSA-06-K02-QA-005
+  type: qa
+  question: '`tar -tf archive.tar.xz` 能证明什么？'
+  answer: 能非破坏性列出归档成员名称，帮助检查顶层、路径前缀和成员集合。
+  extra: 它不能证明提取后所有字节和元数据都符合要求。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::output
+  - priority::P0
+- id: RHCSA-FILES-O04-QA-004
+  type: qa
+  question: 不提取内容，查看 xz 压缩 tar 归档成员的命令是什么？
+  answer: '```bash
+
+    tar -tf archive.tar.xz
+
+    ```'
+  extra: 现代 tar 通常能自动识别压缩类型；保留旧 ID。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::command
+  - priority::P0
+- id: RHCSA-06-K02-QA-007
+  type: qa
+  question: 在 `/srv` 下归档 `app` 与进入 `/srv/app` 后归档 `.`，成员顶层有什么区别？
+  answer: 前者成员以 `app/` 开头；后者通常以 `./` 开头，不会自动保留名为 `app` 的顶层。
+  extra: 任务要求固定顶层时，从父目录归档。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::comparison
+  - priority::P1
+- id: RHCSA-06-K02-QA-008
+  type: qa
+  question: 为什么未知归档应先列成员并提取到空目录？
+  answer: 为了检查绝对路径、`..`、链接和目标层级，避免直接覆盖已有系统或业务文件。
+  extra: 不要把工具默认保护当作唯一安全边界。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::security
+  - priority::P0
+- id: RHCSA-06-K02-QA-009
+  type: qa
+  question: tar 默认是否一定保存 ACL、扩展属性和 SELinux 上下文？
+  answer: 不一定。通常需显式使用 `--acls`、`--xattrs` 和 `--selinux` 等选项。
+  extra: 保存后仍需在目标端用对应工具验证恢复结果。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::configuration
+  - priority::P1
+- id: RHCSA-06-K02-QA-010
+  type: qa
+  question: root 与普通用户提取同一归档时，所有者恢复有什么常见差异？
+  answer: root 通常能够恢复归档记录的所有者；普通用户提取后通常由该用户拥有文件。
+  extra: 具体模式还会受到 umask 和保留权限选项影响。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::comparison
+  - priority::P1
+- id: RHCSA-06-O03-QA-001
+  type: qa
+  question: 从 `/srv` 创建包含 `app/` 顶层的 xz 压缩归档 `/root/app.tar.xz`，命令是什么？
+  answer: '```bash
+
+    tar -C /srv -cJf /root/app.tar.xz app
+
+    ```'
+  extra: 成员以 `app/...` 开头，不保存 `/srv/app` 的绝对路径。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O03-QA-002
+  type: qa
+  question: 创建 gzip 和 bzip2 压缩 tar 归档的参数组合分别是什么？
+  answer: gzip 使用 `-czf`，bzip2 使用 `-cjf`。
+  extra: xz 使用 `-cJf`。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O03-QA-003
+  type: qa
+  question: 为什么不能用 `gzip directory` 代替目录归档？
+  answer: gzip 主要压缩单个文件或流，不负责把目录树组织成多个可列出和恢复的成员。
+  extra: 目录应先用 tar 归档。
+  source:
+  - gzip(1)
+  - tar(1)
+  - RH124 Ch.13
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::comparison
+  - priority::P0
+- id: RHCSA-06-O03-QA-004
+  type: qa
+  question: 分别解压 `.gz`、`.bz2` 和 `.xz` 单文件的命令是什么？
+  answer: '`gunzip FILE.gz`、`bunzip2 FILE.bz2`、`unxz FILE.xz`。'
+  extra: 解压单文件和从 tar 归档提取成员是不同操作。
+  source:
+  - gzip(1)
+  - bzip2(1)
+  - xz(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::command
+  - priority::P1
+- id: RHCSA-06-O03-QA-005
+  type: qa
+  question: 创建压缩 tar 后，最小的非破坏性验证组合是什么？
+  answer: '```bash
+
+    file ARCHIVE
+
+    tar -tf ARCHIVE
+
+    ```'
+  extra: '`file` 看外层格式，`tar -tf` 看成员和路径。'
+  source:
+  - file(1)
+  - tar(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-O03-QA-006
+  type: qa
+  question: 使用 `tar -xzf backup.tar.xz` 报“not in gzip format”，下一条最有区分度的证据是什么？
+  answer: '```bash
+
+    file backup.tar.xz
+
+    tar -tf backup.tar.xz
+
+    ```'
+  extra: 手工指定的 gzip 参数与实际 xz 格式不匹配；可让 tar 自动识别或使用 `-J`。
+  source:
+  - tar(1)
+  - file(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-O03-QA-007
+  type: qa
+  question: 为什么归档验收应包含“试提取到空目录”？
+  answer: 因为成员列表正确仍不能完全证明归档可按预期恢复；空目录试提取能验证实际层级、类型和恢复行为，同时避免覆盖业务路径。
+  extra: 试提取后仍需比较字节和关键元数据。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-O03-QA-008
+  type: qa
+  question: '`gzip -l` 或 `xz -l` 的输出能否证明 tar 成员正确？'
+  answer: 不能。它们主要显示压缩和未压缩大小等外层信息。
+  extra: 成员集合仍用 `tar -tf` 检查。
+  source:
+  - gzip(1)
+  - xz(1)
+  - tar(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-O03-QA-009
+  type: qa
+  question: '`tar -tvf` 相比 `tar -tf` 多提供哪些常用信息？'
+  answer: 通常增加成员类型、模式、所有者、大小和时间等详细字段。
+  extra: 这些是归档记录，不等于任何身份提取后都能原样恢复。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::output
+  - priority::P1
+- id: RHCSA-06-O03-QA-010
+  type: qa
+  question: 两个归档恢复出的普通文件完全相同，归档文件 SHA-256 是否一定相同？
+  answer: 不一定。成员顺序、归档时间戳、元数据或压缩参数不同都可能使归档字节不同。
+  extra: 归档摘要与恢复后数据集合验证回答不同问题。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::compression
+  - card::boundary
+  - priority::P1
+- id: RHCSA-FILES-O04-CLOZE-001
+  type: cloze
+  text: tar 压缩选项：gzip 为 {{c1::-z}}，bzip2 为 {{c2::-j}}，xz 为 {{c3::-J}}。
+  extra: 这是从旧章保留的精确参数组合卡。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::cloze
+  - priority::P0
+- id: RHCSA-06-O03-CLOZE-002
+  type: cloze
+  text: 创建、列出、提取 tar 的主要操作分别是 {{c1::-c}}、{{c2::-t}}、{{c3::-x}}；归档文件由 `-f` 指定。
+  extra: 一次通常只选择一个主要操作。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::cloze
+  - priority::P0
+- id: RHCSA-06-O03-CLOZE-003
+  type: cloze
+  text: 固定成员顶层的常用骨架：`tar {{c1::-C /srv}} -cJf app.tar.xz {{c2::app}}`。
+  extra: '`-C` 影响后续路径的解释位置。'
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::tar
+  - card::cloze
+  - priority::P0
+- id: RHCSA-06-O04-QA-001
+  type: qa
+  question: '`scp`、`sftp` 和远端 `rsync` 常见的远端路径语法是什么？'
+  answer: '`[user@]host:path`。'
+  extra: 冒号右侧由远端文件系统和远端登录身份解释。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::syntax
+  - priority::P0
+- id: RHCSA-06-O04-QA-002
+  type: qa
+  question: 把本地 `archive.tar.xz` 上传到 `serverb` 的绝对目录 `/home/student/incoming/`，命令是什么？
+  answer: '```bash
+
+    scp archive.tar.xz student@serverb:/home/student/incoming/
+
+    ```'
+  extra: 传输后仍应在远端检查路径和摘要。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O04-QA-003
+  type: qa
+  question: 从远端下载 `/home/student/result.txt` 到本地当前目录，命令是什么？
+  answer: '```bash
+
+    scp student@serverb:/home/student/result.txt ./
+
+    ```'
+  extra: 源为远端操作数，目标为本地。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O04-QA-004
+  type: qa
+  question: 在 `sftp` 中，`pwd`/`cd` 与 `lpwd`/`lcd` 分别操作哪一端？
+  answer: '`pwd`/`cd` 操作远端工作目录；`lpwd`/`lcd` 操作本地工作目录。'
+  extra: 传输前同时确认两端目录可减少方向错误。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::comparison
+  - priority::P0
+- id: RHCSA-06-O04-QA-005
+  type: qa
+  question: 在交互式 `sftp` 中上传和下载文件的命令分别是什么？
+  answer: '`put LOCAL` 上传，`get REMOTE` 下载。'
+  extra: 使用 `-r` 可递归处理目录树。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O04-QA-006
+  type: qa
+  question: '`host:relative/path` 的相对路径从哪里解释？'
+  answer: 从远端登录用户的远端路径语境解释，通常与其远端主目录或会话工作目录相关。
+  extra: 考试和变更任务优先使用明确绝对路径。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-O04-QA-007
+  type: qa
+  question: '`scp -p` 请求保留哪些常见属性？'
+  answer: 请求保留源文件的修改时间、访问时间和模式。
+  extra: 目标端实际结果仍受权限和后端影响，应使用 `stat` 验证。
+  source:
+  - scp(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::parameter
+  - priority::P1
+- id: RHCSA-06-O04-QA-008
+  type: qa
+  question: SFTP 显示上传 100%，但预期远端绝对路径没有文件。下一步最有区分度的证据是什么？
+  answer: 在会话中检查 `pwd`，或通过 SSH 检查远端用户、当前目录和用户主目录中的文件。
+  extra: 100% 进度不证明远端路径解释符合预期。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-O04-QA-009
+  type: qa
+  question: 一次性传输归档后，如何验证传输未改变归档字节？
+  answer: 在本地和远端分别对归档执行 `sha256sum` 并比较。
+  extra: 这证明归档文件字节一致，但不证明归档成员恢复结果。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-O04-QA-010
+  type: qa
+  question: 什么时候更适合用 `sftp`，什么时候更适合用 `rsync`？
+  answer: 需要交互式浏览、选择和上传下载时用 `sftp`；需要重复同步目录差异、属性策略和预览时用 `rsync`。
+  extra: 一次性简单文件复制也可使用 `scp`。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::comparison
+  - priority::P1
+- id: RHCSA-06-O04-QA-011
+  type: qa
+  question: RHEL 9 中，为什么不能把“`scp` 命令”简单等同于“旧 SCP 协议”？
+  answer: 因为 RHEL 9 的 OpenSSH `scp` 默认使用 SFTP 协议后端；旧 SCP 协议是兼容路径。
+  extra: 这是版本敏感事实，命令界面和底层协议应分开理解。
+  source:
+  - RHEL 9 OpenSSH documentation
+  - scp(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::boundary
+  - priority::P0
+- id: RHCSA-06-O04-QA-012
+  type: qa
+  question: 远端目录递归传输后，除了摘要还必须检查什么高频问题？
+  answer: 检查目标是否多包一层目录、隐藏成员是否存在，以及关键模式和时间是否满足要求。
+  extra: 目录树不是单个字节对象。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::verification
+  - priority::P1
+- id: RHCSA-06-O04-CLOZE-001
+  type: cloze
+  text: 远端路径骨架是 `{{c1::[user@]host:path}}`；冒号右侧由 {{c2::远端}} 文件系统解释。
+  extra: 优先使用明确绝对路径消除落点歧义。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::cloze
+  - priority::P0
+- id: RHCSA-06-O04-CLOZE-002
+  type: cloze
+  text: SFTP 中远端工作目录命令是 {{c1::pwd/cd}}，本地工作目录命令是 {{c2::lpwd/lcd}}。
+  extra: 上传和下载前确认两端。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::remote-transfer
+  - card::cloze
+  - priority::P0
+- id: RHCSA-FILES-O04-QA-005
+  type: qa
+  question: '`rsync -a /source /target/` 与 `rsync -a /source/ /target/` 的结果区别是什么？'
+  answer: 前者通常在目标中创建 `source/` 子目录；后者把 source 的内容直接同步到目标目录。
+  extra: 保留旧 ID；末尾斜杠定义同步根。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::comparison
+  - priority::P0
+- id: RHCSA-06-O05-QA-002
+  type: qa
+  question: '`rsync` 的“增量”主要表示什么？'
+  answer: 首次同步后，后续运行通过比较源和目标，只传输被判定为变化的文件或数据差异。
+  extra: 首次同步仍可能接近完整复制。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::concept
+  - priority::P0
+- id: RHCSA-06-O05-QA-003
+  type: qa
+  question: '`rsync -a` 常见地保留哪些方面，又不默认包含哪些高价值属性？'
+  answer: 它提供递归并保留链接、模式、时间、组、所有者和设备等常用归档语义；硬链接、ACL 和扩展属性分别通常需 `-H`、`-A`、`-X`。
+  extra: 是否能实际保留还受目标端权限和文件系统影响。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::parameter
+  - priority::P0
+- id: RHCSA-FILES-O04-QA-006
+  type: qa
+  question: 在不实际修改目标的情况下预览 rsync 同步，命令骨架是什么？
+  answer: '```bash
+
+    rsync -ani SOURCE/ DESTINATION/
+
+    ```'
+  extra: '`-n` dry-run，`-i` 逐项显示变化；保留旧 ID。'
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O05-QA-005
+  type: qa
+  question: '`rsync -i` 的用途是什么？'
+  answer: 逐项显示文件或属性将发生的变化，帮助审查同步计划。
+  extra: 与 `-n` 组合可在执行前观察而不修改目标。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::parameter
+  - priority::P0
+- id: RHCSA-FILES-O04-QA-007
+  type: qa
+  question: 为什么 `rsync --delete` 必须先 dry-run？
+  answer: 因为它会删除目标端在可见源集合中不存在的成员；源根、目标或排除规则错误时可能造成大规模误删。
+  extra: 只在题目明确要求精确镜像时使用；保留旧 ID。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::security
+  - priority::P0
+- id: RHCSA-06-O05-QA-007
+  type: qa
+  question: 远端已有一个必须保留的 `remote-note.txt`，同步源内容时是否应使用 `--delete`？
+  answer: 不应使用。
+  extra: 任务明确要求保留远端额外成员，`--delete` 与目标终态冲突。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::task
+  - priority::P0
+- id: RHCSA-06-O05-QA-008
+  type: qa
+  question: 实际同步后再次运行同一条 `rsync -ani` 无输出，能证明什么？
+  answer: 证明 rsync 根据当前选择和比较规则认为没有需要再次更新的差异。
+  extra: 不能独立证明全部字节、ACL、xattr 或业务功能。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-O05-QA-009
+  type: qa
+  question: 为什么普通远端用户执行 `rsync -a` 时不一定能保留源 root 所有者？
+  answer: 因为目标端设置任意 UID/GID 所有者需要足够权限。
+  extra: 题目未要求所有者映射时，不要把偶然源所有者扩大为验收目标。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-O05-QA-010
+  type: qa
+  question: 把本地 `/srv/site/` 的内容直接同步到远端 `/home/student/stage/site/`，先预览的命令是什么？
+  answer: '```bash
+
+    rsync -ani /srv/site/ student@serverb:/home/student/stage/site/
+
+    ```'
+  extra: 源和目标都带目录语义，源末尾斜杠确保不生成 `site/site/`。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O05-QA-011
+  type: qa
+  question: rsync 能否在一条普通命令中让源和目标都为两个不同的远端主机？
+  answer: 不能。普通远端语法要求至少一端是本地执行环境。
+  extra: 需要跨远端搬运时应重新设计执行位置或中转流程。
+  source:
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::syntax
+  - priority::P1
+- id: RHCSA-06-O05-QA-012
+  type: qa
+  question: dry-run 计划在目标创建 `source/` 子目录，但任务要求内容直接进入目标。最可能的修复是什么？
+  answer: 在源目录路径末尾加 `/`，并重新 dry-run。
+  extra: 不要执行后再盲目移动目录层级。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-O05-QA-013
+  type: qa
+  question: 每次 rsync 都反复显示同一个文件变化，下一步先比较什么？
+  answer: 比较两端文件大小、精确修改时间，确认文件是否持续被写入，并检查两端时钟和文件系统时间精度。
+  extra: 不要直接用更激进的校验掩盖持续写入。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  - stat(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-O05-QA-014
+  type: qa
+  question: '`-H`、`-A`、`-X` 分别保留什么？'
+  answer: '`-H` 保留硬链接关系，`-A` 保留 ACL，`-X` 保留扩展属性。'
+  extra: SELinux 文件上下文通常存储在扩展属性中。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::comparison
+  - priority::P1
+- id: RHCSA-06-O05-QA-015
+  type: qa
+  question: 为什么不应在所有同步任务中无条件添加 `-HAX`？
+  answer: 它们会增加扫描、传输和权限要求，且任务可能并不需要这些属性。
+  extra: 根据明确目标选择属性，而不是把最大参数集当作默认答案。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-O05-QA-016
+  type: qa
+  question: dry-run 输出出现大量 `*deleting`，应继续实际执行吗？
+  answer: 不应。应停止并重新确认源集合、目标路径、末尾斜杠、排除规则和删除授权。
+  extra: 删除计划本身就是关键风险证据。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::output
+  - priority::P1
+- id: RHCSA-06-O05-QA-017
+  type: qa
+  question: 第二次 rsync 无变化与 `sha256sum` 相同分别证明什么？
+  answer: 前者证明 rsync 的当前比较规则已收敛；后者证明被比较文件字节相同。
+  extra: 两种证据可以组合，但不能互相替代。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::comparison
+  - priority::P1
+- id: RHCSA-06-O05-CLOZE-001
+  type: cloze
+  text: '`rsync -a /source{{c1::/}} /target/` 同步源目录内容；去掉该末尾斜杠通常会在目标中形成 {{c2::source/}} 子目录。'
+  extra: 末尾斜杠是同步根语义。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::cloze
+  - priority::P0
+- id: RHCSA-06-O05-CLOZE-002
+  type: cloze
+  text: 执行前预览 rsync 的常用组合是 `rsync -a{{c1::n}}{{c2::i}} SOURCE/ DEST/`。
+  extra: '`-n` 不执行，`-i` 逐项显示变化。'
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::cloze
+  - priority::P0
+- id: RHCSA-06-O05-CLOZE-003
+  type: cloze
+  text: rsync 扩展属性选项：硬链接 {{c1::-H}}，ACL {{c2::-A}}，xattr {{c3::-X}}。
+  extra: 只在任务需要且目标支持时加入。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::rsync
+  - card::cloze
+  - priority::P1
+- id: RHCSA-06-O06-QA-001
+  type: qa
+  question: 计算一个文件 SHA-256 摘要的命令是什么？
+  answer: '```bash
+
+    sha256sum FILE
+
+    ```'
+  extra: 输出包含摘要和文件名。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O06-QA-002
+  type: qa
+  question: 创建并检查 SHA-256 清单的命令骨架是什么？
+  answer: '```bash
+
+    sha256sum FILE... > SHA256SUMS
+
+    sha256sum -c SHA256SUMS
+
+    ```'
+  extra: 检查时清单中的路径必须能在当前语境正确解析。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::command
+  - priority::P0
+- id: RHCSA-06-O06-QA-003
+  type: qa
+  question: '`sha256sum -c` 全部显示 OK，是否证明清单来自可信发布者？'
+  answer: 不证明。它只证明当前文件与给定清单一致。
+  extra: 清单本身的真实性需要可信通道或数字签名等其他机制。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::boundary
+  - priority::P0
+- id: RHCSA-06-O06-QA-004
+  type: qa
+  question: 如何对两个目录的普通文件建立可比较的稳定摘要视图？
+  answer: 在各自目录根中，用 `find . -type f -print0 | sort -z | xargs -0 sha256sum` 生成相对路径排序的清单，再比较清单。
+  extra: 该方法不检查目录、符号链接和元数据。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  - find(1)
+  - sort(1)
+  - xargs(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::process
+  - priority::P1
+- id: RHCSA-06-O06-QA-005
+  type: qa
+  question: 归档文件摘要与试提取后的成员摘要分别用于什么验收？
+  answer: 归档摘要验证交付文件字节未变；成员摘要验证恢复后的普通文件内容与相对名称。
+  extra: 成员层级、链接和元数据仍需其他证据。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::comparison
+  - priority::P0
+- id: RHCSA-FILES-C01-QA-002
+  type: qa
+  question: 归档或传输后的最小分层验证链是什么？
+  answer: 检查对象存在与格式、成员和层级、普通文件字节、关键元数据，以及远端或试提取终态。
+  extra: 保留旧 ID；不要只用命令成功或一个摘要代替全部层次。
+  source:
+  - RH124 Ch.3
+  - RH124 Ch.13
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-O06-QA-007
+  type: qa
+  question: 两个文件大小和修改时间相同，是否足以证明内容相同？
+  answer: 不足。
+  extra: 大小和时间是快速比较信号；需要独立内容证据时计算摘要。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::output
+  - priority::P1
+- id: RHCSA-06-O06-QA-008
+  type: qa
+  question: 能否直接对目录执行 `sha256sum DIRECTORY` 来证明整个目录树一致？
+  answer: 不能。目录不是一个普通字节流；必须先确定成员集合并分别处理普通文件，同时独立验证类型、链接和元数据。
+  extra: 不要把命令报错当成只缺一个参数。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-O06-QA-009
+  type: qa
+  question: 任务要求证明传输的 `.tar.xz` 未被改变，但不要求立即恢复。最直接的字节证据是什么？
+  answer: 比较传输前后的归档文件 SHA-256。
+  extra: 若还要求可恢复和成员正确，再增加 `tar -tf` 与试提取。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::task
+  - priority::P0
+- id: RHCSA-06-O06-CLOZE-001
+  type: cloze
+  text: 根据清单检查文件使用 `sha256sum {{c1::-c}} SHA256SUMS`。
+  extra: 清单本身仍需可信来源。
+  source:
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::verification
+  - card::cloze
+  - priority::P0
+- id: RHCSA-06-D01-QA-001
+  type: qa
+  question: 目标多出一层源目录时，下一条最有区分度的证据是什么？
+  answer: 查看目标前两层目录树，并核对源操作数是否带末尾斜杠或 `/.`。
+  extra: 先确认同步根，再做最小修复。
+  source:
+  - find(1)
+  - cp(1)
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-D01-QA-002
+  type: qa
+  question: 归档顶层是 `./`，但任务要求 `app/`。最小修复是什么？
+  answer: 从源目录父级重新创建，或使用 `tar -C PARENT ... app`。
+  extra: 不要在提取后用移动操作掩盖错误归档结构。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-D01-QA-003
+  type: qa
+  question: 文件摘要相同但应用提示权限拒绝，下一条最有区分度的证据是什么？
+  answer: '`stat` 比较源和目标的类型、模式、所有者和组；必要时再检查 ACL 和 SELinux 上下文。'
+  extra: 摘要已经排除了普通文件字节差异。
+  source:
+  - stat(1)
+  - getfacl(1)
+  - ls(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-D01-QA-004
+  type: qa
+  question: rsync dry-run 计划删除大量文件时，最小安全动作是什么？
+  answer: 停止实际执行，重新确认源集合、目标路径、末尾斜杠、排除规则和删除授权。
+  extra: 不能用 `--force` 或直接执行来“看结果”。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-06-D01-QA-005
+  type: qa
+  question: 归档扩展名为 `.tar.gz`，但 `file` 显示 xz 数据。应信任哪个证据？
+  answer: 信任实际格式检测和归档读取结果，不只信任文件名后缀。
+  extra: 可纠正后缀或使用与实际格式匹配的工具。
+  source:
+  - file(1)
+  - tar(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-06-D01-QA-006
+  type: qa
+  question: 传输后远端文件大小为 0，客户端命令却退出 0。下一步应先检查什么？
+  answer: 确认比较的是正确远端路径和正确用户，再查看传输源大小、目标 `stat` 和相关客户端输出。
+  extra: 不要先假设网络正常或文件内容正确。
+  source:
+  - RH124 Ch.13 pp.439-444
+  - scp(1)
+  - sftp(1)
+  - RHEL 9 OpenSSH documentation
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-06-D01-QA-007
+  type: qa
+  question: '`install` 后文件终态正确，但服务未读取新配置。本章能否直接给出关闭 SELinux或重启所有服务的答案？'
+  answer: 不能。应把问题交给服务、日志和 SELinux 对应章节，基于应用证据继续调查。
+  extra: 文件部署正确只排除了一层问题。
+  source:
+  - install(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::diagnosis
+  - card::boundary
+  - priority::P1
+- id: RHCSA-06-T01-QA-001
+  type: qa
+  question: 要求归档成员有单一顶层 `app-release/`，源为 `/srv/app-release/`。创建 xz 归档的关键命令是什么？
+  answer: '```bash
+
+    tar -C /srv -cJf ARCHIVE app-release
+
+    ```'
+  extra: '`-C /srv` 与成员 `app-release` 共同固定顶层。'
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-06-T01-QA-002
+  type: qa
+  question: 经典归档任务中，为什么必须检查 `.release-env`？
+  answer: 它验证隐藏成员没有因使用 `*` 或错误集合边界而遗漏。
+  extra: 可用 `tar -tf` 精确查找成员。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-06-T01-QA-003
+  type: qa
+  question: 未知归档的推荐验收顺序是什么？
+  answer: 先 `file`，再 `tar -tf/-tvf`，然后提取到空目录，最后比较层级、字节、链接和关键元数据。
+  extra: 不要直接提取到业务路径。
+  source:
+  - RH124 Ch.13 pp.431-438
+  - tar(1)
+  - GNU tar manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-06-T02-QA-001
+  type: qa
+  question: 源 `/srv/site/` 的内容必须直接进入远端 `.../site/`，rsync 源路径应怎样写？
+  answer: 写成 `/srv/site/`，保留末尾斜杠。
+  extra: 否则可能形成 `site/site/`。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-06-T02-QA-002
+  type: qa
+  question: 远端 `remote-note.txt` 必须保留，经典同步任务为何不能使用 `--delete`？
+  answer: 因为 `--delete` 会把目标端不在源集合中的额外成员作为删除候选，与题目终态冲突。
+  extra: 删除选项必须来自明确镜像需求。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::classic-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-06-T02-QA-003
+  type: qa
+  question: 经典同步任务执行后的验收至少包括哪些证据？
+  answer: 第二次 dry-run、远端目录层级、额外文件仍存在、关键文件摘要、模式和修改时间。
+  extra: 每条证据回答不同层次。
+  source:
+  - RH124 Ch.13 pp.445-450
+  - rsync(1)
+  - sha256sum(1)
+  - GNU Coreutils manual
+  tags:
+  - exam::rhcsa
+  - chapter::copy-archive-compression-transfer
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+status: integrated

@@ -1,174 +1,2105 @@
-chapter_id: RHCSA-COMPREHENSIVE
+chapter_id: RHCSA-33
+chapter_slug: comprehensive
 deck: RedHat::RHCSA-RHEL9
-note_types:
-- RedHat-QA
-- RedHat-Cloze
+schema_version: 1
+status: integrated
+validation: static
 notes:
 - id: RHCSA-COMPREHENSIVE-QA-001
   type: qa
-  question: RHCSA 综合题首先应建立什么？
-  answer: 对象依赖图、共享影响表和高风险操作队列。
-  extra: 不从最长命令开始。
+  question: 面对一组跨用户、网络、服务和存储的 RHCSA 要求，第一步应产出什么？
+  answer: 把原题拆成独立评分行，并为每行写出目标对象、精确参数、限制和必需证据。
+  extra: 不要先把题号转换成命令清单；评分对象是终态。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
+  - topic::method
   - card::process
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-002
   type: qa
-  question: 为什么网络与名称解析通常先于仓库/NFS/SSH？
-  answer: 后三者依赖可达地址和解析。
-  extra: 修改网络仍需恢复路径。
+  question: 哪些关系应被标记为综合任务中的硬依赖？
+  answer: 当前置对象不成立时，后续功能无法正确建立或验证的关系。
+  extra: 例如网络和名称解析是仓库、NFS 与镜像仓库的硬依赖。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
+  - topic::dependency
   - card::concept
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-003
   type: qa
-  question: 综合题的三列证据是什么？
-  answer: 当前状态、持久配置、最终功能。
-  extra: 每项要求分别映射。
+  question: 为什么修改共享对象后需要执行回归集合？
+  answer: 同一个用户、路径、端口、设备或 profile 可能被多个任务共同依赖；其变化可能使已通过的任务失效。
+  extra: 回归相关任务即可，不必从头重做整台主机。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::process
+  - topic::dependency
+  - card::verification
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-004
   type: qa
-  question: 共享对象修改后为什么要回归？
-  answer: 后续端口、路径、组或服务变化可能破坏已完成题。
-  extra: 记录相关题号。
+  question: 综合验收中“当前状态”和“持久状态”分别回答什么？
+  answer: 当前状态回答系统此刻是否生效；持久状态回答重新登录、reload 或重启后是否仍会成立。
+  extra: '`active` 与 `enabled`、runtime 与 permanent 是典型分离。'
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::diagnosis
+  - topic::evidence
+  - card::comparison
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-005
   type: qa
-  question: 高风险存储操作的证据门是什么？
-  answer: 设备身份、签名/归属、已有数据、目标与恢复条件。
-  extra: 不足时停止写入。
+  question: 为什么功能证据不能总由 root 执行？
+  answer: root 可能绕过普通用户权限或使用不同的容器、环境和凭据，无法证明真实消费者能够使用目标功能。
+  extra: ACL、sudo、计划任务和 rootless 容器都应在题目指定身份下验证。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::process
+  - topic::evidence
+  - card::boundary
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-006
   type: qa
-  question: 最终检查应从哪里开始？
-  answer: 从题目原文逐项反查对象和证据。
-  extra: 不是从命令历史。
+  question: 局部闭环的基本顺序是什么？
+  answer: 调查当前对象 → 完成一个最小修改 → 运行贴近该对象的最小验证 → 记录证据。
+  extra: 不要同时改多个层后再统一排错。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::verification
+  - topic::method
+  - card::process
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-007
   type: qa
-  question: 重启前最少检查什么？
-  answer: 网络持久 profile、fstab verify/mount、关键服务语法和恢复入口。
-  extra: 重启不是通用排错。
+  question: 存储写操作前的最低证据门包括哪些内容？
+  answer: 目标设备身份、容量、当前挂载、文件系统签名、LVM/Swap 归属以及题目允许的用途。
+  extra: 证据不清楚时应停止，而不是用 `wipefs -a` 或强制参数推进。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::verification
+  - topic::risk
+  - card::boundary
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-008
   type: qa
-  question: 服务综合验收包含哪些层？
-  answer: 包/配置语法、active/enabled、监听、安全层、协议功能。
-  extra: 局部成功不替代整体。
+  question: 为什么重启不应作为首轮排错手段？
+  answer: 重启会同时改变网络、服务、挂载、用户 manager 和容器状态，扩大故障面。
+  extra: 先完成静态检查和当前功能闭环，再用重启证明持久性。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::process
+  - topic::risk
+  - card::boundary
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-009
   type: qa
-  question: 存储综合验收包含哪些层？
-  answer: 设备/LVM、文件系统、当前挂载、fstab、容量和数据。
-  extra: Swap 另查 swapon。
+  question: 服务显示 active 能否证明远端客户端可以访问？
+  answer: 不能。还需确认配置、监听、SELinux、firewalld、网络路径和客户端请求。
+  extra: active 只证明 systemd 当前认为 unit 处于活动状态。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::process
+  - topic::evidence
+  - card::boundary
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-010
   type: qa
-  question: 容器综合验收包含哪些层？
-  answer: 镜像、实例、端口、卷/数据、user unit、linger、HTTP。
-  extra: rootless 身份一致。
+  question: 一个任务缺少远端功能证据时，应写成什么状态？
+  answer: 写成 `blocked` 或 `deferred`，并记录缺失证据和下一步；不能把静态或当前状态升级为完整 PASS。
+  extra: 证据矩阵必须诚实表达验证边界。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::process
+  - topic::evidence
+  - card::verification
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-011
   type: qa
-  question: 卡题时应记录什么？
-  answer: 已证实层、缺失证据、最后错误和共享影响。
-  extra: 保留现场。
+  question: 最终检查为什么必须从原题重新开始？
+  answer: 执行历史会强化“我做过”的记忆，却可能遗漏原始参数、限制或子要求。
+  extra: 从原题逐项映射证据矩阵，才能发现遗漏。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
-  - card::diagnosis
+  - topic::final-check
+  - card::process
   - priority::P0
 - id: RHCSA-COMPREHENSIVE-QA-012
   type: qa
-  question: 综合任务完成的判据是什么？
-  answer: 所有要求都有对象正确、功能成立且持久状态一致的证据。
-  extra: 命令执行过不等于完成。
+  question: 综合任务的最终完成标准是什么？
+  answer: 所有题目要求的对象达到一致终态，所需证据层关闭，限制条件未被破坏，重启或重新登录后的状态按题目要求成立。
+  extra: 命令数量和没有报错都不是完成标准。
   source:
-  - RHCSA9-Mock
-  - RH124-RHEL9
-  - RH134-RHEL9
+  - legacy comprehensive anki
+  - RHCSA-33 lecture
   tags:
   - exam::rhcsa
   - chapter::comprehensive
+  - topic::final-check
+  - card::concept
+  - priority::P0
+- id: RHCSA-33-K01-QA-001
+  type: qa
+  question: 题目写“确保 httpd 在 8082 端口提供内容”。拆解时至少应形成哪几类验收对象？
+  answer: httpd 配置语法、服务当前/持久状态、监听端口、SELinux 文件与端口策略、firewalld、内容读取和客户端请求。
+  extra: 题面要求的层进入矩阵，未要求的扩展不要无限展开。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
+  - card::process
+  - priority::P0
+- id: RHCSA-33-K01-QA-002
+  type: qa
+  question: 题目参数与环境事实有什么区别？
+  answer: 题目参数是必须达到的目标值；环境事实是接口名、现有 profile、UUID、设备签名等需要查询的当前状态。
+  extra: 不得猜测环境事实。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
+  - card::comparison
+  - priority::P0
+- id: RHCSA-33-K01-QA-003
+  type: qa
+  question: “不得删除目录中已有文件”应放在任务账本的哪个位置？
+  answer: 作为独立限制或保持条件，与正向终态一起进入验收矩阵。
+  extra: 限制条件不是可忽略备注。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-K01-QA-004
+  type: qa
+  question: 一个大题中用户已创建，但默认 ACL 未生效。为什么不能把整题标记为完成？
+  answer: 用户身份与默认 ACL 是不同评分行；默认 ACL 缺少新对象功能证据。
+  extra: 大题要拆成可独立判定的子状态。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-K01-QA-005
+  type: qa
+  question: 执行命令退出码为 0 能证明什么？
+  answer: 只能证明该命令按自身定义成功返回；不能自动证明跨层功能和持久性。
+  extra: 继续读取目标对象状态。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
+  - card::output
+  - priority::P0
+- id: RHCSA-33-K01-QA-006
+  type: qa
+  question: 把“配置仓库”改写为可验证终态时，应包含哪些要素？
+  answer: repo ID/文件、baseurl、enabled/GPG 策略、元数据可获取，以及题目要求的软件查询或安装功能。
+  extra: '`dnf repolist` 只覆盖其中一部分。'
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
+  - card::process
+  - priority::P0
+- id: RHCSA-33-K01-QA-007
+  type: qa
+  question: 为什么不应把模拟题答案中的设备名或 UUID直接写入自己的操作？
+  answer: 这些值属于特定环境事实；在另一环境中照抄可能操作错误设备或写入无效 fstab。
+  extra: 题目参数与查询结果必须分开。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-K01-QA-008
+  type: qa
+  question: 一道题要求“开机自动启动”，只执行 `systemctl start` 后还缺哪类证据？
+  answer: 持久启动配置，例如 `systemctl is-enabled`，以及必要时重启后的实际状态。
+  extra: 当前 active 不能代替持久状态。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
   - card::verification
+  - priority::P0
+- id: RHCSA-33-K02-QA-001
+  type: qa
+  question: 硬依赖与顺序优化有什么区别？
+  answer: 硬依赖不成立时后续任务无法正确完成；顺序优化只是减少返工或改善诊断。
+  extra: 独立任务可以自由安排。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::comparison
+  - priority::P0
+- id: RHCSA-33-K02-QA-002
+  type: qa
+  question: 修改用户 `svcweb` 的 home 后，哪些对象应进入回归集合？
+  answer: rootless Podman 存储/配置、Quadlet 路径、用户 systemd、容器卷和数据所有权。
+  extra: 它们共享用户和 home 路径。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::process
+  - priority::P0
+- id: RHCSA-33-K02-QA-003
+  type: qa
+  question: 修改服务端口后，最小跨层回归顺序是什么？
+  answer: 应用配置与语法 → 进程/监听 → SELinux 端口类型 → firewalld → 本机请求 → 远端请求。
+  extra: 不要只重启服务。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::process
+  - priority::P0
+- id: RHCSA-33-K02-QA-004
+  type: qa
+  question: 把文件系统挂载到已有目录前必须调查什么？
+  answer: 该目录当前内容、现有挂载、使用者和是否会遮蔽业务数据。
+  extra: 挂载不会删除原目录内容，但会遮蔽视图。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-K02-QA-005
+  type: qa
+  question: NFS 名称无法解析时，继续调整 autofs map 有什么问题？
+  answer: 名称解析是硬依赖；map 即使语法正确也无法完成远程功能验证。
+  extra: 先修复网络/NSS 层。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-K02-QA-006
+  type: qa
+  question: 本机 curl 成功而远端 curl 失败，哪些层的优先级下降？
+  answer: DocumentRoot、应用内容和本机监听的嫌疑下降；应优先查 active zone、firewalld、路由和远端路径。
+  extra: 仍需以实际证据为准。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::comparison
+  - priority::P0
+- id: RHCSA-33-K02-QA-007
+  type: qa
+  question: 修改 `/srv/web` 的挂载或标签后，最小回归集合是什么？
+  answer: '`findmnt -T`、所有权/SELinux 标签、httpd 配置与状态、本机请求、远端请求。'
+  extra: 路径是多个层的共享对象。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::process
+  - priority::P0
+- id: RHCSA-33-K02-QA-008
+  type: qa
+  question: 为什么同一个端口会同时属于应用和安全对象？
+  answer: 应用决定是否监听；SELinux 决定服务域能否绑定；firewalld 决定外部流量是否允许。
+  extra: 三者状态独立。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::concept
+  - priority::P0
+- id: RHCSA-33-K03-QA-001
+  type: qa
+  question: R0 只读调查与 R4 启动关键操作的策略差异是什么？
+  answer: R0 可尽早执行并保存基线；R4 必须确认对象身份、通过证据门并准备恢复入口。
+  extra: 风险决定前置证据，不等于禁止操作。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::comparison
+  - priority::P0
+- id: RHCSA-33-K03-QA-002
+  type: qa
+  question: 通过 SSH 修改当前 NetworkManager profile 时，最重要的恢复边界是什么？
+  answer: 保留控制台或第二会话，并在删除/禁用旧 profile 前验证新 profile。
+  extra: 不要先破坏当前可达性。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-K03-QA-003
+  type: qa
+  question: 写入 `/etc/fstab` 后，进入重启前至少应执行哪些验证？
+  answer: 检查重复项和 UUID，运行 `findmnt --verify --verbose`，用 `mount -a`/`swapon -a` 验证当前状态。
+  extra: 还应确保有恢复入口。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-K03-QA-004
+  type: qa
+  question: 为什么配置文件备份不能撤销误格式化？
+  answer: 备份只保存文本声明，不能恢复被 `mkfs` 覆盖的文件系统数据结构。
+  extra: 存储安全主要依靠写入前确认。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-K03-QA-005
+  type: qa
+  question: 网络切换后 SSH 断开，首先应从哪里恢复？
+  answer: 使用预留控制台，检查设备、active profile、地址、路由和 autoconnect；不要继续远程猜命令。
+  extra: 恢复入口应在修改前准备。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-K03-QA-006
+  type: qa
+  question: 何时应把高风险任务标记为 blocked？
+  answer: 题目对象身份、现有数据用途或恢复条件无法确认时。
+  extra: 诚实阻塞优于无证据强行写入。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::process
+  - priority::P0
+- id: RHCSA-33-K03-QA-007
+  type: qa
+  question: 为什么 `--force`、`--nodeps` 或 `--allowerasing` 不能作为综合题默认答案？
+  answer: 它们可能绕过依赖或安全检查并扩大影响面，只有题目和证据明确支持时才可评估。
+  extra: 默认选择最小、可解释的修改。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-K03-QA-008
+  type: qa
+  question: 重启门的核心问题是什么？
+  answer: 启动关键配置是否已静态和当前验证，持久状态是否完整，失败后是否有控制台或恢复路径。
+  extra: 重启不是“碰碰运气”。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::process
+  - priority::P0
+- id: RHCSA-33-O01-QA-001
+  type: qa
+  question: 查看路径每一级目录所有者和权限的命令是什么？
+  answer: '`namei -om /path`。'
+  extra: 它补充 `stat` 只看末级对象的局限。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::baseline
+  - card::command
+  - priority::P0
+- id: RHCSA-33-O01-QA-002
+  type: qa
+  question: 确认某路径实际属于哪个挂载对象，用什么命令？
+  answer: '`findmnt -T /path`。'
+  extra: 可发现路径被其他文件系统覆盖。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::baseline
+  - card::command
+  - priority::P0
+- id: RHCSA-33-O01-QA-003
+  type: qa
+  question: 同时查看 NetworkManager 连接名、UUID、设备和 autoconnect 的命令骨架是什么？
+  answer: '`nmcli -f NAME,UUID,TYPE,DEVICE,AUTOCONNECT connection show`。'
+  extra: 连接 profile 与 device 当前状态应分开看。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::baseline
+  - card::command
+  - priority::P0
+- id: RHCSA-33-O01-QA-004
+  type: qa
+  question: 构建存储宽基线的核心命令组合是什么？
+  answer: '`lsblk`、`blkid`、`pvs/vgs/lvs`、`findmnt`、`swapon --show` 和 `/etc/fstab`。'
+  extra: 单一命令不能证明设备完全空闲。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::baseline
+  - card::command
+  - priority::P0
+- id: RHCSA-33-O01-QA-005
+  type: qa
+  question: 为什么 root 的 `podman ps` 不能作为 `svcweb` rootless 容器证据？
+  answer: root 与 svcweb 使用不同的用户存储、配置和 systemd manager。
+  extra: 必须在目标用户上下文调查。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::baseline
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-O01-QA-006
+  type: qa
+  question: 任务账本中的“缺失证据”字段有什么作用？
+  answer: 明确当前为何不能关账，并指出下一条验证；避免把执行动作误写为完成。
+  extra: blocked 项尤其需要此字段。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::baseline
+  - card::process
+  - priority::P0
+- id: RHCSA-33-O01-QA-007
+  type: qa
+  question: '`systemctl --failed` 没有输出能证明所有服务健康吗？'
+  answer: 不能。它只说明没有被 systemd 标记为 failed 的 unit，不能证明业务功能。
+  extra: 仍需按题目对象验证。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::baseline
+  - card::output
+  - priority::P0
+- id: RHCSA-33-O01-QA-008
+  type: qa
+  question: 为何要同时保存初始状态和修改后状态？
+  answer: 便于确认变化由本次操作产生，识别覆盖关系，并支持最小恢复。
+  extra: 只保存最终输出会丢失因果证据。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::baseline
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-O02-QA-001
+  type: qa
+  question: 静态证据和当前证据分别回答什么？
+  answer: 静态证据回答声明/语法是否正确；当前证据回答此刻是否已加载并生效。
+  extra: 两者都不自动等于功能证据。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::comparison
+  - priority::P0
+- id: RHCSA-33-O02-QA-002
+  type: qa
+  question: '`httpd -t` 通过不能证明哪些状态？'
+  answer: 不能证明服务已运行、监听 8082、SELinux/firewalld 正确或客户端可访问。
+  extra: 它只验证 Apache 配置语法。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-O02-QA-003
+  type: qa
+  question: '`findmnt /srv/data` 通过不能证明什么？'
+  answer: 不能证明 fstab 正确或重启后自动挂载。
+  extra: 需要 `findmnt --verify` 和重启证据。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-O02-QA-004
+  type: qa
+  question: '`crontab -l` 或 cron 文件存在不能证明什么？'
+  answer: 不能证明调度到点后以正确身份和环境成功运行。
+  extra: 需产物和日志证据。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-O02-QA-005
+  type: qa
+  question: 验证 ACL 未来继承的最佳方式是什么？
+  answer: 以目标创建者新建文件/目录，再用 `getfacl` 和真实消费者访问验证。
+  extra: 只读取默认 ACL 条目不足。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-O02-QA-006
+  type: qa
+  question: 验证 firewalld 持久性为什么要查询两次？
+  answer: runtime 与 permanent 是独立状态；分别使用普通查询和 `--permanent` 查询。
+  extra: reload/reboot 后以 permanent 重建 runtime。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-O02-QA-007
+  type: qa
+  question: 一项任务何时可以标记 verified？
+  answer: 题目要求的所有证据层已关闭、参数一致、限制未破坏，并完成必要回归。
+  extra: 缺一层就记录 pending/blocked。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::process
+  - priority::P0
+- id: RHCSA-33-O02-QA-008
+  type: qa
+  question: '`systemctl is-enabled` 可能返回 enabled 以外的哪些有意义状态？'
+  answer: 例如 disabled、static、indirect、generated 等；应结合 unit 类型解释。
+  extra: Quadlet 生成 unit 可能显示 generated。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::output
+  - priority::P1
+- id: RHCSA-33-T01-QA-001
+  type: qa
+  question: 创建 GID 3100 的 `opsadmins` 组命令是什么？
+  answer: '`groupadd -g 3100 opsadmins`。'
+  extra: 执行前先用 `getent group` 检查名称和 GID 冲突。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T01-QA-002
+  type: qa
+  question: 创建 UID 2201、附加组为 opsadmins 的 deploy 用户命令是什么？
+  answer: '`useradd -u 2201 -G opsadmins deploy`。'
+  extra: '`-G` 指附加组；不要误用覆盖现有用户组的操作。'
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T01-QA-003
+  type: qa
+  question: 把 `/srv/project` 设置为 root:opsadmins 且目录模式 2770 的命令是什么？
+  answer: '`chown root:opsadmins /srv/project` 与 `chmod 2770 /srv/project`。'
+  extra: setgid 使新对象继承目录组。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T01-QA-004
+  type: qa
+  question: 目录模式 2770 中前导 2 表示什么？
+  answer: setgid 位；在目录上使新建对象继承目录组，并影响子目录的 setgid 继承。
+  extra: 它不自动解决全部 ACL 和 umask 问题。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::parameter
+  - priority::P0
+- id: RHCSA-33-T01-QA-005
+  type: qa
+  question: 验证 sudoers 全局语法的命令是什么？
+  answer: '`visudo -cf /etc/sudoers`。'
+  extra: 独立文件权限通常应为 0440。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T01-QA-006
+  type: qa
+  question: 仅允许 deploy 重启 httpd 的 sudoers 行是什么？
+  answer: '`deploy ALL=(root) /usr/bin/systemctl restart httpd.service`。'
+  extra: 不要加入通配符、shell 或任意 systemctl 子命令。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T01-QA-007
+  type: qa
+  question: 验证附加组时为什么必须使用新登录会话？
+  answer: 已运行进程的组列表不会因账号数据库变化自动刷新。
+  extra: 新会话 `id` 才能代表后续登录状态。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T01-QA-008
+  type: qa
+  question: ACL 条目存在但 auditor 仍无法读取，下一步最有区分度的证据是什么？
+  answer: 查看 `getfacl` 的 mask，并用 `namei -om` 检查父目录遍历权限。
+  extra: 命名 ACL 可能被 mask 限制。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-T01-QA-009
+  type: qa
+  question: 为什么不能用 root 的 `cat` 验证 auditor 只读？
+  answer: root 可能绕过普通访问控制，无法证明 auditor 的真实权限。
+  extra: 应使用 `runuser -u auditor -- ...` 或实际登录。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-T01-QA-010
+  type: qa
+  question: 如何验证默认 ACL 对新对象生效？
+  answer: 由 deploy 新建文件，再执行 `getfacl` 并以 auditor 读取、尝试写入。
+  extra: 预期写入应被拒绝。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T02-QA-001
+  type: qa
+  question: 创建静态 profile `exam-static` 的核心 nmcli 骨架是什么？
+  answer: '`nmcli con add type ethernet ifname enp1s0 con-name exam-static ipv4.method manual ipv4.addresses 192.0.2.20/24
+    ipv4.gateway 192.0.2.1 ipv4.dns 192.0.2.53 connection.autoconnect yes`。'
+  extra: 激活前先 `nmcli con show exam-static` 核对。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T02-QA-002
+  type: qa
+  question: 为什么不建议先删除 `Wired connection 1`？
+  answer: 它可能是当前恢复入口；应先建立并验证新 profile，再调整旧 profile 的 autoconnect。
+  extra: 通过远程连接操作时尤其重要。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-T02-QA-003
+  type: qa
+  question: 静态网络完成后至少验证哪三个不同层面？
+  answer: 地址/路由、名称解析、依赖资源访问（如仓库或远端服务）。
+  extra: 只 ping 网关不足。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T02-QA-004
+  type: qa
+  question: 训练 repo 文件中每个仓库最低需要哪些字段？
+  answer: 唯一 section ID、`name`、`baseurl`、`enabled` 和题目指定的 `gpgcheck` 策略。
+  extra: 配置文件名必须以 `.repo` 结尾。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T02-QA-005
+  type: qa
+  question: 只刷新两个指定 repo 元数据的命令骨架是什么？
+  answer: '`dnf makecache --disablerepo="*" --enablerepo=rhel9-baseos,rhel9-appstream`。'
+  extra: 能区分其他仓库噪声。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T02-QA-006
+  type: qa
+  question: 为 `/srv/web` 建立持久 httpd 内容标签的命令组合是什么？
+  answer: '`semanage fcontext -a -t httpd_sys_content_t "/srv/web(/.*)?"`，然后 `restorecon -RFv /srv/web`。'
+  extra: '`chcon` 不是持久规则。'
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T02-QA-007
+  type: qa
+  question: 为尚未登记的 8082/tcp 添加 httpd 端口类型的命令是什么？
+  answer: '`semanage port -a -t http_port_t -p tcp 8082`。'
+  extra: 若端口已存在于其他类型，需调查后使用 `-m`。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T02-QA-008
+  type: qa
+  question: 非标准 HTTP 端口当前状态的直接证据是什么？
+  answer: '`ss -lnt "( sport = :8082 )"`，结合 `systemctl is-active httpd`。'
+  extra: 监听不证明外部可达。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T02-QA-009
+  type: qa
+  question: firewall-cmd 普通 `--add-port` 与带 `--permanent` 的区别是什么？
+  answer: 前者修改 runtime，后者修改持久配置；两者要分别验证。
+  extra: 只做 permanent 不会自动改变当前 runtime，除非 reload。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::comparison
+  - priority::P0
+- id: RHCSA-33-T02-QA-010
+  type: qa
+  question: 本机 curl 8082 失败时，下一条证据优先看什么？
+  answer: 先看 httpd 配置语法、unit 日志和 `ss` 监听，再看 AVC；不要先调整远端路由。
+  extra: 失败层仍在本机服务链。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-T02-QA-011
+  type: qa
+  question: httpd 日志没有明显错误但启动失败，怀疑 SELinux 时用什么证据？
+  answer: '`ausearch -m AVC -ts recent`，并结合文件/端口上下文。'
+  extra: 不要直接关闭 SELinux。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-T02-QA-012
+  type: qa
+  question: 为什么远端 curl 是最终功能证据的一部分？
+  answer: 它同时经过监听、主机防火墙和网络路径，覆盖本机 curl 无法证明的层。
+  extra: 仍需确保请求的是正确内容。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-T03-QA-001
+  type: qa
+  question: 确认 `/dev/vdb` 是否被挂载或属于 LVM 的核心命令是什么？
+  answer: 结合 `lsblk`、`blkid`、`findmnt --source /dev/vdb` 和 `pvs`。
+  extra: 单看 lsblk 的 MOUNTPOINT 不足。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T03-QA-002
+  type: qa
+  question: 发现 `/dev/vdb` 有未知签名时应如何处理？
+  answer: 停止写入并确认题目、签名类型和是否有需保留数据；不能默认运行 `wipefs -a`。
+  extra: 这是存储证据门。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-T03-QA-003
+  type: qa
+  question: 创建 GPT 全盘分区的命令骨架是什么？
+  answer: '`parted -s /dev/vdb mklabel gpt`，再 `parted -s /dev/vdb mkpart primary 1MiB 100%`。'
+  extra: 随后 `partprobe` 和 `udevadm settle`。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T03-QA-004
+  type: qa
+  question: 创建 vgexam、1G lvdata 和 256M lvswap 的命令顺序是什么？
+  answer: '`pvcreate /dev/vdb1` → `vgcreate vgexam /dev/vdb1` → 两次 `lvcreate`。'
+  extra: 每层后用 pvs/vgs/lvs 核对。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T03-QA-005
+  type: qa
+  question: '`mkfs.xfs` 与 `lvcreate` 分别改变什么对象？'
+  answer: '`lvcreate` 创建块设备 LV；`mkfs.xfs` 在该块设备上创建文件系统结构。'
+  extra: LV 存在不等于可挂载文件系统存在。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::comparison
+  - priority::P0
+- id: RHCSA-33-T03-QA-006
+  type: qa
+  question: 查询 LV 文件系统 UUID 的命令是什么？
+  answer: '`blkid -s UUID -o value /dev/vgexam/lvdata`。'
+  extra: 不要编造 UUID。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T03-QA-007
+  type: qa
+  question: 数据文件系统使用 UUID 的 fstab 行骨架是什么？
+  answer: '`UUID=<真实UUID> /srv/data xfs defaults 0 0`。'
+  extra: 追加前检查重复 UUID 和挂载点。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T03-QA-008
+  type: qa
+  question: Swap 使用 UUID 的 fstab 行骨架是什么？
+  answer: '`UUID=<真实UUID> none swap defaults 0 0`。'
+  extra: 当前状态用 `swapon -a` 和 `swapon --show` 验证。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T03-QA-009
+  type: qa
+  question: 为什么要先卸载 `/srv/data` 再执行 `mount -a`？
+  answer: 这样能验证 fstab 条目而不是继续依赖原来的手工挂载。
+  extra: 执行前确保没有进程占用。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T03-QA-010
+  type: qa
+  question: '`findmnt --verify --verbose` 在重启门中的作用是什么？'
+  answer: 静态检查 fstab 引用、目标和选项问题，提前发现可能阻断启动的错误。
+  extra: 它仍不能替代真实重启。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T03-QA-011
+  type: qa
+  question: '`lvs` 显示 1G，但 `df` 没有目标挂载，下一条证据是什么？'
+  answer: 检查 `blkid` 是否有文件系统、`findmnt` 是否挂载到预期路径。
+  extra: LV 容量与文件系统/挂载是不同层。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-T03-QA-012
+  type: qa
+  question: XFS 文件系统能否通过常规 RHCSA 操作缩小？
+  answer: 不能。XFS 支持增长，不支持原地缩小。
+  extra: 容量规划错误时不能用缩小作为默认恢复。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::boundary
+  - priority::P1
+- id: RHCSA-33-T04-QA-001
+  type: qa
+  question: autofs 间接 master map 的一行是什么？
+  answer: '`/rhome /etc/auto.rhome`。'
+  extra: 放在 `/etc/auto.master.d/*.autofs`。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T04-QA-002
+  type: qa
+  question: 使用通配符把 `/rhome/remote1` 映射到 NFS home 的 map 行骨架是什么？
+  answer: '`* -fstype=nfs4,rw nfs.lab.example.com:/exports/home/&`。'
+  extra: '`&` 替换为被访问的 key。'
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T04-QA-003
+  type: qa
+  question: 为什么 autofs 验收要先访问具体 key？
+  answer: autofs 按访问触发；未触发时没有 NFS 挂载是正常现象。
+  extra: 访问后再用 `findmnt -T`。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T04-QA-004
+  type: qa
+  question: 静态查看 autofs 合并映射的命令是什么？
+  answer: '`automount -m`。'
+  extra: 它能发现 map 解析和加载结构问题。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T04-QA-005
+  type: qa
+  question: chronyd active 与时间同步有效有什么区别？
+  answer: active 只表示 daemon 运行；有效同步还需来源可达、被选择并有合理 tracking 状态。
+  extra: 用 `chronyc sources -v` 和 `tracking`。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::comparison
+  - priority::P0
+- id: RHCSA-33-T04-QA-006
+  type: qa
+  question: '`chronyc sources -v` 中指定源持续显示 `^?` 通常意味着什么？'
+  answer: 该源当前不可选择或没有有效测量，应调查名称解析、网络、端口和源响应。
+  extra: 不能仅靠重启 chronyd。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::output
+  - priority::P1
+- id: RHCSA-33-T04-QA-007
+  type: qa
+  question: '`/etc/cron.d` 条目与用户 crontab 的关键语法差异是什么？'
+  answer: '`/etc/cron.d` 在五个时间字段后必须包含执行用户字段。'
+  extra: 漏写用户会使条目无效或被误解析。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T04-QA-008
+  type: qa
+  question: 每周三 15:30 由 root 运行脚本的 cron 行是什么？
+  answer: '`30 15 * * 3 root /usr/local/sbin/rhcsa33-health`。'
+  extra: 在 `/etc/cron.d` 中使用绝对路径。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T04-QA-009
+  type: qa
+  question: 为什么计划脚本应显式设置 PATH？
+  answer: cron 环境比交互 Shell 精简，依赖用户 profile 或相对路径会产生手工成功、调度失败。
+  extra: 还应明确 HOME/SHELL 或使用绝对路径。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::process
+  - priority::P0
+- id: RHCSA-33-T04-QA-010
+  type: qa
+  question: 手工在 `env -i` 下运行脚本能证明什么？
+  answer: 证明脚本在精简环境中可执行并产生预期产物；不能证明 cron 到点触发。
+  extra: 真实调度仍需日志和产物时间证据。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T04-QA-011
+  type: qa
+  question: 按日志 tag 查询健康检查事件的命令是什么？
+  answer: '`journalctl -t rhcsa33-health`。'
+  extra: 可以加时间范围缩小证据。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T04-QA-012
+  type: qa
+  question: cron 文件存在但没有产物，下一条高区分度证据是什么？
+  answer: 检查 crond journal、文件权限/SELinux、用户字段和脚本在精简环境中的执行。
+  extra: 不要只重复 `systemctl restart crond`。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-T05-QA-001
+  type: qa
+  question: rootless 容器操作前如何确认当前确实是目标用户上下文？
+  answer: 检查 `id`、`HOME`、`XDG_RUNTIME_DIR` 和 `podman info` 的存储路径。
+  extra: '`sudo podman` 会切换到 rootful 对象。'
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-T05-QA-002
+  type: qa
+  question: 为什么先运行临时手工容器再写 Quadlet？
+  answer: 可以先隔离镜像、端口、卷和 SELinux 问题，避免把所有失败归因于 systemd generator。
+  extra: 手工成功仍不代表持久状态完成。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::process
+  - priority::P0
+- id: RHCSA-33-T05-QA-003
+  type: qa
+  question: Podman 卷选项 `:Z` 的语义是什么？
+  answer: 为该容器私有地重新标记绑定目录，使 SELinux 容器域可访问。
+  extra: 共享多个容器时需评估 `:z`，不要机械替换。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::parameter
+  - priority::P1
+- id: RHCSA-33-T05-QA-004
+  type: qa
+  question: Quadlet 中发布 8088 到容器 8080 的字段是什么？
+  answer: '`PublishPort=8088:8080`。'
+  extra: 写在 `[Container]`。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T05-QA-005
+  type: qa
+  question: Quadlet 持久绑定 `/home/svcweb/site` 的字段是什么？
+  answer: '`Volume=/home/svcweb/site:/var/www/html:Z`。'
+  extra: 路径必须真实存在且属于目标用户。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T05-QA-006
+  type: qa
+  question: 用户 Quadlet 开机关联 default target 的配置是什么？
+  answer: 在 `[Install]` 中写 `WantedBy=default.target`。
+  extra: 生成 unit 可能显示 generated，不必机械执行 enable。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::configuration
+  - priority::P0
+- id: RHCSA-33-T05-QA-007
+  type: qa
+  question: 写入 Quadlet 后让用户 manager 重新读取的命令是什么？
+  answer: '`systemctl --user daemon-reload`。'
+  extra: 然后查询生成 unit 并 start。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T05-QA-008
+  type: qa
+  question: 为什么 Quadlet 生成 unit 的 `is-enabled` 结果不能只按 enabled/disabled 判断？
+  answer: 生成 unit 可能显示 `generated`，启动关系来自 Quadlet 的 `[Install]` 和 generator。
+  extra: 结合 default target 依赖和重启结果。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::comparison
+  - priority::P1
+- id: RHCSA-33-T05-QA-009
+  type: qa
+  question: 允许 `svcweb` 未登录时保留用户 manager 的命令是什么？
+  answer: 由 root 执行 `loginctl enable-linger svcweb`。
+  extra: 验证 `loginctl show-user svcweb -p Linger`。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::command
+  - priority::P0
+- id: RHCSA-33-T05-QA-010
+  type: qa
+  question: linger 完成后应进行什么功能验证？
+  answer: 退出 svcweb 登录会话，再从其他会话访问 8088 并检查 user-status；最终还需重启验证。
+  extra: 只查询 Linger=yes 不足。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T05-QA-011
+  type: qa
+  question: 用户 unit 启动失败时最直接的日志入口是什么？
+  answer: 在 svcweb 会话执行 `journalctl --user -u web33.service` 或 `systemctl --user status`。
+  extra: root 的系统 journal 视图可能缺少用户上下文细节。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-T05-QA-012
+  type: qa
+  question: 如何区分容器持久运行与数据持久化？
+  answer: 前者检查用户 unit/容器生命周期；后者修改 host 数据并在容器重建或重启后确认仍可读取。
+  extra: 二者必须分别验证。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-D01-QA-001
+  type: qa
+  question: 证据式诊断的六步链路是什么？
+  answer: 症状 → 当前证据 → 假设 → 下一条高区分度证据 → 最小修复 → 再验证。
+  extra: 不要用随机命令替代假设区分。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-33-D01-QA-002
+  type: qa
+  question: 服务 active、本机监听存在，但远端超时。下一条证据优先是什么？
+  answer: active zone、runtime/permanent firewalld、接口归属和网络路径。
+  extra: 应用层已获得较强正证据。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-D01-QA-003
+  type: qa
+  question: fstab 修正后当前挂载仍正确，为什么不能立即重启？
+  answer: 还需 `findmnt --verify`、重新通过 `mount -a`、核对其他 fstab 条目并确保恢复入口。
+  extra: 当前手工挂载可能掩盖错误。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-D01-QA-004
+  type: qa
+  question: 新建 ACL 后 auditor 读取失败，最小修复前先看什么？
+  answer: 父目录遍历权限、ACL mask 和实际文件 ACL。
+  extra: 不要扩大为 chmod 777。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-D01-QA-005
+  type: qa
+  question: Quadlet 指向错误目录时，最小修复是什么？
+  answer: 修正 `Volume=` 路径，确认目录/标签，`daemon-reload` 并重启该用户 unit，再做数据和退出登录回归。
+  extra: 不需要删除用户或重新安装 Podman。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-33-D01-QA-006
+  type: qa
+  question: 看到 SELinux AVC 后为什么不能直接 `setenforce 0`？
+  answer: AVC 是策略证据，应定位文件类型、端口类型或 Boolean；关闭 SELinux破坏题目限制和安全边界。
+  extra: 修复后保持 Enforcing。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-D01-QA-007
+  type: qa
+  question: 修复共享网络 profile 后应回归哪些典型任务？
+  answer: 仓库、DNS/NSS、NFS/autofs、远端 HTTP、镜像仓库和 SSH 可达性。
+  extra: 以实际依赖图为准。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-33-D01-QA-008
+  type: qa
+  question: 最终矩阵中的 pending 与 blocked 有什么区别？
+  answer: pending 表示尚未执行但可继续；blocked 表示缺少前置条件或安全证据，当前不应推进。
+  extra: 两者都不能写 verified。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::output
+  - priority::P0
+- id: RHCSA-33-T06-QA-001
+  type: qa
+  question: 最终检查的第一项是什么？
+  answer: 重新读取原始题目，为每个要求和限制找到对应证据矩阵行。
+  extra: 不要只检查自己记得做过的任务。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::process
+  - priority::P0
+- id: RHCSA-33-T06-QA-002
+  type: qa
+  question: 进入重启前，网络对象至少应满足哪些状态？
+  answer: 正确 profile 当前可用、autoconnect 持久、地址/路由/DNS正确，并保留控制台恢复入口。
+  extra: 依赖网络的服务应已回归。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T06-QA-003
+  type: qa
+  question: 进入重启前，存储对象至少应满足哪些状态？
+  answer: 设备和 UUID 正确、`findmnt --verify` 通过、`mount -a`/`swapon -a` 成功、没有误改其他 fstab 行。
+  extra: 这是启动关键证据门。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::verification
+  - priority::P0
+- id: RHCSA-33-T06-QA-004
+  type: qa
+  question: 重启后为什么应按矩阵复查而不是重新执行配置命令？
+  answer: 复查能发现持久性缺口；重新执行命令会掩盖“开机未自动恢复”的问题。
+  extra: 只有定位到缺失状态后才做最小修复。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::process
+  - priority::P0
+- id: RHCSA-33-T06-QA-005
+  type: qa
+  question: 系统重启后 httpd 未启动，直接再次 `systemctl start` 会掩盖什么？
+  answer: 会掩盖 enabled、依赖或启动时配置问题，无法证明自动启动终态。
+  extra: 先查 `is-enabled` 和本次启动 journal。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::boundary
+  - priority::P0
+- id: RHCSA-33-T06-QA-006
+  type: qa
+  question: 考试结束前如何处理无法完成远端验证的任务？
+  answer: 记录已通过层、阻塞原因、下一条证据；在环境恢复后优先补功能层。
+  extra: 不能凭本机成功宣称完整完成。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::process
+  - priority::P0
+- id: RHCSA-33-T06-QA-007
+  type: qa
+  question: 最终证据矩阵对真实工作有什么迁移价值？
+  answer: 它记录初始状态、变更、证明边界、回归和剩余风险，可用于维护窗口、交接和后续自动化测试。
+  extra: 自动化实现属于 RHCE。
+  source:
+  - RHCSA-33 lecture
+  - RH124/RH134
+  - relevant RHEL 9 man pages
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::concept
+  - priority::P1
+- id: RHCSA-33-K01-CLOZE-001
+  type: cloze
+  text: 题目要求应改写为 {{c1::对象}}、{{c2::精确参数}}、{{c3::终态}} 和 {{c4::限制条件}}。
+  extra: 这一步先于选择命令。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::task-decomposition
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-K02-CLOZE-001
+  type: cloze
+  text: 修改 {{c1::共享对象}} 后，应执行与其相关的 {{c2::回归集合}}。
+  extra: 不必重做无关任务。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::dependency
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-K03-CLOZE-001
+  type: cloze
+  text: 高风险存储写入前必须通过 {{c1::设备身份与用途}} 的证据门；证据不清楚时状态应为 {{c2::blocked}}。
+  extra: 禁止无调查 wipefs/force。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::risk
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-O02-CLOZE-001
+  type: cloze
+  text: 四层证据是 {{c1::静态配置}}、{{c2::当前状态}}、{{c3::真实功能}}、{{c4::持久或重启状态}}。
+  extra: 题目要求哪一层就验证哪一层。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::evidence
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-O03-CLOZE-001
+  type: cloze
+  text: 局部闭环为 {{c1::调查}} → {{c2::最小修改}} → {{c3::最小验证}} → {{c4::记录证据}}。
+  extra: 一次只推进一个明确状态层。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::method
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-D01-CLOZE-001
+  type: cloze
+  text: 诊断链路是症状 → 当前证据 → 假设 → {{c1::下一条高区分度证据}} → {{c2::最小修复}} → 再验证。
+  extra: 避免随机试命令。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::diagnosis
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T01-CLOZE-001
+  type: cloze
+  text: 目录模式 `2770` 中，{{c1::2}} 是 setgid，{{c2::770}} 是 owner/group/other 权限。
+  extra: setgid 使新对象继承目录组。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T01-CLOZE-002
+  type: cloze
+  text: sudoers 精确规则应使用 {{c1::完整命令路径}} 和 {{c2::固定参数}}，避免通配符扩大授权。
+  extra: 并用 visudo 校验。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::identity-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T02-CLOZE-001
+  type: cloze
+  text: HTTP 远端访问链：配置 → 进程 → {{c1::监听}} → {{c2::SELinux}} → {{c3::firewalld}} → 客户端。
+  extra: active 只覆盖其中一层。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T02-CLOZE-002
+  type: cloze
+  text: firewalld 的 {{c1::runtime}} 状态与 {{c2::permanent}} 状态必须分别查询。
+  extra: 重启后由 permanent 重建。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::network-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T03-CLOZE-001
+  type: cloze
+  text: LVM 对象顺序为 {{c1::PV}} → {{c2::VG}} → {{c3::LV}} → 文件系统/Swap → 挂载或激活。
+  extra: 逐层验证对象身份。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T03-CLOZE-002
+  type: cloze
+  text: 写入 fstab 后，重启前先运行 {{c1::findmnt --verify --verbose}}，再验证 {{c2::mount -a / swapon -a}}。
+  extra: 当前手工挂载不能证明 fstab。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::storage-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T04-CLOZE-001
+  type: cloze
+  text: '`/etc/cron.d` 的五个时间字段后还必须有 {{c1::执行用户}} 字段。'
+  extra: 用户 crontab 没有该字段。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T04-CLOZE-002
+  type: cloze
+  text: autofs 间接映射按 {{c1::访问具体 key}} 触发，未触发时没有 NFS 挂载可能是正常状态。
+  extra: 访问后用 findmnt 验证。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::schedule-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T05-CLOZE-001
+  type: cloze
+  text: rootless 容器的三个关键上下文是 {{c1::目标用户}}、{{c2::用户 systemd manager}} 和 {{c3::用户容器存储}}。
+  extra: root 视图不能代替。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T05-CLOZE-002
+  type: cloze
+  text: Quadlet 生成 unit 可能显示为 {{c1::generated}}；持久启动关系来自 `.container` 的 {{c2::WantedBy=default.target}}。
+  extra: 不要机械要求 enable。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::container-task
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T06-CLOZE-001
+  type: cloze
+  text: 重启用于证明 {{c1::持久性}}，而不是用于 {{c2::首轮猜故障}}。
+  extra: 先通过重启门。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::cloze
+  - priority::P0
+- id: RHCSA-33-T06-CLOZE-002
+  type: cloze
+  text: 最终检查必须从 {{c1::原始题目}} 逐项映射到 {{c2::证据矩阵}}。
+  extra: 命令历史不能替代。
+  source:
+  - RHCSA-33 lecture
+  - RHEL 9 course material
+  tags:
+  - exam::rhcsa
+  - chapter::comprehensive
+  - topic::final-check
+  - card::cloze
   - priority::P0

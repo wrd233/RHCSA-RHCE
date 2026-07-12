@@ -1,0 +1,1446 @@
+chapter_id: RHCSA-29
+chapter_slug: selinux-files-ports-booleans
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+notes:
+- id: RHCSA-SELINUX-C01-CLOZE-001
+  type: cloze
+  text: 服务的 `active` 描述{{c1::当前运行状态}}，`enabled` 描述{{c2::开机启动配置}}。
+  extra: 两个状态都需要分别验证。
+  source:
+  - RH124
+  - RHCSA9-Mock-Task-3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::cloze
+  - bridge::rhce
+  - topic::classic-task-web-82
+  - priority::P1
+- id: RHCSA-SELINUX-C01-QA-001
+  type: qa
+  question: 综合处理“自定义 Web 目录 + 非标准端口 + Enforcing”任务时，应拆分哪些主要目标状态？
+  answer: SELinux 当前/持久模式、文件规则/当前标签、端口类型、服务 active/enabled、实际监听、防火墙和最终访问。
+  extra: 每一项都需要独立证据，不能由局部成功代替。
+  source:
+  - RHCSA9-Mock-Task-3
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::process
+  - priority::P0
+  - task::nonstandard-web
+  - topic::classic-task-web-82
+- id: RHCSA-SELINUX-C01-QA-002
+  type: qa
+  question: '`systemctl is-enabled httpd` 返回 `enabled`，能否证明 Web 服务当前正在运行？'
+  answer: 不能。`enabled` 只表示已配置开机启动，还要检查 `is-active`。
+  extra: 当前状态与启动配置是两个维度。
+  source:
+  - RHCSA9-Mock-Task-3
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::output
+  - priority::P0
+  - task::nonstandard-web
+  - topic::classic-task-web-82
+- id: RHCSA-SELINUX-C01-QA-003
+  type: qa
+  question: 经典任务中，为什么在最终验收前再次执行 `restorecon -Rv /srv/exam-site`？
+  answer: 为了证明站点依赖的是持久 fcontext 规则，而不是一次临时标签修改。
+  extra: 执行后应再次检查标签和页面访问。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::verification
+  - priority::P0
+  - task::nonstandard-web
+  - topic::classic-task-web-82
+- id: RHCSA-SELINUX-C01-QA-004
+  type: qa
+  question: 在自定义 Web 服务任务中，`curl` 请求成功能否单独证明配置可跨重启保持？
+  answer: 不能。还需验证 SELinux 持久模式、fcontext 规则、端口映射和服务 enabled 状态。
+  extra: 功能验证与持久性验证不能合并成一个结论。
+  source:
+  - RH134
+  - RHCSA9-Mock-Task-3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::verification
+  - priority::P0
+  - task::nonstandard-web
+  - topic::classic-task-web-82
+- id: RHCSA-SELINUX-C01-QA-005
+  type: qa
+  question: 已知服务 active、防火墙允许 82/tcp，但访问自定义目录仍返回 403，系统为 Enforcing。下一步优先检查什么？
+  answer: 检查近期 AVC、路径预期标签和当前文件标签。
+  extra: 重点判断目标文件是否属于 Web 服务可访问的类型。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::diagnosis
+  - priority::P0
+  - task::nonstandard-web
+  - topic::classic-task-web-82
+- id: RHCSA-SELINUX-C01-QA-006
+  type: qa
+  question: 已知 httpd 因绑定 TCP 82 失败，AVC 显示 `name_bind`，推荐的下一步调查是什么？
+  answer: 查询 TCP 82 当前的 SELinux 端口类型和 `http_port_t` 映射。
+  extra: 根据已有记录决定新增或修改。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::diagnosis
+  - priority::P0
+  - task::nonstandard-web
+  - topic::classic-task-web-82
+- id: RHCSA-SELINUX-EXTRA-QA-001
+  type: qa
+  question: 文件从用户家目录移动到 `/var/www/html` 后仍带有 `user_home_t`，应优先使用什么操作修复？
+  answer: '```bash
+
+    restorecon -v /var/www/html/<FILE>
+
+    ```'
+  extra: '`restorecon` 根据目标路径的默认规则恢复正确类型。'
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::diagnosis
+  - coverage::extra
+  - topic::file-contexts
+  - priority::P1
+- id: RHCSA-SELINUX-EXTRA-QA-003
+  type: qa
+  question: '`setsebool -P` 短时间没有输出时，为什么不应立即重复执行？'
+  answer: 因为 `-P` 需要重建并写入持久策略配置，可能需要一些时间。
+  extra: 等待命令完成后再用 `getsebool` 验证。
+  source:
+  - RHEL9-Using-SELinux-4.2
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::diagnosis
+  - coverage::extra
+  - topic::booleans
+  - priority::P1
+- id: RHCSA-SELINUX-K02-QA-004
+  type: qa
+  question: AVC 中出现 `denied { name_bind }`、`comm="httpd"` 和 `tclass=tcp_socket`，下一步优先检查什么？
+  answer: 检查目标端口当前的 SELinux 端口类型及 `http_port_t` 映射。
+  extra: 不应跳过查询直接反复新增端口规则。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::diagnosis
+  - priority::P0
+  - topic::port-types
+- id: RHCSA-SELINUX-K03-QA-001
+  type: qa
+  question: '`httpd_sys_content_t` 与 `httpd_sys_rw_content_t` 的核心差异是什么？'
+  answer: 前者用于 Web 服务读取内容；后者用于确实需要由 Web 服务读写的内容。
+  extra: 只给需要写入的小目录可写类型，避免扩大权限范围。
+  source:
+  - Red-Hat-KB-SELinux-httpd-rw-context
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::comparison
+  - priority::P1
+  - topic::least-privilege-types
+- id: RHCSA-SELINUX-K03-QA-002
+  type: qa
+  question: 目录已标记为 `httpd_sys_rw_content_t`，能否证明 httpd 一定能写入？
+  answer: 不能。普通 Unix 所有者、组和权限位也必须允许写入。
+  extra: DAC 与 SELinux 两层都需要满足。
+  source:
+  - RHEL9-Using-SELinux-1.1
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::diagnosis
+  - priority::P1
+  - topic::least-privilege-types
+- id: RHCSA-SELINUX-O02-CLOZE-001
+  type: cloze
+  text: '`{{c1::semanage fcontext}}` 建立持久路径规则，`{{c2::restorecon}}` 将规则应用到当前对象。'
+  extra: '`ls -Z` 只观察当前标签。'
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::cloze
+  - priority::P0
+  - topic::file-contexts
+- id: RHCSA-SELINUX-O02-CLOZE-002
+  type: cloze
+  text: 为目录及其后代建立 fcontext 规则时，常用路径表达式是 `'/path{{c1::(/.*)?}}'`。
+  extra: 它同时覆盖目录本身和其下内容。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::cloze
+  - topic::file-contexts
+  - priority::P1
+- id: RHCSA-SELINUX-O02-QA-002
+  type: qa
+  question: '`chcon` 与 `semanage fcontext` 的核心区别是什么？'
+  answer: '`chcon` 修改当前标签；`semanage fcontext` 建立路径的持久标签规则。'
+  extra: 最终持久配置通常还要运行 `restorecon` 应用规则。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::comparison
+  - priority::P0
+  - topic::file-contexts
+- id: RHCSA-SELINUX-O02-QA-003
+  type: qa
+  question: 已经为 `/srv/site` 建立持久文件上下文规则，如何将规则应用到现有目录及其内容？
+  answer: '```bash
+
+    restorecon -Rv /srv/site
+
+    ```'
+  extra: '`restorecon` 根据策略和 fcontext 规则恢复当前标签。'
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::command
+  - priority::P0
+  - topic::file-contexts
+- id: RHCSA-SELINUX-O02-QA-004
+  type: qa
+  question: 为 `/srv/site` 及其后代路径建立持久的 `httpd_sys_content_t` 规则，推荐命令是什么？
+  answer: '```bash
+
+    semanage fcontext -a -t httpd_sys_content_t ''/srv/site(/.*)?''
+
+    ```'
+  extra: 添加后仍需执行 `restorecon -Rv /srv/site`。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::command
+  - priority::P0
+  - topic::file-contexts
+- id: RHCSA-SELINUX-O02-QA-005
+  type: qa
+  question: 在 `'/srv/site(/.*)?'` 中，`(/.*)?` 的直观作用是什么？
+  answer: 让规则除匹配目录本身外，也匹配其下的文件和子目录。
+  extra: 单引号用于把整个路径表达式原样交给命令处理。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::concept
+  - priority::P1
+  - topic::file-contexts
+- id: RHCSA-SELINUX-O02-QA-006
+  type: qa
+  question: 如何检查策略认为 `/srv/site/index.html` 应具有的 SELinux 上下文？
+  answer: '```bash
+
+    matchpathcon /srv/site/index.html
+
+    ```'
+  extra: 它用于观察预期标签，再与 `ls -Z` 的当前标签比较。
+  source:
+  - RHEL9-Using-SELinux-4.1
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::command
+  - priority::P1
+  - topic::file-contexts
+- id: RHCSA-SELINUX-O02-QA-007
+  type: qa
+  question: 文件上下文配置的稳定闭环应分别确认哪三层？
+  answer: 持久路径规则、策略推导出的预期标签、文件当前实际标签。
+  extra: 三者一致后，再验证业务访问。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::verification
+  - priority::P0
+  - topic::file-contexts
+- id: RHCSA-SELINUX-O02-QA-008
+  type: qa
+  question: '`semanage fcontext -a` 提示同一路径规则已存在时，下一步应该做什么？'
+  answer: 先查询现有规则的表达式和类型，再根据目标决定是否修改，而不是重复新增。
+  extra: 确需修改时可使用 `semanage fcontext -m`。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::diagnosis
+  - priority::P1
+  - topic::file-contexts
+- id: RHCSA-SELINUX-O02-QA-009
+  type: qa
+  question: '`semanage` 命令不存在时，如何从已启用仓库反查提供它的软件包？'
+  answer: '```bash
+
+    dnf provides ''*/semanage''
+
+    ```'
+  extra: 先检查拼写，再根据查询结果安装，不需要背完整工具包对照表。
+  source:
+  - RH134
+  - RHEL9-DNF
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::command
+  - coverage::extra
+  - topic::file-contexts
+  - priority::P1
+- id: RHCSA-SELINUX-O03-CLOZE-001
+  type: cloze
+  text: '`semanage port -a -t {{c1::<PORT_TYPE>}} -p {{c2::tcp|udp}} {{c3::<PORT_OR_RANGE>}}` 用于新增协议相关的端口类型映射。'
+  extra: 端口身份由协议和端口共同确定；操作前先查询现有记录。
+  source:
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::cloze
+  - topic::port-types
+  - priority::P1
+- id: RHCSA-SELINUX-O03-CLOZE-002
+  type: cloze
+  text: '`semanage port {{c1::-a}}` 用于新增记录；目标端口已有记录并确需变更类型时使用 `{{c2::-m}}`。'
+  extra: 修改前先查询现有映射。
+  source:
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::cloze
+  - topic::port-types
+  - priority::P1
+- id: RHCSA-SELINUX-O03-QA-001
+  type: qa
+  question: 如何查看 SELinux 当前允许 `httpd` 使用的端口映射？
+  answer: '```bash
+
+    semanage port -l | grep -w http_port_t
+
+    ```'
+  extra: 先查当前状态，再决定新增或修改。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::command
+  - priority::P0
+  - topic::port-types
+- id: RHCSA-SELINUX-O03-QA-002
+  type: qa
+  question: 让 SELinux 允许 httpd 绑定 TCP 82 的新增命令是什么？
+  answer: '```bash
+
+    semanage port -a -t http_port_t -p tcp 82
+
+    ```'
+  extra: 若端口已存在，先查询其当前类型，可能需要 `-m` 而不是 `-a`。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  - RHCSA9-Mock-Task-3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::command
+  - priority::P0
+  - topic::port-types
+- id: RHCSA-SELINUX-O03-QA-003
+  type: qa
+  question: '`semanage port -a` 与 `semanage port -m` 的选择依据是什么？'
+  answer: 目标端口没有记录时新增；已有记录且确需改变类型时修改。
+  extra: 添加报错后应先查询，不要无条件改写已有映射。
+  source:
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::comparison
+  - priority::P0
+  - topic::port-types
+- id: RHCSA-SELINUX-O03-QA-004
+  type: qa
+  question: 防火墙已经放行 TCP 82，能否证明 SELinux 允许 httpd 绑定它？
+  answer: 不能。防火墙规则与 SELinux 端口类型是独立状态。
+  extra: 还要检查 `http_port_t`、实际监听和最终访问。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::comparison
+  - priority::P0
+  - topic::port-types
+- id: RHCSA-SELINUX-O03-QA-005
+  type: qa
+  question: SELinux 端口映射正确后，至少还要验证哪三个与访问链路相关的状态？
+  answer: 服务配置与实际监听、防火墙规则、最终业务访问。
+  extra: 端口类型只证明 SELinux 这一层允许绑定。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::verification
+  - priority::P0
+  - topic::port-types
+- id: RHCSA-SELINUX-O04-CLOZE-001
+  type: cloze
+  text: '`setsebool {{c1::-P}} <BOOLEAN> on` 使 Boolean 修改跨重启保持。'
+  extra: 不带 `-P` 只改变当前值。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::cloze
+  - topic::booleans
+  - priority::P1
+- id: RHCSA-SELINUX-O04-QA-001
+  type: qa
+  question: SELinux Boolean 主要解决什么类型的问题？
+  answer: 启用或关闭策略预先提供的可选业务行为。
+  extra: 它不是文件标签、端口类型或普通权限的替代品。
+  source:
+  - RHEL9-Using-SELinux-4.2
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::concept
+  - priority::P1
+  - topic::booleans
+- id: RHCSA-SELINUX-O04-QA-002
+  type: qa
+  question: 如何搜索与 httpd 相关的 SELinux Boolean 当前值？
+  answer: '```bash
+
+    getsebool -a | grep ''^httpd_''
+
+    ```'
+  extra: 还可用 `semanage boolean -l` 查看更完整说明。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::command
+  - priority::P1
+  - topic::booleans
+- id: RHCSA-SELINUX-O04-QA-003
+  type: qa
+  question: Web 应用确实需要主动连接 MariaDB 时，哪个 Boolean 是典型的策略入口？
+  answer: '`httpd_can_network_connect_db`'
+  extra: 应先确认业务行为与该 Boolean 的语义匹配。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::concept
+  - priority::P1
+  - topic::booleans
+- id: RHCSA-SELINUX-O04-QA-004
+  type: qa
+  question: 如何持久启用 `httpd_can_network_connect_db`？
+  answer: '```bash
+
+    setsebool -P httpd_can_network_connect_db on
+
+    ```'
+  extra: '`-P` 使设置跨重启保持，执行可能需要一些时间。'
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::command
+  - priority::P1
+  - topic::booleans
+- id: RHCSA-SELINUX-O04-QA-005
+  type: qa
+  question: Boolean 已开启但服务仍失败，下一步应怎样处理？
+  answer: 重新查看当前失败的证据，继续检查标签、端口、普通权限和服务配置。
+  extra: 不应盲目开启更多 Boolean。
+  source:
+  - RHEL9-Using-SELinux-5.3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - card::diagnosis
+  - priority::P1
+  - topic::booleans
+- id: RHCSA-29-K01-QA-001
+  type: qa
+  question: 已经确认 SELinux 参与拒绝时，文件上下文、端口类型和 Boolean 分别处理什么对象？
+  answer: 文件上下文处理路径对象的用途；端口类型处理协议与端口；Boolean 处理策略预先定义的可选业务行为。
+  extra: 三者是不同策略入口，不能互相替代。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-Chapter-4
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::strategy-entry
+  - card::comparison
+  - priority::P0
+- id: RHCSA-29-K01-QA-002
+  type: qa
+  question: AVC 指向文件 `read` 或目录 `search`，且目标路径位于自定义目录。下一步最有区分度的证据是什么？
+  answer: 比较该路径的当前标签、`matchpathcon` 预期标签和本地 fcontext 规则。
+  extra: 不要先改端口或盲开 Boolean。
+  source:
+  - RH134
+  - semanage-fcontext(8)
+  - restorecon(8)
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::strategy-entry
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-29-K01-QA-003
+  type: qa
+  question: 服务启动失败，拒绝行为为 TCP socket 的 `name_bind`。优先调查哪类 SELinux 状态？
+  answer: 目标 TCP 端口当前属于哪个 SELinux 端口类型。
+  extra: 协议与端口共同构成端口映射身份。
+  source:
+  - RH134
+  - semanage-port(8)
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::strategy-entry
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-29-K01-QA-004
+  type: qa
+  question: 为什么不应在看到 AVC 后立即用 `audit2allow` 生成本地策略模块？
+  answer: 因为常见拒绝通常由错误标签、非标准端口或未配置的标准 Boolean 引起；直接生成规则可能掩盖误配置并扩大权限。
+  extra: 先使用策略已经提供的标准入口。
+  source:
+  - RHEL9-Using-SELinux-Chapter-5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::strategy-entry
+  - card::boundary
+  - priority::P0
+- id: RHCSA-29-K02-QA-001
+  type: qa
+  question: '`ls -Z`、`matchpathcon` 和 `semanage fcontext` 分别回答什么问题？'
+  answer: '`ls -Z` 看当前标签；`matchpathcon` 看路径预期标签；`semanage fcontext` 看或维护持久路径规则。'
+  extra: 三者应分开验证。
+  source:
+  - RH134
+  - semanage-fcontext(8)
+  - restorecon(8)
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-state-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-29-K02-QA-002
+  type: qa
+  question: '`ls -Z` 显示 `httpd_sys_content_t`，为什么仍不能证明配置是持久的？'
+  answer: 因为当前标签可能由 `chcon` 等直接修改，未必存在对应 fcontext 规则。
+  extra: 再次 `restorecon` 或重标记时可能被默认规则覆盖。
+  source:
+  - chcon(1)
+  - restorecon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-state-model
+  - card::verification
+  - priority::P0
+- id: RHCSA-29-K02-QA-003
+  type: qa
+  question: 把 `chcon` 描述为“重启后必定失效”为什么不准确？
+  answer: '`chcon` 修改的当前标签通常可跨普通重启保留；真正问题是它没有建立路径默认规则，可能被 `restorecon`、重标记或对象重建覆盖。'
+  extra: 考试最终配置仍应使用 fcontext 规则配合 `restorecon`。
+  source:
+  - chcon(1)
+  - restorecon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-state-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-29-K02-QA-004
+  type: qa
+  question: 怎样只列出管理员本地添加或修改的 fcontext 记录？
+  answer: '```bash
+
+    semanage fcontext -C -l
+
+    ```'
+  extra: 这比在完整策略规则中搜索更适合定位本地覆盖。
+  source:
+  - semanage-fcontext(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-state-model
+  - card::command
+  - priority::P1
+- id: RHCSA-29-K02-QA-005
+  type: qa
+  question: 怎样直接验证 `/srv/site/index.html` 当前标签是否符合策略默认值？
+  answer: '```bash
+
+    matchpathcon -V /srv/site/index.html
+
+    ```'
+  extra: 需要了解具体预期值时可先运行不带 `-V` 的命令。
+  source:
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-state-model
+  - card::verification
+  - priority::P1
+- id: RHCSA-29-O01-QA-001
+  type: qa
+  question: 递归重标记现有业务目录前，怎样先预览 `restorecon` 将改变什么？
+  answer: '```bash
+
+    restorecon -nRv /srv/site
+
+    ```'
+  extra: '`-n` 不修改，`-R` 递归，`-v` 显示计划。'
+  source:
+  - restorecon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::restorecon-workflow
+  - card::command
+  - priority::P0
+- id: RHCSA-29-O01-QA-002
+  type: qa
+  question: '`restorecon` 的 `-n` 参数解决什么风险？'
+  answer: 它只预览计划变更，不实际修改标签，便于在大目录上确认影响范围。
+  extra: 预览发现意外子目录时，应先收窄规则或路径。
+  source:
+  - restorecon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::restorecon-workflow
+  - card::parameter
+  - priority::P1
+- id: RHCSA-29-O01-QA-003
+  type: qa
+  question: '`restorecon -Rv` 后没有标签变化，第一步应判断什么？'
+  answer: 判断当前标签是否本来就与 `matchpathcon` 的预期一致。
+  extra: 没有变化可能是正常结果，不应为了制造输出而先用 `chcon`。
+  source:
+  - restorecon(8)
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::restorecon-workflow
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-29-O01-QA-004
+  type: qa
+  question: '`restorecon` 把文件恢复成了业务不希望的类型，下一步应查什么？'
+  answer: 查询该路径的预期标签和本地 fcontext 覆盖，修正规则而不是继续手工改当前标签。
+  extra: '`restorecon` 正在忠实应用现有规则。'
+  source:
+  - RH134
+  - semanage-fcontext(8)
+  - restorecon(8)
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::restorecon-workflow
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-29-O01-QA-005
+  type: qa
+  question: 完成 fcontext 变更后，为什么还要重新触发原始服务操作？
+  answer: 标签一致只证明对象状态；只有重新读取、写入或请求成功才能证明业务终态。
+  extra: 应使用最新日志，不要根据修复前的 AVC 判断。
+  source:
+  - RH134
+  - RHEL9-Using-SELinux-Chapter-4
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::restorecon-workflow
+  - card::verification
+  - priority::P0
+- id: RHCSA-29-O01-QA-006
+  type: qa
+  question: 为什么不建议在包含多个业务的数据根目录上直接执行大范围 `restorecon -R`？
+  answer: 它可能改变多个用途不同的对象；应先预览并把递归范围收缩到目标目录。
+  extra: 真实环境还应确认挂载边界和回滚条件。
+  source:
+  - restorecon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::restorecon-workflow
+  - card::boundary
+  - priority::P1
+- id: RHCSA-29-O02-QA-001
+  type: qa
+  question: '`semanage fcontext -a`、`-m`、`-d` 的选择依据是什么？'
+  answer: 规则不存在时新增；同一规则已存在且确需改变时修改；不再需要本地规则时删除。
+  extra: 每次变化后重新查询预期标签，再决定是否 `restorecon`。
+  source:
+  - semanage-fcontext(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::comparison
+  - priority::P0
+- id: RHCSA-29-O02-QA-002
+  type: qa
+  question: 将已有 `'/srv/site(/.*)?'` 规则修改为 `httpd_sys_content_t` 的命令是什么？
+  answer: '```bash
+
+    semanage fcontext -m -t httpd_sys_content_t ''/srv/site(/.*)?''
+
+    ```'
+  extra: 随后执行 `restorecon -Rv /srv/site` 应用。
+  source:
+  - semanage-fcontext(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-29-O02-QA-003
+  type: qa
+  question: 删除本地 `'/srv/site(/.*)?'` fcontext 规则的命令是什么？
+  answer: '```bash
+
+    semanage fcontext -d ''/srv/site(/.*)?''
+
+    ```'
+  extra: 删除规则不会自动修改磁盘标签。
+  source:
+  - semanage-fcontext(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::command
+  - priority::P1
+- id: RHCSA-29-O02-QA-004
+  type: qa
+  question: 删除 fcontext 规则后，怎样安全让现有对象回到新的默认状态？
+  answer: 先用 `matchpathcon` 查询删除后的预期，再用 `restorecon -nRv` 预览，确认后执行 `restorecon -Rv`。
+  extra: 删除规则和修改当前标签是两个动作。
+  source:
+  - RH134
+  - semanage-fcontext(8)
+  - restorecon(8)
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::process
+  - priority::P0
+- id: RHCSA-29-O02-QA-005
+  type: qa
+  question: 为什么 fcontext 路径表达式通常用单引号包围？
+  answer: 为了防止 Shell 把括号、问号和星号解释为自己的语法，使表达式原样传给 `semanage`。
+  extra: 引号不属于保存的路径内容。
+  source:
+  - bash(1)
+  - semanage-fcontext(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::syntax
+  - priority::P0
+- id: RHCSA-29-O02-QA-006
+  type: qa
+  question: 两条本地 fcontext 正则都能匹配同一路径时，为什么不能只凭“更具体”判断优先级？
+  answer: 本地规则按较新的记录优先检查，第一条匹配项生效；应以 `matchpathcon` 对具体路径的结果为准。
+  extra: 同时查看 `semanage fcontext -C -l`。
+  source:
+  - semanage-fcontext(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-29-O02-QA-007
+  type: qa
+  question: 站点只有 `/srv/site/uploads` 需要 Web 进程写入，最小授权的标签设计是什么？
+  answer: 站点主体使用只读 `httpd_sys_content_t`，仅上传子目录使用 `httpd_sys_rw_content_t`。
+  extra: 还必须满足普通权限和 ACL。
+  source:
+  - httpd_selinux(8)
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::security
+  - priority::P0
+- id: RHCSA-29-O02-QA-008
+  type: qa
+  question: 不确定当前 RHEL 仓库中哪个包提供 `semanage` 时，怎样查询？
+  answer: '```bash
+
+    dnf provides ''*/semanage''
+
+    ```'
+  extra: 先确认仓库和拼写，不需要死记脱离环境的包名。
+  source:
+  - RH134
+  - dnf(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::command
+  - priority::P2
+- id: RHCSA-29-K03-QA-001
+  type: qa
+  question: 为什么不应为了避免 403 而把整个 Web 站点标记为 `httpd_sys_rw_content_t`？
+  answer: 它会扩大 httpd 可修改的数据范围；只有确实需要写入的最小子目录才应使用可写类型。
+  extra: 静态内容应保持只读类型。
+  source:
+  - httpd_selinux(8)
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::least-privilege-types
+  - card::security
+  - priority::P0
+- id: RHCSA-29-K03-QA-002
+  type: qa
+  question: SELinux 可写类型与 Unix 写权限是什么关系？
+  answer: 两层都必须允许；可写类型不会绕过所有者、组、模式位或 ACL。
+  extra: '`chmod 777` 也不会替代正确类型。'
+  source:
+  - RHEL9-Using-SELinux-1.1
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::least-privilege-types
+  - card::comparison
+  - priority::P0
+- id: RHCSA-29-K03-QA-003
+  type: qa
+  question: 不确定某服务有哪些文件类型和 Boolean 时，优先查哪个本地帮助入口？
+  answer: 对应的 `<service>_selinux(8)` 手册页，例如 `man httpd_selinux`。
+  extra: 目标系统已安装策略的手册页比脱离版本的列表更可靠。
+  source:
+  - selinux(8)
+  - httpd_selinux(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::least-privilege-types
+  - card::command
+  - priority::P2
+- id: RHCSA-29-K03-QA-004
+  type: qa
+  question: 目录类型和 DAC 都看似允许写入，但应用仍失败。下一步应怎样推进？
+  answer: 重新触发操作并查看当前应用日志和最新 SELinux 证据，确认实际目标路径、进程域和请求行为。
+  extra: 不要扩大整个目录权限试错。
+  source:
+  - RHEL9-Using-SELinux-Chapter-5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::least-privilege-types
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-29-O03-QA-001
+  type: qa
+  question: SELinux 端口映射为什么必须同时记录协议？
+  answer: 因为 TCP 82 与 UDP 82 是不同网络对象，策略允许的进程行为也可能不同。
+  extra: 查询和修改都应显式使用 `-p tcp` 或 `-p udp`。
+  source:
+  - semanage-port(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::port-lifecycle
+  - card::comparison
+  - priority::P0
+- id: RHCSA-29-O03-QA-002
+  type: qa
+  question: 怎样只列出管理员本地定制的 SELinux 端口映射？
+  answer: '```bash
+
+    semanage port -C -l
+
+    ```'
+  extra: 适合调查已有端口冲突和清理历史定制。
+  source:
+  - semanage-port(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::port-lifecycle
+  - card::command
+  - priority::P1
+- id: RHCSA-29-O03-QA-003
+  type: qa
+  question: 删除本地 TCP 82 端口映射的命令是什么？
+  answer: '```bash
+
+    semanage port -d -p tcp 82
+
+    ```'
+  extra: 删除不会修改应用监听配置或 firewalld。
+  source:
+  - semanage-port(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::port-lifecycle
+  - card::command
+  - priority::P1
+- id: RHCSA-29-O03-QA-004
+  type: qa
+  question: TCP 82 已属于另一个 SELinux 类型时，为什么不能无条件执行 `-m`？
+  answer: 该映射可能被同机其他合法服务使用；应确认业务归属和影响面，再修改或选择其他端口。
+  extra: 最小修改包括保护现有业务。
+  source:
+  - semanage-port(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::port-lifecycle
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-29-O03-QA-005
+  type: qa
+  question: '`semanage port` 成功后，哪条证据能证明进程当前真的监听 TCP 82？'
+  answer: 使用 `ss -lntp` 等 socket 查询查看当前监听。
+  extra: 端口类型只证明 SELinux 允许，不证明进程状态。
+  source:
+  - ss(8)
+  - semanage-port(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::port-lifecycle
+  - card::verification
+  - priority::P0
+- id: RHCSA-29-O03-QA-006
+  type: qa
+  question: 端口类型正确但服务仍报地址已被占用，下一步优先查什么？
+  answer: 查询该端口当前由哪个进程监听，并检查应用配置是否重复定义。
+  extra: 这不是继续修改 SELinux 端口类型的证据。
+  source:
+  - ss(8)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::port-lifecycle
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-29-O04-QA-001
+  type: qa
+  question: '`getsebool` 与 `semanage boolean -l` 在调查 Boolean 时各自适合做什么？'
+  answer: '`getsebool` 快速查询当前值；`semanage boolean -l` 用于查看列表、默认/持久信息和说明。'
+  extra: 先用业务语义筛选候选开关。
+  source:
+  - RH134
+  - getsebool(8)
+  - setsebool(8)
+  - semanage-boolean(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::boolean-lifecycle
+  - card::comparison
+  - priority::P0
+- id: RHCSA-29-O04-QA-002
+  type: qa
+  question: '`setsebool NAME on` 与 `setsebool -P NAME on` 的核心区别是什么？'
+  answer: 前者只改变当前已加载策略值；后者还写入持久策略配置。
+  extra: 题目要求跨重启保持时必须处理持久值。
+  source:
+  - setsebool(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::boolean-lifecycle
+  - card::comparison
+  - priority::P0
+- id: RHCSA-29-O04-QA-003
+  type: qa
+  question: '`setsebool -P` 暂时没有返回提示时，为什么不应立即重复执行？'
+  answer: 持久设置可能触发策略重建和写入，需要等待命令完成。
+  extra: 完成后再用 `getsebool` 和真实业务验证。
+  source:
+  - setsebool(8)
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::boolean-lifecycle
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-29-O04-QA-004
+  type: qa
+  question: 业务只需要 httpd 连接数据库时，为什么应优先精确的数据库 Boolean，而不是更宽的任意网络连接开关？
+  answer: 精确开关只扩大目标业务所需能力，更符合最小授权。
+  extra: 选择前仍应阅读目标系统中的 Boolean 说明。
+  source:
+  - httpd_selinux(8)
+  - RHEL9-Using-SELinux-4.2
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::boolean-lifecycle
+  - card::security
+  - priority::P0
+- id: RHCSA-29-O04-QA-005
+  type: qa
+  question: Boolean 当前为 on，能否证明数据库功能已经恢复？
+  answer: 不能。还要重新触发应用操作，并检查网络、数据库、凭据和应用配置等其他层。
+  extra: Boolean 只证明策略条件之一。
+  source:
+  - RH134
+  - getsebool(8)
+  - setsebool(8)
+  - semanage-boolean(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::boolean-lifecycle
+  - card::verification
+  - priority::P0
+- id: RHCSA-29-D01-QA-001
+  type: qa
+  question: 新增可写子目录 fcontext 规则后，`matchpathcon` 仍显示父目录的只读类型。下一步查什么？
+  answer: 检查本地重叠规则和匹配优先顺序，确认窄规则是否成为对该路径的最终匹配。
+  extra: 不要直接用 `chcon` 绕过规则问题。
+  source:
+  - semanage-fcontext(8)
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-29-D01-QA-002
+  type: qa
+  question: 只运行 `ls -lZ /srv/site` 可能漏掉哪个关键对象？
+  answer: 可能只看到目录内容而漏掉 `/srv/site` 目录本身的标签。
+  extra: 查看目录本身使用 `ls -Zd /srv/site`。
+  source:
+  - ls(1)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-29-D01-QA-003
+  type: qa
+  question: 文件规则修复的证据推进顺序是什么？
+  answer: 当前标签 → 预期标签 → 本地规则 → 预览恢复 → 应用恢复 → 重新触发功能。
+  extra: 发现预期本身错误时先修规则。
+  source:
+  - RH134
+  - semanage-fcontext(8)
+  - restorecon(8)
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-29-D01-QA-004
+  type: qa
+  question: 从用户家目录移动到标准 Web 目录的文件仍为 `user_home_t`，为什么通常先用 `restorecon` 而不是新增 fcontext？
+  answer: 标准 Web 目录已有策略默认规则，问题是当前文件保留了来源标签。
+  extra: 先利用已有规则，避免无意义的本地覆盖。
+  source:
+  - restorecon(8)
+  - RHEL9-Using-SELinux-Chapter-5
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-29-D02-QA-001
+  type: qa
+  question: 防火墙已放行且服务为 active，但没有任何进程监听目标端口。此时是否应继续修改 firewalld？
+  answer: 不应。下一步检查服务配置、启动日志、端口占用和 SELinux 绑定拒绝。
+  extra: 网络放行不能创造监听 socket。
+  source:
+  - RH124
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::cross-layer-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-29-D02-QA-002
+  type: qa
+  question: '`systemctl is-active` 与 `ss -lntp` 分别证明什么？'
+  answer: 前者证明 unit 当前状态；后者证明本机当前存在对应监听 socket。
+  extra: 服务 active 不一定监听题目端口。
+  source:
+  - systemctl(1)
+  - ss(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::cross-layer-diagnosis
+  - card::comparison
+  - priority::P0
+- id: RHCSA-29-D02-QA-003
+  type: qa
+  question: 本机 `curl localhost:82` 成功，为什么还要从题目指定客户端验证？
+  answer: 本机请求可能不经过相同网络路径和防火墙条件，不能证明远端可达。
+  extra: 最终功能验收应覆盖题目要求的访问位置。
+  source:
+  - RHCSA9-Mock-Task-3
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::cross-layer-diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-29-D02-QA-004
+  type: qa
+  question: 怎样证明自定义 Web 目录没有依赖一次 `chcon`？
+  answer: 再次执行 `restorecon -Rv`，核对标签后重复页面访问。
+  extra: 持久 fcontext 正确时，恢复操作不会破坏业务。
+  source:
+  - RHCSA9-Mock-Task-3
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::cross-layer-diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-29-D02-QA-005
+  type: qa
+  question: 为什么不能把“命令退出码为 0”扩大为 SELinux 任务完成？
+  answer: 命令成功只证明工具接受了修改；还需验证当前状态、持久状态和业务功能。
+  extra: 同样适用于自动化中的 changed 状态。
+  source:
+  - 项目知识架构总规范
+  - RH134
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::cross-layer-diagnosis
+  - card::boundary
+  - priority::P1
+- id: RHCSA-29-C01-QA-001
+  type: qa
+  question: 自定义目录 + TCP 82 Web 任务中，文件上下文最小持久操作骨架是什么？
+  answer: 先查询规则与预期；不存在时 `semanage fcontext -a -t httpd_sys_content_t '/srv/exam-site(/.*)?'`；已有错误规则时用 `-m`；再 `restorecon -Rv
+    /srv/exam-site`。
+  extra: 不能机械假设规则一定不存在。
+  source:
+  - RHCSA9-Mock-Task-3
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-web-82
+  - card::task
+  - priority::P0
+  - task::nonstandard-web
+- id: RHCSA-29-C01-QA-002
+  type: qa
+  question: 自定义 Web 任务中，TCP 82 的端口规则应怎样根据现状选择？
+  answer: 先查 TCP 82；无记录时 `-a`，已有不匹配记录且确认可改时 `-m`。
+  extra: 还要验证实际监听和防火墙。
+  source:
+  - RHCSA9-Mock-Task-3
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-web-82
+  - card::task
+  - priority::P0
+  - task::nonstandard-web
+- id: RHCSA-29-C01-QA-003
+  type: qa
+  question: 该任务的最终证据矩阵至少包含哪些层？
+  answer: fcontext 规则、预期/当前标签、端口类型、服务 active/enabled、真实监听、firewalld 当前/永久规则、页面请求。
+  extra: 每层证据证明不同终态。
+  source:
+  - RHCSA9-Mock-Task-3
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-web-82
+  - card::verification
+  - priority::P0
+  - task::nonstandard-web
+- id: RHCSA-29-C01-QA-004
+  type: qa
+  question: 站点只提供静态文件时，为什么任务答案不应使用 `httpd_sys_rw_content_t`？
+  answer: 题目没有 Web 写入需求，可写类型会无必要地扩大权限。
+  extra: 使用 `httpd_sys_content_t` 满足最小授权。
+  source:
+  - RHCSA9-Mock-Task-3
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-web-82
+  - card::security
+  - priority::P1
+  - task::nonstandard-web
+- id: RHCSA-29-C02-QA-001
+  type: qa
+  question: 已确认 Web 应用需要主动连接 MariaDB，典型的精确 Boolean 是什么？
+  answer: '`httpd_can_network_connect_db`。'
+  extra: 仍应在目标系统用 `semanage boolean -l` 核对说明。
+  source:
+  - httpd_selinux(8)
+  - RHEL9-Using-SELinux-4.2
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-boolean-db
+  - card::task
+  - priority::P0
+  - task::httpd-db
+- id: RHCSA-29-C02-QA-002
+  type: qa
+  question: 持久启用 httpd 数据库连接 Boolean 的命令是什么？
+  answer: '```bash
+
+    setsebool -P httpd_can_network_connect_db on
+
+    ```'
+  extra: 等待完成后查询当前值并重试应用。
+  source:
+  - setsebool(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-boolean-db
+  - card::command
+  - priority::P0
+  - task::httpd-db
+- id: RHCSA-29-C02-QA-003
+  type: qa
+  question: Boolean 已开启但数据库功能仍失败，下一条证据应来自哪里？
+  answer: 重新触发应用并查看当前应用/服务日志及最新拒绝，同时检查目标地址、网络、凭据和数据库服务。
+  extra: 不要盲目开启更多 Boolean。
+  source:
+  - RH134
+  - getsebool(8)
+  - setsebool(8)
+  - semanage-boolean(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-boolean-db
+  - card::diagnosis
+  - priority::P0
+  - task::httpd-db
+- id: RHCSA-29-C02-QA-004
+  type: qa
+  question: 为什么不应只凭网上示例选择 Boolean？
+  answer: 策略版本和业务行为可能不同；应以目标系统的 Boolean 列表、说明和当前拒绝为准。
+  extra: 名称匹配只是候选线索。
+  source:
+  - semanage-boolean(8)
+  - httpd_selinux(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-boolean-db
+  - card::boundary
+  - priority::P1
+  - task::httpd-db
+- id: RHCSA-29-W01-QA-001
+  type: qa
+  question: 真实服务器修改 SELinux 本地定制前，应保存哪些基线？
+  answer: 至少保存本地 fcontext、端口映射、相关 Boolean 原值和受影响服务状态。
+  extra: 便于影响评估、审计和回滚。
+  source:
+  - 项目知识架构总规范
+  - semanage(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::work-migration
+  - card::process
+  - priority::P1
+- id: RHCSA-29-W01-QA-002
+  type: qa
+  question: 自动化任务显示 changed，为什么仍要进行功能验收？
+  answer: changed 只表示声明状态发生变化，不证明服务加载配置、网络可达或业务成功。
+  extra: 应复用手工阶段建立的分层证据矩阵。
+  source:
+  - 项目知识架构总规范
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::work-migration
+  - card::boundary
+  - priority::P1
+- id: RHCSA-29-K02-CLOZE-001
+  type: cloze
+  text: 当前标签用 {{c1::ls -Z}} 查看，预期标签用 {{c2::matchpathcon}} 查询，持久路径规则用 {{c3::semanage fcontext}} 管理。
+  extra: 三个状态不能互相替代。
+  source:
+  - RH134
+  - semanage-fcontext(8)
+  - restorecon(8)
+  - matchpathcon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::file-state-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-29-O01-CLOZE-001
+  type: cloze
+  text: '`restorecon {{c1::-n}}Rv /srv/site` 只预览；去掉 `{{c2::-n}}` 后才实际修改。'
+  extra: 递归变更前先确认影响范围。
+  source:
+  - restorecon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::restorecon-workflow
+  - card::cloze
+  - priority::P1
+- id: RHCSA-29-O02-CLOZE-001
+  type: cloze
+  text: fcontext 规则不存在时用 {{c1::-a}}；已存在且确需改变时用 {{c2::-m}}；移除本地记录用 {{c3::-d}}。
+  extra: 规则变化后重新查询预期并应用标签。
+  source:
+  - semanage-fcontext(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::fcontext-lifecycle
+  - card::cloze
+  - priority::P0
+- id: RHCSA-29-O03-CLOZE-001
+  type: cloze
+  text: SELinux 端口映射由 {{c1::协议}} 与 {{c2::端口或端口范围}} 共同标识。
+  extra: TCP 82 与 UDP 82 不是同一记录。
+  source:
+  - semanage-port(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::port-lifecycle
+  - card::cloze
+  - priority::P0
+- id: RHCSA-29-O04-CLOZE-001
+  type: cloze
+  text: 不带 `-P` 的 `setsebool` 只改变 {{c1::当前值}}；带 `-P` 同时建立 {{c2::持久值}}。
+  extra: 完成后仍需重新触发业务。
+  source:
+  - setsebool(8)
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::boolean-lifecycle
+  - card::cloze
+  - priority::P0
+- id: RHCSA-29-C01-CLOZE-001
+  type: cloze
+  text: Web 任务完整访问链至少包括：配置、服务状态、{{c1::真实监听}}、firewalld、SELinux 和 {{c2::最终协议请求}}。
+  extra: 局部成功不能代替完整终态。
+  source:
+  - RHCSA9-Mock-Task-3
+  - RH134
+  - RHEL9-Using-SELinux-4.1
+  tags:
+  - exam::rhcsa
+  - chapter::selinux-files-ports-booleans
+  - topic::classic-task-web-82
+  - card::cloze
+  - priority::P0
+  - task::nonstandard-web
+status: integrated

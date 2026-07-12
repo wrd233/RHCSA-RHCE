@@ -1,10 +1,17 @@
 .venv/
 __pycache__/
+*.pyc
 .DS_Store
+.build/
 build/
+dist/
+releases/
+tmp/
+sources/
+incoming/
+imports/
+*.zip
+*.pdf
+*.apkg
 
-# Large local study materials
-/1、红帽系统管理一.pdf
-/2、红帽系统管理二.pdf
-/3、使用Ansible 实现红帽企业 Linux自动化.pdf
-/RHCE9模拟考试资料.zip
+# Large source material and generated releases are always local-only.

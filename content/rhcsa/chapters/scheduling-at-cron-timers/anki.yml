@@ -1,0 +1,2119 @@
+chapter_id: RHCSA-15
+chapter_slug: scheduling-at-cron-timers
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+live_test: not_performed
+notes:
+- id: RHCSA-SERVICES-O04-QA-001
+  type: qa
+  question: 某用户 crontab 中的五个时间字段按什么顺序排列？
+  answer: '`分钟 小时 月中日 月 星期`，之后才是命令。'
+  extra: 用户 crontab 不包含执行用户字段。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::syntax
+  - priority::P0
+  - coverage::core
+- id: RHCSA-SERVICES-O04-QA-002
+  type: qa
+  question: '`/etc/crontab` 或 `/etc/cron.d/*` 与用户 crontab 相比，多出的字段是什么？'
+  answer: 在五个时间字段后多一个“执行用户”字段，然后才是命令。
+  extra: 漏写用户会导致字段错位；把用户写进用户 crontab 会被当作命令正文。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::comparison
+  - priority::P0
+  - coverage::core
+- id: RHCSA-SERVICES-O04-QA-003
+  type: qa
+  question: 每天 02:15 执行命令的用户 crontab 时间表达式是什么？
+  answer: '`15 2 * * *`'
+  extra: 完整条目还要追加绝对命令路径与输出处理。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::syntax
+  - priority::P0
+  - coverage::core
+- id: RHCSA-SERVICES-O04-QA-004
+  type: qa
+  question: 为什么 cron 命令应优先使用绝对路径并显式处理 stdout/stderr？
+  answer: cron 的环境和交互 Shell 不同；绝对路径避免 PATH 歧义，显式重定向保留失败证据。
+  extra: 命令静默退出不代表业务成功，仍需检查真实产物。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-environment
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-SERVICES-O04-QA-005
+  type: qa
+  question: 怎样提交、列出和删除一个 at 一次性任务？
+  answer: 用 `at TIMESPEC` 提交，`atq` 列出，`atrm JOB_ID` 删除。
+  extra: '`at -c JOB_ID` 可进一步审阅保存的脚本。'
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-SERVICES-O04-QA-006
+  type: qa
+  question: 计划任务定义已经存在，为什么仍不能宣布任务完成？
+  answer: 定义存在不证明调度器运行、任务到点触发、命令成功退出或业务产物正确。
+  extra: 至少分开验证定义、调度、执行和功能结果。
+  source:
+  - lecture.md#RHCSA-15-K01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::evidence-chain
+  - card::verification
+  - priority::P0
+  - coverage::core
+- id: RHCSA-SERVICES-D01-QA-002
+  type: qa
+  question: 脚本在管理员终端手工成功，但由 cron 执行失败。下一条最有区分度的证据是什么？
+  answer: 以目标用户在精简环境中直接运行同一绝对路径脚本，并保留 stderr 与退出码。
+  extra: 例如使用 `sudo -u USER env -i HOME=... PATH=... SHELL=... /absolute/script`。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-SERVICES-O04-CLOZE-001
+  type: cloze
+  text: 用户 crontab 的字段是 {{c1::分钟 小时 月中日 月 星期}}；`/etc/crontab` 与 `/etc/cron.d/*` 还要在命令前增加 {{c2::执行用户}}。
+  extra: 先确定配置入口，再数时间字段。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K01-QA-001
+  type: qa
+  question: 未来只执行一次的任务通常应选择哪个调度对象？
+  answer: '`at` job。'
+  extra: 执行后不会自动形成下一次任务。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-K01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::scheduler-model
+  - card::comparison
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K01-QA-002
+  type: qa
+  question: 简单、固定的重复日历任务通常优先选择什么？
+  answer: cron。
+  extra: 题目明确要求 crontab 时，不应无故改用 timer。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-K01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::scheduler-model
+  - card::comparison
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K01-QA-003
+  type: qa
+  question: 任务要求关机错过后补执行，并统一查看退出状态。应优先考虑什么对象？
+  answer: systemd `.timer` 与 `.service` 对。
+  extra: 日历 timer 可配 `Persistent=true`，service 记录退出状态。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::scheduler-model
+  - card::comparison
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K01-QA-004
+  type: qa
+  question: 一个可维护的调度定义最适合表达哪三件事？
+  answer: 何时、以谁、启动哪个稳定入口。
+  extra: 复杂业务逻辑应放入可独立运行的脚本或程序。
+  source:
+  - lecture.md#RHCSA-15-K01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::scheduler-model
+  - card::concept
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K01-QA-005
+  type: qa
+  question: 计划任务的“定义状态”和“功能状态”分别回答什么？
+  answer: 定义状态回答规则是否存在且正确；功能状态回答真实业务产物是否符合目标。
+  extra: 两者之间还隔着调度、触发和执行状态。
+  source:
+  - lecture.md#RHCSA-15-K01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::evidence-chain
+  - card::comparison
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K01-QA-006
+  type: qa
+  question: '`crond.service` 为 active 能证明某条 cron job 成功吗？'
+  answer: 不能。它只证明 cron daemon 当前运行。
+  extra: 还要验证目标表、触发记录、执行输出和产物。
+  source:
+  - cron(8)
+  - lecture.md#RHCSA-15-K01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::evidence-chain
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K01-QA-007
+  type: qa
+  question: timer 显示 `active (waiting)` 能证明同名 service 最近成功吗？
+  answer: 不能。它只说明 timer 当前在等待触发。
+  extra: 检查 service 的 `Result`、`ExecMainStatus`、journal 和产物。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::evidence-chain
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K01-QA-008
+  type: qa
+  question: 为什么不应把 alias、SSH agent 或交互口令作为计划任务依赖？
+  answer: 计划任务通常没有交互终端，也不会稳定继承登录会话状态。
+  extra: 把依赖改为绝对路径、受控变量、非交互凭据和明确失败。
+  source:
+  - lecture.md#RHCSA-15-K01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::execution-context
+  - card::boundary
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K01-CLOZE-001
+  type: cloze
+  text: 调度任务的完整证据链是：定义 → {{c1::调度器}} → 触发 → {{c2::执行结果}} → 真实产物。
+  extra: 只完成任一中间层都不能扩大为最终成功。
+  source:
+  - lecture.md#RHCSA-15-K01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::evidence-chain
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O01-QA-001
+  type: qa
+  question: 两小时后提交一次性任务的命令骨架是什么？
+  answer: '`at now + 2 hours`，然后从标准输入提供任务正文。'
+  extra: 用 `Ctrl+D` 结束交互输入。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O01-QA-002
+  type: qa
+  question: 怎样让 `at` 从已有文件读取任务正文？
+  answer: '`at -f FILE TIMESPEC`。'
+  extra: 文件内容仍应使用绝对路径和输出处理。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::parameter
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O01-QA-003
+  type: qa
+  question: 怎样列出当前用户待执行的 at job？
+  answer: '`atq`。'
+  extra: root 通常可看到更多用户作业。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O01-QA-004
+  type: qa
+  question: 怎样审阅 job 12 保存的 Shell 脚本和环境？
+  answer: '`at -c 12`。'
+  extra: 重点检查工作目录、PATH、umask 和命令正文。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O01-QA-005
+  type: qa
+  question: 怎样取消尚未执行的 at job 12？
+  answer: '`atrm 12`。'
+  extra: 随后用 `atq` 确认队列项消失。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O01-QA-006
+  type: qa
+  question: '`atrm` 能停止一个已经开始运行的作业进程吗？'
+  answer: 不能。它删除的是尚未执行的队列项。
+  extra: 进程已经启动时，要先识别进程或其管理者再控制。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::boundary
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O01-QA-007
+  type: qa
+  question: here-document 结束标记写成 `<<'ATJOB'` 的主要作用是什么？
+  answer: 阻止当前 Shell 在提交时提前展开变量、命令替换和反斜杠。
+  extra: 未来执行时再由保存的脚本解释。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::syntax
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O01-QA-008
+  type: qa
+  question: '`atq` 中存在 job 能证明将来执行成功吗？'
+  answer: 不能。它只证明任务当前在队列。
+  extra: 还需验证 atd、保存正文、依赖、日志和产物。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-verification
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O01-QA-009
+  type: qa
+  question: 检查 at 调度器当前和持久状态的命令是什么？
+  answer: '`systemctl is-active atd.service` 和 `systemctl is-enabled atd.service`。'
+  extra: 两种状态分别验证。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-verification
+  - card::command
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O01-QA-010
+  type: qa
+  question: 为什么 at job 仍应使用绝对路径，即使 `at -c` 显示保存了 PATH？
+  answer: 未来执行环境和依赖可能变化；绝对路径能减少命令解析歧义。
+  extra: 保存环境不等于交互会话完整复现。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::boundary
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O01-QA-011
+  type: qa
+  question: '`at -c JOB` 输出很长时，审核重点是什么？'
+  answer: 执行用户、保存的环境、工作目录、umask 和最后的命令正文。
+  extra: 它是静态审核，不是执行结果。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-verification
+  - card::output
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O01-QA-012
+  type: qa
+  question: 没有收到 at 输出邮件能证明任务没有运行吗？
+  answer: 不能。可能没有输出，也可能本地邮件链不可用。
+  extra: 重要任务应显式重定向并检查产物。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-verification
+  - card::boundary
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O01-QA-013
+  type: qa
+  question: 存在 `/etc/at.allow` 时，访问控制通常怎样判断？
+  answer: 通常只有文件中列出的用户可使用 at。
+  extra: 精确行为仍以本机 `at(1)` 和 PAM 配置为准。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-access
+  - card::configuration
+  - priority::P2
+  - coverage::extra
+- id: RHCSA-15-O01-CLOZE-001
+  type: cloze
+  text: at 作业的四个核心管理入口是：提交用 {{c1::at}}，列队列用 {{c2::atq}}，审阅用 {{c3::at -c}}，删除用 {{c4::atrm}}。
+  extra: 删除后再查队列；执行后的产物还要单独验证。
+  source:
+  - RH134 Ch.2
+  - at(1)
+  - atd(8)
+  - lecture.md#RHCSA-15-O01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::at-jobs
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K02-QA-001
+  type: qa
+  question: cron 中 `*/10` 表示“从任务创建时刻起每 10 分钟”吗？
+  answer: 不是。它按该日历字段允许值的起点做步长匹配。
+  extra: 需要从上次激活后计时可考虑 `OnUnitActiveSec=`。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K02-QA-002
+  type: qa
+  question: 工作日 08:00 执行的五字段表达式是什么？
+  answer: '`0 8 * * 1-5`。'
+  extra: 之后追加绝对命令路径。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::syntax
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K02-QA-003
+  type: qa
+  question: 每 15 分钟匹配一次的分钟字段是什么？
+  answer: '`*/15`。'
+  extra: 它匹配 0、15、30、45 分。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::syntax
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K02-QA-004
+  type: qa
+  question: cron 的范围 `1-5` 是否包含端点？
+  answer: 包含，表示 1、2、3、4、5。
+  extra: 字段含义取决于所在列。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::syntax
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K02-QA-005
+  type: qa
+  question: cron 的列表 `1,15,30` 表示什么？
+  answer: 该字段在 1、15、30 三个值匹配。
+  extra: 列表可与范围按实现语法组合，但应保持可读。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::syntax
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K02-QA-006
+  type: qa
+  question: 表达式 `0 6 1 * 1` 通常何时运行？
+  answer: 每月 1 日 06:00，以及每个星期一 06:00。
+  extra: 月中日与星期同时受限时通常按 OR 匹配。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::output
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K02-QA-007
+  type: qa
+  question: cron 判断日期时，哪些字段必须匹配，两个“日”字段怎样匹配？
+  answer: 分钟、小时和月必须匹配；月中日或星期至少一个匹配。
+  extra: 这是高频考试与运维陷阱。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::concept
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K02-QA-008
+  type: qa
+  question: 星期字段中 `0` 和 `7` 通常表示什么？
+  answer: 星期日。
+  extra: 也可使用实现支持的英文名称。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::syntax
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K02-QA-009
+  type: qa
+  question: 夏令时导致某个本地时刻不存在时，cron 任务可能怎样？
+  answer: 该时刻不会匹配，任务可能漏跑。
+  extra: 完整时区机制归第 14 章。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::boundary
+  - priority::P2
+  - coverage::extra
+- id: RHCSA-15-K02-QA-010
+  type: qa
+  question: 夏令时导致本地时刻重复时，cron 任务可能怎样？
+  answer: 匹配时刻可能运行两次。
+  extra: 不能重复的任务应具备幂等或锁语义。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::boundary
+  - priority::P2
+  - coverage::extra
+- id: RHCSA-15-K02-CLOZE-001
+  type: cloze
+  text: cron 中，分钟、小时和月份必须匹配，而月中日与星期采用“{{c1::至少一个匹配}}”的语义。
+  extra: 两个日字段都受限时，不要误当成 AND。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-calendar
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-001
+  type: qa
+  question: 列出 `monitor` 用户 crontab 的命令是什么？
+  answer: '`crontab -l -u monitor`。'
+  extra: 通常由 root 管理其他用户表。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-002
+  type: qa
+  question: 编辑 `monitor` 用户 crontab 的命令是什么？
+  answer: '`crontab -u monitor -e`。'
+  extra: 保留已有条目，不要覆盖整张表。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-003
+  type: qa
+  question: '`crontab -r` 删除一条任务还是整张表？'
+  answer: 删除整张用户 crontab。
+  extra: 操作前先 `crontab -l` 保存基线。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-004
+  type: qa
+  question: 为什么不应直接编辑 `/var/spool/cron` 中的文件？
+  answer: 它们是 crontab 的内部存储，应通过 `crontab` 命令安装和维护。
+  extra: 直接修改还可能破坏权限、标签或通知机制。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::boundary
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O02-QA-005
+  type: qa
+  question: 用户 crontab 中误写执行用户字段会发生什么？
+  answer: 该文本会成为命令正文的一部分，而不是切换用户。
+  extra: 因此先确定入口再数字段。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-006
+  type: qa
+  question: '`/etc/cron.d` 条目漏掉执行用户会发生什么？'
+  answer: 字段整体错位，任务不会以预期命令和身份运行。
+  extra: 系统表格式是五个时间字段、用户、命令。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-007
+  type: qa
+  question: crontab 中 `SHELL=/bin/bash` 改变了什么？
+  answer: 改变 cron 解释命令字段时使用的 Shell。
+  extra: 它不替代脚本自己的 shebang。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-environment
+  - card::configuration
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O02-QA-008
+  type: qa
+  question: 为什么应在 crontab 中显式设置受控 `PATH`？
+  answer: 避免依赖交互登录环境，并让命令解析可预测。
+  extra: 仍优先使用绝对脚本路径。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-environment
+  - card::configuration
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-009
+  type: qa
+  question: '`MAILTO=""` 通常表示什么？'
+  answer: 不发送 cron 命令输出邮件。
+  extra: 重要输出仍应显式保留；邮件能力也依赖 MTA。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-environment
+  - card::configuration
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O02-QA-010
+  type: qa
+  question: cron 命令需要固定工作目录时，怎样避免 `cd` 失败后继续执行？
+  answer: 使用 `cd /path && /absolute/command`。
+  extra: 更好时让脚本自行定位资源。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-environment
+  - card::command
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O02-QA-011
+  type: qa
+  question: crontab 命令字段中的第一个未转义 `%` 有什么语义？
+  answer: 它结束命令部分；剩余文本经换行转换后作为标准输入。
+  extra: 日期格式中的 `%F` 因此需要转义或移入脚本。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-percent
+  - card::syntax
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-012
+  type: qa
+  question: 在 crontab 中直接使用 `date +%F` 时怎样写百分号？
+  answer: 写成 `date +\%F`。
+  extra: 更稳定的做法是把日期逻辑放入脚本。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-percent
+  - card::syntax
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-QA-013
+  type: qa
+  question: 把脚本放进 `/etc/cron.daily` 能证明它已经运行吗？
+  answer: 不能。还要确认发行版调度链、执行条件、日志和产物。
+  extra: 周期目录与 anacron 在本章只做辨识。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-directories
+  - card::boundary
+  - priority::P2
+  - coverage::extra
+- id: RHCSA-15-O02-QA-014
+  type: qa
+  question: root 预先创建 cron 日志文件但目标用户不可写，会在哪一层失败？
+  answer: Shell 打开重定向目标时就失败，命令正文可能根本没有执行。
+  extra: 检查文件和父目录权限。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-environment
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-CLOZE-001
+  type: cloze
+  text: '`crontab -r` 删除的是 {{c1::整张用户任务表}}，不是一条规则；变更前应先用 {{c2::crontab -l}} 保存基线。'
+  extra: 编辑单条任务优先使用 `crontab -e`。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-entry
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O02-CLOZE-002
+  type: cloze
+  text: crontab 命令字段中的未转义 {{c1::%}} 会切分命令与标准输入；需要字面百分号时写成 {{c2::\%}}。
+  extra: 复杂日期逻辑优先移入脚本。
+  source:
+  - RH134 Ch.2
+  - crontab(1)
+  - crontab(5)
+  - cron(8)
+  - lecture.md#RHCSA-15-K02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-percent
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D01-QA-001
+  type: qa
+  question: 排查“手工成功但 cron 失败”时，第一步应确认什么？
+  answer: 任务定义属于哪个用户、位于哪个入口。
+  extra: 先看目标用户 crontab、`/etc/crontab`、`/etc/cron.d` 和是否存在 timer。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D01-QA-002
+  type: qa
+  question: 怎样用精简环境测试 `monitor` 的脚本？
+  answer: 使用 `sudo -u monitor env -i HOME=... PATH=... SHELL=... /absolute/script`。
+  extra: 同时保留 stderr 和退出码。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D01-QA-003
+  type: qa
+  question: 精简环境测试失败后，下一条证据优先看什么？
+  answer: 脚本 stderr、退出码以及第一个找不到或无法访问的对象。
+  extra: 不要先继续修改 cron 时间字段。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D01-QA-004
+  type: qa
+  question: 为什么不推荐在 cron 中 `source ~/.bashrc` 作为通用修复？
+  answer: 它把交互环境和副作用引入非交互任务，掩盖真实依赖。
+  extra: 只声明任务实际需要的变量和路径。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::boundary
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-D01-QA-005
+  type: qa
+  question: cron 完全没有触发证据时，应优先检查哪些层？
+  answer: 正确用户的任务表、字段时间、crond 状态和系统时间/时区。
+  extra: 不要先调查脚本内部业务逻辑。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::process
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D01-QA-006
+  type: qa
+  question: cron 有触发记录但命令失败时，应转向哪些证据？
+  answer: 执行身份、环境、绝对路径、shebang、权限、SELinux、依赖和 stderr。
+  extra: 这是执行层，而不是日历层。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::process
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D01-QA-007
+  type: qa
+  question: 脚本退出 0 但报告错误或缺失时，下一步是什么？
+  answer: 检查脚本是否吞错、工作目录、目标路径、文件内容和更新时间。
+  extra: systemd 或 cron 的“成功”不能代替业务验收。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D01-QA-008
+  type: qa
+  question: 排错初期为什么不应把输出重定向到 `/dev/null`？
+  answer: 它会删除最有价值的 stderr 和诊断证据。
+  extra: 先保留日志，稳定后再决定噪声策略。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::boundary
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-D01-QA-009
+  type: qa
+  question: 没有正式等待到周期时间时，能够声称任务已 live 验证吗？
+  answer: 不能。只能声明静态配置与可控的脚本/测试入口已验证。
+  extra: 正式触发应列入后续 live test。
+  source:
+  - lecture.md#RHCSA-15-S01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-verification
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D01-CLOZE-001
+  type: cloze
+  text: “手工成功但 cron 失败”的稳定链路是：正确用户 → {{c1::精简环境}} → 路径/权限 → 触发日志 → {{c2::真实产物}}。
+  extra: 每一步只引入一类新证据。
+  source:
+  - RH134 Ch.2
+  - lecture.md#RHCSA-15-D01
+  - cron(8)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::cron-diagnosis
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-001
+  type: qa
+  question: '`.timer` 默认激活哪个 unit？'
+  answer: 同名 `.service`。
+  extra: 可用 `Unit=` 指定其他非 timer unit。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-model
+  - card::concept
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-002
+  type: qa
+  question: 一个只由 timer 周期触发的 service 通常需要 enable 吗？
+  answer: 不需要；通常只 enable timer。
+  extra: service 可手工 start 以独立验证。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-model
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-003
+  type: qa
+  question: timer 到期时目标 service 已经 active，会自动启动第二个实例吗？
+  answer: 不会；目标 unit 保持 active，不会因该次到期自动重启。
+  extra: 长时间 active 的 service 需要单独设计并发语义。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-model
+  - card::boundary
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K03-QA-004
+  type: qa
+  question: 为什么重复 timer 通常不搭配 `RemainAfterExit=yes` 的 oneshot service？
+  answer: service 会在第一次完成后保持 active，后续 timer 到期不会再次启动它。
+  extra: 周期脚本通常让 oneshot 完成后回到 inactive。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-model
+  - card::diagnosis
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K03-QA-005
+  type: qa
+  question: '`OnCalendar=` 使用哪类时间基准？'
+  answer: 实时时钟的日历时间。
+  extra: 表达式可用 `systemd-analyze calendar` 验证。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-time
+  - card::parameter
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-006
+  type: qa
+  question: '`OnBootSec=10min` 表示什么？'
+  answer: 系统启动后 10 分钟触发。
+  extra: 如果 timer 激活时该时点已过去，可能立即到期。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-time
+  - card::parameter
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-007
+  type: qa
+  question: '`OnUnitActiveSec=30min` 的计时起点是什么？'
+  answer: 目标 unit 上一次被激活的时刻。
+  extra: 它不是从任务结束时刻开始。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-time
+  - card::parameter
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-008
+  type: qa
+  question: 需要从任务变为 inactive 后再等 30 分钟，应使用什么？
+  answer: '`OnUnitInactiveSec=30min`。'
+  extra: 适合希望间隔从完成时刻计算的任务。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-time
+  - card::parameter
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K03-QA-009
+  type: qa
+  question: '`Persistent=true` 对纯 `OnBootSec=` timer 有效吗？'
+  answer: 没有该补跑效果；`Persistent=` 只影响 `OnCalendar=` timer。
+  extra: 不要把它当作所有 timer 的通用补跑开关。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-persistent
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-010
+  type: qa
+  question: 系统关机期间错过多个日历周期，`Persistent=true` 会逐次回放吗？
+  answer: 不会，重新激活时最多补一次触发。
+  extra: 补触发仍受随机延迟影响。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-persistent
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-011
+  type: qa
+  question: '`RandomizedDelaySec=5min` 的含义是什么？'
+  answer: 在基础触发时间上增加 0 到 5 分钟的随机延迟。
+  extra: 用于摊开多台主机或相似 timer 的负载。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-delay
+  - card::parameter
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-012
+  type: qa
+  question: '`AccuracySec=` 的主要目的是什么？'
+  answer: 允许在一个精度窗口内合并本机 timer 唤醒。
+  extra: 它不是随机摊开主机的属性。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-delay
+  - card::parameter
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-013
+  type: qa
+  question: 同时设置随机延迟和精度窗口时，顺序怎样理解？
+  answer: 先加 `RandomizedDelaySec`，再可能在 `AccuracySec` 窗口内合并。
+  extra: 两个属性目的相反。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-delay
+  - card::comparison
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-K03-QA-014
+  type: qa
+  question: '`list-timers` 的 `NEXT` 能证明什么？'
+  answer: timer 当前计算出的下一次触发时间。
+  extra: 不能证明 service 到时会成功。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-output
+  - card::output
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-015
+  type: qa
+  question: '`list-timers` 的 `LAST` 能证明业务产物正确吗？'
+  answer: 不能。它只说明最近触发时间。
+  extra: 继续检查 service Result、journal 和产物。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-output
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-QA-016
+  type: qa
+  question: systemd timer 的日历表达式怎样做静态解析？
+  answer: '`systemd-analyze calendar "EXPRESSION"`。'
+  extra: 它会规范化表达式并计算后续时间。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-calendar
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-CLOZE-001
+  type: cloze
+  text: systemd timer 负责 {{c1::何时激活}}，被触发的 service 负责 {{c2::怎样执行及记录退出状态}}。
+  extra: 因此 timer 和 service 必须分别验收。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-model
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-K03-CLOZE-002
+  type: cloze
+  text: '`Persistent=true` 只对配置了 {{c1::OnCalendar=}} 的 timer 生效；错过多个周期后通常只补 {{c2::一次}}。'
+  extra: 补触发仍受 RandomizedDelaySec 影响。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-persistent
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-001
+  type: qa
+  question: 创建 timer 前，为什么先直接运行目标脚本？
+  answer: 先隔离脚本、用户、环境和权限问题，避免与 unit 配置同时引入变量。
+  extra: 使用目标用户和精简环境。
+  source:
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-workflow
+  - card::process
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-002
+  type: qa
+  question: 周期脚本对应的 service 常用什么 `Type=`？
+  answer: '`Type=oneshot`。'
+  extra: systemd 等待命令结束并记录退出状态。
+  source:
+  - systemd.service(5)
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-service
+  - card::configuration
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-003
+  type: qa
+  question: service 中以 `reporter` 用户运行应设置什么？
+  answer: '`User=reporter`，需要时再显式设置 `Group=reporter`。'
+  extra: 不要用 root 替代题目指定用户。
+  source:
+  - systemd.exec(5)
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-service
+  - card::configuration
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-004
+  type: qa
+  question: 怎样静态检查 service 与 timer unit 文件？
+  answer: '`systemd-analyze verify FILE.service FILE.timer`。'
+  extra: 静态通过不证明脚本成功或 timer 已启用。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-verification
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-005
+  type: qa
+  question: unit 文件修改后需要执行什么？
+  answer: '`systemctl daemon-reload`。'
+  extra: 它让 manager 重读 unit，不等于运行 service。
+  source:
+  - systemctl(1)
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-workflow
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-006
+  type: qa
+  question: 为什么在启用 timer 前手工 `start` service？
+  answer: 证明执行身份、路径、退出码和产物独立正确。
+  extra: 若失败，先修 service，不要改 timer 日历。
+  source:
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-workflow
+  - card::process
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-007
+  type: qa
+  question: 同时启用并立即启动 `daily-report.timer` 的命令是什么？
+  answer: '`systemctl enable --now daily-report.timer`。'
+  extra: 之后分别查 active 与 enabled。
+  source:
+  - systemctl(1)
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-workflow
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-008
+  type: qa
+  question: 列出全部 timer（包括未活动项）的命令是什么？
+  answer: '`systemctl list-timers --all`。'
+  extra: 按 unit 名筛选只是显示便利，不代替完整状态。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-output
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-009
+  type: qa
+  question: 怎样读取 service 的 systemd 结果和主进程退出状态？
+  answer: '`systemctl show NAME.service -p Result,ExecMainCode,ExecMainStatus`。'
+  extra: 还要结合 journal 和产物。
+  source:
+  - systemctl(1)
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-output
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-010
+  type: qa
+  question: 怎样同时查询 timer 和 service 的 journal？
+  answer: '`journalctl -u NAME.timer -u NAME.service --since today --no-pager`。'
+  extra: timer 日志解释触发，service 日志解释命令执行。
+  source:
+  - journalctl(1)
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-output
+  - card::command
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O03-QA-011
+  type: qa
+  question: '`systemd-analyze calendar` 成功能证明 timer 已加载吗？'
+  answer: 不能。它只验证日历表达式。
+  extra: 仍需 verify、daemon-reload、start/enable 和状态查询。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-verification
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-012
+  type: qa
+  question: '`systemd-analyze verify` 无报错能证明业务脚本成功吗？'
+  answer: 不能。它只做 unit 静态检查。
+  extra: 手工启动 service 并检查 Result 与产物。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-verification
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-QA-013
+  type: qa
+  question: 为什么 timer active、service inactive 可能是正常状态？
+  answer: timer 在等待；oneshot service 完成后会回到 inactive。
+  extra: 应看最近 Result 和 LAST，而不是要求 service 持续 active。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-output
+  - card::output
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O03-QA-014
+  type: qa
+  question: service 显示 `Result=success` 后还必须验证什么？
+  answer: 真实业务产物的所有者、大小、内容和更新时间。
+  extra: 脚本可能吞错或写错位置。
+  source:
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-verification
+  - card::verification
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O03-CLOZE-001
+  type: cloze
+  text: 持久 timer 的稳定建立顺序是：脚本精简环境 → {{c1::service 独立成功}} → timer 日历解析 → {{c2::enable --now timer}} → Result/journal/产物。
+  extra: 只 enable timer，不单独 enable service。
+  source:
+  - lecture.md#RHCSA-15-O03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-workflow
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O04-QA-001
+  type: qa
+  question: 两分钟后临时运行命令的 systemd-run 骨架是什么？
+  answer: '`systemd-run --unit=NAME --on-active=2min /absolute/command`。'
+  extra: 会创建 transient timer 和 service。
+  source:
+  - systemd-run(1)
+  - systemd.timer(5) v252
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::transient-timer
+  - card::command
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O04-QA-002
+  type: qa
+  question: 创建 transient 日历 timer 使用什么选项？
+  answer: '`--on-calendar="EXPRESSION"`。'
+  extra: 它是 `OnCalendar=` 的命令行快捷方式。
+  source:
+  - systemd-run(1)
+  - systemd.timer(5) v252
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::transient-timer
+  - card::parameter
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O04-QA-003
+  type: qa
+  question: 怎样为 transient timer 指定 `AccuracySec=1s`？
+  answer: 增加 `--timer-property=AccuracySec=1s`。
+  extra: timer 属性和 service 属性使用不同选项。
+  source:
+  - systemd-run(1)
+  - systemd.timer(5) v252
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::transient-timer
+  - card::parameter
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O04-QA-004
+  type: qa
+  question: 使用 timer 选项调用 `systemd-run` 时，立即启动的是谁？
+  answer: transient timer；service 到 timer 到期时才被触发。
+  extra: 查询输出会给出两个 unit 名。
+  source:
+  - systemd-run(1)
+  - systemd.timer(5) v252
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::transient-timer
+  - card::concept
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-O04-QA-005
+  type: qa
+  question: transient timer 能替代题目要求的重启后持久 timer 吗？
+  answer: 不能。它没有持久 unit 文件，manager 或系统重启后不能按持久配置验收。
+  extra: 应编写 `.service` 和 `.timer` 文件。
+  source:
+  - systemd-run(1)
+  - systemd.timer(5) v252
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::transient-timer
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O04-QA-006
+  type: qa
+  question: 迁移 cron 到 timer 时，为什么不能先删除旧 cron？
+  answer: 新 service/timer 可能尚未成功，先删除会造成任务中断。
+  extra: 先验证新链路，再切换旧入口。
+  source:
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-migration
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O04-QA-007
+  type: qa
+  question: 为什么旧 cron 和新 timer 不应长期并行？
+  answer: 可能造成重复执行、并发写入和负载峰值。
+  extra: 验证窗口后应保留唯一调度入口。
+  source:
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-migration
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O04-QA-008
+  type: qa
+  question: 迁移完成后怎样检查是否还存在重复 cron 入口？
+  answer: 搜索目标用户 crontab、`/etc/crontab`、`/etc/cron.d` 和只读 spool。
+  extra: 同时用 `list-timers` 查 timer。
+  source:
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-migration
+  - card::verification
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O04-QA-009
+  type: qa
+  question: '`OnUnitActiveSec` 和 `OnUnitInactiveSec` 的关键区别是什么？'
+  answer: 前者从目标 unit 上次激活计时；后者从上次变为 inactive 计时。
+  extra: 任务运行时间较长时差异明显。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-time
+  - card::comparison
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-O04-CLOZE-001
+  type: cloze
+  text: cron 迁移 timer 的切换原则是：先验证 {{c1::新 service/timer 链路}}，再删除 {{c2::旧 cron 入口}}，最后全局查重。
+  extra: 避免中断和重复执行。
+  source:
+  - lecture.md#RHCSA-15-O04
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-migration
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D02-QA-001
+  type: qa
+  question: timer 不在 `list-timers` 中，第一组证据是什么？
+  answer: '`systemctl status/cat TIMER`、`systemd-analyze verify`，并确认已 `daemon-reload` 和 start。'
+  extra: 先查加载层。
+  source:
+  - lecture.md#RHCSA-15-D02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D02-QA-002
+  type: qa
+  question: timer 为 waiting 但 NEXT 错误，下一步查什么？
+  answer: 用 `systemd-analyze calendar` 核对表达式，并检查时区、随机延迟和精度窗口。
+  extra: 不要先调查脚本业务逻辑。
+  source:
+  - lecture.md#RHCSA-15-D02
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D02-QA-003
+  type: qa
+  question: timer 有 LAST，但 service 为 failed。调查入口是什么？
+  answer: '`systemctl show/status SERVICE` 和 `journalctl -u SERVICE`。'
+  extra: 转向执行身份、路径、权限和依赖。
+  source:
+  - lecture.md#RHCSA-15-D02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D02-QA-004
+  type: qa
+  question: service 为 success 但无报告，下一条证据是什么？
+  answer: 检查报告路径、所有者、大小、内容、更新时间，以及脚本是否传播错误码。
+  extra: 这是功能层。
+  source:
+  - lecture.md#RHCSA-15-D02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D02-QA-005
+  type: qa
+  question: '`Persistent=true` 未立即补跑时，为什么先检查随机延迟？'
+  answer: 补触发仍受 `RandomizedDelaySec=` 影响，可能尚在等待窗口内。
+  extra: 还要确认是 OnCalendar timer。
+  source:
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-diagnosis
+  - card::diagnosis
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-D02-QA-006
+  type: qa
+  question: timer 任务出现重复执行时，应先搜索哪些入口？
+  answer: 所有用户/系统 cron 入口、同类 timer，以及人工或脚本内重复调度。
+  extra: 先找重复定义，再设计锁。
+  source:
+  - lecture.md#RHCSA-15-D02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-diagnosis
+  - card::diagnosis
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D02-QA-007
+  type: qa
+  question: 怎样区分“timer 触发问题”和“service 执行问题”？
+  answer: timer 的 NEXT/LAST 和 timer journal看触发；service Result、service journal 和产物看执行。
+  extra: 不要只读一个 unit。
+  source:
+  - lecture.md#RHCSA-15-D02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-diagnosis
+  - card::comparison
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-D02-CLOZE-001
+  type: cloze
+  text: timer 排错分层：不在列表查 {{c1::加载}}；NEXT 错查日历与延迟；有 LAST 查 {{c2::service}}；service success 后查产物。
+  extra: 每层选择最有区分度的证据。
+  source:
+  - lecture.md#RHCSA-15-D02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::timer-diagnosis
+  - card::cloze
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-C01-QA-001
+  type: qa
+  question: 题目要求每周三 15:30 以 `monitor` 执行，且指定使用用户 crontab。核心条目是什么？
+  answer: '`30 15 * * 3 /usr/local/libexec/web-health >> /var/log/web-health-cron.log 2>&1`。'
+  extra: 在表头另设 SHELL、PATH、MAILTO；不要写用户字段。
+  source:
+  - lecture.md#RHCSA-15-C01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::classic-cron-task
+  - card::task
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-C01-QA-002
+  type: qa
+  question: 健康检查任务中，安装 crontab 前必须先证明什么？
+  answer: '`monitor` 在精简环境中能执行脚本并写入日志和报告目录。'
+  extra: 先修权限和脚本依赖。
+  source:
+  - lecture.md#RHCSA-15-S01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::classic-cron-task
+  - card::process
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-C01-QA-003
+  type: qa
+  question: 无法等待到正式周三时，怎样表述验证边界？
+  answer: 声明已完成静态核对和可撤销测试/直接脚本验证，但正式周期触发尚未 live test。
+  extra: 不得写“已跑通”。
+  source:
+  - lecture.md#RHCSA-15-S01
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::classic-cron-task
+  - card::boundary
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-C02-QA-001
+  type: qa
+  question: cron 迁移 timer 时，为什么 service 配置 `Type=oneshot`？
+  answer: 任务是执行一次后退出的报告生成动作，systemd 需要等待并记录退出状态。
+  extra: 完成后回到 inactive，便于下一次触发。
+  source:
+  - lecture.md#RHCSA-15-C02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::classic-timer-task
+  - card::configuration
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-C02-QA-002
+  type: qa
+  question: daily-report timer 要求关机错过后补一次，核心属性是什么？
+  answer: '`OnCalendar=...` 与 `Persistent=true`。'
+  extra: 纯单调 timer 上 Persistent 不提供该语义。
+  source:
+  - lecture.md#RHCSA-15-C02
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::classic-timer-task
+  - card::parameter
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-C02-QA-003
+  type: qa
+  question: 多台主机最多摊开 5 分钟，应设置什么？
+  answer: '`RandomizedDelaySec=5min`。'
+  extra: 实际延迟是 0 到 5 分钟，不是固定 5 分钟。
+  source:
+  - lecture.md#RHCSA-15-C02
+  - RH134 Ch.2
+  - systemd.timer(5) v252
+  - systemd.time(7) v252
+  - lecture.md#RHCSA-15-K03
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::classic-timer-task
+  - card::parameter
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-C02-QA-004
+  type: qa
+  question: 新 timer 验收后删除旧 cron，最后必须证明什么？
+  answer: 系统中只剩一个有效调度入口。
+  extra: 搜索用户/系统 crontab并检查 list-timers。
+  source:
+  - lecture.md#RHCSA-15-S02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::classic-timer-task
+  - card::verification
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-C02-QA-005
+  type: qa
+  question: timer active、enabled 且 NEXT 正确，任务是否完成？
+  answer: 还没有；必须检查 service Result、journal 和报告文件。
+  extra: 关机补跑与随机延迟也仍需 live test。
+  source:
+  - lecture.md#RHCSA-15-S02
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::classic-timer-task
+  - card::verification
+  - priority::P0
+  - coverage::core
+- id: RHCSA-15-Z01-QA-001
+  type: qa
+  question: 查看 cron 表格式与 `%` 语义应进入哪个手册页？
+  answer: '`man 5 crontab`。'
+  extra: '`man crontab` 默认可能打开命令页而不是格式页。'
+  source:
+  - crontab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::help-entry
+  - card::command
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-Z01-QA-002
+  type: qa
+  question: 查看 timer 属性语义应进入哪个手册页？
+  answer: '`man systemd.timer`。'
+  extra: 日历表达式语法另见 `man systemd.time`。
+  source:
+  - systemd.timer(5) v252
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::help-entry
+  - card::command
+  - priority::P1
+  - coverage::core
+- id: RHCSA-15-Z01-QA-003
+  type: qa
+  question: 查看 transient timer 命令行选项应进入哪个手册页？
+  answer: '`man systemd-run`。'
+  extra: 重点关注 `--on-active`、`--on-calendar` 和 `--timer-property`。
+  source:
+  - systemd-run(1)
+  tags:
+  - exam::rhcsa
+  - chapter::scheduling-at-cron-timers
+  - topic::help-entry
+  - card::command
+  - priority::P1
+  - coverage::core

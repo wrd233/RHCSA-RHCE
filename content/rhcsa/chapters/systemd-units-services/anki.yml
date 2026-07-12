@@ -1,0 +1,2044 @@
+chapter_id: RHCSA-12
+chapter_slug: systemd-units-services
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+notes:
+- id: RHCSA-SERVICES-O01-QA-001
+  type: qa
+  question: 查看一个 systemd service 时，`active` 与 `enabled` 分别说明哪个状态维度？
+  answer: '`active` 描述当前运行状态；`enabled` 描述持久启动配置。'
+  extra: 两者必须分别验证。当前运行不代表系统重启后会自动启动。
+  source:
+  - RH124
+  - systemctl(1)
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SERVICES-O01-QA-002
+  type: qa
+  question: '`chronyd.service` 当前未运行，题目要求现在启动并在系统重启后自动启动。应执行什么命令？'
+  answer: '```bash
+
+    systemctl enable --now chronyd.service
+
+    ```'
+  extra: 操作后仍分别检查 `systemctl is-active` 与 `systemctl is-enabled`。
+  source:
+  - RH124
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::command
+  - priority::P0
+- id: RHCSA-SERVICES-O01-QA-003
+  type: qa
+  question: '`systemctl disable UNIT` 与 `systemctl mask UNIT` 的关键区别是什么？'
+  answer: '`disable` 移除 enable 建立的持久启动链接；`mask` 阻止 unit 被手工、依赖或触发入口普通激活。'
+  extra: mask 强度更高，不应作为普通“不开机启动”的替代。
+  source:
+  - RH124
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SERVICES-O01-QA-004
+  type: qa
+  question: 手工创建或修改了 `/etc/systemd/system/report-agent.service` 后，哪条命令让 systemd manager 重新读取 unit 定义？
+  answer: '```bash
+
+    systemctl daemon-reload
+
+    ```'
+  extra: '`daemon-reload` 不会自动重启服务。'
+  source:
+  - systemctl(1)
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::reload-boundary
+  - card::command
+  - priority::P0
+- id: RHCSA-SERVICES-O01-QA-005
+  type: qa
+  question: unit 文件变化与应用自身配置文件变化，分别通常需要什么重新加载动作？
+  answer: unit 文件变化需要让 systemd 重新读取定义；应用配置变化需要应用支持的 reload 或 restart。
+  extra: '`daemon-reload` 不等于让应用重读 `/etc/<app>/...`。'
+  source:
+  - systemctl(1)
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::reload-boundary
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SERVICES-O01-QA-006
+  type: qa
+  question: 需要同时查看 vendor 主 unit 和管理员 drop-in 时，应使用什么命令？
+  answer: '```bash
+
+    systemctl cat UNIT
+
+    ```'
+  extra: 合并后的精确属性继续用 `systemctl show -p ...`。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::command
+  - priority::P0
+- id: RHCSA-SERVICES-O01-QA-007
+  type: qa
+  question: 某 Web 服务显示 `active`。这能否单独证明业务终态正确？
+  answer: 不能。它只证明 systemd 当前状态达到 active，还需验证持久配置、进程身份、监听或真实请求。
+  extra: ''
+  source:
+  - RH124
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::verification
+  - card::boundary
+  - priority::P0
+- id: RHCSA-SERVICES-D01-QA-001
+  type: qa
+  question: 自定义 service 启动失败。第一轮应优先收集哪组 systemd 证据？
+  answer: 先查看 `systemctl status UNIT --no-pager -l`，再用 `systemctl show UNIT -p LoadState,ActiveState,SubState,Result,ExecMainCode,ExecMainStatus,FragmentPath,DropInPaths`
+    收缩原因。
+  extra: 完整日志检索归日志章节，但 status 是可靠入口。
+  source:
+  - systemctl(1)
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-SERVICES-D01-QA-003
+  type: qa
+  question: 一个 service 已 `enabled`，但当前为 `inactive`。为什么不能再次盲目执行 enable？
+  answer: '`enabled` 已证明持久链接；当前 inactive 可能是未执行 start、启动失败、条件不满足、按需激活或目标尚未拉起。应调查当前层。'
+  extra: ''
+  source:
+  - RH124
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-K01-QA-001
+  type: qa
+  question: systemd 中的 unit、job 与进程分别是什么？
+  answer: unit 是声明对象；job 是一次 start/stop 等管理事务；进程是 service 激活后产生的运行实例。
+  extra: 一个 service 可以有多个进程，也可以在 oneshot 完成后没有长期进程。
+  source:
+  - systemd.unit(5)
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K01-QA-002
+  type: qa
+  question: '`.service`、`.socket`、`.path`、`.timer` 和 `.target` 分别管理什么？'
+  answer: 分别管理进程生命周期、socket 入口、路径事件、时间触发器和依赖集合。
+  extra: timer 的时间表达式不在本章完整展开。
+  source:
+  - systemd.unit(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-12-K01-QA-003
+  type: qa
+  question: 需要明确查询服务与同名 socket，命令骨架是什么？
+  answer: '```bash
+
+    systemctl status NAME.service NAME.socket
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-naming
+  - card::command
+  - priority::P1
+- id: RHCSA-12-K01-QA-004
+  type: qa
+  question: 为什么在脚本和诊断记录中优先写完整的 `.service` 后缀？
+  answer: 完整名称可以区分同名 service、socket、timer 等不同 unit，避免补全歧义。
+  extra: 交互使用时省略 `.service` 常可自动补全。
+  source:
+  - systemctl(1)
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-naming
+  - card::comparison
+  - priority::P1
+- id: RHCSA-12-K01-QA-005
+  type: qa
+  question: 模板 unit 与实例 unit 的命名骨架是什么？
+  answer: 模板为 `name@.service`，实例为 `name@instance.service`。
+  extra: 每个实例拥有独立状态和 cgroup。
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-template
+  - card::syntax
+  - priority::P1
+- id: RHCSA-12-K01-QA-006
+  type: qa
+  question: 模板 unit 中 `%i` 的作用是什么？
+  answer: 展开为实例标识符。
+  extra: 需要反转义的实例名时还要区分 `%I`。
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-template
+  - card::parameter
+  - priority::P2
+- id: RHCSA-12-K01-QA-007
+  type: qa
+  question: 某 oneshot unit 的 `MainPID=0`，能否仅据此判定 unit 失败？
+  answer: 不能。应结合 `Type`、`ActiveState`、`SubState` 和 `Result`。
+  extra: 一次性任务成功退出后可能没有长期 MainPID。
+  source:
+  - systemd.service(5)
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-model
+  - card::output
+  - priority::P1
+- id: RHCSA-12-K01-QA-008
+  type: qa
+  question: 在 `/usr/lib/systemd/system` 中没有找到同名固定文件，能否判定 unit 不存在？
+  answer: 不能。unit 可能来自 `/etc`、`/run`、generator、transient 定义或别名。
+  extra: 用 `show FragmentPath/SourcePath` 和 `cat` 查实际来源。
+  source:
+  - systemd.unit(5)
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-model
+  - card::boundary
+  - priority::P2
+- id: RHCSA-12-K01-QA-009
+  type: qa
+  question: 路径或名称需要转换为合法 unit 名时，优先使用什么工具？
+  answer: '```bash
+
+    systemd-escape <name-or-path>
+
+    ```'
+  extra: ''
+  source:
+  - systemd-escape(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-naming
+  - card::command
+  - priority::P2
+- id: RHCSA-12-K02-QA-010
+  type: qa
+  question: '`LoadState` 与 `ActiveState` 分别回答什么？'
+  answer: '`LoadState` 判断 unit 定义是否被找到并有效加载；`ActiveState` 判断当前通用生命周期。'
+  extra: loaded 不代表 active。
+  source:
+  - systemctl(1)
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K02-QA-011
+  type: qa
+  question: '`ActiveState` 与 `SubState` 的关系是什么？'
+  answer: ActiveState 是跨 unit 类型的通用状态；SubState 是 service、socket、timer 等类型专用细节。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K02-QA-012
+  type: qa
+  question: '`active (exited)` 通常说明什么，不能说明什么？'
+  answer: 说明 unit 保持 active 语义但没有长期运行主进程；不能据此证明存在正在运行的守护进程。
+  extra: 常见于 oneshot + RemainAfterExit 或兼容脚本式 unit。
+  source:
+  - systemd.service(5)
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::output
+  - priority::P0
+- id: RHCSA-12-K02-QA-013
+  type: qa
+  question: '`systemctl is-enabled UNIT` 返回 `static` 应如何解释？'
+  answer: unit 通常没有普通 enable 所需的安装声明，但仍可被依赖、触发或手工启动。
+  extra: static 不是错误。
+  source:
+  - systemctl(1)
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-file-state
+  - card::output
+  - priority::P0
+- id: RHCSA-12-K02-QA-014
+  type: qa
+  question: '`systemctl is-enabled UNIT` 返回 `masked` 表示什么？'
+  answer: unit 被强制屏蔽，普通手工、依赖或触发激活会被阻止。
+  extra: 还需检查当前是否已经在运行。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-file-state
+  - card::output
+  - priority::P0
+- id: RHCSA-12-K02-QA-015
+  type: qa
+  question: 精确查看 unit 四层状态的命令骨架是什么？
+  answer: '```bash
+
+    systemctl show UNIT -p LoadState,ActiveState,SubState,UnitFileState
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::command
+  - priority::P0
+- id: RHCSA-12-K02-QA-016
+  type: qa
+  question: '`failed` 能否直接给出服务根因？'
+  answer: 不能。failed 是 manager 的失败记账，应继续查 `Result`、`ExecMainCode`、`ExecMainStatus` 和应用证据。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::output
+  - priority::P1
+- id: RHCSA-12-K02-QA-017
+  type: qa
+  question: 查询 service 最近运行结果和主进程退出状态的命令骨架是什么？
+  answer: '```bash
+
+    systemctl show UNIT -p Result,ExecMainCode,ExecMainStatus
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::command
+  - priority::P1
+- id: RHCSA-12-K02-QA-018
+  type: qa
+  question: '`systemctl is-active` 与 `systemctl is-enabled` 为什么都要执行？'
+  answer: 前者验证当前状态，后者验证持久启动配置；二者是独立维度。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::verification
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K02-QA-019
+  type: qa
+  question: 完整 service 验收的五层是什么？
+  answer: 定义层、当前状态层、持久状态层、进程身份层、功能层。
+  extra: ''
+  source:
+  - RHEL9-RHCSA-lecture-architecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-12-K02-QA-020
+  type: qa
+  question: '`systemctl start UNIT` 返回成功能否证明对外功能正常？'
+  answer: 不能。还需根据服务检查监听、请求、文件或数据终态。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-K02-QA-021
+  type: qa
+  question: 只需要脚本化判断当前是否失败，应优先使用什么命令？
+  answer: '```bash
+
+    systemctl is-failed UNIT
+
+    ```'
+  extra: 退出状态适合自动判断，但“不 failed”仍不等于 active 或功能正确。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::command
+  - priority::P1
+- id: RHCSA-12-K02-CLOZE-022
+  type: cloze
+  text: 查看 unit 时，{{c1::LoadState}} 回答定义是否有效加载，{{c2::ActiveState}} 回答当前通用生命周期，{{c3::UnitFileState}} 回答持久启用配置。
+  extra: 三者不能互相替代。
+  source:
+  - systemctl(1)
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-state
+  - card::cloze
+  - priority::P1
+- id: RHCSA-12-O01-QA-023
+  type: qa
+  question: '`systemctl list-units` 与 `systemctl list-unit-files` 的对象差异是什么？'
+  answer: 前者查看 manager 已加载的 unit；后者查看搜索路径中的 unit 文件及启用状态。
+  extra: 默认 list-units 未出现不代表未安装。
+  source:
+  - systemctl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-O01-QA-024
+  type: qa
+  question: 列出所有 service，包括 inactive 的命令是什么？
+  answer: '```bash
+
+    systemctl list-units --type=service --all
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O01-QA-025
+  type: qa
+  question: 列出已安装 service unit file 及启用状态的命令是什么？
+  answer: '```bash
+
+    systemctl list-unit-files --type=service
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O01-QA-026
+  type: qa
+  question: 快速列出当前 failed unit 的命令是什么？
+  answer: '```bash
+
+    systemctl list-units --state=failed
+
+    ```'
+  extra: '`systemctl --failed` 也是常用形式。'
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::command
+  - priority::P1
+- id: RHCSA-12-O01-QA-027
+  type: qa
+  question: '`systemctl status` 为什么是调查入口而不是完整日志工具？'
+  answer: 它只汇总有限近期日志和综合状态；完整的按时间、boot、字段检索属于 journalctl。
+  extra: 完整日志检索归第 13 章。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-O01-QA-028
+  type: qa
+  question: 避免 pager 和长行截断的 status 命令骨架是什么？
+  answer: '```bash
+
+    systemctl status UNIT --no-pager -l
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O01-QA-029
+  type: qa
+  question: 查询主文件和 drop-in 实际来源的精确属性命令是什么？
+  answer: '```bash
+
+    systemctl show UNIT -p FragmentPath,DropInPaths,SourcePath
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O01-QA-030
+  type: qa
+  question: '`systemctl cat` 与 `systemctl show` 分别更适合看什么？'
+  answer: cat 适合阅读主文件和 drop-in 片段；show 适合读取合并后的精确属性。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::comparison
+  - priority::P1
+- id: RHCSA-12-O01-QA-031
+  type: qa
+  question: 查“谁依赖或可能拉起这个 unit”的命令是什么？
+  answer: '```bash
+
+    systemctl list-dependencies --reverse UNIT
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-dependency
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O01-QA-032
+  type: qa
+  question: 从排序角度查看 unit 的 after/before 关系可使用什么命令？
+  answer: '```bash
+
+    systemctl list-dependencies --after UNIT
+
+    systemctl list-dependencies --before UNIT
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-dependency
+  - card::command
+  - priority::P1
+- id: RHCSA-12-O01-QA-033
+  type: qa
+  question: 为什么不应把整棵依赖树直接当作根因？
+  answer: 依赖图可能很大且包含隐式关系；应围绕当前 unit 和症状选择有区分度的边。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-query
+  - card::boundary
+  - priority::P2
+- id: RHCSA-12-O02-QA-034
+  type: qa
+  question: '`start` 与 `enable` 的作用对象有什么差异？'
+  answer: start 改变当前活动状态；enable 根据 `[Install]` 改变持久依赖链接。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-O02-QA-035
+  type: qa
+  question: '`restart` 与 `reload` 的主要差异是什么？'
+  answer: restart 替换进程并可能中断连接；reload 请求现有服务重读配置，前提是 unit/应用支持。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-O02-QA-036
+  type: qa
+  question: 服务支持 reload 时，重新读取应用配置的命令是什么？
+  answer: '```bash
+
+    systemctl reload UNIT
+
+    ```'
+  extra: 应用配置应先使用其专用语法检查。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::command
+  - priority::P1
+- id: RHCSA-12-O02-QA-037
+  type: qa
+  question: 希望支持 reload 时 reload，不支持时自动 restart，命令是什么？
+  answer: '```bash
+
+    systemctl reload-or-restart UNIT
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::command
+  - priority::P1
+- id: RHCSA-12-O02-QA-038
+  type: qa
+  question: 为什么不能用无调查 `restart` 代替应用配置检查？
+  answer: 配置错误可能导致重启后服务完全不可用；应先运行应用专用语法检查再选择 reload/restart。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-O02-QA-039
+  type: qa
+  question: 当前停止并移除持久开机启动链接的组合命令是什么？
+  answer: '```bash
+
+    systemctl disable --now UNIT
+
+    ```'
+  extra: 操作后分别检查 is-active 与 is-enabled。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O02-QA-040
+  type: qa
+  question: '`enable` 后 service 仍 inactive 是否必然异常？'
+  answer: 不必然。enable 默认不 start；也可能是按需激活对象。应根据目标决定是否 `--now`。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::output
+  - priority::P1
+- id: RHCSA-12-O02-QA-041
+  type: qa
+  question: 解除 mask 后 unit 会自动启动吗？
+  answer: 不会。unmask 只移除屏蔽，还要按目标决定 enable/start。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-O02-QA-042
+  type: qa
+  question: 先停止再强制禁止普通激活的命令骨架是什么？
+  answer: '```bash
+
+    systemctl stop UNIT
+
+    systemctl mask UNIT
+
+    ```'
+  extra: 环境支持时可评估 `mask --now`，但仍应明确影响。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O02-QA-043
+  type: qa
+  question: 服务因快速连续失败触发速率限制，修复根因后还可能需要什么命令？
+  answer: '```bash
+
+    systemctl reset-failed UNIT
+
+    ```'
+  extra: 它只清理失败记账和计数，不修复根因。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-12-O02-QA-044
+  type: qa
+  question: 为什么 static unit 不应通过机械添加 `[Install]` 来“修复”？
+  answer: static 可能按设计由依赖或触发 unit 激活；应先查它的预期激活者和包维护语义。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::service-control
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-O02-QA-045
+  type: qa
+  question: 执行 `enable --now` 后最小的 systemd 双重验证是什么？
+  answer: '```bash
+
+    systemctl is-active UNIT
+
+    systemctl is-enabled UNIT
+
+    ```'
+  extra: 随后仍需身份和功能验证。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-12-K03-QA-046
+  type: qa
+  question: '`Wants=` 与 `Requires=` 的核心差异是什么？'
+  answer: 两者都会拉入需求对象；Requires 表达更强的生命周期需求，Wants 对依赖启动失败更宽松。
+  extra: 仍需结合排序关系理解失败传播。
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K03-QA-047
+  type: qa
+  question: '`After=` 与 `Requires=` 的差异是什么？'
+  answer: After 只定义同一事务中的顺序；Requires 把需求对象拉入事务并建立较强关系。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K03-QA-048
+  type: qa
+  question: A 写了 `After=B.service`，启动 A 时会自动启动 B 吗？
+  answer: 不会。After 不会自行把 B 拉入事务。
+  extra: 需要 Wants/Requires 或其他关系。
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-K03-QA-049
+  type: qa
+  question: 希望网络在线目标进入事务，并在其后启动当前服务，常见 `[Unit]` 组合是什么？
+  answer: '```ini
+
+    Wants=network-online.target
+
+    After=network-online.target
+
+    ```'
+  extra: 只对真正需要网络在线语义的服务使用。
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::syntax
+  - priority::P0
+- id: RHCSA-12-K03-QA-050
+  type: qa
+  question: 为什么说 `Requires=B` 时 B 启动失败并不总能脱离顺序关系简单判断 A？
+  answer: 如果没有相应排序，A 与 B 可能并行；要让 A 等待 B 的启动结果，通常还需 `After=B`。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-K03-QA-051
+  type: qa
+  question: '`[Unit] Wants=` 与 `[Install] WantedBy=` 分别在何时生效？'
+  answer: Wants 是运行时依赖；WantedBy 指导 enable 时建立目标 wants 链接。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K03-QA-052
+  type: qa
+  question: 看到 `/etc/systemd/system/multi-user.target.wants/foo.service` 能证明什么？
+  answer: 证明持久 Wants 链接存在；不能单独证明 foo 当前 active。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::output
+  - priority::P1
+- id: RHCSA-12-K03-QA-053
+  type: qa
+  question: 读取合并后的 Wants、Requires、After、Before 的命令是什么？
+  answer: '```bash
+
+    systemctl show UNIT -p Wants,Requires,After,Before
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::command
+  - priority::P0
+- id: RHCSA-12-K03-QA-054
+  type: qa
+  question: 服务“启动太早”时，最关键的两类关系证据是什么？
+  answer: 需求关系（Wants/Requires）和顺序关系（After/Before）。
+  extra: 分别检查“是否进入事务”和“谁先谁后”。
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-K03-QA-055
+  type: qa
+  question: 关闭 unit 时 After/Before 的顺序通常怎样处理？
+  answer: 关闭顺序通常与启动顺序相反。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::boundary
+  - priority::P2
+- id: RHCSA-12-K03-CLOZE-056
+  type: cloze
+  text: systemd 中 {{c1::Wants/Requires}} 决定对象是否进入事务，{{c2::After/Before}} 决定同一事务中的先后顺序。
+  extra: 这是本章最重要的双图模型。
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::dependency-order
+  - card::cloze
+  - priority::P1
+- id: RHCSA-12-K04-QA-057
+  type: qa
+  question: socket activation 的核心对象关系是什么？
+  answer: '`.socket` 先管理监听入口，连接到来时激活对应 `.service`。'
+  extra: ''
+  source:
+  - systemd.socket(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::concept
+  - priority::P0
+- id: RHCSA-12-K04-QA-058
+  type: qa
+  question: 停止 service 后发起连接又被拉起，下一条最有区分度的证据是什么？
+  answer: 检查相关 socket 状态和 `systemctl show SERVICE -p TriggeredBy`。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-K04-QA-059
+  type: qa
+  question: path activation 解决什么需求？
+  answer: 根据文件或目录的存在、变化等路径事件激活 service。
+  extra: ''
+  source:
+  - systemd.path(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::concept
+  - priority::P1
+- id: RHCSA-12-K04-QA-060
+  type: qa
+  question: 本章对 timer unit 只训练什么？
+  answer: 训练 timer 与 service 的激活关系和“停止 service 不等于停止 timer”；完整时间表达式归第 15 章。
+  extra: ''
+  source:
+  - systemd.timer(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-K04-QA-061
+  type: qa
+  question: socket/path/timer 激活与 `Restart=` 的根本差异是什么？
+  answer: 前者由外部事件或调度入口激活 service；Restart 根据 service 进程退出结果决定是否重新启动。
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K04-QA-062
+  type: qa
+  question: 长期服务希望仅异常退出时自动重启，应使用什么策略？
+  answer: '```ini
+
+    Restart=on-failure
+
+    ```'
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::parameter
+  - priority::P0
+- id: RHCSA-12-K04-QA-063
+  type: qa
+  question: 控制自动重启尝试间隔的指令是什么？
+  answer: '```ini
+
+    RestartSec=5s
+
+    ```'
+  extra: 具体值按任务要求。
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::parameter
+  - priority::P1
+- id: RHCSA-12-K04-QA-064
+  type: qa
+  question: 一次查询触发来源与重启策略的命令骨架是什么？
+  answer: '```bash
+
+    systemctl show UNIT -p TriggeredBy,Restart,RestartUSec,NRestarts
+
+    ```'
+  extra: 属性展示需要目标 RHEL 9 环境复核。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::command
+  - priority::P0
+- id: RHCSA-12-K04-QA-065
+  type: qa
+  question: 要求关闭 socket 自动激活，但保留手工启动 service，最小变更是什么？
+  answer: 停止并禁用 `.socket` unit，不 mask `.service`。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::process
+  - priority::P0
+- id: RHCSA-12-K04-QA-066
+  type: qa
+  question: 为什么不应通过反复 kill MainPID 判断正常停服行为？
+  answer: kill 模拟进程异常退出，可能触发 Restart；正常管理停服应使用 `systemctl stop`。
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::activation
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-K05-QA-067
+  type: qa
+  question: '`/etc/systemd/system`、`/run/systemd/system`、`/usr/lib/systemd/system` 分别主要放什么？'
+  answer: 管理员持久配置、当前启动周期运行时配置、软件包 vendor unit。
+  extra: 管理员 `/etc` 优先级高。
+  source:
+  - systemd.unit(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-paths
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K05-QA-068
+  type: qa
+  question: 查看当前 systemd 实际 unit 搜索路径的命令是什么？
+  answer: '```bash
+
+    systemd-analyze unit-paths
+
+    ```'
+  extra: ''
+  source:
+  - systemd-analyze(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-paths
+  - card::command
+  - priority::P1
+- id: RHCSA-12-K05-QA-069
+  type: qa
+  question: 为什么不建议直接修改 `/usr/lib/systemd/system/*.service`？
+  answer: 软件包升级可能覆盖修改，且本地意图难以审计；局部定制优先使用 `/etc` drop-in。
+  extra: ''
+  source:
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-paths
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-K05-QA-070
+  type: qa
+  question: 完整复制 vendor unit 到 `/etc` 与创建 drop-in 的维护差异是什么？
+  answer: 完整副本会遮蔽后续 vendor 主文件更新；drop-in 只表达本地差异，更易合并和审计。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-paths
+  - card::comparison
+  - priority::P1
+- id: RHCSA-12-O03-QA-071
+  type: qa
+  question: 为现有 unit 创建持久管理员 drop-in 的命令是什么？
+  answer: '```bash
+
+    systemctl edit UNIT
+
+    ```'
+  extra: 默认通常写入 `/etc/systemd/system/UNIT.d/override.conf`。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O03-QA-072
+  type: qa
+  question: '`systemctl edit --runtime UNIT` 的关键边界是什么？'
+  answer: 写入运行时路径，重启后消失；普通持久考试配置不应误用。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-O03-QA-073
+  type: qa
+  question: 何时才考虑 `systemctl edit --full UNIT`？
+  answer: 只有 drop-in 无法表达需要的完整结构替换时；需承担 vendor 更新合并风险。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-O03-QA-074
+  type: qa
+  question: drop-in 中替换已有 `ExecStart=` 的通用骨架是什么？
+  answer: '```ini
+
+    [Service]
+
+    ExecStart=
+
+    ExecStart=/absolute/program --arg value
+
+    ```'
+  extra: 空赋值先清除旧列表。
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::syntax
+  - priority::P0
+- id: RHCSA-12-O03-QA-075
+  type: qa
+  question: 为什么 `ExecStart=/usr/bin/echo hi > /tmp/x` 不会自动像 Bash 一样重定向？
+  answer: ExecStart 默认直接执行程序，不经过交互 Shell 解析 `>`、管道、`&&`、`~` 等。
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-O03-QA-076
+  type: qa
+  question: 静态检查自定义 unit 的命令是什么？
+  answer: '```bash
+
+    systemd-analyze verify /etc/systemd/system/UNIT
+
+    ```'
+  extra: verify 不代替实际启动与功能测试。
+  source:
+  - systemd-analyze(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::command
+  - priority::P0
+- id: RHCSA-12-O03-QA-077
+  type: qa
+  question: '`systemd-analyze verify` 与 `systemctl daemon-reload` 分别做什么？'
+  answer: verify 静态检查文件；daemon-reload 让运行中的 manager 重新读取 unit 定义。
+  extra: ''
+  source:
+  - systemd-analyze(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-O03-QA-078
+  type: qa
+  question: 执行 daemon-reload 后，如何证明 drop-in 被采用？
+  answer: 用 `systemctl cat UNIT` 和 `systemctl show UNIT -p DropInPaths,<目标属性>` 复核。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::verification
+  - priority::P0
+- id: RHCSA-12-O03-QA-079
+  type: qa
+  question: '`daemon-reload` 会自动重启已运行 service 吗？'
+  answer: 不会。还要根据变更字段和业务中断要求决定 reload/restart。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-O03-QA-080
+  type: qa
+  question: 删除本地覆盖并恢复 vendor 状态可使用什么命令？
+  answer: '```bash
+
+    systemctl revert UNIT
+
+    ```'
+  extra: 执行前确认不会删除仍需保留的管理员定制。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::drop-in
+  - card::command
+  - priority::P2
+- id: RHCSA-12-O04-QA-081
+  type: qa
+  question: service unit 的 `[Unit]`、`[Service]`、`[Install]` 分别负责什么？
+  answer: 对象关系、进程生命周期、enable 安装链接。
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-O04-QA-082
+  type: qa
+  question: 前台长期程序在 RHCSA 场景中常用什么 Type？
+  answer: '```ini
+
+    Type=simple
+
+    ```'
+  extra: manager 直接拥有 ExecStart 进程。
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::parameter
+  - priority::P0
+- id: RHCSA-12-O04-QA-083
+  type: qa
+  question: 一次性执行并等待命令结束应使用什么 Type？
+  answer: '```ini
+
+    Type=oneshot
+
+    ```'
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::parameter
+  - priority::P1
+- id: RHCSA-12-O04-QA-084
+  type: qa
+  question: 为什么不能因程序叫“daemon”就默认使用 `Type=forking`？
+  answer: 现代程序常可前台运行并由 systemd 直接跟踪；forking 只适合真正自行 fork 的传统程序。
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-O04-QA-085
+  type: qa
+  question: 长期受限用户 service 的核心 `[Service]` 骨架是什么？
+  answer: '```ini
+
+    [Service]
+
+    Type=simple
+
+    User=svcwatch
+
+    WorkingDirectory=/var/lib/app
+
+    ExecStart=/usr/local/libexec/app
+
+    Restart=on-failure
+
+    RestartSec=5s
+
+    ```'
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::syntax
+  - priority::P0
+- id: RHCSA-12-O04-QA-086
+  type: qa
+  question: 配置 `User=svcwatch` 后，systemd 会自动创建用户和目录吗？
+  answer: 不会。账号、目录、所有权和权限必须另行准备。
+  extra: ''
+  source:
+  - systemd.exec(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-O04-QA-087
+  type: qa
+  question: 如何把 service 的 MainPID 与实际运行用户关联验证？
+  answer: '```bash
+
+    pid=$(systemctl show UNIT -p MainPID --value)
+
+    ps -p "$pid" -o pid,user,group,cmd
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::verification
+  - priority::P0
+- id: RHCSA-12-O04-QA-088
+  type: qa
+  question: '`WorkingDirectory=` 指向不存在或不可访问目录时，应调查什么？'
+  answer: 路径是否存在、每级目录遍历权限、目标用户权限，以及安全策略证据。
+  extra: ''
+  source:
+  - systemd.exec(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-O04-QA-089
+  type: qa
+  question: 让 enable 把自定义 service 加入多用户目标，`[Install]` 写什么？
+  answer: '```ini
+
+    [Install]
+
+    WantedBy=multi-user.target
+
+    ```'
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::parameter
+  - priority::P0
+- id: RHCSA-12-O04-QA-090
+  type: qa
+  question: '`RemainAfterExit=yes` 适合什么场景，不适合什么目的？'
+  answer: 适合 oneshot 完成后仍要表示活动语义；不应只为让 status 显示 active 而无条件使用。
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-O04-QA-091
+  type: qa
+  question: 自定义 service 以错误用户运行，最有区分度的证据链是什么？
+  answer: '`systemctl cat/show -p User,MainPID,ExecStart`，再用 `ps` 检查该 MainPID 的实际 UID。'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-O04-QA-092
+  type: qa
+  question: 服务反复重启时应同时检查哪些属性？
+  answer: '`Result`、`ExecMainStatus`、`Restart`、`RestartUSec`、`NRestarts` 和启动速率限制。'
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-12-O04-QA-093
+  type: qa
+  question: 自定义 service 的推荐部署顺序是什么？
+  answer: verify → daemon-reload → enable/start → 当前与持久验证 → MainPID/用户验证 → 功能验证。
+  extra: ''
+  source:
+  - RHEL9-RHCSA-lecture-architecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::process
+  - priority::P0
+- id: RHCSA-12-O04-QA-094
+  type: qa
+  question: 传统权限看似正确但 service 仍 permission denied，下一层应想到什么？
+  answer: 继续收集 SELinux 上下文和 AVC 证据，不把关闭 SELinux 当默认修复。
+  extra: 完整处理归 SELinux 章节。
+  source:
+  - RHEL9 security boundary
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::security
+  - priority::P1
+- id: RHCSA-12-K06-QA-095
+  type: qa
+  question: '`.target` unit 的本质是什么？'
+  answer: 一组依赖和同步点，通常没有自己的长期进程。
+  extra: ''
+  source:
+  - systemd.target(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::target
+  - card::concept
+  - priority::P0
+- id: RHCSA-12-K06-QA-096
+  type: qa
+  question: 查询当前持久默认 target 的命令是什么？
+  answer: '```bash
+
+    systemctl get-default
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::target
+  - card::command
+  - priority::P0
+- id: RHCSA-12-K06-QA-097
+  type: qa
+  question: 把持久默认目标设置为非图形多用户目标的命令是什么？
+  answer: '```bash
+
+    systemctl set-default multi-user.target
+
+    ```'
+  extra: 它不等于立即 isolate。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::target
+  - card::command
+  - priority::P0
+- id: RHCSA-12-K06-QA-098
+  type: qa
+  question: '`start TARGET` 与 `isolate TARGET` 的主要差异是什么？'
+  answer: start 加入目标及依赖；isolate 还会停止不属于新目标依赖图的 unit。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::target
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K06-QA-099
+  type: qa
+  question: 为什么远程系统上执行 `systemctl isolate` 前必须评估风险？
+  answer: 它可能停止网络、图形会话或管理入口，导致当前连接中断。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::target
+  - card::security
+  - priority::P0
+- id: RHCSA-12-K06-QA-100
+  type: qa
+  question: '`multi-user.target.wants/foo.service` 链接能否证明 foo 当前在运行？'
+  answer: 不能。它只证明持久 Wants 关系；当前状态用 is-active。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::target
+  - card::output
+  - priority::P1
+- id: RHCSA-12-K06-QA-101
+  type: qa
+  question: rescue/emergency target 的完整恢复操作属于哪一章？
+  answer: 《启动链、GRUB、Target 与系统恢复》。
+  extra: 本章只建立对象模型和边界。
+  source:
+  - chapter-boundary
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::target
+  - card::boundary
+  - priority::P1
+- id: RHCSA-12-K07-QA-102
+  type: qa
+  question: 系统 service 中 `User=alice` 与 user service 有什么区别？
+  answer: 前者仍由系统 PID 1 管理，只以 alice 身份执行；后者由 alice 的 user manager 通过 `systemctl --user` 管理。
+  extra: ''
+  source:
+  - systemd.exec(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::user-manager
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-K07-QA-103
+  type: qa
+  question: 查询当前用户的 user manager unit，命令骨架是什么？
+  answer: '```bash
+
+    systemctl --user list-units
+
+    ```'
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::user-manager
+  - card::command
+  - priority::P1
+- id: RHCSA-12-K07-QA-104
+  type: qa
+  question: 查询用户 manager 状态和 linger 的命令是什么？
+  answer: '```bash
+
+    loginctl show-user USER -p State,Linger,Sessions
+
+    ```'
+  extra: ''
+  source:
+  - loginctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::user-manager
+  - card::command
+  - priority::P0
+- id: RHCSA-12-K07-QA-105
+  type: qa
+  question: '`Linger=yes` 的主要意义是什么？'
+  answer: 允许用户 manager 在没有活动登录会话时保留，并可在引导时启动。
+  extra: ''
+  source:
+  - loginctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::user-manager
+  - card::concept
+  - priority::P0
+- id: RHCSA-12-K07-QA-106
+  type: qa
+  question: 系统 service 使用 `User=` 时是否需要 enable-linger？
+  answer: 不需要。只有真正属于 user manager 且需跨登出运行时才调查 linger。
+  extra: ''
+  source:
+  - loginctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::user-manager
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-K07-QA-107
+  type: qa
+  question: 用户服务持久性为什么需要 live VM 做跨会话验证？
+  answer: 需要验证目标用户 bus、退出登录后的 manager 生命周期以及重启后的启动行为，静态检查无法证明。
+  extra: ''
+  source:
+  - loginctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::user-manager
+  - card::verification
+  - priority::P1
+- id: RHCSA-12-D01-QA-108
+  type: qa
+  question: '`Unit UNIT could not be found` 时，第一条精确属性证据是什么？'
+  answer: '```bash
+
+    systemctl show UNIT -p LoadState,FragmentPath
+
+    ```'
+  extra: 随后查名称、搜索路径和 daemon-reload。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-D01-QA-109
+  type: qa
+  question: unit 文件已经创建，但 systemctl 仍 not-found，最常见的两个假设是什么？
+  answer: 文件不在 unit 搜索路径，或 manager 尚未执行 daemon-reload。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-D01-QA-110
+  type: qa
+  question: '发现 `Loaded: masked` 时为什么不应直接 unmask？'
+  answer: 屏蔽可能是有意防冲突或安全策略；应先查链接来源、变更意图和依赖影响。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-D01-QA-111
+  type: qa
+  question: unit 已修改但服务仍按旧 ExecStart 运行，下一条最有区分度的证据是什么？
+  answer: 比较 `systemctl cat UNIT`、`show FragmentPath,DropInPaths,ExecStart` 与实际进程命令。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-D01-QA-112
+  type: qa
+  question: enabled 但 inactive 的调查应从哪一层开始？
+  answer: 从当前层查 ActiveState/SubState/Result、条件、依赖和是否按需激活，而不是再次 enable。
+  extra: ''
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-D01-QA-113
+  type: qa
+  question: stop 后再次 active 时的三类主要假设是什么？
+  answer: socket/path/timer 事件激活、Restart 策略、其他 unit/target 的依赖启动。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-D01-QA-114
+  type: qa
+  question: active 且 enabled，但端口不可访问，下一步应做什么？
+  answer: 转入功能链：监听、请求、应用配置、权限、安全策略和网络，而不是继续 enable/restart。
+  extra: ''
+  source:
+  - RHEL9-RHCSA-lecture-architecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-12-D01-QA-115
+  type: qa
+  question: service 启动太早时为什么要同时查 Wants/Requires 和 After/Before？
+  answer: 前者判断前置对象是否进入事务，后者判断先后顺序。
+  extra: ''
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-12-D01-QA-116
+  type: qa
+  question: 自定义 service 报执行失败时，应检查哪些静态对象？
+  answer: ExecStart 绝对路径、文件可执行权限、脚本解释器、目标用户、WorkingDirectory 和 unit 合并结果。
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-12-D01-QA-117
+  type: qa
+  question: 为什么不能把关闭 SELinux 作为 service permission denied 的默认答案？
+  answer: 这会破坏安全模型并掩盖上下文或策略根因；应收集传统权限和 AVC 证据后做最小修复。
+  extra: ''
+  source:
+  - RHEL9
+  - security
+  - boundary
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-D01-QA-118
+  type: qa
+  question: systemd 故障的通用诊断链是什么？
+  answer: 症状 → 当前证据 → 假设 → 最有区分度的下一条证据 → 最小修复 → 分层再验证。
+  extra: ''
+  source:
+  - RHEL9-RHCSA-lecture-architecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-12-T01-QA-119
+  type: qa
+  question: 需要创建受限账号运行的长期 heartbeat service。部署前必须准备哪三类非 unit 对象？
+  answer: 服务账号、可执行程序及解释器/权限、工作与数据目录的所有权和权限。
+  extra: ''
+  source:
+  - RHCSA-12
+  - lecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-12-T01-QA-120
+  type: qa
+  question: 自定义 heartbeat service 从定义到验收的完整顺序是什么？
+  answer: 创建账号/目录 → 写 unit → verify → daemon-reload → enable --now → 当前/持久/身份/功能验证。
+  extra: ''
+  source:
+  - RHCSA-12
+  - lecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-12-T01-QA-121
+  type: qa
+  question: heartbeat service 的功能验证为什么要间隔读取两次文件状态？
+  answer: 单次存在只证明过去产生过文件；两次时间推进才能证明服务仍在持续工作。
+  extra: ''
+  source:
+  - RHCSA-12
+  - lecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-12-T01-QA-122
+  type: qa
+  question: 为什么 `chmod 777 /var/lib/heartbeat-worker` 不是合格答案？
+  answer: 它无差别放宽权限，违背最小授权；应按服务账号设置最小所有权和模式。
+  extra: ''
+  source:
+  - RHEL9
+  - security
+  - boundary
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::classic-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-12-T02-QA-123
+  type: qa
+  question: 要求关闭 socket 自动激活但保留手工启动 service，为什么不能 mask service？
+  answer: mask 会同时阻止手工启动，超过目标范围；应 disable --now socket。
+  extra: ''
+  source:
+  - RHCSA-12
+  - lecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-12-T02-QA-124
+  type: qa
+  question: 证明 socket 激活已关闭的验收组合是什么？
+  answer: socket 为 inactive+disabled；service stop 后发起连接不再自动 active；service 仍可手工 start。
+  extra: ''
+  source:
+  - RHCSA-12
+  - lecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::classic-task
+  - card::verification
+  - priority::P0
+- id: RHCSA-12-T02-QA-125
+  type: qa
+  question: 如何用实验区分 socket 激活与 Restart 重启？
+  answer: stop service 后发连接观察 socket 激活；受控异常终止主进程且无连接，观察 Restart/NRestarts。
+  extra: ''
+  source:
+  - RHCSA-12
+  - lecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::classic-task
+  - card::comparison
+  - priority::P0
+- id: RHCSA-12-T02-QA-126
+  type: qa
+  question: 为什么不应在生产服务上随意 kill MainPID 来证明 Restart？
+  answer: 可能造成真实中断和数据损失；应在受控实验或题目指定环境中验证。
+  extra: ''
+  source:
+  - RHCSA-12
+  - lecture
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::classic-task
+  - card::security
+  - priority::P1
+- id: RHCSA-12-MIX-CLOZE-127
+  type: cloze
+  text: 系统 unit 常见优先级可概括为 {{c1::/etc/systemd/system}} 高于 {{c2::/run/systemd/system}}，后者高于 {{c3::/usr/lib/systemd/system}}。
+  extra: 完整路径还可能包含 generator/transient 目录。
+  source:
+  - systemd.unit(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::unit-paths
+  - card::cloze
+  - priority::P1
+- id: RHCSA-12-MIX-CLOZE-128
+  type: cloze
+  text: unit 定义变化后执行 {{c1::systemctl daemon-reload}}；应用配置变化通常执行应用自身的 {{c2::reload 或 restart}}。
+  extra: 二者作用对象不同。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::reload-boundary
+  - card::cloze
+  - priority::P0
+- id: RHCSA-12-MIX-CLOZE-129
+  type: cloze
+  text: 自定义 service 中，{{c1::[Unit]}} 描述关系，{{c2::[Service]}} 描述进程生命周期，{{c3::[Install]}} 指导 enable。
+  extra: ''
+  source:
+  - systemd.service(5)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::custom-service
+  - card::cloze
+  - priority::P1
+- id: RHCSA-12-MIX-CLOZE-130
+  type: cloze
+  text: '{{c1::systemctl get-default}} 查询持久默认 target，{{c2::systemctl set-default TARGET}} 修改它。'
+  extra: set-default 不会立即 isolate。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::target
+  - card::cloze
+  - priority::P1
+- id: RHCSA-12-MIX-CLOZE-131
+  type: cloze
+  text: 属于用户 manager 的 unit 使用 {{c1::systemctl --user}} 管理；用户是否跨登出保留可用 {{c2::loginctl show-user USER -p Linger}} 检查。
+  extra: ''
+  source:
+  - loginctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::systemd-units-services
+  - topic::user-manager
+  - card::cloze
+  - priority::P1

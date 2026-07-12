@@ -36,7 +36,7 @@ def build_chapter(chapter: dict) -> Path:
     pdf_path = out_dir / "lecture.pdf"
     wrap_html(chapter["title"], chapter_html(chapter), html_path)
     chrome_pdf(html_path, pdf_path)
-    release = ROOT / "releases" / chapter["track"] / "chapters" / f'{chapter["number"]:02d}-{chapter["slug"]}.pdf'
+    release = ROOT / "dist" / chapter["track"] / "chapters" / f'{chapter["number"]:02d}-{chapter["slug"]}.pdf'
     release.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(pdf_path, release)
     print(f"built {rel(release)} ({len(PdfReader(release).pages)} pages)")
@@ -56,18 +56,22 @@ def book_body(title: str, chapters: list[dict]) -> str:
     return "\n".join(parts)
 
 
-def build_book(track: str) -> Path:
+def book_filename(track: str, incomplete: bool) -> str:
+    return f'RHEL9-{track.upper()}-V2-INCOMPLETE-PREVIEW.pdf' if incomplete else f'RHEL9-{track.upper()}-讲义.pdf'
+
+
+def build_book(track: str, incomplete: bool = False) -> Path:
     manifest = load_manifest()
     common = list(iter_chapters(["common"]))
     chapters = common + list(iter_chapters([track]))
     title = f'RHEL 9 {track.upper()} 讲义'
-    filename = f'RHEL9-{track.upper()}-讲义.pdf'
+    filename = book_filename(track, incomplete)
     out_dir = ROOT / "build" / "books" / track
     html_path = out_dir / f"{track}.html"
     pdf_path = out_dir / filename
     wrap_html(title, book_body(title, chapters), html_path)
     chrome_pdf(html_path, pdf_path)
-    release = ROOT / "releases" / track / filename
+    release = ROOT / "dist" / track / filename
     release.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(pdf_path, release)
     print(f"built {rel(release)} ({len(PdfReader(release).pages)} pages)")
@@ -116,4 +120,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

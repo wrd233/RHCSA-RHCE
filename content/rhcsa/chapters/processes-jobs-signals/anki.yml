@@ -1,0 +1,1524 @@
+chapter_id: RHCSA-11
+chapter_slug: processes-jobs-signals
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+validation: static
+live_test: not_performed
+notes:
+- id: RHCSA-SERVICES-K01-QA-001
+  type: qa
+  question: 需要按 CPU 降序查看全部进程，并显示 PID、PPID、用户、状态、nice、CPU、内存、RSS 和完整命令行。`ps` 骨架是什么？
+  answer: '```bash
+
+    ps -eo pid,ppid,user,stat,ni,%cpu,%mem,rss,args --sort=-%cpu
+
+    ```'
+  extra: '`-e` 选择全部进程；`-o` 定制字段；排序前的负号表示降序。一次输出只是快照。'
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::ps-view
+  - card::command
+  - priority::P0
+- id: RHCSA-SERVICES-K01-QA-002
+  type: qa
+  question: 系统有多个同名 worker。怎样先按有效用户 `appsvc` 和名称选择，并显示完整命令行？
+  answer: '```bash
+
+    pgrep -a -u appsvc worker
+
+    ```'
+  extra: 若需要匹配完整命令行中的路径或参数，再加 `-f`；进入 `pkill` 前先预览集合。
+  source:
+  - RH124 Ch.8
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-selection
+  - card::command
+  - priority::P0
+- id: RHCSA-SERVICES-K01-QA-003
+  type: qa
+  question: 已经确认 PID 2450 是目标进程。`kill 2450` 未指定信号时通常发送什么？
+  answer: '`SIGTERM`。'
+  extra: 它是请求有序终止的默认首选；命令返回成功不证明进程已经退出。
+  source:
+  - RH124 Ch.8
+  - kill(1)
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::concept
+  - priority::P0
+- id: RHCSA-SERVICES-K01-QA-004
+  type: qa
+  question: 为什么不应把 `SIGKILL` 作为终止进程的第一选择？
+  answer: '`SIGKILL` 不能被捕获、阻塞或忽略，进程没有机会刷新数据、释放锁或执行清理。'
+  extra: 先发送 `SIGTERM`，等待并再查询；重新确认目标仍存在后才考虑 `SIGKILL`。
+  source:
+  - RH124 Ch.8
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::boundary
+  - priority::P0
+- id: RHCSA-SERVICES-K01-QA-005
+  type: qa
+  question: '`ps` 显示一个子进程为 `Z`。为什么继续向这个 PID 发送信号不能清除它？'
+  answer: 僵尸进程已经退出，只剩父进程尚未回收的退出状态和少量进程表信息。
+  extra: 下一步应查 `PPID` 和父进程健康，而不是继续“杀僵尸”。
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-states
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-SERVICES-K01-QA-006
+  type: qa
+  question: nice 值的方向是什么？
+  answer: nice 值越低，普通 CPU 调度越有利；值越高，任务越礼让。
+  extra: 常见范围为 `-20` 到 `19`。nice 不是 CPU 配额。
+  source:
+  - RH124 Ch.8
+  - nice(1)
+  - renice(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::comparison
+  - priority::P0
+- id: RHCSA-SERVICES-K01-QA-007
+  type: qa
+  question: '`jobs`、`fg` 和 `bg` 的作用范围是什么？'
+  answer: 只作用于当前交互 Shell 的作业表和 jobspec。
+  extra: 另一个终端没有同一作业表；系统级长期进程应使用明确的服务管理方式。
+  source:
+  - RH124 Ch.8
+  - bash(1) Job Control
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-K01-QA-001
+  type: qa
+  question: 程序、进程与线程分别是什么？
+  answer: 程序是磁盘上的可执行内容；进程是程序的一次运行实例；线程是进程内部的调度执行单元。
+  extra: 同一程序可有多个进程，同一进程可有多个线程。
+  source:
+  - RH124 Ch.8
+  - proc(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::object-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-11-K01-QA-002
+  type: qa
+  question: PID 能长期代表同一个业务实例吗？
+  answer: 不能。PID 只在进程存活期间标识当前实例，退出后可能被复用。
+  extra: 高风险操作前应重新核对用户、启动时间、完整命令行和 PPID。
+  source:
+  - RH124 Ch.8
+  - proc(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::identity
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-K01-QA-003
+  type: qa
+  question: '`PID`、`PPID`、`PGID` 与 `SID` 分别表示什么？'
+  answer: '`PID` 是进程实例；`PPID` 是直接父进程；`PGID` 是进程组；`SID` 是会话。'
+  extra: 终端前后台和作业控制主要围绕进程组与会话组织。
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-11-K01-QA-004
+  type: qa
+  question: '`ps` 的 `TTY` 字段显示 `?` 通常说明什么？'
+  answer: 该进程没有控制终端。
+  extra: 守护进程和 systemd 管理的服务常见这种情况，不自动表示异常。
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::object-model
+  - card::output
+  - priority::P1
+- id: RHCSA-11-K01-QA-005
+  type: qa
+  question: 为什么一条 Shell 管道可能显示多个 PID，但 `jobs` 只显示一个作业？
+  answer: 管道包含多个进程，Bash 通常把它们放入同一进程组，并作为一个作业管理。
+  extra: 终端信号通常发送给整个前台进程组。
+  source:
+  - RH124 Ch.8
+  - bash(1) Job Control
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::concept
+  - priority::P0
+- id: RHCSA-11-K01-QA-006
+  type: qa
+  question: 进程成为“孤儿”说明什么？
+  answer: 父进程先退出，仍存活的子进程被 PID 1 或子收割器接管。
+  extra: 孤儿只描述父子关系变化，不等于失控或故障。
+  source:
+  - RH124 Ch.8
+  - proc(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::lifecycle
+  - card::concept
+  - priority::P1
+- id: RHCSA-11-K01-QA-007
+  type: qa
+  question: 要查看 PID 2450 的线程，应使用哪两类入口？
+  answer: 可使用 `ps -T -p 2450`/`ps -eL`，或 `top -H -p 2450`。
+  extra: 线程视图用于定位进程内部执行单元；应用栈分析超出本章。
+  source:
+  - ps(1)
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::threads
+  - card::command
+  - priority::P1
+- id: RHCSA-11-K01-CLOZE-001
+  type: cloze
+  text: 终端的 `Ctrl+C` 通常向{{c1::前台进程组}}发送 `SIGINT`，不是只发送给管道中的某一个 PID。
+  extra: 这也是 PGID 和 Shell Job 必须与 PID 区分的原因。
+  source:
+  - bash(1) Job Control
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::cloze
+  - priority::P0
+- id: RHCSA-11-K02-QA-001
+  type: qa
+  question: '`ps` 主状态 `R` 表示什么？'
+  answer: 正在 CPU 上运行或位于可运行队列
+  extra: 用多轮采样判断是否持续存在 CPU 竞争
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-states
+  - card::output
+  - priority::P0
+- id: RHCSA-11-K02-QA-002
+  type: qa
+  question: '`ps` 主状态 `S` 表示什么？'
+  answer: 可中断睡眠，等待事件
+  extra: 多数服务长时间处于 S 可以是正常状态
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-states
+  - card::output
+  - priority::P1
+- id: RHCSA-11-K02-QA-003
+  type: qa
+  question: '`ps` 主状态 `D` 表示什么？'
+  answer: 不可中断睡眠，常见于内核 I/O 等待
+  extra: 查 wchan、I/O、挂载和共同依赖，而不是不断升级信号
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-states
+  - card::output
+  - priority::P0
+- id: RHCSA-11-K02-QA-004
+  type: qa
+  question: '`ps` 主状态 `T` 表示什么？'
+  answer: 被作业控制信号停止或处于跟踪状态
+  extra: 查 jobs、TTY、PGID 和信号/调试来源
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-states
+  - card::output
+  - priority::P0
+- id: RHCSA-11-K02-QA-005
+  type: qa
+  question: '`ps` 主状态 `Z` 表示什么？'
+  answer: 子进程已退出但父进程尚未回收
+  extra: 查 PPID 和父进程健康
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-states
+  - card::output
+  - priority::P0
+- id: RHCSA-11-K02-QA-006
+  type: qa
+  question: '`STAT` 中的 `+` 修饰符说明什么？'
+  answer: 该进程位于其控制终端的前台进程组。
+  extra: 这不是字符串相加，也不是“优先级更高”。
+  source:
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-states
+  - card::output
+  - priority::P1
+- id: RHCSA-11-K02-QA-007
+  type: qa
+  question: '`STAT` 中的 `l` 与 `N` 分别常表示什么？'
+  answer: '`l` 表示多线程；`N` 表示较低的调度优先级。'
+  extra: 主状态字符和修饰符应分开解读。
+  source:
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-states
+  - card::output
+  - priority::P2
+- id: RHCSA-11-K02-QA-008
+  type: qa
+  question: RSS 与 VSZ 的区别是什么？
+  answer: RSS 是当前驻留物理内存；VSZ 是虚拟地址空间总量。
+  extra: VSZ 很大不能直接推出消耗了同等大小的物理 RAM。
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  - proc(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::memory
+  - card::comparison
+  - priority::P0
+- id: RHCSA-11-K02-QA-009
+  type: qa
+  question: Linux load average 可以直接当作 CPU 使用百分比吗？
+  answer: 不能。它反映可运行任务和某些不可中断等待任务的平均数量。
+  extra: 高负载可能来自 CPU 竞争，也可能来自 D 状态 I/O 等待。
+  source:
+  - RH124 Ch.8
+  - proc_loadavg(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::load
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-K02-QA-010
+  type: qa
+  question: 为什么一次 `ps` 输出不能证明高 CPU 是持续问题？
+  answer: '`ps` 只提供采样瞬间的快照，短命进程和波动热点可能在下一次采样中变化。'
+  extra: 使用固定间隔的多轮 `top -b` 或重复 `ps` 保存趋势。
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::sampling
+  - card::verification
+  - priority::P0
+- id: RHCSA-11-K02-QA-011
+  type: qa
+  question: 多个 `Z` 状态进程持续累积时，下一条最有区分度的证据是什么？
+  answer: 读取它们的 `PPID`，并检查共同父进程是否健康、是否持续未回收子进程。
+  extra: 不要向每个僵尸反复发送 `SIGKILL`。
+  source:
+  - RH124 Ch.8
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::zombie
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-11-K02-QA-012
+  type: qa
+  question: 一个 `D` 状态 PID 在 `kill -KILL` 后仍存在，是否证明信号发送失败？
+  answer: 不一定。信号可能已待处理，但要等不可中断的内核等待返回后才生效。
+  extra: 继续查等待依赖，而不是反复发送信号。
+  source:
+  - signal(7)
+  - proc_pid_wchan(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::d-state
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-11-K02-CLOZE-001
+  type: cloze
+  text: '`RSS` 表示{{c1::当前驻留物理内存}}，`VSZ` 表示{{c2::虚拟地址空间总量}}。'
+  extra: 两者不能直接互换。
+  source:
+  - ps(1)
+  - proc(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::memory
+  - card::cloze
+  - priority::P0
+- id: RHCSA-11-K02-CLOZE-002
+  type: cloze
+  text: Linux 的 load average 既可能包含可运行任务，也可能包含{{c1::不可中断等待任务}}。
+  extra: 因此高负载不自动等于 CPU 使用率高。
+  source:
+  - proc_loadavg(5)
+  - RH124 Ch.8
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::load
+  - card::cloze
+  - priority::P0
+- id: RHCSA-11-O01-QA-001
+  type: qa
+  question: 要核对 PID 2450 的父进程、用户、启动时间、会话、进程组、终端、状态和命令行，应执行什么？
+  answer: '```bash
+
+    ps -p 2450 -o pid,ppid,user,lstart,etimes,sid,pgid,tty,stat,args
+
+    ```'
+  extra: 这是操作前的身份视图；强制操作前应再次读取。
+  source:
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::ps-view
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O01-QA-002
+  type: qa
+  question: '`ps -C report-worker` 按什么匹配？'
+  answer: 按短命令名选择进程。
+  extra: 它不匹配完整参数；需要参数级区分时使用 `pgrep -f` 或先得到 PID 后检查 `args`。
+  source:
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::ps-selection
+  - card::parameter
+  - priority::P1
+- id: RHCSA-11-O01-QA-003
+  type: qa
+  question: 怎样查看 PID 2450 的直接子进程？
+  answer: '```bash
+
+    ps --ppid 2450 -o pid,ppid,stat,etimes,args
+
+    ```'
+  extra: '`--ppid` 只选择直接子进程，不递归整个后代树。'
+  source:
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::ps-selection
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O01-QA-004
+  type: qa
+  question: 怎样按 RSS 从大到小查看进程？
+  answer: '```bash
+
+    ps -eo pid,ppid,user,%mem,rss,vsz,stat,etimes,args --sort=-rss
+
+    ```'
+  extra: 排序键前的 `-` 表示降序。RSS 和 VSZ 应同时保留以避免误读。
+  source:
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::ps-view
+  - card::command
+  - priority::P1
+- id: RHCSA-11-O01-QA-005
+  type: qa
+  question: '`ps --forest` 与 `pstree` 各有什么优势？'
+  answer: '`ps --forest` 可与自定义字段结合；`pstree` 更直观展示祖先和后代结构。'
+  extra: 需要精确字段时回到 `ps`；相同子树在 `pstree` 中可能被压缩。
+  source:
+  - ps(1)
+  - pstree(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-tree
+  - card::comparison
+  - priority::P1
+- id: RHCSA-11-O01-QA-006
+  type: qa
+  question: 怎样显示 PID 2450 的祖先链和参数？
+  answer: '```bash
+
+    pstree -aps 2450
+
+    ```'
+  extra: '`-a` 显示参数，`-p` 显示 PID，`-s` 显示祖先。'
+  source:
+  - pstree(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-tree
+  - card::command
+  - priority::P1
+- id: RHCSA-11-O01-QA-007
+  type: qa
+  question: '`pidof -s chronyd` 的 `-s` 有什么作用？'
+  answer: 只返回一个匹配 PID。
+  extra: “只返回一个”不等于完成唯一身份确认，多实例场景仍需核对。
+  source:
+  - pidof(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::pidof
+  - card::parameter
+  - priority::P2
+- id: RHCSA-11-O01-QA-008
+  type: qa
+  question: 为什么操作前后应使用同一套 `ps -o` 字段？
+  answer: 这样才能直接比较对象身份、状态和资源是否发生预期变化。
+  extra: 只换成另一条模糊命令，可能无法证明操作对象和终态。
+  source:
+  - ps(1)
+  - RHEL lecture design standard
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-11-O01-CLOZE-001
+  type: cloze
+  text: 在 `ps --sort=-rss` 中，排序键前的负号表示{{c1::降序}}。
+  extra: 没有负号时通常为升序。
+  source:
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::ps-view
+  - card::cloze
+  - priority::P1
+- id: RHCSA-11-O02-QA-001
+  type: qa
+  question: '`pgrep -x` 与 `pgrep -f` 的区别是什么？'
+  answer: '`-x` 要求短命令名精确匹配；`-f` 使用完整命令行匹配。'
+  extra: 二者可以组合，但使用 `-f` 时模式应尽量具体并先预览。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-selection
+  - card::comparison
+  - priority::P0
+- id: RHCSA-11-O02-QA-002
+  type: qa
+  question: '`pgrep -a` 与 `pgrep -l` 的区别是什么？'
+  answer: '`-a` 显示 PID 和完整命令行；`-l` 显示 PID 和短命令名。'
+  extra: 批量操作前更适合使用 `-a` 审阅参数。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-selection
+  - card::parameter
+  - priority::P0
+- id: RHCSA-11-O02-QA-003
+  type: qa
+  question: 怎样选择 PID 2450 的直接子进程并显示完整命令行？
+  answer: '```bash
+
+    pgrep -a -P 2450
+
+    ```'
+  extra: 这不会递归选择所有后代。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-selection
+  - card::command
+  - priority::P1
+- id: RHCSA-11-O02-QA-004
+  type: qa
+  question: '`pgrep -u appsvc -P 2450 worker` 中不同条件如何组合？'
+  answer: 目标必须同时满足有效用户、直接父 PID 和名称模式，通常是 AND 关系。
+  extra: 同一选项的逗号列表可包含多个候选值。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-selection
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-O02-QA-005
+  type: qa
+  question: 怎样选择启动超过一小时的 `report-worker`？
+  answer: '```bash
+
+    pgrep -a -O 3600 report-worker
+
+    ```'
+  extra: '`-O` 按运行时间筛选；仍要核对参数和父进程，不能把“更老”直接等同于错误实例。'
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-selection
+  - card::command
+  - priority::P1
+- id: RHCSA-11-O02-QA-006
+  type: qa
+  question: '`pgrep -o` 和 `pgrep -n` 分别选择什么？'
+  answer: '`-o` 选择最旧实例；`-n` 选择最新实例。'
+  extra: 排序选择不等于业务身份判断。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::process-selection
+  - card::comparison
+  - priority::P1
+- id: RHCSA-11-O02-QA-007
+  type: qa
+  question: 为什么执行 `pkill -f` 前应先运行同条件的 `pgrep -a -f`？
+  answer: 为了看到完整匹配集合，确认不会包含非目标实例或管理命令。
+  extra: 风险主要来自选择集合过宽。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::pkill-safety
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-O02-QA-008
+  type: qa
+  question: '`pgrep -w` 输出的是什么？'
+  answer: 输出匹配进程的线程 ID（TID/LWP），而不仅是进程组长的 PID。
+  extra: 线程选择用于取证时要保留所属 PID。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::threads
+  - card::parameter
+  - priority::P2
+- id: RHCSA-11-O02-QA-009
+  type: qa
+  question: 操作后原 PID 消失，但同条件 `pgrep -a -f` 出现新 PID。下一步是什么？
+  answer: 比较新旧启动时间、PPID 和进程树，识别父进程或服务管理器是否重新拉起。
+  extra: 不要继续无差别重复 `pkill`。
+  source:
+  - pgrep(1)
+  - pstree(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::restart-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-11-O02-CLOZE-001
+  type: cloze
+  text: 批量信号的安全顺序是先用{{c1::pgrep -a}}预览集合，再用相同条件执行 `pkill`，之后再用{{c2::原条件}}验收。
+  extra: 集合选择、操作和验收必须保持一致。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::pkill-safety
+  - card::cloze
+  - priority::P0
+- id: RHCSA-11-O03-QA-001
+  type: qa
+  question: 怎样每 2 秒采样一次、共 5 轮，并把 `top` 输出保存到文件？
+  answer: '```bash
+
+    top -b -d 2 -n 5 -w 200 > /tmp/top-sample.txt
+
+    ```'
+  extra: 批处理模式适合留证；固定采样窗口便于前后对比。
+  source:
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::sampling
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O03-QA-002
+  type: qa
+  question: '`top -H -p 2450` 的作用是什么？'
+  answer: 只观察 PID 2450，并展开其线程。
+  extra: 用于从进程级热点下钻到线程级执行单元。
+  source:
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::threads
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O03-QA-003
+  type: qa
+  question: '`top -n 5` 与 `top -d 2` 分别控制什么？'
+  answer: '`-n 5` 控制迭代次数；`-d 2` 控制每轮间隔秒数。'
+  extra: 两者与 `-b` 组合可形成可重复采样。
+  source:
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::sampling
+  - card::parameter
+  - priority::P0
+- id: RHCSA-11-O03-QA-004
+  type: qa
+  question: '`/proc/PID/status` 适合读取哪些信息？'
+  answer: 人类可读的名称、状态、PID/PPID、线程数、UID/GID、内存等字段。
+  extra: 它是活对象接口，进程可能在读取过程中退出。
+  source:
+  - proc_pid_status(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::proc-evidence
+  - card::concept
+  - priority::P1
+- id: RHCSA-11-O03-QA-005
+  type: qa
+  question: 为什么读取 `/proc/PID/cmdline` 时常使用 `tr "\0" " "`？
+  answer: 命令行参数以 NUL 字节分隔，直接 `cat` 可能看起来粘连。
+  extra: 示例：`tr "\0" " " < /proc/PID/cmdline; echo`。
+  source:
+  - proc_pid_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::proc-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O03-QA-006
+  type: qa
+  question: '`/proc/PID/exe` 与 `/proc/PID/cwd` 分别是什么？'
+  answer: 分别是当前可执行文件和当前工作目录的符号链接。
+  extra: 可使用 `readlink -f` 查看；权限和进程退出会影响读取。
+  source:
+  - proc_pid_exe(5)
+  - proc_pid_cwd(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::proc-evidence
+  - card::comparison
+  - priority::P1
+- id: RHCSA-11-O03-QA-007
+  type: qa
+  question: '`/proc/PID/fd/` 能证明业务 I/O 正常吗？'
+  answer: 不能。它只显示打开的文件描述符及其链接目标。
+  extra: 存在描述符不证明数据已成功读写、刷新或到达远端。
+  source:
+  - proc_pid_fd(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::proc-evidence
+  - card::boundary
+  - priority::P1
+- id: RHCSA-11-O03-QA-008
+  type: qa
+  question: '`/proc/PID/io` 与 `wchan` 分别提供什么线索？'
+  answer: '`io` 提供进程读写计数；`wchan` 提供当前内核等待位置。'
+  extra: 二者都只是诊断线索，需要结合状态和依赖解释。
+  source:
+  - proc_pid_io(5)
+  - proc_pid_wchan(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::proc-evidence
+  - card::comparison
+  - priority::P1
+- id: RHCSA-11-O03-QA-009
+  type: qa
+  question: 为什么不应默认打印 `/proc/PID/environ`？
+  answer: 环境变量可能包含令牌、密码或其他敏感信息。
+  extra: 只在有明确必要、权限和脱敏方案时读取所需字段。
+  source:
+  - proc_pid_environ(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::proc-evidence
+  - card::security
+  - priority::P0
+- id: RHCSA-11-O03-QA-010
+  type: qa
+  question: 读取多个 `/proc/PID/*` 文件时，某条路径突然不存在，最先考虑什么？
+  answer: 进程可能在读取期间退出或执行状态发生变化。
+  extra: 区分对象已消失、PID 复用和权限不足，不要编造缺失内容。
+  source:
+  - proc(5)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::proc-evidence
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-11-O03-CLOZE-001
+  type: cloze
+  text: '`top` 的{{c1::-b}}进入批处理模式，{{c2::-n}}设置迭代次数，{{c3::-d}}设置采样间隔。'
+  extra: 三者组合适合保存多轮证据。
+  source:
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::sampling
+  - card::cloze
+  - priority::P0
+- id: RHCSA-11-O04-QA-001
+  type: qa
+  question: 命令末尾的 `&` 改变了什么？
+  answer: 让当前 Shell 不等待该作业完成，并立即返回提示符。
+  extra: 后台运行仍可能依赖终端，并不自动抵抗 SIGHUP。
+  source:
+  - RH124 Ch.8
+  - bash(1) Job Control
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::concept
+  - priority::P0
+- id: RHCSA-11-O04-QA-002
+  type: qa
+  question: 怎样显示当前 Shell 作业的作业号、PID 和状态？
+  answer: '```bash
+
+    jobs -l
+
+    ```'
+  extra: '`jobs -r` 只列运行作业，`jobs -s` 只列停止作业。'
+  source:
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O04-QA-003
+  type: qa
+  question: 前台命令按 `Ctrl+Z` 后，怎样让作业 1 在后台继续？
+  answer: '```bash
+
+    bg %1
+
+    ```'
+  extra: '`Ctrl+Z` 通常发送 `SIGTSTP`；`bg` 发送继续信号并保持后台。'
+  source:
+  - RH124 Ch.8
+  - bash(1)
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O04-QA-004
+  type: qa
+  question: 怎样把作业 1 拉回前台？
+  answer: '```bash
+
+    fg %1
+
+    ```'
+  extra: 前台作业重新获得终端；Shell 会等待它停止或退出。
+  source:
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O04-QA-005
+  type: qa
+  question: '`%+`、`%%` 与 `%-` 分别表示什么？'
+  answer: '`%+` 和 `%%` 表示当前作业；`%-` 表示上一个作业。'
+  extra: jobspec 只在当前 Shell 的作业表中有效。
+  source:
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::syntax
+  - priority::P1
+- id: RHCSA-11-O04-QA-006
+  type: qa
+  question: 为什么后台作业可能因读取终端输入再次停止？
+  answer: 后台进程组通常不能直接从控制终端读取输入，Shell/终端作业控制会使其停止。
+  extra: 需要交互的程序应拉回前台，而不是强行后台运行。
+  source:
+  - bash(1) Job Control
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-11-O04-QA-007
+  type: qa
+  question: '`nohup` 是否会自动把命令放到后台？'
+  answer: 不会。`nohup` 主要让命令忽略 SIGHUP 并处理仍连接终端的标准流。
+  extra: 常见组合是显式重定向后再加 `&`。
+  source:
+  - nohup(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::nohup-disown
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-O04-QA-008
+  type: qa
+  question: 怎样用 `nohup` 启动一次性长任务，并明确保存输出？
+  answer: '```bash
+
+    nohup /usr/local/bin/import-data   > /var/tmp/import-data.log 2>&1 &
+
+    ```'
+  extra: 仍需记录 PID、退出状态和功能结果；它不是服务管理。
+  source:
+  - nohup(1)
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::nohup-disown
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O04-QA-009
+  type: qa
+  question: '`disown -h %1` 与 `disown %1` 的区别是什么？'
+  answer: '`-h` 标记作业在 Shell 退出时不接收 HUP，但保留作业表；不带 `-h` 会把作业从作业表移除。'
+  extra: 两者都是 Bash builtin 行为。
+  source:
+  - bash(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::nohup-disown
+  - card::comparison
+  - priority::P1
+- id: RHCSA-11-O04-QA-010
+  type: qa
+  question: 为什么 `nohup`/`disown` 不应替代 systemd service？
+  answer: 它们不提供开机启动、失败重启、依赖、统一状态、身份隔离和标准化日志。
+  extra: 需要长期生命周期管理时应进入第 12 章。
+  source:
+  - nohup(1)
+  - bash(1)
+  - chapter-boundary
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::nohup-disown
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-O04-CLOZE-001
+  type: cloze
+  text: '`Ctrl+Z` 通常发送{{c1::SIGTSTP}}，`bg`/`fg` 恢复作业时会涉及{{c2::SIGCONT}}。'
+  extra: STOP 类信号与 CONT 构成暂停/继续控制。
+  source:
+  - bash(1)
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::job-control
+  - card::cloze
+  - priority::P0
+- id: RHCSA-11-O05-QA-001
+  type: qa
+  question: '`SIGTERM` 和 `SIGKILL` 的本质区别是什么？'
+  answer: TERM 是可由进程处理的有序终止请求；KILL 由内核强制终止且无清理机会。
+  extra: 默认先 TERM，等待和再查询后才考虑 KILL。
+  source:
+  - signal(7)
+  - RH124 Ch.8
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::comparison
+  - priority::P0
+- id: RHCSA-11-O05-QA-002
+  type: qa
+  question: 哪些常用信号不能被捕获、阻塞或忽略？
+  answer: '`SIGKILL` 和 `SIGSTOP`。'
+  extra: 这两个信号构成强制终止和强制停止边界。
+  source:
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::concept
+  - priority::P0
+- id: RHCSA-11-O05-QA-003
+  type: qa
+  question: '`SIGHUP` 是否统一表示“重新加载配置”？'
+  answer: 不是。它的传统含义是终端挂断，部分守护进程约定用它重读配置。
+  extra: 是否 reload 必须查具体程序文档。
+  source:
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-O05-QA-004
+  type: qa
+  question: 怎样向 PID 2450 请求有序退出，并在两秒后重新查询？
+  answer: '```bash
+
+    kill -TERM 2450
+
+    sleep 2
+
+    ps -p 2450 -o pid,ppid,user,lstart,stat,args
+
+    ```'
+  extra: 还应按原业务匹配条件检查是否出现新 PID。
+  source:
+  - kill(1)
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signal-flow
+  - card::process
+  - priority::P0
+- id: RHCSA-11-O05-QA-005
+  type: qa
+  question: '`kill -0 2450` 能证明什么？'
+  answer: PID 是否存在以及当前用户是否有发送信号的权限。
+  extra: 它不验证 PID 仍属于原实例，也不证明业务健康。
+  source:
+  - kill(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::verification
+  - priority::P0
+- id: RHCSA-11-O05-QA-006
+  type: qa
+  question: 怎样继续一个明确的停止进程？
+  answer: '```bash
+
+    kill -CONT 2450
+
+    ```'
+  extra: 操作后用 `ps -p 2450 -o pid,stat,args` 验证是否离开 `T`。
+  source:
+  - kill(1)
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::command
+  - priority::P1
+- id: RHCSA-11-O05-QA-007
+  type: qa
+  question: 为什么信号命令返回 0 不能证明进程已经退出？
+  answer: 返回成功通常只表示信号请求已被接受；进程可能捕获、忽略、延迟处理或处于 D 状态。
+  extra: 必须再次查询 PID、状态和业务特征。
+  source:
+  - kill(1)
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signal-flow
+  - card::verification
+  - priority::P0
+- id: RHCSA-11-O05-QA-008
+  type: qa
+  question: 要向 PGID 6200 发送 TERM，可使用什么清晰形式？
+  answer: '```bash
+
+    kill -TERM -- -6200
+
+    ```'
+  extra: 负目标表示进程组；`--` 消除把负数解释为选项的歧义。操作前先确认 PGID。
+  source:
+  - kill(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::command
+  - priority::P1
+- id: RHCSA-11-O05-QA-009
+  type: qa
+  question: 为什么不能把一个工作进程 PID 消失等同于服务停止？
+  answer: 主进程或外部管理器可能重新创建 worker，服务也可能包含多个进程。
+  extra: 按原业务条件和进程树检查新 PID；必要时转到 systemd 管理层。
+  source:
+  - RH124 Ch.8
+  - chapter-boundary
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::restart-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-O05-QA-010
+  type: qa
+  question: 一个目标在 TERM 后仍存在，升级到 KILL 前必须再次确认什么？
+  answer: 用户、启动时间、完整命令行和父进程仍与原目标一致，并确认不是 D 状态等待。
+  extra: 这是降低 PID 复用和误伤风险的关键步骤。
+  source:
+  - kill(1)
+  - ps(1)
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signal-flow
+  - card::security
+  - priority::P0
+- id: RHCSA-11-O05-QA-011
+  type: qa
+  question: 对多个同名进程执行 `pkill -TERM name` 前，最少要做什么？
+  answer: 用同条件 `pgrep -a` 查看完整集合，并确认用户、参数和父进程范围。
+  extra: 名称本身不等于唯一业务对象。
+  source:
+  - pgrep(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::pkill-safety
+  - card::process
+  - priority::P0
+- id: RHCSA-11-O05-CLOZE-001
+  type: cloze
+  text: 未指定信号时，`kill PID` 通常发送{{c1::SIGTERM}}；强制且无清理机会的是{{c2::SIGKILL}}。
+  extra: 信号名称比数字更具可移植性。
+  source:
+  - kill(1)
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::signals
+  - card::cloze
+  - priority::P0
+- id: RHCSA-11-O06-QA-001
+  type: qa
+  question: 怎样以调整量 10 启动 `build-index`？
+  answer: '```bash
+
+    nice -n 10 /usr/local/bin/build-index
+
+    ```'
+  extra: GNU nice 的 `-n` 是相对继承值的调整量；操作后检查实际 NI。
+  source:
+  - nice(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O06-QA-002
+  type: qa
+  question: 为什么本章在 `renice` 示例中优先使用 `--priority`？
+  answer: 它明确表示目标绝对 nice 值，避免 `-n` 在实现和兼容模式中的相对/绝对歧义。
+  extra: 相对调整使用 `--relative`。
+  source:
+  - renice(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::boundary
+  - priority::P1
+- id: RHCSA-11-O06-QA-003
+  type: qa
+  question: 怎样把运行中的 PID 2450 设置为 nice 15？
+  answer: '```bash
+
+    renice --priority 15 --pid 2450
+
+    ```'
+  extra: 然后用 `ps -p 2450 -o pid,user,lstart,ni,pri,stat,args` 验证。
+  source:
+  - renice(1)
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::command
+  - priority::P0
+- id: RHCSA-11-O06-QA-004
+  type: qa
+  question: '`renice --pgrp` 与 `renice --user` 分别改变什么集合？'
+  answer: 分别作用于指定进程组中的任务，以及指定用户拥有的匹配任务集合。
+  extra: 集合操作前应评估影响，不要用用户级选择器处理单个业务实例。
+  source:
+  - renice(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::comparison
+  - priority::P1
+- id: RHCSA-11-O06-QA-005
+  type: qa
+  question: 普通用户通常能把自己的进程从 nice 10 调到 nice 15 吗？
+  answer: 通常可以，因为这让进程更不利、更礼让。
+  extra: 把 nice 降到更有利的值通常需要额外权限。
+  source:
+  - renice(1)
+  - capabilities(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::security
+  - priority::P0
+- id: RHCSA-11-O06-QA-006
+  type: qa
+  question: 调整 nice 后应怎样验证？
+  answer: '```bash
+
+    ps -p 2450 -o pid,ppid,user,lstart,ni,pri,stat,%cpu,args
+
+    ```'
+  extra: 同时保留身份字段，防止 PID 复用造成误判。
+  source:
+  - ps(1)
+  - renice(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::verification
+  - priority::P0
+- id: RHCSA-11-O06-QA-007
+  type: qa
+  question: 高负载来自多个 D 状态任务时，`renice` 是合适根因修复吗？
+  answer: 通常不是。nice 主要影响普通 CPU 调度，不修复不可中断 I/O 等待。
+  extra: 应先调查共同存储、NFS、驱动或内核依赖。
+  source:
+  - renice(1)
+  - sched(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-11-O06-QA-008
+  type: qa
+  question: nice 能限制进程最多使用 20% CPU 吗？
+  answer: 不能。nice 是相对调度倾向，不是硬配额。
+  extra: CPU 配额和 cgroup 深度治理不在本章主线。
+  source:
+  - nice(1)
+  - sched(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-O06-CLOZE-001
+  type: cloze
+  text: nice 值越{{c1::低}}，普通调度越有利；值越{{c2::高}}，任务越礼让。
+  extra: 不要把数值大小和调度优先方向混淆。
+  source:
+  - nice(1)
+  - renice(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::niceness
+  - card::cloze
+  - priority::P0
+- id: RHCSA-11-D01-QA-001
+  type: qa
+  question: 多个 `D` 状态进程共享同一 `wchan`，且都访问同一 NFS 挂载。下一步最有区分度的方向是什么？
+  answer: 调查该网络文件系统和网络/服务端依赖，而不是继续向每个 PID 发送 KILL。
+  extra: 本章记录到依赖层入口；NFS 和日志细节在相应章节展开。
+  source:
+  - proc_pid_wchan(5)
+  - RH124 Ch.8
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::d-state
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-11-D01-QA-002
+  type: qa
+  question: 一个无 `jobs` 记录的进程处于 `T`。下一步应检查什么？
+  answer: 读取 SID、PGID、TTY、父进程和是否存在调试/外部 STOP 来源。
+  extra: 不要对所有 T 状态统一发送 CONT。
+  source:
+  - ps(1)
+  - signal(7)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::t-state
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-11-D01-QA-003
+  type: qa
+  question: load average 高、CPU idle 仍有余量时，哪类状态应优先统计？
+  answer: '`D` 状态和可运行 `R` 状态的数量与趋势。'
+  extra: 这有助于区分 I/O 等待与 CPU 竞争。
+  source:
+  - RH124 Ch.8
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::load
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-11-D01-QA-004
+  type: qa
+  question: 没有单一高 CPU 进程时，为什么要查看线程视图？
+  answer: 热点可能分布在同一进程的多个线程，进程级汇总难以显示内部差异。
+  extra: 使用 `top -H` 或 `ps -eL`。
+  source:
+  - top(1)
+  - ps(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::load
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-11-D01-QA-005
+  type: qa
+  question: 怎样识别大量短命子进程造成的压力？
+  answer: 使用固定间隔重复 `ps`，结合 `pstree` 观察某个父进程持续派生运行时间很短的子进程。
+  extra: 单次快照可能完全漏掉短命任务。
+  source:
+  - ps(1)
+  - pstree(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::sampling
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-11-D01-QA-006
+  type: qa
+  question: 终止 worker 后新 PID 立即出现，哪条证据比“再 kill 一次”更有区分度？
+  answer: 查看新 PID 的 PPID、祖先链、启动时间和完整命令行。
+  extra: 用于识别主进程重建或外部管理者。
+  source:
+  - ps(1)
+  - pstree(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::restart-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-11-D01-QA-007
+  type: qa
+  question: 为什么“进程命令返回成功”不能作为任务最终验收？
+  answer: 它只能证明局部操作被接受，不能证明目标集合为空、非目标未受影响、业务功能正确或进程不会被重建。
+  extra: 验收应覆盖身份、目标状态、非目标保护和管理层。
+  source:
+  - RHEL lecture design standard
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::verification
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-D01-QA-008
+  type: qa
+  question: 调查高负载时，什么时候才适合考虑 `renice`？
+  answer: 证据已支持普通 CPU 竞争，目标任务身份明确，并且业务允许降低其进度时。
+  extra: 操作前记录基线，操作后用相同采样窗口复核。
+  source:
+  - renice(1)
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::load
+  - card::process
+  - priority::P0
+- id: RHCSA-11-T01-QA-001
+  type: qa
+  question: 多个同名 worker 中只需停止 legacy 参数实例，第一条选择命令应具有什么特征？
+  answer: 同时限定有效用户、完整可执行路径和 legacy 关键参数，并使用 `pgrep -a -f` 预览。
+  extra: 不能只按短命令名操作。
+  source:
+  - pgrep(1)
+  - classic-task T01
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::task-old-worker
+  - card::task
+  - priority::P0
+- id: RHCSA-11-T01-QA-002
+  type: qa
+  question: 安全停止旧 worker 的完整验收为什么要检查 current 参数实例？
+  answer: 用于证明操作没有误伤非目标实例。
+  extra: 目标消失与非目标保护是两个独立验收维度。
+  source:
+  - classic-task T01
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::task-old-worker
+  - card::verification
+  - priority::P0
+- id: RHCSA-11-T01-QA-003
+  type: qa
+  question: 旧 worker 原 PID 消失但 legacy 匹配出现新 PID，任务是否完成？
+  answer: 未完成。应识别新 PID 的父进程或管理器，停止继续追杀 PID。
+  extra: 原 PID 消失不等于业务实例不会再出现。
+  source:
+  - classic-task T01
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::task-old-worker
+  - card::boundary
+  - priority::P0
+- id: RHCSA-11-T02-QA-001
+  type: qa
+  question: 高负载经典任务中，为什么要求 `top -b -d 2 -n 5` 而不是截图一次交互界面？
+  answer: 固定采样间隔和轮数可保存趋势并支持前后可比验证。
+  extra: 单屏只能证明一个瞬间。
+  source:
+  - top(1)
+  - classic-task T02
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::task-high-load
+  - card::process
+  - priority::P0
+- id: RHCSA-11-T02-QA-002
+  type: qa
+  question: 高负载但 CPU idle 有余量时，哪四类假设应保留？
+  answer: 多个 R 任务竞争、多个 D 任务等待 I/O、线程级热点、大量短命子进程。
+  extra: 证据不足时不要强行只选一个根因。
+  source:
+  - classic-task T02
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::task-high-load
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-11-T02-QA-003
+  type: qa
+  question: 修复依赖后怎样验证高负载改善？
+  answer: 使用与变更前相同的采样间隔、轮数和字段，比较 load、R/D 数量和资源趋势。
+  extra: 验证窗口不同会削弱对比可信度。
+  source:
+  - classic-task T02
+  - top(1)
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::task-high-load
+  - card::verification
+  - priority::P0
+- id: RHCSA-11-D01-CLOZE-001
+  type: cloze
+  text: 诊断链应按“症状 → 当前证据 → 假设 → {{c1::下一条最有区分度的证据}} → 最小修复 → 再验证”推进。
+  extra: 不要一次堆砌所有命令。
+  source:
+  - RHEL lecture design standard
+  tags:
+  - exam::rhcsa
+  - chapter::processes-jobs-signals
+  - topic::diagnosis-method
+  - card::cloze
+  - priority::P0
+status: integrated

@@ -1,38 +1,70 @@
 common:
   title: 通用考试方法
   chapters:
-    - {slug: exam-strategy, id: COMMON-STRATEGY, title: 完成一场红帽实操考试的方法}
+    - {exam: common, part: 通用, number: 0, slug: exam-strategy, id: COMMON-STRATEGY, title: 完成一场红帽实操考试的方法, path: content/common/exam-strategy, status: validated}
 rhcsa:
   title: RHEL 9 RHCSA
   deck: RedHat::RHCSA-RHEL9
   chapters:
-    - {slug: shell-help, id: RHCSA-SHELL, title: 命令行、Shell 与本地帮助}
-    - {slug: files-text-archive, id: RHCSA-FILES, title: 文件、目录、文本处理与归档传输}
-    - {slug: users-permissions, id: RHCSA-USERS, title: 用户、组、权限、ACL 与 sudo}
-    - {slug: processes-services-logs, id: RHCSA-SERVICES, title: 进程、作业、服务、日志与计划任务}
-    - {slug: packages-repositories, id: RHCSA-PACKAGES, title: 软件包、仓库与基础系统维护}
-    - {slug: network-ssh-firewall, id: RHCSA-NETWORK, title: 网络、名称解析、SSH 与 firewalld}
-    - {slug: partitions-filesystems, id: RHCSA-FILESYSTEMS, title: 分区、文件系统、Swap 与持久挂载}
-    - {slug: lvm, id: RHCSA-LVM, title: LVM 逻辑存储}
-    - {slug: nfs-autofs, id: RHCSA-NFS, title: 网络文件系统与自动挂载}
-    - {slug: selinux, id: RHCSA-SELINUX, title: SELinux}
-    - {slug: boot-recovery, id: RHCSA-BOOT, title: 启动过程、Target 与系统恢复}
-    - {slug: podman, id: RHCSA-PODMAN, title: Podman 容器与持久运行}
-    - {slug: comprehensive, id: RHCSA-COMPREHENSIVE, title: RHCSA 综合任务}
+    - {exam: rhcsa, part: 命令行与本地信息处理, number: 1, slug: shell-parsing-expansion, id: RHCSA-01, title: Shell 解析、引用、展开与命令组合, path: content/rhcsa/chapters/shell-parsing-expansion, status: validated}
+    - {exam: rhcsa, part: 命令行与本地信息处理, number: 2, slug: io-redirection-pipelines, id: RHCSA-02, title: 标准输入输出、重定向与管道, path: content/rhcsa/chapters/io-redirection-pipelines, status: validated}
+    - {exam: rhcsa, part: 命令行与本地信息处理, number: 3, slug: local-help-command-discovery, id: RHCSA-03, title: 本地帮助、命令发现与软件能力查询, path: content/rhcsa/chapters/local-help-command-discovery, status: validated}
+    - {exam: rhcsa, part: 命令行与本地信息处理, number: 4, slug: filesystem-paths-types-links, id: RHCSA-04, title: 文件系统层次、路径、文件类型与链接, path: content/rhcsa/chapters/filesystem-paths-types-links, status: validated}
+    - {exam: rhcsa, part: 命令行与本地信息处理, number: 5, slug: file-search-text-processing, id: RHCSA-05, title: 文件查找、文本筛选与批量处理, path: content/rhcsa/chapters/file-search-text-processing, status: validated}
+    - {exam: rhcsa, part: 命令行与本地信息处理, number: 6, slug: copy-archive-compression-transfer, id: RHCSA-06, title: 复制、归档、压缩与远程传输, path: content/rhcsa/chapters/copy-archive-compression-transfer, status: validated}
+    - {exam: rhcsa, part: 身份、权限与特权控制, number: 7, slug: users-groups-lifecycle, id: RHCSA-07, title: 用户、组与账号生命周期, path: content/rhcsa/chapters/users-groups-lifecycle, status: validated}
+    - {exam: rhcsa, part: 身份、权限与特权控制, number: 8, slug: unix-permissions-umask-special-bits, id: RHCSA-08, title: 传统权限、umask 与特殊权限位, path: content/rhcsa/chapters/unix-permissions-umask-special-bits, status: validated}
+    - {exam: rhcsa, part: 身份、权限与特权控制, number: 9, slug: acl-collaboration-directories, id: RHCSA-09, title: ACL 与协作目录, path: content/rhcsa/chapters/acl-collaboration-directories, status: validated}
+    - {exam: rhcsa, part: 身份、权限与特权控制, number: 10, slug: sudo-least-privilege, id: RHCSA-10, title: sudo 与最小特权授权, path: content/rhcsa/chapters/sudo-least-privilege, status: validated}
+    - {exam: rhcsa, part: 进程、服务与系统运行, number: 11, slug: processes-jobs-signals, id: RHCSA-11, title: 进程、作业、信号与调度优先级, path: content/rhcsa/chapters/processes-jobs-signals, status: validated}
+    - {exam: rhcsa, part: 进程、服务与系统运行, number: 12, slug: systemd-units-services, id: RHCSA-12, title: systemd Unit、服务与依赖关系, path: content/rhcsa/chapters/systemd-units-services, status: validated}
+    - {exam: rhcsa, part: 进程、服务与系统运行, number: 13, slug: journald-rsyslog-logrotate, id: RHCSA-13, title: 系统日志、Journal、rsyslog 与日志轮转, path: content/rhcsa/chapters/journald-rsyslog-logrotate, status: validated}
+    - {exam: rhcsa, part: 进程、服务与系统运行, number: 14, slug: time-timezone-rtc-chrony, id: RHCSA-14, title: 系统时间、时区、RTC 与 chrony, path: content/rhcsa/chapters/time-timezone-rtc-chrony, status: validated}
+    - {exam: rhcsa, part: 进程、服务与系统运行, number: 15, slug: scheduling-at-cron-timers, id: RHCSA-15, title: 一次性任务、周期任务与 systemd Timer, path: content/rhcsa/chapters/scheduling-at-cron-timers, status: validated}
+    - {exam: rhcsa, part: 软件与系统内容管理, number: 16, slug: rpm-packages-transactions, id: RHCSA-16, title: RPM 包、文件归属与软件事务, path: content/rhcsa/chapters/rpm-packages-transactions, status: validated}
+    - {exam: rhcsa, part: 软件与系统内容管理, number: 17, slug: dnf-repositories-modules-groups, id: RHCSA-17, title: DNF 仓库、模块流与包组, path: content/rhcsa/chapters/dnf-repositories-modules-groups, status: validated}
+    - {exam: rhcsa, part: 网络与远程管理, number: 18, slug: networkmanager-ipv4-routing, id: RHCSA-18, title: NetworkManager、IPv4 地址与路由, path: content/rhcsa/chapters/networkmanager-ipv4-routing, status: validated}
+    - {exam: rhcsa, part: 网络与远程管理, number: 19, slug: hostname-nss-dns, id: RHCSA-19, title: 主机名、NSS 与 DNS 名称解析, path: content/rhcsa/chapters/hostname-nss-dns, status: validated}
+    - {exam: rhcsa, part: 网络与远程管理, number: 20, slug: ssh-client-server-keys, id: RHCSA-20, title: SSH 客户端、服务端与密钥认证, path: content/rhcsa/chapters/ssh-client-server-keys, status: validated}
+    - {exam: rhcsa, part: 网络与远程管理, number: 21, slug: firewalld-service-access-chain, id: RHCSA-21, title: firewalld 与完整服务访问链, path: content/rhcsa/chapters/firewalld-service-access-chain, status: validated}
+    - {exam: rhcsa, part: 块存储与网络存储, number: 22, slug: block-devices-partitions-signatures, id: RHCSA-22, title: 块设备、分区表与设备签名, path: content/rhcsa/chapters/block-devices-partitions-signatures, status: validated}
+    - {exam: rhcsa, part: 块存储与网络存储, number: 23, slug: filesystems-labels-uuid-capacity, id: RHCSA-23, title: 文件系统、标签、UUID 与容量管理, path: content/rhcsa/chapters/filesystems-labels-uuid-capacity, status: validated}
+    - {exam: rhcsa, part: 块存储与网络存储, number: 24, slug: mounts-fstab-swap, id: RHCSA-24, title: 挂载、fstab、Swap 与启动持久性, path: content/rhcsa/chapters/mounts-fstab-swap, status: validated}
+    - {exam: rhcsa, part: 块存储与网络存储, number: 25, slug: lvm, id: RHCSA-25, title: LVM 逻辑存储, path: content/rhcsa/chapters/lvm, status: validated}
+    - {exam: rhcsa, part: 块存储与网络存储, number: 26, slug: nfs-client, id: RHCSA-26, title: NFS 客户端与远程文件系统, path: content/rhcsa/chapters/nfs-client, status: validated}
+    - {exam: rhcsa, part: 块存储与网络存储, number: 27, slug: autofs, id: RHCSA-27, title: autofs 自动挂载, path: content/rhcsa/chapters/autofs, status: validated}
+    - {exam: rhcsa, part: 安全、启动与系统恢复, number: 28, slug: selinux-model-context-avc, id: RHCSA-28, title: SELinux 模型、模式、上下文与 AVC 证据, path: content/rhcsa/chapters/selinux-model-context-avc, status: validated}
+    - {exam: rhcsa, part: 安全、启动与系统恢复, number: 29, slug: selinux-files-ports-booleans, id: RHCSA-29, title: SELinux 文件规则、端口类型与 Boolean, path: content/rhcsa/chapters/selinux-files-ports-booleans, status: validated}
+    - {exam: rhcsa, part: 安全、启动与系统恢复, number: 30, slug: boot-grub-recovery, id: RHCSA-30, title: 启动链、GRUB、Target 与系统恢复, path: content/rhcsa/chapters/boot-grub-recovery, status: validated}
+    - {exam: rhcsa, part: 容器, number: 31, slug: podman-images-containers-rootless, id: RHCSA-31, title: Podman 镜像、容器与 Rootless 运行, path: content/rhcsa/chapters/podman-images-containers-rootless, status: validated}
+    - {exam: rhcsa, part: 容器, number: 32, slug: podman-systemd-quadlet, id: RHCSA-32, title: 容器持久化、用户 systemd 与 Quadlet, path: content/rhcsa/chapters/podman-systemd-quadlet, status: validated}
+    - {exam: rhcsa, part: 综合实践, number: 33, slug: comprehensive, id: RHCSA-33, title: RHCSA 综合任务与证据矩阵, path: content/rhcsa/chapters/comprehensive, status: validated}
 rhce:
   title: RHEL 9 RHCE
   deck: RedHat::RHCE-RHEL9
   chapters:
-    - {slug: architecture-inventory, id: RHCE-INVENTORY, title: Ansible 架构、配置与 Inventory}
-    - {slug: yaml-playbook-modules, id: RHCE-PLAYBOOK, title: YAML、Playbook、Task 与模块}
-    - {slug: variables-facts, id: RHCE-VARIABLES, title: 变量、Facts、注册结果与优先级}
-    - {slug: loops-conditionals-handlers, id: RHCE-CONTROL, title: 循环、条件、Handler、Block 与错误控制}
-    - {slug: files-templates-jinja, id: RHCE-TEMPLATES, title: 文件、模板与 Jinja2}
-    - {slug: external-data-vault, id: RHCE-VAULT, title: 外部数据、敏感变量与 Vault}
-    - {slug: roles-collections, id: RHCE-ROLES, title: Include、Import、Role 与 Collection}
-    - {slug: automate-system-services, id: RHCE-SYSTEM, title: 自动化用户、软件包、仓库、服务与计划任务}
-    - {slug: automate-network-selinux, id: RHCE-NETWORK, title: 自动化网络、防火墙与 SELinux}
-    - {slug: automate-storage, id: RHCE-STORAGE, title: 自动化存储、文件系统与挂载}
-    - {slug: troubleshooting-idempotency, id: RHCE-TROUBLESHOOTING, title: Ansible 故障排除、验证与幂等性}
-    - {slug: comprehensive, id: RHCE-COMPREHENSIVE, title: RHCE 综合任务}
-
+    - {exam: rhce, part: Ansible 执行模型与发现能力, number: 1, slug: ansible-control-execution-model, id: RHCE-01, title: Ansible 控制模型、受管节点与执行链, path: content/rhce/chapters/ansible-control-execution-model, status: pending}
+    - {exam: rhce, part: Ansible 执行模型与发现能力, number: 2, slug: ansible-config-docs-collections, id: RHCE-02, title: 配置发现、ansible-doc、Collection 与帮助入口, path: content/rhce/chapters/ansible-config-docs-collections, status: pending}
+    - {exam: rhce, part: Ansible 执行模型与发现能力, number: 3, slug: inventory-groups-patterns, id: RHCE-03, title: Inventory、组、主机模式与连接变量, path: content/rhce/chapters/inventory-groups-patterns, status: pending}
+    - {exam: rhce, part: Ansible 执行模型与发现能力, number: 4, slug: ad-hoc-command-execution, id: RHCE-04, title: Ad Hoc 命令与命令执行模块, path: content/rhce/chapters/ad-hoc-command-execution, status: pending}
+    - {exam: rhce, part: Playbook 与数据模型, number: 5, slug: yaml-plays-tasks-modules, id: RHCE-05, title: YAML、Play、Task 与模块调用结构, path: content/rhce/chapters/yaml-plays-tasks-modules, status: pending}
+    - {exam: rhce, part: Playbook 与数据模型, number: 6, slug: module-semantics-results-idempotency, id: RHCE-06, title: 模块语义、FQCN、返回值与幂等性, path: content/rhce/chapters/module-semantics-results-idempotency, status: pending}
+    - {exam: rhce, part: Playbook 与数据模型, number: 7, slug: variables-scopes-precedence, id: RHCE-07, title: 变量作用域、变量来源与优先级, path: content/rhce/chapters/variables-scopes-precedence, status: pending}
+    - {exam: rhce, part: Playbook 与数据模型, number: 8, slug: facts-magic-registered-setfact, id: RHCE-08, title: Facts、Magic Variables、注册变量与 set_fact, path: content/rhce/chapters/facts-magic-registered-setfact, status: pending}
+    - {exam: rhce, part: 流程控制与错误语义, number: 9, slug: conditionals-tests-filters, id: RHCE-09, title: 条件、Tests、Filters 与布尔判断, path: content/rhce/chapters/conditionals-tests-filters, status: pending}
+    - {exam: rhce, part: 流程控制与错误语义, number: 10, slug: loops-data-structures, id: RHCE-10, title: 循环、数据结构与循环结果, path: content/rhce/chapters/loops-data-structures, status: pending}
+    - {exam: rhce, part: 流程控制与错误语义, number: 11, slug: handlers-change-notify, id: RHCE-11, title: Handler、changed 语义与通知链, path: content/rhce/chapters/handlers-change-notify, status: pending}
+    - {exam: rhce, part: 流程控制与错误语义, number: 12, slug: blocks-errors-result-control, id: RHCE-12, title: Block、错误处理、failed_when 与 changed_when, path: content/rhce/chapters/blocks-errors-result-control, status: pending}
+    - {exam: rhce, part: 文件、模板与外部数据, number: 13, slug: files-content-modules, id: RHCE-13, title: 文件与内容管理模块, path: content/rhce/chapters/files-content-modules, status: pending}
+    - {exam: rhce, part: 文件、模板与外部数据, number: 14, slug: jinja2-templates, id: RHCE-14, title: Jinja2 模板、变量渲染与空白控制, path: content/rhce/chapters/jinja2-templates, status: pending}
+    - {exam: rhce, part: 文件、模板与外部数据, number: 15, slug: external-data-lookups, id: RHCE-15, title: 外部数据、lookup、vars_files 与 include_vars, path: content/rhce/chapters/external-data-lookups, status: pending}
+    - {exam: rhce, part: 文件、模板与外部数据, number: 16, slug: vault-secrets, id: RHCE-16, title: Ansible Vault、Secret 边界与日志泄漏控制, path: content/rhce/chapters/vault-secrets, status: pending}
+    - {exam: rhce, part: 内容复用与工程化, number: 17, slug: include-import-composition, id: RHCE-17, title: include、import 与任务组合, path: content/rhce/chapters/include-import-composition, status: pending}
+    - {exam: rhce, part: 内容复用与工程化, number: 18, slug: roles-architecture, id: RHCE-18, title: Role 结构、Defaults、Vars、Tasks 与依赖, path: content/rhce/chapters/roles-architecture, status: pending}
+    - {exam: rhce, part: 内容复用与工程化, number: 19, slug: collections-requirements-system-roles, id: RHCE-19, title: Collection、requirements 与 RHEL System Roles, path: content/rhce/chapters/collections-requirements-system-roles, status: pending}
+    - {exam: rhce, part: 系统状态自动化, number: 20, slug: automate-identity-privilege, id: RHCE-20, title: 用户、组、SSH Key 与 sudo 自动化, path: content/rhce/chapters/automate-identity-privilege, status: pending}
+    - {exam: rhce, part: 系统状态自动化, number: 21, slug: automate-packages-services-scheduling, id: RHCE-21, title: 软件包、仓库、服务与计划任务自动化, path: content/rhce/chapters/automate-packages-services-scheduling, status: pending}
+    - {exam: rhce, part: 系统状态自动化, number: 22, slug: automate-network-firewall-selinux, id: RHCE-22, title: 网络、主机名、firewalld 与 SELinux 自动化, path: content/rhce/chapters/automate-network-firewall-selinux, status: pending}
+    - {exam: rhce, part: 系统状态自动化, number: 23, slug: automate-storage-filesystems-lvm, id: RHCE-23, title: 存储、文件系统、挂载与 LVM 自动化, path: content/rhce/chapters/automate-storage-filesystems-lvm, status: pending}
+    - {exam: rhce, part: 质量、诊断与综合任务, number: 24, slug: troubleshooting-idempotency-verification, id: RHCE-24, title: Check、Diff、幂等性、故障定位与验证, path: content/rhce/chapters/troubleshooting-idempotency-verification, status: pending}
+    - {exam: rhce, part: 质量、诊断与综合任务, number: 25, slug: comprehensive, id: RHCE-25, title: RHCE 综合任务、Role 化与证据矩阵, path: content/rhce/chapters/comprehensive, status: pending}

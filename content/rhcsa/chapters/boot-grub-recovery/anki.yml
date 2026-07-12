@@ -1,0 +1,1308 @@
+chapter_id: RHCSA-30
+chapter_slug: boot-grub-recovery
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+notes:
+- id: RHCSA-BOOT-QA-001
+  type: qa
+  question: RHEL 9 主机从固件到登录环境的核心启动链是什么？
+  answer: '`firmware → GRUB → kernel 与 initramfs → 真实根文件系统 → systemd PID 1 → default target`。'
+  extra: 每一阶段能读取的配置和证据不同。故障诊断应先判断控制权已经到哪一层。
+  source:
+  - RH134-RHEL9
+  - RHCSA细分课件18 pp.15-16
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-chain
+  - card::process
+  - priority::P0
+- id: RHCSA-BOOT-QA-002
+  type: qa
+  question: 怎样查询当前持久默认 target，并把下次正常启动目标设置为 `multi-user.target`？
+  answer: '```bash
+
+    systemctl get-default
+
+    systemctl set-default multi-user.target
+
+    ```'
+  extra: '`set-default` 不会自动切换当前运行状态；修改后再次执行 `get-default`。'
+  source:
+  - systemctl(1)
+  - systemd.special(7)
+  - RHCSA细分课件18 p.13
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::command
+  - priority::P0
+- id: RHCSA-BOOT-QA-003
+  type: qa
+  question: 在远程主机执行 `systemctl isolate rescue.target` 前，最重要的风险判断是什么？
+  answer: 确认切换会停止哪些非目标依赖 unit，以及网络、SSH 或当前会话是否会中断；应先确保有控制台或回退通道。
+  extra: '`isolate` 改变当前运行集合，不等同于只查看 target，也不改变持久 default target。'
+  source:
+  - systemctl(1)
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::boundary
+  - priority::P0
+- id: RHCSA-BOOT-QA-004
+  type: qa
+  question: 使用 `rd.break` 进入 shell 后，当前 `/` 和真实系统根通常分别在哪里？
+  answer: 当前 `/` 是 initramfs 的临时根；真实系统根通常挂载在 `/sysroot`。
+  extra: 这就是后续需要 remount `/sysroot` 并 `chroot /sysroot` 的原因。
+  source:
+  - dracut(8)
+  - RH134-RHEL9
+  - RHCSA细分课件18 pp.21-22
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::recovery-env
+  - card::comparison
+  - priority::P0
+- id: RHCSA-BOOT-QA-005
+  type: qa
+  question: '`rd.break` shell 中，怎样把真实根重新挂载为读写并验证？'
+  answer: '```bash
+
+    mount -o remount,rw /sysroot
+
+    findmnt -no TARGET,SOURCE,FSTYPE,OPTIONS /sysroot
+
+    ```'
+  extra: 先用 `findmnt /sysroot` 确认作用对象；不能只凭 `mount` 无报错判断成功。
+  source:
+  - mount(8)
+  - findmnt(8)
+  - RHCSA细分课件18 p.22
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::command
+  - priority::P0
+- id: RHCSA-BOOT-QA-006
+  type: qa
+  question: '`chroot /sysroot` 在口令恢复流程中改变了什么？'
+  answer: 它把当前进程的路径解析根改为 `/sysroot`，使 `/etc/shadow`、`/.autorelabel` 等路径指向真实系统。
+  extra: '`chroot` 不会启动新 kernel、创建完整容器或让磁盘 systemd 自动成为当前 PID 1。'
+  source:
+  - chroot(1)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::boundary
+  - priority::P0
+- id: RHCSA-BOOT-QA-007
+  type: qa
+  question: 在 `rd.break` 口令恢复中，为什么要在 chroot 内执行 `touch /.autorelabel`？
+  answer: 它在真实根中创建下一次启动的 SELinux 全盘重标记请求，避免修改后的安全文件保留错误标签。
+  extra: 该命令不是立即完成重标记；若在 chroot 前执行，文件会落在 initramfs 临时根。
+  source:
+  - RHEL9 basic system settings documentation
+  - RHCSA细分课件18 p.22
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::selinux-relabel
+  - card::command
+  - priority::P0
+- id: RHCSA-BOOT-QA-008
+  type: qa
+  question: 系统因疑似 `/etc/fstab` 错误进入 emergency，推荐的证据链是什么？
+  answer: '`systemctl --failed → journalctl -b → 映射失败 mount unit 与 fstab 行 → lsblk -f/blkid → findmnt --verify → 最小修复 → daemon-reload
+    → mount -a → findmnt 目标 → 重启复验`。'
+  extra: 不要从“进入 emergency”直接跳到注释 fstab 或格式化设备。
+  source:
+  - fstab(5)
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-BOOT-QA-009
+  type: qa
+  question: 什么时候可以考虑在 `fstab` 中使用 `nofail`，什么时候不应使用？
+  answer: 只有业务明确允许该挂载缺失且系统仍应继续启动时才评估；必需数据或系统挂载不能用 `nofail` 掩盖真实故障。
+  extra: 选项选择必须来自目标终态，而不是为了让错误暂时不阻断启动。
+  source:
+  - fstab(5)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::boundary
+  - priority::P0
+- id: RHCSA-BOOT-QA-010
+  type: qa
+  question: 系统已经进入 systemd emergency，哪两类命令最适合先定位本次启动失败？
+  answer: '```bash
+
+    systemctl --failed
+
+    journalctl -b
+
+    ```'
+  extra: 前者列失败 unit，后者给出本次启动的时间序列；可再按 unit、kernel 或优先级收窄。
+  source:
+  - systemctl(1)
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-BOOT-QA-011
+  type: qa
+  question: 在 `rd.break` shell 中直接执行 `passwd root` 后，正常启动仍无法使用新口令。最可能遗漏了什么作用域步骤？
+  answer: 没有先 `chroot /sysroot`，因此 `passwd` 未必修改真实磁盘系统的账号数据库。
+  extra: 下一步应确认 `/sysroot`、读写挂载状态和实际被修改的文件环境，而不是重复改口令。
+  source:
+  - chroot(1)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-BOOT-QA-012
+  type: qa
+  question: '`multi-user.target` 显示 active 能否证明所有服务器业务功能正确？'
+  answer: 不能。它只证明该 target 的同步点已达到；仍需验证目标服务、监听、挂载、数据和外部功能。
+  extra: target 状态是启动层证据，不是全部业务终态。
+  source:
+  - systemd.special(7)
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::verification
+  - priority::P0
+- id: RHCSA-BOOT-QA-013
+  type: qa
+  question: '`rescue.target` 与 `emergency.target` 的主要区别是什么？'
+  answer: '`rescue.target` 提供较完整的单用户维护环境；`emergency.target` 只拉起极少依赖，适合更早、更严重的故障。'
+  extra: 根是否只读不能仅靠 target 名称判断，应使用 `findmnt /`。
+  source:
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::recovery-env
+  - card::comparison
+  - priority::P0
+- id: RHCSA-BOOT-QA-014
+  type: qa
+  question: 使用 `rd.break` 恢复 root 口令的核心流程是什么？
+  answer: '`GRUB 临时追加 rd.break → remount /sysroot 为 rw → chroot /sysroot → passwd root → touch /.autorelabel → exit 两次 → 正常启动后验证`。'
+  extra: 流程卡训练顺序；每一步仍应以阶段、根和验证证据为依据。
+  source:
+  - RH134-RHEL9
+  - RHCSA细分课件18 pp.21-22
+  - RHCSA9.0模拟题 p.12
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::process
+  - priority::P0
+- id: RHCSA-30-K01-QA-001
+  type: qa
+  question: firmware 在 Linux 启动链中的职责边界是什么？
+  answer: 完成基本硬件初始化、选择可启动设备并进入 boot loader；它不读取 `fstab`，也不启动 systemd 服务。
+  extra: 若尚未进入 kernel，Journal 通常无法提供该阶段证据。
+  source:
+  - RH134-RHEL9
+  - RHCSA细分课件18 p.15
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-chain
+  - card::concept
+  - priority::P0
+- id: RHCSA-30-K01-QA-002
+  type: qa
+  question: GRUB 启动条目向下一阶段提供哪三类核心内容？
+  answer: kernel image、initramfs image 和 kernel command line。
+  extra: 菜单标题和默认选择用于选择条目，但真正交给 kernel 的关键是镜像与参数。
+  source:
+  - grubby(8)
+  - RHCSA细分课件18 p.15
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-chain
+  - card::comparison
+  - priority::P0
+- id: RHCSA-30-K01-QA-003
+  type: qa
+  question: initramfs 为什么存在？
+  answer: 它提供早期用户空间，装载访问真实根所需模块、发现存储并把真实根挂载到 `/sysroot`。
+  extra: 它解决“必须先访问根才能获得访问根的能力”的依赖问题。
+  source:
+  - dracut(8)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-chain
+  - card::concept
+  - priority::P0
+- id: RHCSA-30-K01-QA-004
+  type: qa
+  question: 看到启动故障时，为什么不应立即执行 `dracut -f`？
+  answer: 因为重建 initramfs 只有在证据指向 initramfs 内容缺失、损坏或硬件适配问题时才合理；其他阶段故障不会因此修复。
+  extra: 先判断失败阶段和根因。
+  source:
+  - dracut(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-chain
+  - card::boundary
+  - priority::P1
+- id: RHCSA-30-K01-QA-005
+  type: qa
+  question: initramfs 阶段的 systemd 与正常根中的 systemd 有什么关键差异？
+  answer: 前者运行于早期用户空间并负责找到、挂载真实根；根切换后使用磁盘系统中的 systemd 继续正常启动。
+  extra: 不要把 initramfs shell 当作完整正常系统。
+  source:
+  - dracut(8)
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-chain
+  - card::comparison
+  - priority::P0
+- id: RHCSA-30-K01-QA-006
+  type: qa
+  question: 控制台仍停在固件“无可启动设备”，下一条最有区分度的证据是什么？
+  answer: 检查固件/BMC 是否识别目标磁盘及启动顺序，而不是先查 systemd Journal。
+  extra: Linux 内核尚未运行。
+  source:
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-chain
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-30-K01-CLOZE-001
+  type: cloze
+  text: firmware → {{c1::GRUB}} → {{c2::kernel 与 initramfs}} → {{c3::真实根文件系统}} → {{c4::systemd PID 1}} → {{c5::default target}}。
+  extra: 这张卡训练阶段顺序，不代表每个阶段只有一个内部步骤。
+  source:
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-chain
+  - card::cloze
+  - priority::P0
+- id: RHCSA-30-O01-QA-001
+  type: qa
+  question: 怎样查看当前运行 kernel 的 release？
+  answer: '```bash
+
+    uname -r
+
+    ```'
+  extra: 它不证明下次默认会启动同一个 kernel。
+  source:
+  - uname(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::grub-query
+  - card::command
+  - priority::P0
+- id: RHCSA-30-O01-QA-002
+  type: qa
+  question: 怎样查看本次启动中 kernel 实际收到的 command line？
+  answer: '```bash
+
+    cat /proc/cmdline
+
+    ```'
+  extra: 该文件反映当前事实，包括 GRUB 一次性追加的参数。
+  source:
+  - proc_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::grub-query
+  - card::path
+  - priority::P0
+- id: RHCSA-30-O01-QA-003
+  type: qa
+  question: 怎样查看 RHEL 当前配置的默认启动 kernel 路径？
+  answer: '```bash
+
+    grubby --default-kernel
+
+    ```'
+  extra: 默认条目与当前运行 kernel 是不同状态维度。
+  source:
+  - grubby(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::grub-query
+  - card::command
+  - priority::P0
+- id: RHCSA-30-O01-QA-004
+  type: qa
+  question: 怎样列出所有由 `grubby` 管理的 kernel 启动条目？
+  answer: '```bash
+
+    grubby --info=ALL
+
+    ```'
+  extra: 重点读取 kernel、initrd、args、title、id 等字段，不背固定字段顺序。
+  source:
+  - grubby(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::grub-query
+  - card::command
+  - priority::P0
+- id: RHCSA-30-O01-QA-005
+  type: qa
+  question: 怎样读取 GRUB environment block 中的变量？
+  answer: '```bash
+
+    grub2-editenv list
+
+    ```'
+  extra: 它不等同于列出 BLS 条目或查看 `/proc/cmdline`。
+  source:
+  - grub2-editenv(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::grub-query
+  - card::command
+  - priority::P1
+- id: RHCSA-30-O01-QA-006
+  type: qa
+  question: '`grub2-editenv list`、`grubby --info=ALL` 与 `/proc/cmdline` 分别回答什么？'
+  answer: 分别回答 GRUB 环境变量、持久启动条目和本次 kernel 实际参数。
+  extra: 三类输出不能互相替代。
+  source:
+  - grub2-editenv(1)
+  - grubby(8)
+  - proc_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::grub-query
+  - card::comparison
+  - priority::P0
+- id: RHCSA-30-O01-QA-007
+  type: qa
+  question: 为什么不应把启动条目的固定 `index` 当作长期身份？
+  answer: 安装或删除 kernel 后索引可能变化；kernel 路径、条目 ID 或明确标题更稳定。
+  extra: 执行更新前应重新查询目标条目。
+  source:
+  - grubby(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::grub-query
+  - card::boundary
+  - priority::P1
+- id: RHCSA-30-O01-QA-008
+  type: qa
+  question: RHEL 9 主机启动时没有显示 GRUB 菜单，但系统能继续启动。首先应如何理解？
+  answer: 菜单可能被自动隐藏，不等于 GRUB 未运行；可在启动时尝试 `Esc`、`F8` 或 `Shift` 进入。
+  extra: 按键时机受固件和控制台影响，需 live 环境确认。
+  source:
+  - RHEL9 release notes
+  - grub2-editenv(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::grub-query
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-30-O02-QA-001
+  type: qa
+  question: 怎样只为一次启动临时追加 kernel 参数？
+  answer: 进入 GRUB 菜单，选择条目按 `e`，在 kernel command line 末尾追加参数，再按界面提示继续启动。
+  extra: 该操作正常情况下不回写持久 BLS 条目。
+  source:
+  - RHEL9 kernel documentation
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::kernel-parameters
+  - card::process
+  - priority::P0
+- id: RHCSA-30-O02-QA-002
+  type: qa
+  question: 怎样为所有已安装 kernel 条目持久添加参数？
+  answer: '```bash
+
+    grubby --update-kernel=ALL --args="<PARAMETERS>"
+
+    ```'
+  extra: 是否使用 `ALL` 应根据目标范围决定。
+  source:
+  - grubby(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::kernel-parameters
+  - card::command
+  - priority::P0
+- id: RHCSA-30-O02-QA-003
+  type: qa
+  question: 怎样从所有 kernel 条目持久删除指定参数？
+  answer: '```bash
+
+    grubby --update-kernel=ALL --remove-args="<PARAMETERS>"
+
+    ```'
+  extra: 先用 `grubby --info=ALL` 确认参数的实际形式。
+  source:
+  - grubby(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::kernel-parameters
+  - card::command
+  - priority::P0
+- id: RHCSA-30-O02-QA-004
+  type: qa
+  question: 用 `grubby` 添加参数后、尚未重启时，什么证据只能证明未来条目已改变？
+  answer: '`grubby --info=ALL` 中目标条目的 `args`。'
+  extra: 只有重启后的 `/proc/cmdline` 才证明本次 kernel 实际收到参数。
+  source:
+  - grubby(8)
+  - proc_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::kernel-parameters
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-O02-QA-005
+  type: qa
+  question: GRUB 菜单临时编辑与 `grubby --update-kernel` 的生命周期区别是什么？
+  answer: 前者只影响一次启动；后者修改持久启动条目，影响未来启动。
+  extra: 恢复场景通常优先临时编辑。
+  source:
+  - grubby(8)
+  - RHEL9 kernel documentation
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::kernel-parameters
+  - card::comparison
+  - priority::P0
+- id: RHCSA-30-O02-QA-006
+  type: qa
+  question: 执行 `rd.break` 恢复时，为什么不应删除现有 kernel 参数直到只剩 `ro`？
+  answer: 现有参数可能包含根设备、LVM、console 等启动所需信息；无证据删除会制造新故障。
+  extra: 只在行末追加 `rd.break` 即可。
+  source:
+  - RHCSA9.0模拟题 p.12
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::kernel-parameters
+  - card::boundary
+  - priority::P0
+- id: RHCSA-30-O02-QA-007
+  type: qa
+  question: 为什么日常参数管理不优先直接编辑生成后的 `grub.cfg`？
+  answer: 生成文件可能被后续工具覆盖，且复杂内容更易误改；RHEL 9 优先通过 `grubby` 管理条目。
+  extra: GRUB 重装与主配置恢复不在本章主线。
+  source:
+  - grubby(8)
+  - RHEL9 boot documentation
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::kernel-parameters
+  - card::boundary
+  - priority::P1
+- id: RHCSA-30-O02-CLOZE-001
+  type: cloze
+  text: '`grubby --info=ALL` 验证{{c1::持久启动条目}}；`cat /proc/cmdline` 验证{{c2::本次 kernel 实际参数}}。'
+  extra: 先验证条目，再通过重启验证实际生效。
+  source:
+  - grubby(8)
+  - proc_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::kernel-parameters
+  - card::cloze
+  - priority::P0
+- id: RHCSA-30-K02-QA-001
+  type: qa
+  question: systemd target 的本质是什么？
+  answer: 一组 unit 依赖和同步关系，用来表示系统要达到的状态集合。
+  extra: 它不是一个长期运行的传统“运行级别进程”。
+  source:
+  - systemd.target(5)
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::concept
+  - priority::P0
+- id: RHCSA-30-K02-QA-002
+  type: qa
+  question: '`systemctl get-default` 与 `systemctl list-units --type=target --state=active` 分别看什么？'
+  answer: 前者看持久默认启动目标；后者看当前已达到的 target。
+  extra: default 与 active 必须分开验证。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::comparison
+  - priority::P0
+- id: RHCSA-30-K02-QA-003
+  type: qa
+  question: 怎样查询当前 active target？
+  answer: '```bash
+
+    systemctl list-units --type=target --state=active
+
+    ```'
+  extra: 系统可同时有多个 active target，因为 target 之间存在依赖。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::command
+  - priority::P0
+- id: RHCSA-30-K02-QA-004
+  type: qa
+  question: 怎样只让本次启动进入 rescue target，而不改变持久 default？
+  answer: 在 kernel command line 临时追加 `systemd.unit=rescue.target`。
+  extra: 正常启动后 `systemctl get-default` 应保持原值。
+  source:
+  - systemd(1)
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::parameter
+  - priority::P0
+- id: RHCSA-30-K02-QA-005
+  type: qa
+  question: 怎样只让本次启动进入 emergency target？
+  answer: 在 kernel command line 临时追加 `systemd.unit=emergency.target`。
+  extra: 该参数只影响本次启动。
+  source:
+  - systemd(1)
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::parameter
+  - priority::P1
+- id: RHCSA-30-K02-QA-006
+  type: qa
+  question: 当前系统在维护 target 中，怎样请求回到持久 default target？
+  answer: '```bash
+
+    systemctl default
+
+    ```'
+  extra: 执行前仍要评估依赖启动和当前维护工作是否完成。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::command
+  - priority::P1
+- id: RHCSA-30-K02-QA-007
+  type: qa
+  question: 为什么 `graphical.target` 与 `multi-user.target` 可能同时显示 active？
+  answer: '`graphical.target` 通常依赖 `multi-user.target`；active target 表示依赖同步点，不是互斥运行级别。'
+  extra: 多行 active 不是异常。
+  source:
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::output
+  - priority::P1
+- id: RHCSA-30-K02-CLOZE-001
+  type: cloze
+  text: target 的{{c1::当前状态}}用 active/isolate 观察和改变；{{c2::持久默认状态}}用 get-default/set-default；{{c3::一次启动覆盖}}用 systemd.unit=。
+  extra: 三维状态常在考试中被混淆。
+  source:
+  - systemctl(1)
+  - systemd(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::target-state
+  - card::cloze
+  - priority::P0
+- id: RHCSA-30-K03-QA-001
+  type: qa
+  question: '`rd.break` 与 `emergency.target` 最关键的阶段差异是什么？'
+  answer: '`rd.break` 在 initramfs 根切换前中断；`emergency.target` 属于真实系统中的最小 systemd 目标。'
+  extra: 因此真实根路径和可用证据不同。
+  source:
+  - dracut(8)
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::recovery-env
+  - card::comparison
+  - priority::P0
+- id: RHCSA-30-K03-QA-002
+  type: qa
+  question: 进入 emergency shell 后，怎样判断根是否只读？
+  answer: '```bash
+
+    findmnt -no TARGET,SOURCE,FSTYPE,OPTIONS /
+
+    ```'
+  extra: 不能仅根据“emergency”名称假设固定挂载模式。
+  source:
+  - findmnt(8)
+  - systemd.special(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::recovery-env
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-K03-QA-003
+  type: qa
+  question: 正常系统或 systemd emergency 中，根为只读时怎样重挂载为读写？
+  answer: '```bash
+
+    mount -o remount,rw /
+
+    ```'
+  extra: 先用 `findmnt /` 确认当前根和选项。
+  source:
+  - mount(8)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::recovery-env
+  - card::command
+  - priority::P1
+- id: RHCSA-30-K03-QA-004
+  type: qa
+  question: '`chroot /sysroot` 为什么不等于启动了一个容器？'
+  answer: 它主要改变路径解析根，不自动创建完整 namespace、启动新 kernel 或新 PID 1。
+  extra: 复杂救援可能还需绑定 `/dev`、`/proc`、`/sys`，但不属于本章口令恢复主流程。
+  source:
+  - chroot(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::recovery-env
+  - card::boundary
+  - priority::P1
+- id: RHCSA-30-K03-QA-005
+  type: qa
+  question: 维护 shell 中不确定当前真实根在哪里，下一条最有区分度的命令是什么？
+  answer: 分别执行 `findmnt /` 和必要时 `findmnt /sysroot`，结合 `/proc/cmdline` 判断当前阶段。
+  extra: 先判根，再改文件。
+  source:
+  - findmnt(8)
+  - proc_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::recovery-env
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-30-O03-QA-001
+  type: qa
+  question: 在 GRUB 中为口令恢复追加的最小参数是什么？
+  answer: '`rd.break`。'
+  extra: 只追加该参数，不删除原有启动参数，也不写入持久条目。
+  source:
+  - dracut(8)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::parameter
+  - priority::P0
+- id: RHCSA-30-O03-QA-002
+  type: qa
+  question: 进入 `rd.break` shell 后，怎样先证明本次确实使用了断点参数？
+  answer: '```bash
+
+    cat /proc/cmdline
+
+    ```'
+  extra: 输出中应包含 `rd.break`。
+  source:
+  - proc_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-O03-QA-003
+  type: qa
+  question: 在真实根中交互修改 root 口令的命令是什么？
+  answer: '```bash
+
+    passwd root
+
+    ```'
+  extra: 推荐交互输入，避免把明文口令写入历史或进程参数。
+  source:
+  - passwd(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::command
+  - priority::P0
+- id: RHCSA-30-O03-QA-004
+  type: qa
+  question: 为什么本章不把 `echo 密码 | passwd --stdin root` 作为默认答案？
+  answer: 它会把明文口令暴露在命令文本、历史或记录中；交互 `passwd root` 更符合最小暴露原则。
+  extra: 模拟题写法用于识别题型，不覆盖安全边界。
+  source:
+  - passwd(1)
+  - RHCSA9.0模拟题 p.12
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::security
+  - priority::P0
+- id: RHCSA-30-O03-QA-005
+  type: qa
+  question: 在 chroot 内创建重标记请求后，怎样静态确认文件位于真实根？
+  answer: '```bash
+
+    ls -l /.autorelabel
+
+    ```'
+  extra: 真正的重标记要到下一次启动才执行。
+  source:
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::selinux-relabel
+  - card::verification
+  - priority::P1
+- id: RHCSA-30-O03-QA-006
+  type: qa
+  question: 为什么恢复流程通常要执行两次 `exit`？
+  answer: 第一次退出 chroot 回到 initramfs shell；第二次退出断点 shell，让启动继续。
+  extra: 这反映了两个嵌套环境。
+  source:
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::process
+  - priority::P0
+- id: RHCSA-30-O03-QA-007
+  type: qa
+  question: root 口令恢复后，最终功能验证是什么？
+  answer: 在正常启动的真实系统中使用新口令完成 root 认证。
+  extra: '`passwd` 返回成功只证明修改动作完成，不等于认证终态。'
+  source:
+  - passwd(1)
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-O03-QA-008
+  type: qa
+  question: 恢复后怎样确认 `rd.break` 没有被持久化？
+  answer: 正常启动后执行 `cat /proc/cmdline`，并可同时用 `grubby --info=ALL` 检查条目。
+  extra: 临时参数不应出现在未来条目。
+  source:
+  - grubby(8)
+  - proc_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-O03-QA-009
+  type: qa
+  question: SELinux 重标记进行时为什么不应强制断电？
+  answer: 重标记遍历文件系统并更新标签；中断可能留下不完整的标签状态。
+  extra: 应等待完成并在启动后检查模式、failed unit 和 Journal。
+  source:
+  - RHEL9 SELinux documentation
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::selinux-relabel
+  - card::boundary
+  - priority::P0
+- id: RHCSA-30-O03-CLOZE-001
+  type: cloze
+  text: 在 `rd.break` 中先将 {{c1::/sysroot}} remount 为 rw，再 {{c2::chroot /sysroot}}，执行 `passwd root`，最后创建 {{c3::/.autorelabel}}。
+  extra: '`/.autorelabel` 必须在 chroot 内创建。'
+  source:
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::root-password
+  - card::cloze
+  - priority::P0
+- id: RHCSA-30-D01-QA-001
+  type: qa
+  question: 怎样列出本次启动中 systemd 当前标记为失败的 unit？
+  answer: '```bash
+
+    systemctl --failed
+
+    ```'
+  extra: 若失败的是 mount unit，再按 unit 查询状态和 Journal。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::command
+  - priority::P0
+- id: RHCSA-30-D01-QA-002
+  type: qa
+  question: 怎样对 `/etc/fstab` 做静态验证？
+  answer: '```bash
+
+    findmnt --verify
+
+    ```'
+  extra: 静态通过不能代替真实 `mount -a` 和目标 `findmnt`。
+  source:
+  - findmnt(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::command
+  - priority::P0
+- id: RHCSA-30-D01-QA-003
+  type: qa
+  question: 怎样查看块设备真实 UUID、LABEL 和文件系统类型？
+  answer: '```bash
+
+    lsblk -f
+
+    blkid
+
+    ```'
+  extra: 不要编造 UUID 或只依赖易变化的 `/dev/sdX` 名称。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::command
+  - priority::P0
+- id: RHCSA-30-D01-QA-004
+  type: qa
+  question: 修改 `fstab` 后，为什么要执行 `systemctl daemon-reload`？
+  answer: 让 systemd 重新运行/读取生成关系，使 mount unit 反映新的 `fstab`。
+  extra: 它不等于已经实际挂载目标。
+  source:
+  - systemctl(1)
+  - systemd.generator(7)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-D01-QA-005
+  type: qa
+  question: '`mount -a` 无输出后，还必须验证什么？'
+  answer: 用 `findmnt <TARGET>` 确认目标实际挂载到正确 source、fstype 和 options，并检查 `systemctl --failed`。
+  extra: 命令无输出不是完整终态。
+  source:
+  - mount(8)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-D01-QA-006
+  type: qa
+  question: 失败 unit 为 `data.mount`，怎样把它与 `/etc/fstab` 对应起来？
+  answer: 查看 unit 状态中的挂载点，并检查 `/data` 对应的 `fstab` 行；可用 `systemd-escape --path --suffix=mount /data` 验证名称。
+  extra: 不要批量注释其他行。
+  source:
+  - systemd-escape(1)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-30-D01-QA-007
+  type: qa
+  question: Journal 报告设备 UUID 不存在，下一条最有区分度的证据是什么？
+  answer: 执行 `lsblk -f` 和 `blkid`，比较真实 UUID 与 `fstab` 声明。
+  extra: 若真实设备不存在，还要调查设备发现与依赖，而不是随意换成另一个设备。
+  source:
+  - blkid(8)
+  - lsblk(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-30-D01-QA-008
+  type: qa
+  question: 已有数据文件系统因 `fstab` 错误未挂载，为什么不能直接执行 `mkfs`？
+  answer: '`mkfs` 会创建新文件系统并可能破坏原数据；配置、身份或选项错误不需要格式化。'
+  extra: 先以 `lsblk -f`、`blkid`、日志和 `findmnt` 取证。
+  source:
+  - mkfs(8)
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::boundary
+  - priority::P0
+- id: RHCSA-30-D01-QA-009
+  type: qa
+  question: 修复 `fstab` 后的当前验证顺序是什么？
+  answer: '`daemon-reload → findmnt --verify → mount -a → findmnt <TARGET> → systemctl --failed`。'
+  extra: 当前闭环后再进行受控重启。
+  source:
+  - systemctl(1)
+  - findmnt(8)
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::process
+  - priority::P0
+- id: RHCSA-30-D01-QA-010
+  type: qa
+  question: 题目要求必需数据卷开机挂载，但当前条目错误。允许的最小修复是什么？
+  answer: 从 `blkid`/`lsblk -f` 获取真实身份，只修正对应 `fstab` 字段，并完成静态、当前和重启后验证。
+  extra: 不能注释条目或用 `nofail` 改写目标要求。
+  source:
+  - fstab(5)
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::fstab-recovery
+  - card::task
+  - priority::P1
+- id: RHCSA-30-D02-QA-001
+  type: qa
+  question: 怎样查看本次启动的全部 Journal？
+  answer: '```bash
+
+    journalctl -b
+
+    ```'
+  extra: '`-b` 将范围限定到一次启动。'
+  source:
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-30-D02-QA-002
+  type: qa
+  question: 怎样只查看本次启动的 kernel Journal？
+  answer: '```bash
+
+    journalctl -k -b
+
+    ```'
+  extra: 适合调查 kernel 和设备发现，不包含全部普通服务上下文。
+  source:
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-30-D02-QA-003
+  type: qa
+  question: 怎样列出 Journal 中可用的启动轮次？
+  answer: '```bash
+
+    journalctl --list-boots
+
+    ```'
+  extra: 前次启动能否读取取决于持久化与轮转。
+  source:
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-30-D02-QA-004
+  type: qa
+  question: 怎样查看上一次可用启动的 Journal？
+  answer: '```bash
+
+    journalctl -b -1
+
+    ```'
+  extra: 无记录不等于系统从未失败。
+  source:
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-30-D02-QA-005
+  type: qa
+  question: '`journalctl -b` 与 `journalctl -b -p err` 的区别是什么？'
+  answer: 前者保留本次启动完整时间线；后者只筛较高错误优先级，可能漏掉因果上下文。
+  extra: 诊断通常先看错误，再根据需要回到完整上下文。
+  source:
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::comparison
+  - priority::P0
+- id: RHCSA-30-D02-QA-006
+  type: qa
+  question: 为什么固件阶段故障通常无法从 `journalctl -b -1` 得到证据？
+  answer: 当时 Linux kernel 和 Journal 尚未运行，事件没有进入 systemd 日志链。
+  extra: 应使用控制台、BMC 和固件证据。
+  source:
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::boundary
+  - priority::P1
+- id: RHCSA-30-D02-QA-007
+  type: qa
+  question: Journal 中出现某 service 的 “Started” 是否证明业务功能正确？
+  answer: 不能。它通常只证明 unit 启动动作成功；仍需验证监听、请求、数据或业务响应。
+  extra: 启动证据与功能证据分层。
+  source:
+  - systemd.service(5)
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::output
+  - priority::P1
+- id: RHCSA-30-D02-QA-008
+  type: qa
+  question: 上一次启动失败，但 `journalctl -b -1` 没有记录。合理的下一步是什么？
+  answer: 检查 `journalctl --list-boots` 和 Journal 持久化/轮转条件，并结合控制台或外部日志；不要断言没有失败。
+  extra: 证据缺失本身也是边界。
+  source:
+  - journalctl(1)
+  - journald.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::boot-evidence
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-30-D03-QA-001
+  type: qa
+  question: 启动配置变更的稳健工作流是什么？
+  answer: 建立基线 → 最小变更 → 静态与当前验证 → 确认控制台/回退 → 受控重启 → 用同一对象复验。
+  extra: 重启不是第一条诊断命令。
+  source:
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::reboot-risk
+  - card::process
+  - priority::P0
+- id: RHCSA-30-D03-QA-002
+  type: qa
+  question: 为什么不应同时修改默认 kernel、全部参数、default target 和多条 `fstab`？
+  answer: 多个变量同时改变会扩大故障面，并使重启失败后难以识别根因。
+  extra: 一次只改变一个启动维度。
+  source:
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::reboot-risk
+  - card::boundary
+  - priority::P0
+- id: RHCSA-30-D03-QA-003
+  type: qa
+  question: 持久 kernel 参数重启前后应分别用什么证据？
+  answer: 重启前用 `grubby --info=ALL` 验证条目；重启后用 `/proc/cmdline` 验证实际生效。
+  extra: 同一对象前后对应。
+  source:
+  - grubby(8)
+  - proc_cmdline(5)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::reboot-risk
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-D03-QA-004
+  type: qa
+  question: default target 变更重启前后应如何验证？
+  answer: 重启前后都检查 `systemctl get-default`，重启后再检查 active target 和目标功能。
+  extra: default 值不等于当前已达到。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::reboot-risk
+  - card::verification
+  - priority::P0
+- id: RHCSA-30-D03-QA-005
+  type: qa
+  question: 远程服务器没有控制台时，为什么应谨慎执行启动链变更和 reboot？
+  answer: 错误可能在重启时才暴露，并同时切断唯一网络管理通道。
+  extra: 应先确认 BMC/控制台、回退条目和变更窗口。
+  source:
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::reboot-risk
+  - card::boundary
+  - priority::P0
+- id: RHCSA-30-D03-QA-006
+  type: qa
+  question: 口令恢复时把 SELinux 永久设为 permissive 能否作为完成终态？
+  answer: 不能。它改变安全要求并掩盖标签问题；应保持原模式并使用 `/.autorelabel`。
+  extra: 安全终态必须单独验证。
+  source:
+  - RHEL9 SELinux documentation
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::reboot-risk
+  - card::security
+  - priority::P0
+- id: RHCSA-30-D03-QA-007
+  type: qa
+  question: 修改 `fstab` 后当前验证全部通过，任务还要求重启持久。重启后最少检查哪些对象？
+  answer: '`systemctl --failed`、目标 `findmnt`、default/active target 以及本次 boot Journal。'
+  extra: 还应验证题目要求的实际功能。
+  source:
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::reboot-risk
+  - card::task
+  - priority::P1
+- id: RHCSA-30-D03-CLOZE-001
+  type: cloze
+  text: 启动类变更应遵循：{{c1::基线}} → {{c2::最小变更}} → {{c3::当前验证}} → {{c4::受控重启}} → {{c5::重启后复验}}。
+  extra: 重启只在当前证据闭环后执行。
+  source:
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::reboot-risk
+  - card::cloze
+  - priority::P0
+- id: RHCSA-30-T01-QA-001
+  type: qa
+  question: root 口令恢复任务的完整验收不应只看 `passwd`，还包括哪些状态？
+  answer: 真实根写入、SELinux 重标记、临时参数未持久化、default target 未改变、正常启动、failed unit 与实际 root 认证。
+  extra: 这是综合任务卡，答案按验收对象组织。
+  source:
+  - RHCSA-30 lecture.md
+  - RHCSA9.0模拟题 p.12
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::classic-task-root
+  - card::task
+  - priority::P0
+- id: RHCSA-30-T02-QA-001
+  type: qa
+  question: '`fstab` emergency 任务的最终持久验收是什么？'
+  answer: 受控重启后系统无需人工干预到达原 default target，目标文件系统以正确 source/fstype/options 挂载，相关 mount unit 不失败。
+  extra: 离开 emergency 不是唯一终态。
+  source:
+  - RHCSA-30 lecture.md
+  tags:
+  - exam::rhcsa
+  - chapter::boot-grub-recovery
+  - topic::classic-task-fstab
+  - card::task
+  - priority::P0

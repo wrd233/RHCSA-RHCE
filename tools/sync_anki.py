@@ -20,21 +20,21 @@ ENDPOINT = "http://127.0.0.1:8765"
 MODELS = {
     "qa": {
         "name": "RedHat-QA",
-        "fields": ["ID", "Question", "Answer", "Extra"],
+        "fields": ["ID", "Question", "Answer", "Extra", "Source"],
         "templates": [{
             "Name": "RedHat-QA",
             "Front": "{{Question}}",
-            "Back": '{{Answer}}<div class="extra">{{Extra}}</div>',
+            "Back": '{{Answer}}<div class="extra">{{Extra}}</div><div class="source">{{Source}}</div>',
         }],
         "is_cloze": False,
     },
     "cloze": {
         "name": "RedHat-Cloze",
-        "fields": ["ID", "Text", "Extra"],
+        "fields": ["ID", "Text", "Extra", "Source"],
         "templates": [{
             "Name": "RedHat-Cloze",
             "Front": "{{cloze:Text}}",
-            "Back": '{{cloze:Text}}<div class="extra">{{Extra}}</div>',
+            "Back": '{{cloze:Text}}<div class="extra">{{Extra}}</div><div class="source">{{Source}}</div>',
         }],
         "is_cloze": True,
     },
@@ -65,11 +65,13 @@ def note_fields(note: dict) -> dict[str, str]:
             "Question": safe_markdown_to_html(note["question"]),
             "Answer": safe_markdown_to_html(note["answer"]),
             "Extra": safe_markdown_to_html(note.get("extra")),
+            "Source": safe_markdown_to_html("; ".join(note.get("source") or [])),
         }
     return {
         "ID": note["id"],
         "Text": safe_markdown_to_html(note["text"]),
         "Extra": safe_markdown_to_html(note.get("extra")),
+        "Source": safe_markdown_to_html("; ".join(note.get("source") or [])),
     }
 
 
@@ -156,6 +158,14 @@ def collect(paths: list[Path]) -> list[tuple[Path, dict]]:
     return collected
 
 
+def load_migrations() -> dict:
+    path = ROOT / "config" / "anki-migrations.yml"
+    data = load_yaml(path) if path.exists() else {}
+    if data and data.get("schema_version") != 1:
+        raise ValueError(f"unsupported Anki migration schema: {path}")
+    return data or {"disable_ids": [], "redirects": {}}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Synchronize YAML notes by stable ID")
     parser.add_argument("sources", nargs="*", type=Path, help="one or more chapter anki.yml files")
@@ -171,6 +181,7 @@ def main() -> int:
     if not paths:
         parser.error("provide source files or --all")
     items = collect(paths)
+    migrations = load_migrations()
     counts = {"active": 0, "disabled": 0}
     for _, data in items:
         for note in data["notes"]:
@@ -179,7 +190,8 @@ def main() -> int:
     if not args.apply:
         print(
             f"DRY RUN: {len(items)} source file(s), {counts['active']} active note(s), "
-            f"{counts['disabled']} disabled note(s); AnkiConnect was not called"
+            f"{counts['disabled']} disabled note(s), {len(migrations.get('disable_ids', []))} centralized disable ID(s), "
+            f"{len(migrations.get('redirects', {}))} redirect(s); AnkiConnect was not called"
         )
         return 0
     if not args.yes:

@@ -43,13 +43,15 @@ def build(chapter: dict) -> tuple[Path, Path]:
     html = ENV.get_template("anki/preview.html").render(
         title=chapter["title"], notes=rendered_notes, css_uri=css_uri
     )
-    preview = chapter["path"] / "anki-preview.html"
+    output_dir = ROOT / "build" / "chapters" / chapter["track"] / chapter["slug"]
+    output_dir.mkdir(parents=True, exist_ok=True)
+    preview = output_dir / "anki-preview.html"
     preview.write_text(html, encoding="utf-8")
     types = Counter(n["type"] for n in notes)
     cards = sum(card_count(n) for n in notes)
     extra_count = sum("coverage::extra" in (n.get("tags") or []) for n in notes)
     priorities = Counter(tag for n in notes for tag in n.get("tags", []) if tag.startswith("priority::"))
-    summary = chapter["path"] / "anki-summary.md"
+    summary = output_dir / "anki-summary.md"
     summary.write_text(
         "\n".join([
             f'# {chapter["title"]} Anki 覆盖摘要',
@@ -92,4 +94,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

@@ -1,0 +1,1291 @@
+chapter_id: RHCSA-27
+chapter_slug: autofs
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCSA-NFS-QA-007
+  type: qa
+  question: autofs master map 的职责是什么？
+  answer: 把 indirect map 的父挂载点或 direct map 标记 `/-` 关联到子 map。
+  extra: 具体 key、选项和远端位置由子 map 定义。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::object-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-NFS-QA-008
+  type: qa
+  question: 展开 autofs 当前有效映射的命令是什么？
+  answer: '`automount -m`'
+  extra: 它证明配置可读取和展开，不证明远端已经挂载或可读写。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::configuration-evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-NFS-QA-009
+  type: qa
+  question: indirect map 的父挂载点为 `/shares`，key 为 `docs`，最终本地路径是什么？
+  answer: '`/shares/docs`'
+  extra: indirect key 是父目录下的相对目录名。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::path-model
+  - card::syntax
+  - priority::P0
+- id: RHCSA-NFS-QA-010
+  type: qa
+  question: autofs 触发前，`findmnt` 中没有 `/shares/docs` 的 NFS 载荷，是否一定表示失败？
+  answer: 不一定。按需挂载可能尚未被精确访问触发。
+  extra: 先执行 `stat /shares/docs`，再用 `findmnt -T /shares/docs` 核对。
+  source:
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::trigger-state
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-NFS-QA-011
+  type: qa
+  question: autofs wildcard map 中 `*` 与 `&` 通常怎样配合？
+  answer: '`*` 匹配请求 key，`&` 在 location 中代入该 key。'
+  extra: 常用于本地与远端末级目录同名的用户家目录。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::wildcard
+  - card::parameter
+  - priority::P0
+- id: RHCSA-NFS-QA-015
+  type: qa
+  question: 修改 autofs map 后的推荐验证链是什么？
+  answer: '`automount -m` → reload autofs → 精确访问 key → `findmnt` 核对源 → 目标身份功能 → journal。'
+  extra: 不要只看服务 active。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::verification-chain
+  - card::process
+  - priority::P0
+- id: RHCSA-NFS-QA-016
+  type: qa
+  question: 固定 NFS 挂载与 autofs 的核心生命周期区别是什么？
+  answer: 固定挂载通常由 fstab 在启动或 `mount -a` 时建立；autofs 在访问时按需挂载并可空闲卸载。
+  extra: 按题目要求选择；systemd automount 不作为本章主线替代。
+  source:
+  - RHEL9-Managing-File-Systems-Ch18
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::lifecycle-choice
+  - card::comparison
+  - priority::P0
+- id: RHCSA-27-K01-QA-001
+  type: qa
+  question: autofs 的子 map 一行主要描述哪三个对象？
+  answer: key、挂载选项和 location。
+  extra: 基本骨架是 `key -options location`。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::object-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-27-K01-QA-002
+  type: qa
+  question: autofs 触发文件系统与远端 NFS 载荷分别承担什么作用？
+  answer: 触发层拦截路径访问并发起挂载；NFS 载荷提供实际远端文件内容。
+  extra: 看到 `findmnt -t autofs` 不等于已经看到目标 NFS。
+  source:
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-27-K01-QA-003
+  type: qa
+  question: '`automount -m` 成功与 `autofs.service` active 分别证明什么？'
+  answer: 前者证明 map 可读取和展开；后者证明 daemon 当前运行。
+  extra: 两者都不能单独证明目标 key 可触发或用户可读写。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::state-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-27-K01-QA-004
+  type: qa
+  question: 本地目录已经存在，能否据此证明 autofs 载荷已经挂载？
+  answer: 不能。它可能只是普通目录或 autofs 触发入口。
+  extra: 用 `findmnt` 核对当前文件系统来源。
+  source:
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::state-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-27-K01-QA-005
+  type: qa
+  question: autofs 中 idle 与 busy 的区别是什么？
+  answer: idle 表示载荷没有活动引用，可在超时后尝试卸载；busy 表示仍被进程使用。
+  extra: 当前工作目录、打开文件和后台扫描都可能保持 busy。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::state-model
+  - card::concept
+  - priority::P1
+- id: RHCSA-27-K01-QA-006
+  type: qa
+  question: 怎样证明载荷超时卸载后 autofs 仍然可用？
+  answer: 确认 NFS 载荷消失后，再次精确访问 key，并用 `findmnt` 确认正确源重新出现。
+  extra: 只看到卸载不能证明再触发能力。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::state-model
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-K01-QA-007
+  type: qa
+  question: '`systemctl is-active autofs` 返回 active，能否宣布自动挂载任务完成？'
+  answer: 不能。还要验证 map、触发层、精确 key、当前源和目标身份功能。
+  extra: active 只是 daemon 层证据。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::state-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-27-K01-CLOZE-001
+  type: cloze
+  text: autofs 的完整验证链是：{{c1::map 可解析}} → {{c2::服务运行}} → {{c3::触发层存在}} → {{c4::key 触发载荷}} → {{c5::目标身份功能}}。
+  extra: 每一层都需要独立证据。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::state-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-27-K02-QA-001
+  type: qa
+  question: master map entry 的基本语法骨架是什么？
+  answer: '`mount-point  map-name  options`'
+  extra: options 可省略；direct map 的 mount-point 使用 `/-`。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::master-map
+  - card::syntax
+  - priority::P0
+- id: RHCSA-27-K02-QA-002
+  type: qa
+  question: 子 map entry 的基本语法骨架是什么？
+  answer: '`key  -options  location`'
+  extra: 选项字段位于 key 与 location 之间。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::map-syntax
+  - card::syntax
+  - priority::P0
+- id: RHCSA-27-K02-QA-003
+  type: qa
+  question: 子 map 中 `-fstype=nfs,rw` 表达什么？
+  answer: 指定载荷文件系统类型为 NFS，并请求读写挂载。
+  extra: 实际写权限仍受远端导出和文件所有权控制。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::map-syntax
+  - card::parameter
+  - priority::P0
+- id: RHCSA-27-K02-QA-004
+  type: qa
+  question: autofs map 中 NFS location 的常见格式是什么？
+  answer: '`<HOST>:/<EXPORT_PATH>`'
+  extra: 例如 `serverb:/rhome/remoteuser0`。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::map-syntax
+  - card::syntax
+  - priority::P0
+- id: RHCSA-27-K02-QA-005
+  type: qa
+  question: indirect map 与 direct map 的 key 有什么区别？
+  answer: indirect key 是 master point 下的相对目录组件；direct key 是完整绝对路径。
+  extra: direct map 在 master 中关联 `/-`。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::path-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-27-K02-QA-006
+  type: qa
+  question: direct map 在 master map 中使用什么 mount-point 标记？
+  answer: '`/-`'
+  extra: 它不是实际访问目录，实际绝对路径写在 direct 子 map key 中。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::path-model
+  - card::parameter
+  - priority::P0
+- id: RHCSA-27-K02-QA-007
+  type: qa
+  question: 需要按需挂载 `/srv/docs` 和 `/opt/catalog` 两个分散路径，优先选择哪类 map？
+  answer: direct map。
+  extra: master 使用 `/-`，子 map 分别列出两个完整路径。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::path-model
+  - card::task
+  - priority::P0
+- id: RHCSA-27-K02-QA-008
+  type: qa
+  question: 需要在 `/projects` 下按 `alpha`、`beta` 管理一组共享，优先选择哪类 map？
+  answer: indirect map。
+  extra: master point 为 `/projects`，子 map key 为 `alpha`、`beta`。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::path-model
+  - card::task
+  - priority::P0
+- id: RHCSA-27-K02-QA-009
+  type: qa
+  question: 在 `/etc/auto.master.d/` 中创建本地 master 片段时，课程常用什么文件后缀？
+  answer: '`.autofs`'
+  extra: 例如 `/etc/auto.master.d/rhome.autofs`；最终仍以 `automount -m` 为准。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::master-map
+  - card::configuration
+  - priority::P0
+- id: RHCSA-27-K02-QA-010
+  type: qa
+  question: master 为 `/projects /etc/auto.projects` 时，子 map 第一字段写成 `/projects/alpha` 有什么问题？
+  answer: 它把 direct 的完整路径形式误用于 indirect map；请求 key `alpha` 无法匹配。
+  extra: 应改为 `alpha`。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::path-model
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-K02-CLOZE-001
+  type: cloze
+  text: indirect 路径由 {{c1::master mount point}} 与 {{c2::relative key}} 组成；direct map 的 key 是 {{c3::完整绝对路径}}。
+  extra: 这是诊断 key 不匹配的核心公式。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::path-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-27-O01-QA-001
+  type: qa
+  question: 在 RHEL 9 客户端配置 NFS autofs，通常需要安装哪些包？
+  answer: '`autofs` 和 `nfs-utils`。'
+  extra: '`autofs` 提供 automounter；`nfs-utils` 提供 NFS 客户端能力。'
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::command
+  - priority::P0
+- id: RHCSA-27-O01-QA-002
+  type: qa
+  question: 将 `/rhome` 关联到 `/etc/auto.rhome`，timeout 为 60 秒的 master entry 是什么？
+  answer: '`/rhome  /etc/auto.rhome  --timeout=60`'
+  extra: 可放入 `/etc/auto.master.d/rhome.autofs`。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::configuration
+  - priority::P0
+- id: RHCSA-27-O01-QA-003
+  type: qa
+  question: 将 key `remoteuser0` 映射到 `serverb:/rhome/remoteuser0` 的子 map 行是什么？
+  answer: '`remoteuser0  -fstype=nfs,rw  serverb:/rhome/remoteuser0`'
+  extra: 这是具体 key 形式。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::configuration
+  - priority::P0
+- id: RHCSA-27-O01-QA-004
+  type: qa
+  question: 首次启动并设置 autofs 开机启用的命令是什么？
+  answer: '`systemctl enable --now autofs.service`'
+  extra: 操作后分别检查 active 与 enabled。
+  source:
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::command
+  - priority::P0
+- id: RHCSA-27-O01-QA-005
+  type: qa
+  question: 配置写入后，精确触发 `/rhome/remoteuser0` 可使用什么命令？
+  answer: '`stat /rhome/remoteuser0`'
+  extra: 也可使用 `ls -ld` 或进入该精确路径。
+  source:
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::command
+  - priority::P0
+- id: RHCSA-27-O01-QA-006
+  type: qa
+  question: 触发后怎样核对 `/rhome/remoteuser0` 当前来自哪个源？
+  answer: '`findmnt -T /rhome/remoteuser0`'
+  extra: 核对 TARGET、SOURCE、FSTYPE 与 OPTIONS。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-O01-QA-007
+  type: qa
+  question: 为什么最终读写测试要以 `remoteuser0` 身份执行？
+  answer: 因为 root 的访问结果不能证明题目用户具有所需权限。
+  extra: 远端 UID/GID 与导出策略会影响普通用户。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-O01-QA-008
+  type: qa
+  question: 配置 autofs 家目录时，为什么不应把普通 `mount -t nfs` 留作最终状态？
+  answer: 因为它建立的是手工当前挂载，不证明访问触发和空闲卸载。
+  extra: 临时挂载只能用于独立诊断，完成后应卸载。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::boundary
+  - priority::P0
+- id: RHCSA-27-O01-QA-009
+  type: qa
+  question: '`automount -m` 已显示正确规则，但触发失败，下一步应优先检查哪类证据？'
+  answer: 精确访问的错误、`findmnt` 当前关系和 `journalctl -u autofs -b`。
+  extra: 随后按错误判断是 key、远端源还是权限层。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-O01-CLOZE-001
+  type: cloze
+  text: 配置 indirect map 后，先执行 {{c1::automount -m}}，再 {{c2::reload autofs}}，随后用 {{c3::stat 精确 key}} 触发。
+  extra: 不要跳过静态展开直接反复 restart。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::indirect-config
+  - card::cloze
+  - priority::P0
+- id: RHCSA-27-K03-QA-001
+  type: qa
+  question: wildcard map 中 `*` 匹配的对象是什么？
+  answer: 当前访问请求中的 key。
+  extra: 例如访问 `/rhome/alice` 时 key 是 `alice`。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::wildcard
+  - card::concept
+  - priority::P0
+- id: RHCSA-27-K03-QA-002
+  type: qa
+  question: wildcard map 中 `&` 代表什么？
+  answer: 当前匹配到的 key。
+  extra: 它可在远端 location 中形成同名路径。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::wildcard
+  - card::concept
+  - priority::P0
+- id: RHCSA-27-K03-QA-003
+  type: qa
+  question: 将 `/rhome/<USER>` 映射到 `serverb:/rhome/<USER>` 的 wildcard 子 map 行是什么？
+  answer: '`*  -fstype=nfs,rw  serverb:/rhome/&`'
+  extra: master point 仍应单独定义为 `/rhome`。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::wildcard
+  - card::configuration
+  - priority::P0
+- id: RHCSA-27-K03-QA-004
+  type: qa
+  question: 访问 `/rhome/alice` 时，规则 `serverb:/rhome/&` 形成的远端路径是什么？
+  answer: '`serverb:/rhome/alice`'
+  extra: '`&` 代入请求 key `alice`。'
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::wildcard
+  - card::output
+  - priority::P0
+- id: RHCSA-27-K03-QA-005
+  type: qa
+  question: '`automount -m` 能显示 wildcard 规则，能否证明任意用户目录都存在于远端？'
+  answer: 不能。规则只描述替换，远端目录仍需在触发时验证。
+  extra: 不存在的 key 可能产生失败查找。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::wildcard
+  - card::boundary
+  - priority::P0
+- id: RHCSA-27-K03-QA-006
+  type: qa
+  question: 只有一个固定且异名的共享时，为什么通常不优先使用 wildcard？
+  answer: 具体 key 更直接，能准确表达本地与远端的固定关系。
+  extra: wildcard 适合一组同构、同名路径。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::wildcard
+  - card::comparison
+  - priority::P1
+- id: RHCSA-27-K03-CLOZE-001
+  type: cloze
+  text: 访问 `/rhome/bob` 时，wildcard `*` 捕获 {{c1::bob}}，location 中的 `&` 也替换为 {{c2::bob}}。
+  extra: 替换规则不预检远端目录是否存在。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::wildcard
+  - card::cloze
+  - priority::P0
+- id: RHCSA-27-O02-QA-001
+  type: qa
+  question: direct map 的 master entry 骨架是什么？
+  answer: '`/-  /etc/auto.direct  --timeout=<SECONDS>`'
+  extra: '`/-` 是 direct map 标记。'
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::direct-map
+  - card::configuration
+  - priority::P0
+- id: RHCSA-27-O02-QA-002
+  type: qa
+  question: 将 `/srv/docs` 按需映射到 `files:/exports/docs` 的 direct map 行是什么？
+  answer: '`/srv/docs  -fstype=nfs,rw  files:/exports/docs`'
+  extra: direct key 必须是完整绝对路径。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::direct-map
+  - card::configuration
+  - priority::P0
+- id: RHCSA-27-O02-QA-003
+  type: qa
+  question: '`/-` 应写在 master map 还是 direct 子 map？'
+  answer: master map。
+  extra: 子 map 中写实际绝对路径 key。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::direct-map
+  - card::parameter
+  - priority::P0
+- id: RHCSA-27-O02-QA-004
+  type: qa
+  question: 怎样分别触发并验证 direct map 中的 `/srv/docs`？
+  answer: '`stat /srv/docs`，然后 `findmnt -T /srv/docs`。'
+  extra: 另一个 direct key 必须独立验证。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::direct-map
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-O02-QA-005
+  type: qa
+  question: direct map 内容修改后，为什么应显式 reload autofs？
+  answer: direct map 和 master map 的变化需要刷新 daemon 才能确定应用。
+  extra: 流程为 `automount -m` → reload → 重新触发。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::direct-map
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-O02-QA-006
+  type: qa
+  question: direct map 中 `/srv/docs` 与 indirect map 中 key `docs` 的本质区别是什么？
+  answer: 前者本身是完整本地挂载路径；后者还要与 master point 拼接。
+  extra: 不要混写。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::direct-map
+  - card::comparison
+  - priority::P0
+- id: RHCSA-27-O02-QA-007
+  type: qa
+  question: 一个 direct key 触发成功，能否证明同一 map 中其他 key 也正确？
+  answer: 不能。每个 key 的 location 与权限都可能不同。
+  extra: 逐路径验证当前源和功能。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::direct-map
+  - card::boundary
+  - priority::P1
+- id: RHCSA-27-O02-CLOZE-001
+  type: cloze
+  text: direct map 的 master mount-point 是 {{c1::/-}}，而实际挂载点写在子 map 的 {{c2::完整路径 key}} 中。
+  extra: 这是 direct map 最核心的语法关系。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::direct-map
+  - card::cloze
+  - priority::P0
+- id: RHCSA-27-O03-QA-001
+  type: qa
+  question: '`systemctl reload autofs` 与 `restart autofs` 的影响区别是什么？'
+  answer: reload 重新比较并读取配置，尽量保留运行状态；restart 停止并重新启动服务，影响更强。
+  extra: 优先用能完成目标的较小操作。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::service-lifecycle
+  - card::comparison
+  - priority::P0
+- id: RHCSA-27-O03-QA-002
+  type: qa
+  question: '`automount -m` 已报告语法错误时，restart 能修复吗？'
+  answer: 不能。restart 只会再次加载错误配置。
+  extra: 先修 map，再静态展开。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::service-lifecycle
+  - card::boundary
+  - priority::P0
+- id: RHCSA-27-O03-QA-003
+  type: qa
+  question: master entry 中 `--timeout=60` 表达什么？
+  answer: 载荷空闲约 60 秒后可尝试自动卸载。
+  extra: busy 引用会阻止安全过期。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::timeout
+  - card::parameter
+  - priority::P0
+- id: RHCSA-27-O03-QA-004
+  type: qa
+  question: 将 autofs timeout 设置为 0 有什么效果？
+  answer: 禁用自动卸载。
+  extra: 这不满足“空闲后自动卸载”的任务目标。
+  source:
+  - automount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::timeout
+  - card::boundary
+  - priority::P1
+- id: RHCSA-27-O03-QA-005
+  type: qa
+  question: 超过 timeout 后载荷仍存在，下一步优先检查什么？
+  answer: 检查 Shell 当前目录、打开文件和其他活动引用，确认载荷是否 busy。
+  extra: 可使用 `fuser -vm <PATH>` 辅助调查。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::timeout
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-O03-QA-006
+  type: qa
+  question: 为什么不应在未调查时强制卸载 busy 的 autofs 载荷？
+  answer: 仍在使用该挂载的进程可能发生 I/O 错误或业务异常。
+  extra: 先识别并释放引用。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::timeout
+  - card::boundary
+  - priority::P0
+- id: RHCSA-27-O03-QA-007
+  type: qa
+  question: 执行 `enable --now` 后为什么还要分别检查 active 与 enabled？
+  answer: 因为当前运行状态与开机启动配置是独立维度。
+  extra: 操作成功返回不替代终态查询。
+  source:
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::service-lifecycle
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-O03-QA-008
+  type: qa
+  question: 修改 master 或 direct map 后的确定性加载流程是什么？
+  answer: '`automount -m` → `systemctl reload autofs` → 释放旧引用 → 精确触发 → `findmnt`。'
+  extra: 旧载荷在使用中时，部分变化可能要等其过期。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::service-lifecycle
+  - card::process
+  - priority::P0
+- id: RHCSA-27-O03-CLOZE-001
+  type: cloze
+  text: 首次部署使用 {{c1::systemctl enable --now autofs}}；配置变更优先使用 {{c2::systemctl reload autofs}}。
+  extra: restart 只在需要完整重启服务时使用。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::service-lifecycle
+  - card::cloze
+  - priority::P0
+- id: RHCSA-27-V01-QA-001
+  type: qa
+  question: 查看当前 autofs 触发文件系统的命令是什么？
+  answer: '`findmnt -t autofs`'
+  extra: 它不证明目标 NFS 载荷已经触发。
+  source:
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-V01-QA-002
+  type: qa
+  question: 查看当前所有 NFS/NFSv4 载荷的命令骨架是什么？
+  answer: '`findmnt -t nfs,nfs4 -o TARGET,SOURCE,FSTYPE,OPTIONS`'
+  extra: 适合比较触发前、触发后和超时后。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-V01-QA-003
+  type: qa
+  question: 查看覆盖某个目标路径的实际挂载关系，使用什么？
+  answer: '`findmnt -T <PATH>`'
+  extra: 触发后用它核对源、类型和选项。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-V01-QA-004
+  type: qa
+  question: 为什么不把 `findmnt -T <PATH>` 描述为绝对不会触发 autofs？
+  answer: 它需要解析目标路径，路径查找可能参与触发。
+  extra: 需要明确触发时先执行 `stat`，再用它验收。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::boundary
+  - priority::P1
+- id: RHCSA-27-V01-QA-005
+  type: qa
+  question: 只执行 `ls /rhome` 没看到用户 key，是否能判定 wildcard map 失败？
+  answer: 不能。父目录枚举可能受 browse 行为影响。
+  extra: 直接 `stat /rhome/<KEY>` 更有区分度。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-V01-QA-006
+  type: qa
+  question: 触发前 `findmnt -t autofs` 有 `/rhome`，但 NFS 列表无目标载荷，如何判断？
+  answer: 这可以是正常待触发状态。
+  extra: 精确访问 key 后再比较。
+  source:
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::output
+  - priority::P0
+- id: RHCSA-27-V01-QA-007
+  type: qa
+  question: 触发后 `findmnt -T` 显示了另一台服务器的源，任务是否完成？
+  answer: 没有。当前载荷源与题目不符。
+  extra: 检查有效 map、旧载荷和 reload 状态。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::output
+  - priority::P0
+- id: RHCSA-27-V01-QA-008
+  type: qa
+  question: 查看本次启动中 autofs 运行日志的命令是什么？
+  answer: '`journalctl -u autofs.service -b --no-pager`'
+  extra: 结合触发时间定位 lookup、mount 和 expire。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::command
+  - priority::P0
+- id: RHCSA-27-V01-QA-009
+  type: qa
+  question: '`stat` 成功是否足以证明用户可写？'
+  answer: 不足。它主要证明路径和元数据可访问。
+  extra: 仍要以目标身份测试题目要求的读写。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::verification
+  - priority::P0
+- id: RHCSA-27-V01-CLOZE-001
+  type: cloze
+  text: '`automount -m` 是 {{c1::配置证据}}，`findmnt -t autofs` 是 {{c2::触发层证据}}，`findmnt -T` 是 {{c3::当前载荷关系证据}}。'
+  extra: 最终还需目标身份功能证据。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::evidence
+  - card::cloze
+  - priority::P0
+- id: RHCSA-27-D01-QA-001
+  type: qa
+  question: 创建了 `/etc/auto.master.d/rhome.auto`，但 `automount -m` 没有 `/rhome`，优先检查什么？
+  answer: 检查 master 片段文件名和后缀；课程 drop-in 应使用 `.autofs`。
+  extra: 同时核对子 map 路径和语法。
+  source:
+  - RH134-RHEL9
+  - RHCSA-Course-24
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-D01-QA-002
+  type: qa
+  question: master entry 可见、触发层存在，但 indirect key 无载荷，最有区分度的下一步是什么？
+  answer: 比较请求 key 与子 map 第一字段，并查看精确访问的 journal。
+  extra: 先排除把完整路径写成 indirect key。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-D01-QA-003
+  type: qa
+  question: map 与 key 正确，但触发报 `access denied by server`，问题优先属于哪一层？
+  answer: NFS 服务端导出或来源权限层。
+  extra: 转入第 26 章核对导出路径和客户端范围。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-D01-QA-004
+  type: qa
+  question: autofs 挂载后普通用户不能写，是否应默认执行 `chmod 777`？
+  answer: 不应。先核对远端所有者、UID/GID、导出策略和题目身份。
+  extra: 客户端目录权限不能修改服务端拒绝。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::security
+  - priority::P0
+- id: RHCSA-27-D01-QA-005
+  type: qa
+  question: wildcard 中 `/rhome/alice` 成功、`/rhome/bob` 失败，优先推断什么？
+  answer: master 与 wildcard 机制总体成立，差异更可能在 `bob` 对应的远端路径或身份。
+  extra: 不要先重写整个 master map。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-D01-QA-006
+  type: qa
+  question: 新增远端目录后立即重试同一失败 key 仍失败，可能还有什么运行因素？
+  answer: 失败 key lookup 可能被短暂负缓存。
+  extra: 结合 journal，等待缓存期或按最小范围 reload 后再试。
+  source:
+  - automount(8)
+  - autofs(5)
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-27-D01-QA-007
+  type: qa
+  question: 修改 map 后仍触发旧源，推荐调查链是什么？
+  answer: '`automount -m` → 确认修改文件 → reload → 检查旧载荷是否仍在使用 → 重新触发。'
+  extra: 不要直接删除所有配置。
+  source:
+  - automount(8)
+  - autofs(8)
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-D01-QA-008
+  type: qa
+  question: journal 出现 SELinux 访问控制证据时，本章的安全边界是什么？
+  answer: 保存 autofs、源、身份和时间证据，转入 SELinux 章节分析 AVC。
+  extra: 不通过关闭 SELinux 掩盖根因。
+  source:
+  - RHCSA-28-SELinux-Boundary
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-27-D01-QA-009
+  type: qa
+  question: autofs 故障的推荐分层顺序是什么？
+  answer: entry/load → key → trigger → remote source → identity permission → busy/expire。
+  extra: 每层选择一条最有区分度的证据。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-27-D01-CLOZE-001
+  type: cloze
+  text: 路径存在但无 NFS 载荷时，先区分 {{c1::普通目录/触发层}}，再执行 {{c2::精确 key 访问}}，最后用 {{c3::findmnt}} 核对源。
+  extra: 目录存在不是挂载证据。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnosis
+  - card::cloze
+  - priority::P0
+- id: RHCSA-27-T01-QA-001
+  type: qa
+  question: 家目录任务要求 `/rhome/<USER>` 映射到 `serverb:/rhome/<USER>`，应采用什么 map 组合？
+  answer: indirect master `/rhome` 加 wildcard 子 map `* ... /rhome/&`。
+  extra: 显式 timeout 后完成触发和目标身份验证。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-27-T01-QA-002
+  type: qa
+  question: 按用户 key 自动挂载任务的最终验收顺序是什么？
+  answer: 配置展开 → active/enabled → 触发层 → 精确触发 → 当前源 → 用户读写 → 超时 → 再触发。
+  extra: 不要省略用户身份和再触发。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::classic-task
+  - card::process
+  - priority::P0
+- id: RHCSA-27-T01-QA-003
+  type: qa
+  question: 考试题要求 autofs 时，把相同 NFS 写入 `/etc/fstab` 是否等价？
+  answer: 不等价。fstab 不证明按 key 触发和空闲卸载。
+  extra: 生命周期是评分对象的一部分。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::classic-task
+  - card::boundary
+  - priority::P0
+- id: RHCSA-27-T02-QA-001
+  type: qa
+  question: indirect master 为 `/projects`，map key 错写 `/projects/alpha`，最小修复是什么？
+  answer: 把 key 改为 `alpha`，再展开、reload、精确触发和核对源。
+  extra: 不需要修改远端 NFS。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::diagnostic-task
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-27-W01-QA-001
+  type: qa
+  question: 生产环境修改 autofs 前，建议保存哪些基线证据？
+  answer: '`automount -m`、服务状态、当前 autofs 触发层和当前 NFS 载荷。'
+  extra: 用于比较文件内容与 daemon 有效状态。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::work-migration
+  - card::process
+  - priority::P1
+- id: RHCSA-27-W01-QA-002
+  type: qa
+  question: 为什么监控脚本不应高频访问所有 autofs key？
+  answer: 持续访问会保持载荷活跃，破坏空闲卸载行为并增加远端负载。
+  extra: 选择代表 key 和合理周期。
+  source:
+  - RHCSA9-Mock
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems-Ch19
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::work-migration
+  - card::boundary
+  - priority::P1
+- id: RHCSA-27-W01-QA-003
+  type: qa
+  question: 查询 master map、子 map 和 daemon 语义的主要帮助入口是什么？
+  answer: '`man 5 auto.master`、`man 5 autofs`、`man 8 automount`、`man 8 autofs`。'
+  extra: 分别覆盖入口、map 格式、daemon 参数和服务控制。
+  source:
+  - auto.master(5)
+  - autofs(5)
+  - RH134-RHEL9
+  - automount(8)
+  - autofs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::autofs
+  - topic::help
+  - card::command
+  - priority::P1
+status: integrated

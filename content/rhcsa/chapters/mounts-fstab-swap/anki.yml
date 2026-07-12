@@ -1,0 +1,1511 @@
+chapter_id: RHCSA-24
+chapter_slug: mounts-fstab-swap
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+note_types:
+- RedHat-QA
+- RedHat-Cloze
+notes:
+- id: RHCSA-24-K01-QA-001
+  type: qa
+  question: 挂载关系中的 source、target 与 active mount 分别是什么？
+  answer: source 是文件系统来源；target 是接入目录；active mount 是当前 mount namespace 中已经建立的源—目标关系。
+  extra: 设备或目录存在都不能单独证明 active mount。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-K01-QA-002
+  type: qa
+  question: '`/srv/project` 目录存在，能否证明目标文件系统已挂载？'
+  answer: 不能。目录可能只是父文件系统中的普通目录。
+  extra: 使用 `findmnt --target /srv/project` 核对精确挂载关系。
+  source:
+  - findmnt(8)
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-model
+  - card::verification
+  - priority::P0
+- id: RHCSA-24-K01-QA-003
+  type: qa
+  question: 手工执行 `mount UUID=<UUID> /srv/project` 后，为什么重启仍可能丢失该挂载？
+  answer: 该命令只建立当前运行时关系，没有创建启动持久策略。
+  extra: 应配置 `/etc/fstab` 并完成静态、当前和重入验证。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::current-persistent
+  - card::comparison
+  - priority::P0
+- id: RHCSA-24-K01-QA-004
+  type: qa
+  question: 挂载到一个非空目录后，目录原有内容发生了什么？
+  answer: 原内容被新挂载暂时遮蔽，正常卸载后重新可见。
+  extra: 不是自动删除；挂载前应检查目录内容。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-shadowing
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-K01-QA-005
+  type: qa
+  question: 应用向 `/srv/project` 写入成功，为什么仍不能断定挂载正确？
+  answer: 路径可能仍位于根文件系统中的普通目录。
+  extra: 先核对 `findmnt` 的 source、target、FSTYPE 和 OPTIONS。
+  source:
+  - findmnt(8)
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-K01-QA-006
+  type: qa
+  question: 怎样查询任意路径实际位于哪个已挂载文件系统？
+  answer: '`findmnt -T <PATH>`'
+  extra: 结果可能是父文件系统；仍要与期望 target/source 比较。
+  source:
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::findmnt
+  - card::command
+  - priority::P0
+- id: RHCSA-24-K01-QA-007
+  type: qa
+  question: 当前挂载表是否一定对系统中的所有隔离进程完全相同？
+  answer: 不一定。挂载关系属于 mount namespace，不同 namespace 可以看到不同视图。
+  extra: RHCSA 只要求理解边界，不展开 namespace 创建。
+  source:
+  - mount_namespaces(7)
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-model
+  - card::boundary
+  - priority::P2
+- id: RHCSA-24-K01-QA-008
+  type: qa
+  question: 卸载一个文件系统会删除挂载点目录或文件系统内容吗？
+  answer: 不会。它只解除当前挂载关系。
+  extra: fstab 条目若仍存在，后续可能重新挂载。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::umount
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-O01-QA-001
+  type: qa
+  question: 精确查询 `/srv/project` 当前挂载源、类型和选项的命令骨架是什么？
+  answer: '`findmnt -no SOURCE,TARGET,FSTYPE,OPTIONS --target /srv/project`'
+  extra: 按目标验收时不要只看目录存在。
+  source:
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::findmnt
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O01-QA-002
+  type: qa
+  question: 怎样按文件系统 UUID 查询它当前挂到了哪些目标？
+  answer: '`findmnt --source UUID=<REAL_UUID>`'
+  extra: 可发现同源多挂载或挂错目标。
+  source:
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::findmnt
+  - card::command
+  - priority::P1
+- id: RHCSA-24-O01-QA-003
+  type: qa
+  question: 卸载前怎样查看 `/srv/project` 下的子挂载？
+  answer: '`findmnt -R /srv/project`'
+  extra: 子挂载通常需要按依赖从内到外处理。
+  source:
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::findmnt
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O01-QA-004
+  type: qa
+  question: '`findmnt` 与 `df -hT` 分别主要证明什么？'
+  answer: '`findmnt` 证明当前挂载源、目标、类型和选项；`df` 提供路径所在文件系统的容量和使用率。'
+  extra: '`df` 不能代替持久配置验证。'
+  source:
+  - findmnt(8)
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::evidence-boundary
+  - card::comparison
+  - priority::P0
+- id: RHCSA-24-O01-QA-005
+  type: qa
+  question: '`mountpoint -q /srv/project` 成功能证明哪些内容？'
+  answer: 只能快速证明该目录是一个挂载点。
+  extra: 不能证明 source、FSTYPE、OPTIONS 或 fstab 正确。
+  source:
+  - mountpoint(1)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::evidence-boundary
+  - card::boundary
+  - priority::P1
+- id: RHCSA-24-O01-QA-006
+  type: qa
+  question: 查看 fstab 中与 `/srv/project` 对应条目的 findmnt 形式是什么？
+  answer: '`findmnt --fstab --target /srv/project`'
+  extra: 这是持久声明视图，不是当前挂载视图。
+  source:
+  - findmnt(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::findmnt
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O01-QA-007
+  type: qa
+  question: '`findmnt -T /srv/project/file` 返回根文件系统通常说明什么？'
+  answer: 该路径当前落在根文件系统；预期的独立挂载可能缺失。
+  extra: 继续核对精确 target、fstab 和 mount unit。
+  source:
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::findmnt
+  - card::output
+  - priority::P0
+- id: RHCSA-24-O01-QA-008
+  type: qa
+  question: '`lsblk -f` 显示某设备有 MOUNTPOINTS，为什么仍建议使用 findmnt？'
+  answer: '`findmnt` 更完整地展示当前挂载层次、精确 target 和 OPTIONS。'
+  extra: 两者用于交叉核对，不是互相替代。
+  source:
+  - lsblk(8)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::evidence-boundary
+  - card::comparison
+  - priority::P1
+- id: RHCSA-24-O02-QA-001
+  type: qa
+  question: 建立当前挂载的基本命令骨架是什么？
+  answer: '`mount <SOURCE> <TARGET>`'
+  extra: target 应存在；操作前检查是否非空和是否已有挂载。
+  source:
+  - mount(8)
+  - RH124-RHEL9-Ch15
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-current
+  - card::syntax
+  - priority::P0
+- id: RHCSA-24-O02-QA-002
+  type: qa
+  question: 使用真实 UUID 将文件系统当前挂到 `/srv/project` 的命令是什么？
+  answer: '`mount UUID=<REAL_UUID> /srv/project`'
+  extra: UUID 来自当前 `blkid`/`lsblk -f` 输出。
+  source:
+  - mount(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-current
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O02-QA-003
+  type: qa
+  question: 已有唯一 fstab 条目时，只按挂载点建立当前挂载的命令是什么？
+  answer: '`mount /srv/project`'
+  extra: mount 会从 fstab 补齐 source、type 和 options。
+  source:
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-current
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O02-QA-004
+  type: qa
+  question: '`mount -t xfs -o nodev,nosuid <SOURCE> /srv/project` 中 `-t` 与 `-o` 分别做什么？'
+  answer: '`-t` 指定文件系统类型；`-o` 提供逗号分隔的挂载选项。'
+  extra: 操作后仍应查看当前 OPTIONS。
+  source:
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-options
+  - card::parameter
+  - priority::P0
+- id: RHCSA-24-O02-QA-005
+  type: qa
+  question: 怎样把当前已挂载的 `/srv/project` 重新挂为只读？
+  answer: '`mount -o remount,ro /srv/project`'
+  extra: 只改变当前状态；持久要求还要修改 fstab。
+  source:
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-options
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O02-QA-006
+  type: qa
+  question: '`nodev`、`nosuid`、`noexec` 分别限制什么？'
+  answer: 分别限制设备文件解释、setuid/setgid 提权语义和从挂载直接执行。
+  extra: 三者不能互相替代；`noexec` 也不是完整沙箱。
+  source:
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-options
+  - card::comparison
+  - priority::P0
+- id: RHCSA-24-O02-QA-007
+  type: qa
+  question: 为什么 LABEL 通常不如 UUID 适合唯一持久标识？
+  answer: LABEL 便于阅读，但管理员可能创建重复标签；UUID 通常用于唯一匹配当前文件系统。
+  extra: 重新格式化会改变 UUID。
+  source:
+  - fstab(5)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::source-identifiers
+  - card::comparison
+  - priority::P1
+- id: RHCSA-24-O02-QA-008
+  type: qa
+  question: remount 成功后，为什么还要比较 fstab？
+  answer: remount 只改变当前挂载选项，重启后会重新按持久配置建立。
+  extra: 当前和持久必须分别验证。
+  source:
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::current-persistent
+  - card::verification
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-019
+  type: qa
+  question: '`umount` 报 `target is busy` 时，下一条高区分度证据是什么？'
+  answer: 先用 `findmnt -R <MOUNT>` 查子挂载，再用 `fuser -vm <MOUNT>` 或可用的 lsof 查询进程引用。
+  extra: 不要先使用 force/lazy 或无调查终止进程。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  - fuser(1)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::busy
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-020
+  type: qa
+  question: 挂载到非空目录后，原内容怎样？
+  answer: 被新文件系统暂时遮蔽，卸载后重新出现。
+  extra: 这不是删除。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-shadowing
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-D01-QA-001
+  type: qa
+  question: 当前 Shell 位于 `/srv/project` 内导致 busy，最小修复是什么？
+  answer: 先 `cd /` 或离开该文件系统，再重试 `umount /srv/project`。
+  extra: 还要确认其他进程没有引用。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::busy
+  - card::process
+  - priority::P0
+- id: RHCSA-24-D01-QA-002
+  type: qa
+  question: 查看哪些进程正在使用某个挂载文件系统的核心命令是什么？
+  answer: '`fuser -vm /srv/project`'
+  extra: 识别用户和管理者后再正常释放引用。
+  source:
+  - fuser(1)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::busy
+  - card::command
+  - priority::P0
+- id: RHCSA-24-D01-QA-003
+  type: qa
+  question: 为什么不应看到 fuser 输出后直接 `kill -9`？
+  answer: 进程可能属于服务或正在写数据；强杀会跳过应用清理并可能被 systemd 重建。
+  extra: 先识别管理者，优先正常停止。
+  source:
+  - fuser(1)
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::busy
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-D01-QA-004
+  type: qa
+  question: '`umount -l` 的主要边界是什么？'
+  answer: 它把挂载立即从目录树分离，等引用释放后再清理；旧引用可能继续存在，现场更难理解。
+  extra: 不是普通 busy 的第一修复。
+  source:
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::busy
+  - card::boundary
+  - priority::P1
+- id: RHCSA-24-D01-QA-005
+  type: qa
+  question: 卸载后怎样证明挂载关系消失但目录仍存在？
+  answer: 结合 `findmnt --target <DIR>`、`mountpoint <DIR>` 与 `ls -ld <DIR>`。
+  extra: 卸载不删除挂载点。
+  source:
+  - findmnt(8)
+  - mountpoint(1)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::umount
+  - card::verification
+  - priority::P0
+- id: RHCSA-24-D01-QA-006
+  type: qa
+  question: 目标下还有子挂载时，推荐的处理顺序是什么？
+  answer: 先用 `findmnt -R` 理解层次，再按依赖从内到外安全卸载。
+  extra: 不要用递归操作掩盖未知业务挂载。
+  source:
+  - findmnt(8)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::busy
+  - card::process
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-010
+  type: qa
+  question: fstab 六字段顺序是什么？
+  answer: 设备标识、挂载点、文件系统类型、挂载选项、dump 字段、fsck pass。
+  extra: 六字段共同描述持久策略。
+  source:
+  - RH134-RHEL9-Ch5
+  - RHEL9-Managing-File-Systems
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-fields
+  - card::syntax
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-011
+  type: qa
+  question: 为什么不应默认给 fstab 添加 `nofail`？
+  answer: 它改变启动失败处理和依赖，可能掩盖本应修复的错误或让应用写入未挂载目录。
+  extra: 只在明确允许降级时使用。
+  source:
+  - systemd.mount(5)
+  - systemd-fstab-generator(8)
+  - systemctl(1)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-K02-QA-001
+  type: qa
+  question: 普通 XFS 按 UUID 持久挂载的 fstab 骨架是什么？
+  answer: '`UUID=<REAL_UUID> /srv/project xfs defaults 0 0`'
+  extra: 按任务添加明确选项，UUID 必须是真实值。
+  source:
+  - RH134-RHEL9-Ch5
+  - RHEL9-Managing-File-Systems
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-fields
+  - card::syntax
+  - priority::P0
+- id: RHCSA-24-K02-QA-002
+  type: qa
+  question: fstab 的 `fs_spec` 字段回答什么问题？
+  answer: 要挂载或启用的源对象是谁。
+  extra: 可使用 UUID=、LABEL= 或设备路径等。
+  source:
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-fields
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-K02-QA-003
+  type: qa
+  question: fstab 的 `fs_file` 字段回答什么问题？
+  answer: 普通文件系统的挂载点；Swap 条目通常写 `none`。
+  extra: 挂载点目录应存在。
+  source:
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-fields
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-K02-QA-004
+  type: qa
+  question: fstab 的第五、六字段常见 `0 0` 分别表示什么？
+  answer: 第五字段不参与 dump；第六字段不由启动 fsck 按顺序检查。
+  extra: 具体文件系统和题意可能使用其他 pass 值。
+  source:
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-fields
+  - card::parameter
+  - priority::P1
+- id: RHCSA-24-K02-QA-005
+  type: qa
+  question: '`defaults` 是否等于“没有任何挂载选项”？'
+  answer: 不是。它表示默认行为集合，但不会自动表达 nodev、nosuid、noexec、nofail 等策略。
+  extra: 需要的限制应显式写出。
+  source:
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-options
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-K02-QA-006
+  type: qa
+  question: '`noauto` 与 `nofail` 的核心区别是什么？'
+  answer: '`noauto` 让正常自动挂载和 `mount -a` 跳过；`nofail` 允许挂载失败而不把它作为到达相关 target 的强制条件。'
+  extra: 两者都不修复错误 source。
+  source:
+  - fstab(5)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::comparison
+  - priority::P0
+- id: RHCSA-24-K02-QA-007
+  type: qa
+  question: fstab 字段中的路径包含空格时应怎样表示？
+  answer: 使用转义 `\040` 表示空格。
+  extra: 仅加引号不能替代 fstab 的字段转义。
+  source:
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-fields
+  - card::syntax
+  - priority::P2
+- id: RHCSA-24-K02-QA-008
+  type: qa
+  question: 重新格式化文件系统后，原 fstab UUID 条目可能发生什么？
+  answer: 原 UUID 不再匹配新签名，持久挂载会失败。
+  extra: 查询当前 UUID 并修正；不要为了匹配旧值再次格式化。
+  source:
+  - fstab(5)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::source-identifiers
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-012
+  type: qa
+  question: 修改 fstab 后的重启前验证链是什么？
+  answer: '`systemctl daemon-reload` → `findmnt --verify` → 从未挂载状态实际挂载 → `findmnt` 分层核对。'
+  extra: 静态检查不替代实际挂载，当前验证不等于真实重启。
+  source:
+  - RH134-RHEL9-Ch5
+  - RHEL9-Managing-File-Systems
+  - systemd.mount(5)
+  - systemd-fstab-generator(8)
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-verify
+  - card::process
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-013
+  type: qa
+  question: '`findmnt /srv/project` 与 `df -hT /srv/project` 分别证明什么？'
+  answer: 前者主要证明挂载源、目标、类型和选项；后者证明路径所在文件系统的容量与使用率。
+  extra: 还要核对持久条目和功能。
+  source:
+  - findmnt(8)
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::evidence-boundary
+  - card::verification
+  - priority::P0
+- id: RHCSA-24-O03-QA-001
+  type: qa
+  question: 修改 `/etc/fstab` 后为什么执行 `systemctl daemon-reload`？
+  answer: 让 systemd 重新读取 unit 配置并重新运行包括 fstab generator 在内的生成器。
+  extra: 它不会自动证明挂载成功。
+  source:
+  - systemd.mount(5)
+  - systemd-fstab-generator(8)
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-verify
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-O03-QA-002
+  type: qa
+  question: '`findmnt --verify` 通过后，为什么还要实际挂载？'
+  answer: 它主要做静态解析和明显问题核对，不能证明设备当前可用、文件系统可挂载或功能正确。
+  extra: 继续 `mount -a` 或挂载目标并验收。
+  source:
+  - findmnt(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-verify
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-O03-QA-003
+  type: qa
+  question: '`mount -a` 主要处理哪些 fstab 条目？'
+  answer: 处理适用且尚未挂载、未被 `noauto` 排除的文件系统条目。
+  extra: 无输出不证明 source/type/options 符合题意。
+  source:
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-verify
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-O03-QA-004
+  type: qa
+  question: 目标已手工挂载时，直接运行 `mount -a` 为什么不能充分测试新 fstab 条目？
+  answer: 已经挂载的对象通常会被跳过，命令没有从配置重新建立该关系。
+  extra: 在安全前提下从未挂载状态测试，或安排重启验证。
+  source:
+  - mount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-verify
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-24-O03-QA-005
+  type: qa
+  question: 变更 fstab 前推荐保存哪些基线？
+  answer: 至少备份 fstab，并记录 current mount、fstab 视图、真实 source 身份。
+  extra: 这样才能比较变更前后，而不是只看最终文本。
+  source:
+  - fstab(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::change-safety
+  - card::process
+  - priority::P1
+- id: RHCSA-24-O03-QA-006
+  type: qa
+  question: 怎样验证 fstab 中 `/srv/project` 的声明而不混入当前挂载？
+  answer: '`findmnt --fstab --target /srv/project`'
+  extra: 这是配置视图，仍要另查 current mount。
+  source:
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-verify
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O03-QA-007
+  type: qa
+  question: 无重启验证为什么不能声明“启动持久性已实测”？
+  answer: 真实启动还涉及设备出现时序、依赖、网络和启动环境；当前重入只覆盖部分路径。
+  extra: 统一验证记录 应写 live test 未执行。
+  source:
+  - systemd.mount(5)
+  - systemd-fstab-generator(8)
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::verification-boundary
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-K03-QA-001
+  type: qa
+  question: 怎样计算 `/srv/project` 对应的 mount unit 名？
+  answer: '`systemd-escape --path --suffix=mount /srv/project`，结果通常是 `srv-project.mount`。'
+  extra: 路径转义规则决定 unit 名。
+  source:
+  - systemd-escape(1)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::command
+  - priority::P0
+- id: RHCSA-24-K03-QA-002
+  type: qa
+  question: 由 fstab 生成的 mount unit 应直接编辑吗？
+  answer: 不应。生成文件是运行时产物，应修改 `/etc/fstab` 或明确的管理员 unit 真源。
+  extra: 重载或重启会重新生成。
+  source:
+  - systemd-fstab-generator(8)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-K03-QA-003
+  type: qa
+  question: mount unit 为 `active (mounted)` 能否独自证明任务完成？
+  answer: 不能。还要核对 source、target、FSTYPE、OPTIONS、持久条目和功能。
+  extra: active 只是当前 unit 状态。
+  source:
+  - systemd.mount(5)
+  - systemd-fstab-generator(8)
+  - systemctl(1)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-K03-QA-004
+  type: qa
+  question: mount unit 失败时查看本次启动日志的命令是什么？
+  answer: '`journalctl -b -u srv-project.mount`'
+  extra: 结合 status、findmnt --verify 和 source 身份继续区分。
+  source:
+  - journalctl(1)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::command
+  - priority::P0
+- id: RHCSA-24-K03-QA-005
+  type: qa
+  question: '`_netdev` 的核心作用是什么？'
+  answer: 强制把该挂载按依赖网络的挂载分类，从而建立相应网络和 remote-fs 相关依赖/排序。
+  extra: 它不配置网络，也不修复远端不可达。
+  source:
+  - systemd.mount(5)
+  - RHEL9-Managing-Storage-Devices
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::netdev
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-K03-QA-006
+  type: qa
+  question: 什么场景比普通本地磁盘更可能需要 `_netdev`？
+  answer: 底层依赖网络但文件系统类型本身看起来像本地类型，例如网络块设备上的文件系统。
+  extra: NFS 等远程文件系统细节归第 26 章。
+  source:
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::netdev
+  - card::boundary
+  - priority::P1
+- id: RHCSA-24-K03-QA-007
+  type: qa
+  question: 为什么关键数据盘不应为“能启动”随意添加 `nofail`？
+  answer: 挂载缺失时系统可能继续启动，应用随后把数据写入父文件系统，故障被延迟和掩盖。
+  extra: 应由业务降级策略和监控决定。
+  source:
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::nofail
+  - card::security
+  - priority::P0
+- id: RHCSA-24-K03-QA-008
+  type: qa
+  question: 查询 mount unit 当前 What、Where 和 Result 的命令骨架是什么？
+  answer: '`systemctl show <UNIT>.mount -p What,Where,ActiveState,SubState,Result`'
+  extra: 再与 findmnt 当前表交叉核对。
+  source:
+  - systemctl(1)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::command
+  - priority::P1
+- id: RHCSA-FILESYSTEMS-QA-014
+  type: qa
+  question: Swap 的三层状态是什么？
+  answer: '`mkswap` 创建签名、`swapon` 当前启用、fstab 持久条目。'
+  extra: 任一层不能替代其余。
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-lifecycle
+  - card::process
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-015
+  type: qa
+  question: 创建 Swap 签名并当前启用的命令是什么？
+  answer: '`mkswap <DEV>`；`swapon <DEV>`。'
+  extra: 先确认对象可写且无需保留数据。
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-016
+  type: qa
+  question: Swap fstab 条目骨架是什么？
+  answer: '`UUID=<REAL_UUID> none swap defaults 0 0`'
+  extra: 按题目可加入 `pri=<N>`。
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-fstab
+  - card::syntax
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-017
+  type: qa
+  question: 查看具体 Swap 设备、大小、使用量和优先级，使用什么？
+  answer: '`swapon --show --output NAME,TYPE,SIZE,USED,PRIO`'
+  extra: '`free -h` 不直接列设备。'
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-verify
+  - card::verification
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-018
+  type: qa
+  question: Swap 的 `USED=0` 是否表示没有启用？
+  answer: 不是。它可能已在活动表中，但当前没有页面被换出。
+  extra: 以 `swapon --show` 是否列出为准。
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-verify
+  - card::output
+  - priority::P0
+- id: RHCSA-24-O04-QA-001
+  type: qa
+  question: 创建带 LABEL `EXAMSWAP` 的 Swap 签名命令是什么？
+  answer: '`mkswap -L EXAMSWAP /dev/vdb2`'
+  extra: 会写入新的 Swap 元数据和 UUID。
+  source:
+  - mkswap(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O04-QA-002
+  type: qa
+  question: 按优先级 30 当前启用 `/dev/vdb2` 的命令是什么？
+  answer: '`swapon -p 30 /dev/vdb2`'
+  extra: 当前优先级用 `swapon --show` 验证。
+  source:
+  - swapon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-priority
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O04-QA-003
+  type: qa
+  question: 按真实 UUID 和优先级 30 持久启用 Swap 的 fstab 骨架是什么？
+  answer: '`UUID=<REAL_UUID> none swap defaults,pri=30 0 0`'
+  extra: 修改后 daemon-reload、verify，并重新建立当前状态。
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-fstab
+  - card::syntax
+  - priority::P0
+- id: RHCSA-24-O04-QA-004
+  type: qa
+  question: '`mkswap` 成功但 `free -h` 总量未增加，下一步查什么？'
+  answer: 查看 `swapon --show`，并尝试对目标执行 `swapon` 读取具体错误。
+  extra: 签名存在不等于当前启用。
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-24-O04-QA-005
+  type: qa
+  question: '`swapon -a` 的作用是什么？'
+  answer: 根据 fstab 启用适用且未被 `noauto` 排除的 Swap 条目。
+  extra: 不会创建签名，也不验证原有 Swap 未变化。
+  source:
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-lifecycle
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O04-QA-006
+  type: qa
+  question: 为什么新增 Swap 任务应记录操作前的 `swapon --show`？
+  answer: 用于证明已有 Swap 在操作后仍存在且未被意外改变。
+  extra: 总量增加不能替代逐项比较。
+  source:
+  - swapon(8)
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-safety
+  - card::verification
+  - priority::P0
+- id: RHCSA-24-O04-QA-007
+  type: qa
+  question: 只停用新增 Swap `/dev/vdb2` 的命令是什么？
+  answer: '`swapoff /dev/vdb2`'
+  extra: 执行前检查 USED、可用内存和其他 Swap。
+  source:
+  - swapoff(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-safety
+  - card::command
+  - priority::P0
+- id: RHCSA-24-O04-QA-008
+  type: qa
+  question: 为什么不把 `swapoff -a` 作为持久性验证步骤？
+  answer: 它会停用所有 Swap，可能破坏现有状态并造成内存压力。
+  extra: 只操作明确的新增区域。
+  source:
+  - swapoff(8)
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-safety
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-K04-QA-001
+  type: qa
+  question: 多个 Swap 的优先级比较规则是什么？
+  answer: 数值更高的优先级更先被使用。
+  extra: 实际值以当前 `PRIO` 输出为准。
+  source:
+  - swapon(8)
+  - RH134-RHEL9-Ch5-p143
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-priority
+  - card::concept
+  - priority::P0
+- id: RHCSA-24-K04-QA-002
+  type: qa
+  question: fstab 已改为 `pri=30`，当前 PRIO 仍旧，原因可能是什么？
+  answer: 配置只在下一次启用时生效，当前 Swap 尚未按新配置重新建立。
+  extra: 安全停用该目标后用 `swapon -a` 重建。
+  source:
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-priority
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-24-K04-QA-003
+  type: qa
+  question: '`swapoff` 前最少应检查哪些证据？'
+  answer: 目标设备、USED、系统可用内存以及其他活动 Swap。
+  extra: 确保页面有地方迁移。
+  source:
+  - swapoff(8)
+  - free(1)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-safety
+  - card::process
+  - priority::P0
+- id: RHCSA-24-K04-QA-004
+  type: qa
+  question: 删除一个持久 Swap 的安全顺序是什么？
+  answer: 确认余量 → `swapoff` 指定目标 → 移除/修改 fstab → daemon-reload → 再处理底层对象。
+  extra: 擦签名和分区归相邻章节。
+  source:
+  - swapoff(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-safety
+  - card::process
+  - priority::P1
+- id: RHCSA-FILESYSTEMS-QA-021
+  type: qa
+  question: fstab 报 UUID 不存在时怎样处理？
+  answer: 用 `blkid`/`lsblk -f` 核对当前 UUID，修正条目后重新 reload、verify 和挂载。
+  extra: 不要重新格式化来“得到 UUID”。
+  source:
+  - RH134-RHEL9-Ch5
+  - RHEL9-Managing-File-Systems
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-022
+  type: qa
+  question: 目录存在但精确 findmnt 无结果，数据可能写到哪里？
+  answer: 父文件系统（常见为根文件系统）中的普通目录。
+  extra: 停止继续写入，恢复目标挂载并评估遮蔽数据。
+  source:
+  - findmnt(8)
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-023
+  type: qa
+  question: 挂载与 Swap 综合任务的验收骨架是什么？
+  answer: 对象身份 → 当前 mount/swapon → fstab → systemd unit/重入 → 容量、选项和功能。
+  extra: 逐层验证，不能用局部成功替代终态。
+  source:
+  - RH134-RHEL9-Ch5
+  - RHEL9-Managing-File-Systems
+  - findmnt(8)
+  - swapon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::verification-matrix
+  - card::process
+  - priority::P0
+- id: RHCSA-24-D02-QA-001
+  type: qa
+  question: '`mount -a` 报 `wrong fs type` 时，为什么不应立即重新格式化？'
+  answer: 错误可能来自 fstab 类型、选项、工具缺失或文件系统异常；重新格式化会破坏数据。
+  extra: 先核对 blkid、fstab 和 unit Journal。
+  source:
+  - mount(8)
+  - blkid(8)
+  - journalctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-24-D02-QA-002
+  type: qa
+  question: mount unit failed 后，`systemctl reset-failed` 能修复根因吗？
+  answer: 不能。它只清理失败状态记录。
+  extra: 修正 source、配置或文件系统问题后再启动。
+  source:
+  - systemctl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::boundary
+  - priority::P1
+- id: RHCSA-24-D02-QA-003
+  type: qa
+  question: 使用 `nofail` 后系统启动完成，但业务目录异常，先查什么？
+  answer: 先用 `findmnt --target` 和 mount unit/Journal 确认目标是否实际挂载。
+  extra: 启动完成不代表可选挂载成功。
+  source:
+  - systemd.mount(5)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::nofail
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-24-D02-QA-004
+  type: qa
+  question: 当前挂载成功但重启后缺失，应重点核对哪些持久层证据？
+  answer: fstab 条目、`noauto`/选项、generator 生成的 mount unit 及本次启动日志。
+  extra: 手工当前挂载不是持久证据。
+  source:
+  - systemd.mount(5)
+  - systemd-fstab-generator(8)
+  - systemctl(1)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-24-C01-QA-001
+  type: qa
+  question: 经典挂载任务中，第一步为什么不是直接编辑 fstab？
+  answer: 必须先确认真实 UUID、文件系统类型、目标当前状态和目录是否含有需保留内容。
+  extra: 避免挂错对象和遮蔽数据。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  - RH134-RHEL9-Ch5
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::task-persistent-mount
+  - card::process
+  - priority::P0
+  - task::persistent-mount
+- id: RHCSA-24-C01-QA-002
+  type: qa
+  question: 怎样证明 `/srv/project` 当前由目标文件系统提供，而不是根文件系统普通目录？
+  answer: 核对 `findmnt -no SOURCE,TARGET,FSTYPE,OPTIONS --target /srv/project`，并结合 `df -hT`。
+  extra: 目录存在和 touch 成功都不够。
+  source:
+  - findmnt(8)
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::task-persistent-mount
+  - card::verification
+  - priority::P0
+  - task::persistent-mount
+- id: RHCSA-24-C01-QA-003
+  type: qa
+  question: 为什么经典挂载任务建议从未挂载状态执行 `mount /srv/project`？
+  answer: 它迫使 mount 从 fstab 读取完整声明，直接测试该条配置能否建立当前关系。
+  extra: 已手工挂载时 `mount -a` 可能跳过。
+  source:
+  - mount(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::task-persistent-mount
+  - card::verification
+  - priority::P0
+  - task::persistent-mount
+- id: RHCSA-24-C01-QA-004
+  type: qa
+  question: 挂载选项验收时，为什么不要求当前 OPTIONS 与 fstab 文本逐字相同？
+  answer: 内核和文件系统会补充或展开当前选项；应确认目标选项存在且没有冲突。
+  extra: 重点核对语义而非字符串完全相等。
+  source:
+  - mount(8)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::task-persistent-mount
+  - card::output
+  - priority::P1
+  - task::persistent-mount
+- id: RHCSA-24-C02-QA-001
+  type: qa
+  question: 新增 Swap 任务中，怎样证明没有破坏原有 Swap？
+  answer: 保存操作前后的 `swapon --show`，逐项比较已有 NAME、SIZE 和 PRIO。
+  extra: 只看总量增加不够。
+  source:
+  - swapon(8)
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::task-swap
+  - card::verification
+  - priority::P0
+  - task::swap-priority
+- id: RHCSA-24-C02-QA-002
+  type: qa
+  question: 新增 Swap 的完整主流程是什么？
+  answer: 基线 → 确认空闲 → `mkswap` → 取 UUID → `swapon -p` → 写 fstab → reload/verify → 设备级验收 → 安全重入。
+  extra: 每层都有独立证据。
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  - RHCSA9-Mock
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::task-swap
+  - card::process
+  - priority::P0
+  - task::swap-priority
+- id: RHCSA-24-C02-QA-003
+  type: qa
+  question: 经典 Swap 任务中，为什么 `free -h` 只能作为补充证据？
+  answer: 它只显示汇总总量和使用量，不显示具体设备、类型或优先级。
+  extra: 核心验收使用 `swapon --show`。
+  source:
+  - free(1)
+  - swapon(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::task-swap
+  - card::boundary
+  - priority::P0
+  - task::swap-priority
+- id: RHCSA-24-C02-QA-004
+  type: qa
+  question: 经典 Swap 任务中，从 fstab 重入前必须满足什么安全条件？
+  answer: 只操作新增区域，并确认其 USED、可用内存和其他 Swap 足以承接页面。
+  extra: 不满足时不要为了测试强行 swapoff。
+  source:
+  - swapoff(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::task-swap
+  - card::security
+  - priority::P0
+  - task::swap-priority
+- id: RHCSA-24-O05-QA-001
+  type: qa
+  question: 持久挂载变更的三种验证层次是什么？
+  answer: 即时验证、从未挂载状态的重入验证、真实重启验证。
+  extra: 本章没有执行真实重启。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::verification-boundary
+  - card::comparison
+  - priority::P0
+- id: RHCSA-24-O05-QA-002
+  type: qa
+  question: 监控关键挂载时，为什么不能只检查目录存在？
+  answer: 挂载缺失时目录仍可能存在并可写，导致数据写入父文件系统。
+  extra: 监控应核对 target 对应的 source/type。
+  source:
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::monitoring
+  - card::boundary
+  - priority::P1
+- id: RHCSA-24-O05-QA-003
+  type: qa
+  question: RHCE 自动化对本章手工状态模型的核心映射是什么？
+  answer: 把 source、target、fstype、options、当前状态和持久状态映射为声明式目标，并继续分层验证。
+  extra: 具体模块归 RHCE 存储自动化章。
+  source:
+  - ansible.posix.mount
+  - RHEL9-RHCSA-RHCE-Architecture
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::automation-boundary
+  - card::concept
+  - priority::P2
+- id: RHCSA-24-H01-QA-001
+  type: qa
+  question: 查询 fstab 字段和转义规则的本地帮助入口是什么？
+  answer: '`man 5 fstab`'
+  extra: 字段、source 形式和转义以目标系统手册页为准。
+  source:
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::help
+  - card::command
+  - priority::P1
+- id: RHCSA-24-H01-QA-002
+  type: qa
+  question: 查询 systemd mount 依赖、`nofail` 与 `_netdev` 的帮助入口是什么？
+  answer: '`man 5 systemd.mount`'
+  extra: 生成器另查 `man 8 systemd-fstab-generator`。
+  source:
+  - systemd.mount(5)
+  - systemd-fstab-generator(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::help
+  - card::command
+  - priority::P1
+- id: RHCSA-24-H01-QA-003
+  type: qa
+  question: 查询 Swap 优先级和 `--show` 字段的帮助入口是什么？
+  answer: '`man 8 swapon`'
+  extra: 签名创建另查 `man 8 mkswap`。
+  source:
+  - swapon(8)
+  - mkswap(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::help
+  - card::command
+  - priority::P1
+- id: RHCSA-24-CLOZE-001
+  type: cloze
+  text: fstab 六字段依次为 {{c1::fs_spec}}、{{c2::fs_file}}、{{c3::fs_vfstype}}、{{c4::fs_mntops}}、{{c5::fs_freq}}、{{c6::fs_passno}}。
+  extra: 分别表达 source、target、类型、选项、dump 和 fsck 顺序。
+  source:
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-fields
+  - card::cloze
+  - priority::P0
+- id: RHCSA-24-CLOZE-002
+  type: cloze
+  text: 普通持久挂载的状态链是：真实 source → {{c1::当前挂载}} → {{c2::fstab 持久条目}} → {{c3::systemd mount unit}} → 功能验证。
+  extra: 每层需要独立证据。
+  source:
+  - RHEL9-Managing-File-Systems
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::verification-matrix
+  - card::cloze
+  - priority::P0
+- id: RHCSA-24-CLOZE-003
+  type: cloze
+  text: Swap 三层状态是 {{c1::mkswap 写签名}}、{{c2::swapon 当前启用}}、{{c3::fstab 持久配置}}。
+  extra: 任一层成功不代表其他层完成。
+  source:
+  - RH134-RHEL9-Ch5-pp140-143
+  - mkswap(8)
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-lifecycle
+  - card::cloze
+  - priority::P0
+- id: RHCSA-24-CLOZE-004
+  type: cloze
+  text: '`/srv/project` 对应的 unit 名通常是 {{c1::srv-project.mount}}，可由 {{c2::systemd-escape --path --suffix=mount /srv/project}}
+    计算。'
+  extra: 不要手工猜复杂路径的转义名。
+  source:
+  - systemd-escape(1)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::cloze
+  - priority::P1
+- id: RHCSA-24-CLOZE-005
+  type: cloze
+  text: '`noauto` 表示 {{c1::不由正常自动挂载和 mount -a 处理}}；`nofail` 表示 {{c2::失败不作为达到相关 target 的强制条件}}。'
+  extra: 两者都不修复 source 或文件系统错误。
+  source:
+  - fstab(5)
+  - systemd.mount(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::systemd-mount
+  - card::cloze
+  - priority::P1
+- id: RHCSA-24-CLOZE-006
+  type: cloze
+  text: Swap 的 fstab 优先级写在第四字段，例如 `defaults,{{c1::pri=30}}`；当前实际值用 `swapon --show` 的 {{c2::PRIO}} 列确认。
+  extra: 配置修改后需要重新启用目标才反映到当前状态。
+  source:
+  - swapon(8)
+  - fstab(5)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::swap-priority
+  - card::cloze
+  - priority::P0
+- id: RHCSA-24-CLOZE-007
+  type: cloze
+  text: 修改 fstab 后的推荐链路是 {{c1::systemctl daemon-reload}} → {{c2::findmnt --verify}} → {{c3::实际挂载/启用}} → 分层验收。
+  extra: 静态通过不等于当前功能正确。
+  source:
+  - systemd.mount(5)
+  - systemd-fstab-generator(8)
+  - systemctl(1)
+  - findmnt(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::fstab-verify
+  - card::cloze
+  - priority::P0
+- id: RHCSA-24-CLOZE-008
+  type: cloze
+  text: 挂载到非空目录会让原内容暂时{{c1::被遮蔽}}；正常卸载后原内容会{{c2::重新可见}}。
+  extra: 不是自动删除。
+  source:
+  - RH124-RHEL9-Ch15
+  - mount(8)
+  - umount(8)
+  tags:
+  - exam::rhcsa
+  - chapter::mounts-fstab-swap
+  - topic::mount-shadowing
+  - card::cloze
+  - priority::P0
+status: integrated

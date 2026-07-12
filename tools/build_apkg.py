@@ -23,11 +23,11 @@ pre { font-size: 16px; background: #f4f6f8; border-left: 3px solid #315b87; padd
 QA_MODEL = genanki.Model(
     stable_int("RedHat-QA-v1"),
     "RedHat-QA",
-    fields=[{"name": "ID"}, {"name": "Question"}, {"name": "Answer"}, {"name": "Extra"}],
+    fields=[{"name": "ID"}, {"name": "Question"}, {"name": "Answer"}, {"name": "Extra"}, {"name": "Source"}],
     templates=[{
         "name": "RedHat-QA",
         "qfmt": "{{Question}}",
-        "afmt": "{{Answer}}<div class=\"extra\">{{Extra}}</div>",
+        "afmt": "{{Answer}}<div class=\"extra\">{{Extra}}</div><div class=\"source\">{{Source}}</div>",
     }],
     css=CARD_CSS,
 )
@@ -35,18 +35,22 @@ QA_MODEL = genanki.Model(
 CLOZE_MODEL = genanki.Model(
     stable_int("RedHat-Cloze-v1"),
     "RedHat-Cloze",
-    fields=[{"name": "ID"}, {"name": "Text"}, {"name": "Extra"}],
+    fields=[{"name": "ID"}, {"name": "Text"}, {"name": "Extra"}, {"name": "Source"}],
     templates=[{
         "name": "RedHat-Cloze",
         "qfmt": "{{cloze:Text}}",
-        "afmt": "{{cloze:Text}}<div class=\"extra\">{{Extra}}</div>",
+        "afmt": "{{cloze:Text}}<div class=\"extra\">{{Extra}}</div><div class=\"source\">{{Source}}</div>",
     }],
     css=CARD_CSS,
     model_type=genanki.Model.CLOZE,
 )
 
 
-def build(track: str) -> Path:
+def package_filename(track: str, incomplete: bool) -> str:
+    return f"RHEL9-{track.upper()}-V2-INCOMPLETE-PREVIEW.apkg" if incomplete else f"RHEL9-{track.upper()}.apkg"
+
+
+def build(track: str, incomplete: bool = False) -> Path:
     if track not in {"rhcsa", "rhce"}:
         raise ValueError(track)
     manifest = load_manifest()
@@ -68,20 +72,22 @@ def build(track: str) -> Path:
                     safe_markdown_to_html(item["question"]),
                     safe_markdown_to_html(item["answer"]),
                     safe_markdown_to_html(item.get("extra")),
+                    safe_markdown_to_html("; ".join(item.get("source") or [])),
                 ]
                 model = QA_MODEL
                 card_count += 1
             else:
-                fields = [item["id"], safe_markdown_to_html(item["text"]), safe_markdown_to_html(item.get("extra"))]
+                fields = [item["id"], safe_markdown_to_html(item["text"]), safe_markdown_to_html(item.get("extra")), safe_markdown_to_html("; ".join(item.get("source") or []))]
                 model = CLOZE_MODEL
                 card_count += len(set(re.findall(r"\{\{c(\d+)::", item["text"])))
             note = genanki.Note(model=model, fields=fields, tags=tags, guid=genanki.guid_for(item["id"]))
             deck.add_note(note)
             note_count += 1
-    output = ROOT / "build" / "anki" / f"RHEL9-{track.upper()}.apkg"
+    filename = package_filename(track, incomplete)
+    output = ROOT / "build" / "anki" / filename
     output.parent.mkdir(parents=True, exist_ok=True)
     genanki.Package(deck).write_to_file(output)
-    release = ROOT / "releases" / track / output.name
+    release = ROOT / "dist" / track / output.name
     release.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(output, release)
     print(f"built {release.relative_to(ROOT)}: {note_count} notes, {card_count} cards")

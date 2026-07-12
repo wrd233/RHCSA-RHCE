@@ -1,0 +1,874 @@
+chapter_id: RHCSA-32
+chapter_slug: podman-systemd-quadlet
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+notes:
+- id: RHCSA-PODMAN-QA-009
+  type: qa
+  question: 普通用户的 rootless 容器需要在该用户注销后继续由 user systemd manager 管理。应启用什么状态，并怎样验证？
+  answer: 由管理员执行 `loginctl enable-linger <user>`，再用 `loginctl show-user <user> -p Linger` 验证为 `Linger=yes`。
+  extra: linger 延长用户 manager 的登录外生命周期，不证明 Quadlet、unit 或业务功能正确。
+  source:
+  - loginctl(1)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::user-manager
+  - card::command
+  - priority::P0
+- id: RHCSA-PODMAN-QA-010
+  type: qa
+  question: 管理 rootless Quadlet 生成的用户 unit 时，普通 `systemctl` 与 `systemctl --user` 的作用域有什么不同？
+  answer: '`systemctl` 默认连接系统 manager；`systemctl --user` 连接当前用户的 manager。rootless 容器服务应在目标用户作用域内查询和控制。'
+  extra: root 的 Podman 存储、普通用户 Podman 存储和各自 user manager 相互分离。
+  source:
+  - systemctl(1)
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::user-manager
+  - card::comparison
+  - priority::P0
+- id: RHCSA-PODMAN-QA-011
+  type: qa
+  question: 某 rootless 容器现在显示 running。这个证据是否足以证明主机重启后、该用户尚未登录时也会运行？
+  answer: 不足。还要验证 `.container` 的 `[Install]` 启动关系、目标用户 `Linger=yes`，并在冷启动后、目标用户首次登录前从外部验证功能。
+  extra: 当前实例状态、持久配置和未登录功能是三个独立层次。
+  source:
+  - loginctl(1)
+  - podman-systemd.unit(5)-4.6.1
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::boot-verification
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-K01-QA-001
+  type: qa
+  question: 当前容器实例与 Quadlet `.container` 分别代表什么？
+  answer: 当前实例代表已经发生的运行事实；`.container` 代表下一次生成容器时的期望声明。
+  extra: 修改其中一方不会自动改写另一方。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::instance-declaration
+  - card::comparison
+  - priority::P0
+- id: RHCSA-32-K01-QA-002
+  type: qa
+  question: 迁移现有容器前，为什么应先保存 `podman inspect` 基线？
+  answer: 为了记录当前镜像、端口、挂载、环境和用户等事实，避免在重建时遗漏必须保留的配置。
+  extra: '`inspect` 是调查证据，不应无筛选地复制所有历史临时参数。'
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::instance-declaration
+  - card::verification
+  - priority::P1
+- id: RHCSA-32-K01-QA-003
+  type: qa
+  question: 编辑 `.container` 后，当前运行容器会立即采用新配置吗？
+  answer: 不会。通常还需 `systemctl --user daemon-reload` 重新生成 unit，再 restart 使运行实例采用新配置。
+  extra: 编辑、reload、restart 是三个不同动作。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::instance-declaration
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-K01-CLOZE-001
+  type: cloze
+  text: 容器迁移的三步状态变化是：编辑 `.container` -> {{c1::systemctl --user daemon-reload}} -> {{c2::systemctl --user restart NAME.service}}。
+  extra: 前者更新 generated unit，后者更新当前运行实例。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::instance-declaration
+  - card::cloze
+  - priority::P0
+- id: RHCSA-32-K01-QA-004
+  type: qa
+  question: 为什么容器 ID 不适合作为长期配置身份？
+  answer: 容器删除和重建后 ID 通常变化；长期声明应使用稳定的 unit 名、容器名和外部数据位置。
+  extra: ID 变化不等于数据丢失，数据是否外置才是关键。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::instance-declaration
+  - card::concept
+  - priority::P1
+- id: RHCSA-32-K02-QA-001
+  type: qa
+  question: 在 root shell 中执行 `podman ps` 为空，能否证明普通用户 appsvc 没有 rootless 容器？
+  answer: 不能。root 与 appsvc 使用不同的 rootless/rootful 存储作用域，应切换到 appsvc 的完整用户环境再查询。
+  extra: 先核对 `id`，再解释 Podman 输出。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::user-manager
+  - card::output
+  - priority::P0
+- id: RHCSA-32-K02-QA-002
+  type: qa
+  question: '`Linger=yes` 准确证明了什么？'
+  answer: 证明该用户已启用 linger，可支持开机创建 user manager，并在最后一次注销后保留它。
+  extra: 它不证明具体 unit 已生成、已启动或业务健康。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::user-manager
+  - card::concept
+  - priority::P0
+- id: RHCSA-32-K02-QA-003
+  type: qa
+  question: 查询用户 linger 状态的命令是什么？
+  answer: '`loginctl show-user <user> -p Linger`。'
+  extra: 预期值为 `Linger=yes`。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::user-manager
+  - card::command
+  - priority::P0
+- id: RHCSA-32-K02-QA-004
+  type: qa
+  question: 为什么 `sudo systemctl status report.service` 可能对 rootless Quadlet 给出误导性结果？
+  answer: 它查询系统 manager，而 rootless Quadlet 的 `report.service` 属于目标用户的 user manager。
+  extra: 应在目标用户上下文使用 `systemctl --user`。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::user-manager
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-32-K02-QA-005
+  type: qa
+  question: 用户重新登录后服务才恢复，能否算“重启后未登录自动运行”通过？
+  answer: 不能。登录动作可能创建 user manager 或触发 unit，已经污染未登录启动证据。
+  extra: 应在目标用户首次登录前从其他账号或远端测试功能。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::boot-verification
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-K03-QA-001
+  type: qa
+  question: 普通用户最常用的 rootless Quadlet `.container` 目录是什么？
+  answer: '`~/.config/containers/systemd/`。'
+  extra: 不要与普通 user unit 目录 `~/.config/systemd/user/` 混淆。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-generation
+  - card::path
+  - priority::P0
+- id: RHCSA-32-K03-QA-002
+  type: qa
+  question: '`report.container` 默认生成什么 unit？'
+  answer: '`report.service`。'
+  extra: 未显式设置 `ContainerName=` 时，Podman 容器名通常为 `systemd-report`。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-generation
+  - card::syntax
+  - priority::P0
+- id: RHCSA-32-K03-QA-003
+  type: qa
+  question: 为什么不应直接编辑 `systemctl --user cat report.service` 显示的 generated 内容？
+  answer: 它是 generator 根据 `.container` 产生的派生状态，reload 或启动时可能被重新生成。
+  extra: 管理员应修改源 `.container`。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-generation
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-K03-QA-004
+  type: qa
+  question: 创建或修改 Quadlet 后，让 user manager 重新运行 generator 的命令是什么？
+  answer: '`systemctl --user daemon-reload`。'
+  extra: 该命令不等同于重启容器应用。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-generation
+  - card::command
+  - priority::P0
+- id: RHCSA-32-K03-QA-005
+  type: qa
+  question: '`report.service` unit not found，而 `Linger=yes`。下一步最有区分度的证据是什么？'
+  answer: 先核对当前 `id`，再检查 `.container` 是否位于目标用户的 Quadlet 搜索路径、后缀是否正确，并执行 user daemon-reload。
+  extra: linger 已排除部分生命周期问题，但不能证明 generator 识别了声明。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-generation
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-32-O01-QA-001
+  type: qa
+  question: Quadlet `.container` 的必需字段是什么？
+  answer: '`[Container]` 中的 `Image=`。'
+  extra: 优先使用完整镜像引用。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-fields
+  - card::configuration
+  - priority::P0
+- id: RHCSA-32-O01-QA-002
+  type: qa
+  question: 题目明确要求 Podman 容器名称为 `report`，Quadlet 中使用什么字段？
+  answer: '`ContainerName=report`。'
+  extra: 省略时默认容器名通常带 `systemd-` 前缀。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-fields
+  - card::configuration
+  - priority::P0
+- id: RHCSA-32-O01-QA-003
+  type: qa
+  question: 把宿主端口 18080 映射到容器 8080 的 Quadlet 字段是什么？
+  answer: '`PublishPort=18080:8080`。'
+  extra: 左侧为宿主端口，右侧为容器端口。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-fields
+  - card::syntax
+  - priority::P0
+- id: RHCSA-32-O01-QA-004
+  type: qa
+  question: 设置容器环境变量 `REPORT_MODE=exam` 的 Quadlet 字段是什么？
+  answer: '`Environment=REPORT_MODE=exam`。'
+  extra: '`Environment=` 可重复使用。'
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-fields
+  - card::configuration
+  - priority::P0
+- id: RHCSA-32-O01-QA-005
+  type: qa
+  question: 把 `/home/appsvc/report-data` 挂到容器 `/var/lib/report` 并使用私有 SELinux 重标记的字段是什么？
+  answer: '`Volume=/home/appsvc/report-data:/var/lib/report:Z`。'
+  extra: 宿主路径在左，容器路径在右；完整 SELinux 语义归相邻章节。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-fields
+  - card::syntax
+  - priority::P0
+- id: RHCSA-32-O01-QA-006
+  type: qa
+  question: 让 generated service 在失败退出后等待 5 秒重启，应写哪些字段？
+  answer: 在 `[Service]` 中写 `Restart=on-failure` 和 `RestartSec=5`。
+  extra: Restart 不会修复重名、端口或权限等持续错误。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::restart-dependency
+  - card::configuration
+  - priority::P0
+- id: RHCSA-32-O01-QA-007
+  type: qa
+  question: 让 rootless Quadlet 随用户 manager 的默认 target 启动，应在源文件写什么？
+  answer: 在 `[Install]` 中写 `WantedBy=default.target`。
+  extra: generator 会应用该 Install 关系。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::boot-activation
+  - card::configuration
+  - priority::P0
+- id: RHCSA-32-O01-QA-008
+  type: qa
+  question: 为什么不把 `systemctl --user enable report.service` 作为 Quadlet 自动启动主线？
+  answer: Quadlet 生成的 service 是 transient/generated unit，自动启动关系应在源 `.container` 的 `[Install]` 中声明，由 generator 应用。
+  extra: 普通手写 user service 与 Quadlet generated service 的 enable 机制不能混用。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::boot-activation
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-O01-QA-009
+  type: qa
+  question: 镜像首次拉取导致 service 超过 systemd 启动超时，优先有哪些处理？
+  answer: 可以预拉镜像；有证据表明只是拉取耗时时，再在 `[Service]` 中适当增加 `TimeoutStartSec=`。
+  extra: 不要无调查地无限放大超时。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-fields
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-32-O02-QA-001
+  type: qa
+  question: 创建 rootless Quadlet 目录的安全命令骨架是什么？
+  answer: '`install -d -m 0755 ~/.config/containers/systemd`。'
+  extra: 该目录属于目标用户。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-operation
+  - card::command
+  - priority::P0
+- id: RHCSA-32-O02-QA-002
+  type: qa
+  question: 查看 user unit 的 `LoadState`、`ActiveState`、`SubState`、`Result` 和重启次数的命令骨架是什么？
+  answer: '`systemctl --user show NAME.service -p LoadState -p ActiveState -p SubState -p Result -p NRestarts`。'
+  extra: 这是紧凑状态向量，不替代业务功能测试。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::unit-verification
+  - card::command
+  - priority::P0
+- id: RHCSA-32-O02-QA-003
+  type: qa
+  question: '`report.service` 为 active，怎样继续验证固定端口映射和真实 HTTP 功能？'
+  answer: 先 `podman port report`，再对宿主端口执行 `curl -fsS http://127.0.0.1:18080/`。
+  extra: 端口表和协议响应属于不同层。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::unit-verification
+  - card::verification
+  - priority::P0
+- id: RHCSA-32-O02-QA-004
+  type: qa
+  question: 查看当前 boot 中某个 user unit 日志的命令是什么？
+  answer: '`journalctl --user-unit=NAME.service -b --no-pager`。'
+  extra: 实际日志可见范围还受调用用户和 journald 配置影响。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::journal
+  - card::command
+  - priority::P0
+- id: RHCSA-32-O02-QA-005
+  type: qa
+  question: '`systemctl --user daemon-reload` 成功能证明业务已经采用新环境变量吗？'
+  answer: 不能。它只证明 manager 已重新读取/生成 unit；还要 restart，并从容器 inspect 或应用行为验证新变量。
+  extra: 不要把 manager 配置成功扩大为运行实例成功。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::quadlet-operation
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-O02-QA-006
+  type: qa
+  question: 验证运行容器环境变量的常用 Podman 证据是什么？
+  answer: '`podman inspect NAME --format ''{{json .Config.Env}}''`。'
+  extra: 仍应结合应用行为判断变量是否被应用程序使用。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::unit-verification
+  - card::command
+  - priority::P1
+- id: RHCSA-32-K04-QA-001
+  type: qa
+  question: '`Requires=database.service` 与 `After=database.service` 的区别是什么？'
+  answer: '`Requires=` 把依赖 unit 拉入事务并表达失败关系；`After=` 只表达同时启动时的先后顺序。'
+  extra: 常见场景需要两者组合。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::restart-dependency
+  - card::comparison
+  - priority::P0
+- id: RHCSA-32-K04-QA-002
+  type: qa
+  question: Quadlet 依赖另一个 `database.container` 时，`After=` 应引用什么名称？
+  answer: '`After=database.service`，即生成后的 service 名称。'
+  extra: 不要写 `After=database.container`。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::restart-dependency
+  - card::syntax
+  - priority::P0
+- id: RHCSA-32-K04-QA-003
+  type: qa
+  question: '`Restart=on-failure` 能否修复端口持续被占用？'
+  answer: 不能。它只会在失败后重试，端口冲突未消除时可能形成 restart loop。
+  extra: 应先用监听和容器证据定位冲突对象。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::restart-dependency
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-K04-QA-004
+  type: qa
+  question: unit 反复重启时，哪两个 `systemctl show` 字段最能快速确认循环？
+  answer: '`Result` 和 `NRestarts`。'
+  extra: 随后读取 journal 中第一条失败原因。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::restart-dependency
+  - card::output
+  - priority::P0
+- id: RHCSA-32-K04-QA-005
+  type: qa
+  question: 为什么不应无条件把容器 service 配成 `Restart=always`？
+  answer: 正常完成后本应退出的任务也会被反复启动；持续配置错误还会制造无意义循环。
+  extra: 策略应符合应用生命周期。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::restart-dependency
+  - card::boundary
+  - priority::P1
+- id: RHCSA-32-O03-QA-001
+  type: qa
+  question: 容器 stop 后数据仍在，是否足以证明数据独立于容器实例？
+  answer: 不足。stop 不删除实例和可写层；更强证据是删除/重建实例后，新实例仍能读取外部数据。
+  extra: 执行删除前必须确认数据已经外置。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::persistent-data
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-O03-QA-002
+  type: qa
+  question: 调查容器当前挂载的 Podman 命令是什么？
+  answer: '`podman inspect NAME --format ''{{json .Mounts}}''`。'
+  extra: 先确认数据位置，再进行迁移或删除。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::persistent-data
+  - card::command
+  - priority::P0
+- id: RHCSA-32-O03-QA-003
+  type: qa
+  question: 宿主目录写入失败时，为什么不应直接 `chmod 777`？
+  answer: 它破坏最小权限，也可能仍无法解决容器 UID 映射或 SELinux 拒绝。
+  extra: 应依次检查路径、所有者/模式、容器 UID 和 AVC。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::persistent-data
+  - card::security
+  - priority::P0
+- id: RHCSA-32-O03-QA-004
+  type: qa
+  question: 持久目录访问失败的推荐调查顺序是什么？
+  answer: 路径是否正确 -> 宿主 DAC -> 容器内 UID/rootless 映射 -> SELinux 上下文和 AVC。
+  extra: 每一步选择能区分假设的证据。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::persistent-data
+  - card::process
+  - priority::P0
+- id: RHCSA-32-O03-QA-005
+  type: qa
+  question: 验证宿主标记文件在容器挂载点可见的命令骨架是什么？
+  answer: '`podman exec NAME cat /CONTAINER/PATH/marker.txt`，并与宿主文件内容比较。'
+  extra: 这证明当前挂载；跨实例持久性还需重建验证。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::persistent-data
+  - card::verification
+  - priority::P0
+- id: RHCSA-32-O03-QA-006
+  type: qa
+  question: 删除旧容器前必须确认的最高优先级事实是什么？
+  answer: 必须保留的数据已经位于外部宿主目录或 named volume，而不是只在容器可写层。
+  extra: 没有该证据时不应删除。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::persistent-data
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-O04-QA-001
+  type: qa
+  question: '`podman pull IMAGE:TAG` 完成后，正在运行的容器是否自动采用新 image ID？'
+  answer: 不会。pull 更新本地镜像引用，当前实例通常需要由 service restart/recreate 才采用新 image ID。
+  extra: 更新后比较镜像和容器的 image ID。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::update-rebuild
+  - card::comparison
+  - priority::P0
+- id: RHCSA-32-O04-QA-002
+  type: qa
+  question: 怎样比较本地 tag 当前 image ID 与运行容器使用的 image ID？
+  answer: 分别使用 `podman image inspect IMAGE --format '{{.Id}}'` 和 `podman inspect NAME --format '{{.Image}}'`。
+  extra: 名称相同不代表 ID 相同。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::update-rebuild
+  - card::verification
+  - priority::P0
+- id: RHCSA-32-O04-QA-003
+  type: qa
+  question: 修改 Quadlet 端口后只执行 restart，没有先 daemon-reload，可能发生什么？
+  answer: manager 可能仍使用旧 generated unit，重启出的容器继续采用旧端口。
+  extra: 源文件改变后先 reload。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::update-rebuild
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-32-O04-QA-004
+  type: qa
+  question: 容器更新后的回归验证至少覆盖哪些层？
+  answer: unit 结果、容器镜像/参数、端口功能、挂载和持久数据。
+  extra: 不能只看 restart 命令返回成功。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::update-rebuild
+  - card::process
+  - priority::P0
+- id: RHCSA-32-D01-QA-001
+  type: qa
+  question: '`.container` 放在 `~/.config/systemd/user/`，最小修复是什么？'
+  answer: 移动到 `~/.config/containers/systemd/`，然后执行 `systemctl --user daemon-reload`。
+  extra: 不要另写一份同名手工 service。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::diagnosis-generation
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-32-D01-QA-002
+  type: qa
+  question: Quadlet unit 未生成时，如何静态确认文件后缀没有被编辑器变成 `.container.txt`？
+  answer: 使用 `find ~/.config/containers/systemd -maxdepth 1 -type f -printf '%f\n'` 或 `ls -lb` 查看真实文件名。
+  extra: 不要只相信图形界面显示。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::diagnosis-generation
+  - card::command
+  - priority::P1
+- id: RHCSA-32-D01-QA-003
+  type: qa
+  question: Podman 版本低于 4.6 时，本章 Quadlet 主线应怎样处理？
+  answer: 先记录版本不支持的边界；旧 `podman generate systemd` 只能作为兼容路径，不能伪装成当前 Quadlet 已验证。
+  extra: RHEL 9 小版本和 Podman 包版本必须核对。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::version
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-D02-QA-001
+  type: qa
+  question: journal 显示 `name already in use`，下一条最有区分度的证据是什么？
+  answer: '`podman ps -a --filter name=NAME`，检查同名手工或失败实例。'
+  extra: 删除前先核对挂载和数据。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::diagnosis-runtime
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-32-D02-QA-002
+  type: qa
+  question: journal 显示宿主端口已占用，下一条证据是什么？
+  answer: '`ss -ltnp` 检查监听进程，并用 `podman ps --format` 检查其他容器端口。'
+  extra: 先确认冲突对象归属，不随意终止业务。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::diagnosis-runtime
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-32-D02-QA-003
+  type: qa
+  question: unit 显示 failed 后执行 `systemctl --user reset-failed` 能修复服务吗？
+  answer: 不能。它只清理失败状态/计数；仍需修复实际配置或资源冲突。
+  extra: 修根因后再 restart。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::diagnosis-runtime
+  - card::boundary
+  - priority::P0
+- id: RHCSA-32-D02-QA-004
+  type: qa
+  question: 容器创建后立即 Exited，优先读取哪些证据？
+  answer: '`podman ps -a` 的退出状态、`podman logs NAME`，以及对应 user unit journal。'
+  extra: 先定位应用入口失败，不要只增加 Restart。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::diagnosis-runtime
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-32-D03-QA-001
+  type: qa
+  question: 当前 service active，但注销后停止。应优先比较哪两个持久性证据？
+  answer: 源 `.container` 是否有 `[Install] WantedBy=default.target`，以及目标用户是否 `Linger=yes`。
+  extra: 一个负责 unit 启动关系，一个负责 user manager 生命周期。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::boot-verification
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-32-D03-QA-002
+  type: qa
+  question: 重启后验证未登录运行的正确顺序是什么？
+  answer: 先不要登录目标用户；从其他账号/远端测试业务功能和 user manager 状态，再进入目标用户会话回查 unit、journal 和 Podman。
+  extra: 避免登录动作污染证据。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::boot-verification
+  - card::process
+  - priority::P0
+- id: RHCSA-32-D03-QA-003
+  type: qa
+  question: 冷启动后外部功能成功，是否还需要进入目标用户回查？
+  answer: 需要。外部功能证明业务层；回查 unit、journal、容器和数据可证明管理归属及无隐藏循环。
+  extra: 分层证据相互补充。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::boot-verification
+  - card::verification
+  - priority::P1
+- id: RHCSA-32-T01-QA-001
+  type: qa
+  question: 现有 `report` 容器包含必须保留的数据，且声明要使用同名 `ContainerName=report`。迁移操作的关键顺序是什么？
+  answer: 先 inspect 和确认数据外置 -> 写 `.container` -> 停止旧容器 -> 再次确认外部数据 -> 删除旧实例 -> daemon-reload -> start generated service ->
+    分层验证。
+  extra: 不能为解决重名先删除容器再找数据。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-32-T01-QA-002
+  type: qa
+  question: 一个完整的 rootless Quadlet 验收矩阵至少包含哪些层？
+  answer: 用户身份、声明、生成 unit、unit 状态、容器参数、业务功能、持久数据、linger、注销后功能、冷启动未登录功能和 journal。
+  extra: 任何单层成功都不能替代整个终态。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::classic-task
+  - card::comprehensive
+  - priority::P0
+- id: RHCSA-32-T02-QA-001
+  type: qa
+  question: linger 已启用、unit not found、文件位于 `~/.config/systemd/user/portal.container`。最小修复是什么？
+  answer: 把文件移到 `~/.config/containers/systemd/portal.container`，执行 `systemctl --user daemon-reload`，再验证 generated service。
+  extra: linger 状态无需重复修改。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::classic-task
+  - card::task
+  - priority::P0
+- id: RHCSA-32-T02-QA-002
+  type: qa
+  question: 修复 restart loop 后，`NRestarts` 仍显示非零，能否直接判断修复失败？
+  answer: 不能。历史重启计数可能保留；应观察它是否继续增长，并结合当前 Result、journal 和功能。
+  extra: 可在合适时执行 reset-failed，但它不是修复。
+  source:
+  - podman-systemd.unit(5)-4.6.1
+  - RHEL9-container-documentation
+  tags:
+  - exam::rhcsa
+  - chapter::podman-systemd-quadlet
+  - topic::classic-task
+  - card::output
+  - priority::P1
+status: integrated

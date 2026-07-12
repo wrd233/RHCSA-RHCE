@@ -1,0 +1,1834 @@
+chapter_id: RHCSA-23
+chapter_slug: filesystems-labels-uuid-capacity
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+status: integrated
+validation: static
+notes:
+- id: RHCSA-23-K01-QA-001
+  type: qa
+  question: 从底层存储到可访问目录，块设备、文件系统和挂载关系的层级顺序是什么？
+  answer: 块设备 → 文件系统实例 → 当前挂载关系 → 目录树。
+  extra: 每层有独立状态和查询入口，不能用目录存在代替文件系统或挂载存在。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::process
+  - priority::P0
+- id: RHCSA-23-K01-QA-002
+  type: qa
+  question: 块设备与文件系统分别提供什么？
+  answer: 块设备提供可寻址块空间；文件系统在其上组织元数据、文件数据、空闲空间和身份属性。
+  extra: 设备存在不代表已经有文件系统。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::concept
+  - priority::P0
+- id: RHCSA-23-K01-QA-003
+  type: qa
+  question: '`mkfs.xfs /dev/vdb1` 的直接作用对象是什么？'
+  answer: 命令最后指定的块设备 `/dev/vdb1`。
+  extra: '`mkfs` 不会替你创建分区或判断目标是否安全。'
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.xfs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-K01-QA-004
+  type: qa
+  question: '`mkfs`、`mount` 与 `df` 分别处理哪一层？'
+  answer: '`mkfs` 创建文件系统；`mount` 建立当前目录入口；`df` 读取已挂载文件系统容量。'
+  extra: 挂载与 fstab 的完整语义归下一章。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs(8)
+  - mount(8)
+  - df(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-23-K01-QA-005
+  type: qa
+  question: '`lsblk` 能看到 `/dev/vdb1`，是否足以证明它已有可用文件系统？'
+  answer: 不足。还要检查 `FSTYPE`、LABEL、UUID、签名、挂载和上层归属。
+  extra: 块设备存在只证明内核识别到该设备。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-K01-QA-006
+  type: qa
+  question: '`lsblk -f` 中 `FSTYPE` 为空，是否足以证明设备可安全格式化？'
+  answer: 不足。设备仍可能包含未识别数据、分区表或其他上层元数据。
+  extra: 继续核对挂载、LVM/RAID/加密归属和题意。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-K01-QA-007
+  type: qa
+  question: '`lsblk` 的设备 `SIZE` 已增加，而 `df` 仍显示旧容量，说明哪两层状态不同？'
+  answer: 底层块设备容量已增加，但文件系统尚未接管新增空间。
+  extra: 下一步先确认文件系统类型，再使用对应增长工具。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-23-K01-QA-008
+  type: qa
+  question: 为什么不能长期依赖 `/dev/vdX` 或 `/dev/sdX` 的枚举顺序识别文件系统？
+  answer: 设备枚举路径可能随硬件、启动或连接顺序变化。
+  extra: 写操作前重新核对路径、容量、父设备、类型、LABEL 和 UUID。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-23-K01-QA-009
+  type: qa
+  question: 在写操作前，哪条命令可同时展示设备路径、容量、类型、文件系统和挂载点？
+  answer: '```bash
+
+    lsblk -o NAME,PATH,SIZE,TYPE,FSTYPE,LABEL,UUID,MOUNTPOINTS
+
+    ```'
+  extra: 仍需针对目标使用 `blkid` 等证据交叉确认。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::verification
+  - priority::P1
+- id: RHCSA-23-K01-CLOZE-001
+  type: cloze
+  text: 稳定的存储对象链是：{{c1::块设备}} → {{c2::文件系统实例}} → {{c3::当前挂载关系}} → {{c4::目录树}}。
+  extra: 命令必须与其作用层一致。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::object-model
+  - card::cloze
+  - priority::P0
+- id: RHCSA-23-K02-QA-001
+  type: qa
+  question: RHEL 9 默认本地文件系统语境通常偏向哪一种类型？
+  answer: XFS。
+  extra: 仍必须服从题目指定类型，并读取现有系统的真实 `FSTYPE`。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::concept
+  - priority::P1
+- id: RHCSA-23-K02-QA-002
+  type: qa
+  question: XFS 与 ext4 的专用信息查询命令分别是什么？
+  answer: XFS 使用 `xfs_info`；ext4 常用 `tune2fs -l`（或 `dumpe2fs -h`）。
+  extra: '`blkid` 和 `lsblk -f` 适合两者的基本身份查询。'
+  source:
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::comparison
+  - priority::P0
+- id: RHCSA-23-K02-QA-003
+  type: qa
+  question: XFS 与 ext4 的文件系统增长命令分别是什么？
+  answer: XFS 使用 `xfs_growfs`；ext4 使用 `resize2fs`。
+  extra: 增长前底层块设备必须已经提供新增空间。
+  source:
+  - RHEL9-Managing-File-Systems
+  - xfs_growfs(8)
+  - resize2fs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::comparison
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-008
+  type: qa
+  question: 在 RHEL 9 管理边界中，XFS 与 ext4 的缩小能力有什么区别？
+  answer: XFS 不支持受支持的原地缩小；ext4 可以在卸载、检查并满足容量条件时缩小。
+  extra: ext4 必须先缩文件系统，再缩底层容器。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  - resize2fs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::comparison
+  - priority::P0
+- id: RHCSA-23-K02-QA-005
+  type: qa
+  question: 已挂载 ext4 可以执行哪一种调整，而不能执行哪一种？
+  answer: 可以在线增长；不能在线缩小。
+  extra: 缩小前必须卸载并运行 `e2fsck -f`。
+  source:
+  - RHEL9-Managing-File-Systems
+  - resize2fs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-K02-QA-006
+  type: qa
+  question: XFS 与 ext4 的检查/修复工具分别是什么？
+  answer: XFS 使用 `xfs_repair`；ext4 使用 `e2fsck`。
+  extra: 两者的实际检查都应以未挂载状态为基本边界。
+  source:
+  - RHEL9-Managing-File-Systems
+  - xfs_repair(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::comparison
+  - priority::P0
+- id: RHCSA-23-K02-QA-007
+  type: qa
+  question: '`fsck.xfs` 返回 0 能证明 XFS 已完成元数据检查吗？'
+  answer: 不能。RHEL 9 中它是兼容占位程序，会直接成功退出。
+  extra: 离线只读检查使用 `xfs_repair -n`。
+  source:
+  - RHEL9-Managing-File-Systems
+  - fsck.xfs(8)
+  - xfs_repair(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::output
+  - priority::P0
+- id: RHCSA-23-K02-QA-008
+  type: qa
+  question: 怎样从已挂载路径快速确认文件系统类型？
+  answer: '```bash
+
+    df -T <PATH>
+
+    ```'
+  extra: 需要挂载源和选项时由下一章使用 `findmnt` 深入。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::command
+  - priority::P1
+- id: RHCSA-23-K02-QA-009
+  type: qa
+  question: 已有文件系统类型未知时，为什么不能先尝试 `xfs_growfs` 再尝试 `resize2fs`？
+  answer: 工具必须与真实文件系统类型匹配；随机尝试不能建立正确作用对象和前置条件。
+  extra: 先用 `lsblk -f`、`blkid` 或 `df -T` 确认类型。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-K02-CLOZE-001
+  type: cloze
+  text: XFS 使用 {{c1::xfs_growfs}} 增长，ext4 使用 {{c2::resize2fs}}；XFS 在 RHEL 9 支持路径中 {{c3::不能原地缩小}}。
+  extra: 命令选择由真实文件系统类型决定。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::xfs-ext4
+  - card::cloze
+  - priority::P0
+- id: RHCSA-23-O01-QA-001
+  type: qa
+  question: 查看块设备文件系统类型、LABEL、UUID 和挂载点的高频命令是什么？
+  answer: '```bash
+
+    lsblk -f
+
+    ```'
+  extra: 需要自定义列时使用 `lsblk -o ...`。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::command
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-009
+  type: qa
+  question: 读取指定文件系统当前 TYPE、LABEL 和 UUID 的命令是什么？
+  answer: '```bash
+
+    blkid <DEVICE>
+
+    ```'
+  extra: UUID 必须来自当前签名；Swap 归下一章。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O01-QA-003
+  type: qa
+  question: '`blkid` 识别到 `TYPE="xfs"` 能证明哪些事实，不能证明哪些事实？'
+  answer: 能证明设备上存在可识别的 XFS 签名；不能证明已挂载、容量充足或元数据健康。
+  extra: 继续按目标使用挂载、容量或检查证据。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-O01-QA-004
+  type: qa
+  question: 查询 XFS 几何信息的命令骨架是什么？
+  answer: '```bash
+
+    xfs_info <MOUNT_POINT_OR_DEVICE>
+
+    ```'
+  extra: 对已挂载 XFS 优先使用挂载点。
+  source:
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O01-QA-005
+  type: qa
+  question: 查询 ext4 superblock 摘要的命令是什么？
+  answer: '```bash
+
+    tune2fs -l <DEVICE>
+
+    ```'
+  extra: 这是信息查询，不等于 `e2fsck`。
+  source:
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O01-QA-006
+  type: qa
+  question: '`xfs_info` 中 `bsize`、`blocks` 与 `agcount` 分别表示什么？'
+  answer: '`bsize` 是文件系统块大小；`blocks` 是数据区块数；`agcount` 是 allocation group 数量。'
+  extra: 具体值受设备大小、创建参数和工具版本影响。
+  source:
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::output
+  - priority::P1
+- id: RHCSA-23-O01-QA-007
+  type: qa
+  question: '`tune2fs -l` 中哪些字段可用于判断 ext4 容量与 inode 状态？'
+  answer: '`Block count`、`Free blocks`、`Block size`、`Inode count` 和 `Free inodes`。'
+  extra: LABEL、UUID 和 state 也可从该输出读取。
+  source:
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::output
+  - priority::P1
+- id: RHCSA-23-O01-QA-008
+  type: qa
+  question: 创建或修改文件系统属性后，最小身份交叉验证组合是什么？
+  answer: '`blkid <DEVICE>` 与 `lsblk -f <DEVICE>`。'
+  extra: 按类型可继续使用 `xfs_info` 或 `tune2fs -l`。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::verification
+  - priority::P0
+- id: RHCSA-23-O01-QA-009
+  type: qa
+  question: '`blkid -s TYPE -s LABEL -s UUID <DEVICE>` 中 `-s` 的作用是什么？'
+  answer: 只显示指定标签字段。
+  extra: 适合减少输出噪声，但仍要保留目标设备上下文。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::parameter
+  - priority::P1
+- id: RHCSA-23-O01-CLOZE-001
+  type: cloze
+  text: 全局拓扑用 {{c1::lsblk -f}}，指定设备签名用 {{c2::blkid}}，XFS 几何用 {{c3::xfs_info}}，ext4 superblock 用 {{c4::tune2fs -l}}。
+  extra: 四条命令观察不同层次。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-query
+  - card::cloze
+  - priority::P0
+- id: RHCSA-FILESYSTEMS-QA-007
+  type: qa
+  question: '`mkfs.xfs` 的作用与风险是什么？'
+  answer: 它在指定块设备上创建新的 XFS，会覆盖原文件系统结构。
+  extra: 只对确认无需保留数据的新对象使用。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.xfs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-O02-QA-002
+  type: qa
+  question: 在确认空闲的 `/dev/vdb1` 上创建 LABEL 为 `ARCHIVE` 的 XFS，命令是什么？
+  answer: '```bash
+
+    mkfs.xfs -L ARCHIVE /dev/vdb1
+
+    ```'
+  extra: 创建后用 `blkid` 和 `lsblk -f` 验证。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.xfs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O02-QA-003
+  type: qa
+  question: 在确认空闲的 `/dev/vdb1` 上创建 LABEL 为 `ARCHIVE` 的 ext4，命令是什么？
+  answer: '```bash
+
+    mkfs.ext4 -L ARCHIVE /dev/vdb1
+
+    ```'
+  extra: 不要把 XFS 与 ext4 命令互换。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.ext4(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O02-QA-004
+  type: qa
+  question: ext4 创建命令中 `-L` 设置的 LABEL 最大长度是多少？
+  answer: 16 字节。
+  extra: 多字节字符按字节限制理解，并在创建后读取实际结果。
+  source:
+  - mkfs.ext4(8)
+  - mke2fs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::parameter
+  - priority::P1
+- id: RHCSA-23-O02-QA-005
+  type: qa
+  question: 对候选设备执行 `mkfs` 前，最小调查链是什么？
+  answer: '`lsblk` 核对路径/容量/层级 → `blkid` 查签名 → 查当前挂载和上层归属 → 确认无需保留数据。'
+  extra: 任一证据冲突都应停止写操作。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::process
+  - priority::P0
+- id: RHCSA-23-O02-QA-006
+  type: qa
+  question: '`mkfs` 因发现已有签名而警告时，默认应立即加 `-f` 吗？'
+  answer: 不应。先确认旧签名、数据价值、目标设备和题意。
+  extra: 强制参数不能替代设备调查。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-O02-QA-007
+  type: qa
+  question: 创建文件系统后，哪些三项身份必须从当前设备验证？
+  answer: 文件系统 TYPE、LABEL 和 UUID。
+  extra: 同时检查没有误作用到相邻设备。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::verification
+  - priority::P0
+- id: RHCSA-23-O02-QA-008
+  type: qa
+  question: 为什么不能用再次运行 `mkfs` 来扩大已有文件系统？
+  answer: '`mkfs` 会创建新文件系统并破坏现有数据；增长应使用类型专用调整工具。'
+  extra: XFS 用 `xfs_growfs`，ext4 用 `resize2fs`。
+  source:
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::comparison
+  - priority::P0
+- id: RHCSA-23-O02-QA-009
+  type: qa
+  question: 创建前发现目标已有文件系统和数据，下一步是什么？
+  answer: 停止写操作，重新核对设备用途和任务边界。
+  extra: 不要用 `wipefs -a` 或强制格式化消除证据。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-O02-QA-010
+  type: qa
+  question: 题目只要求“创建带标签的 XFS”，完成后最小验收是什么？
+  answer: 运行 `blkid` 与 `lsblk -f`，确认 TYPE=xfs、LABEL 正确且 UUID 已生成。
+  extra: 没有要求时不抢先配置 fstab。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-create
+  - card::task
+  - priority::P1
+- id: RHCSA-23-K03-QA-001
+  type: qa
+  question: 文件系统 LABEL 与 UUID 的核心区别是什么？
+  answer: LABEL 便于人阅读且可能重复；UUID 用于区分当前文件系统实例。
+  extra: 两者都存放在文件系统元数据中。
+  source:
+  - RHEL9-Managing-File-Systems
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::comparison
+  - priority::P0
+- id: RHCSA-23-K03-QA-002
+  type: qa
+  question: UUID 属于块设备路径、物理磁盘还是文件系统实例？
+  answer: 属于文件系统实例。
+  extra: 重新格式化通常会产生新的 UUID。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::concept
+  - priority::P0
+- id: RHCSA-23-K03-QA-003
+  type: qa
+  question: 为什么重新运行 `mkfs` 后旧 UUID 引用会失效？
+  answer: 因为 `mkfs` 创建了新的文件系统实例和新的 UUID。
+  extra: 应读取当前 UUID 并修正引用，而不是继续格式化。
+  source:
+  - RHEL9-Managing-File-Systems
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-K03-QA-004
+  type: qa
+  question: 块级克隆文件系统后，UUID 一定仍然唯一吗？
+  answer: 不一定。克隆可能复制同一个 UUID。
+  extra: 同时使用克隆副本前应评估并修改其中一个实例的身份。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::boundary
+  - priority::P1
+- id: RHCSA-23-K03-QA-005
+  type: qa
+  question: 把未挂载 XFS 的 LABEL 改为 `ARCHIVE2`，命令是什么？
+  answer: '```bash
+
+    xfs_admin -L ARCHIVE2 <DEVICE>
+
+    udevadm settle
+
+    ```'
+  extra: 修改后重新运行 `blkid` 和 `lsblk -f`。
+  source:
+  - xfs_admin(8)
+  - udevadm(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::command
+  - priority::P1
+- id: RHCSA-23-K03-QA-006
+  type: qa
+  question: 修改 XFS LABEL 或 UUID 时，稳定前置边界是什么？
+  answer: 先卸载该 XFS。
+  extra: 已挂载设备不应直接使用 `xfs_admin` 修改这些属性。
+  source:
+  - xfs_admin(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-K03-QA-007
+  type: qa
+  question: 把 ext4 的 LABEL 改为 `ARCHIVE2`，命令是什么？
+  answer: '```bash
+
+    tune2fs -L ARCHIVE2 <DEVICE>
+
+    udevadm settle
+
+    ```'
+  extra: 随后读取实际 LABEL。
+  source:
+  - tune2fs(8)
+  - udevadm(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::command
+  - priority::P1
+- id: RHCSA-23-K03-QA-008
+  type: qa
+  question: 使用显式新 UUID 修改文件系统身份的安全命令骨架是什么？
+  answer: 先 `NEW_UUID=$(uuidgen)`；XFS 用 `xfs_admin -U "$NEW_UUID" <DEVICE>`，ext4 用 `tune2fs -U "$NEW_UUID" <DEVICE>`。
+  extra: XFS 先卸载；修改后运行 `udevadm settle` 并重新查询。
+  source:
+  - uuidgen(1)
+  - xfs_admin(8)
+  - tune2fs(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::command
+  - priority::P1
+- id: RHCSA-23-K03-QA-009
+  type: qa
+  question: 修改 LABEL 或 UUID 后为什么运行 `udevadm settle`？
+  answer: 等待 udev 完成属性变化和相关设备链接更新。
+  extra: 避免下一条命令仍读取旧属性。
+  source:
+  - udevadm(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::command
+  - priority::P1
+- id: RHCSA-23-K03-QA-010
+  type: qa
+  question: 外部配置引用旧 UUID，但当前文件系统和数据仍存在，最小修复方向是什么？
+  answer: 读取当前 UUID，修正外部引用并重新验证。
+  extra: 不要重新格式化；fstab 的完整处理归下一章。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-K03-CLOZE-001
+  type: cloze
+  text: LABEL 便于{{c1::人阅读}}但可能重复；UUID 标识{{c2::当前文件系统实例}}；重新格式化通常会产生{{c3::新 UUID}}。
+  extra: 身份必须从当前设备读取。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::label-uuid
+  - card::cloze
+  - priority::P0
+- id: RHCSA-23-K04-QA-001
+  type: qa
+  question: '`lsblk` 的 `SIZE` 与 `df` 的 `Size` 分别描述什么？'
+  answer: '`lsblk` 描述底层块设备容量；`df` 描述已挂载文件系统当前管理的容量。'
+  extra: 底层变大不表示文件系统已增长。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::capacity-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-23-K04-QA-003
+  type: qa
+  question: 查看路径所在文件系统 inode 总量和使用率，命令是什么？
+  answer: '```bash
+
+    df -i <PATH>
+
+    ```'
+  extra: 用于判断大量小文件导致的 inode 耗尽。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::capacity-model
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O03-QA-001
+  type: qa
+  question: 汇总目录树实际分配空间的常用命令是什么？
+  answer: '```bash
+
+    du -sh <PATH>
+
+    ```'
+  extra: '`du` 遍历能够读取的文件和目录。'
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::df-du
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O03-QA-002
+  type: qa
+  question: '`du -x` 的作用是什么？'
+  answer: 限制统计在同一个文件系统内，不跨入子挂载。
+  extra: 适合分析某个文件系统自身的目录占用。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::df-du
+  - card::parameter
+  - priority::P1
+- id: RHCSA-23-O03-QA-003
+  type: qa
+  question: '`du` 默认结果与 `du --apparent-size` 分别更接近什么？'
+  answer: 默认更接近实际分配块；`--apparent-size` 显示逻辑长度。
+  extra: 稀疏文件两者可能相差很大。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::df-du
+  - card::comparison
+  - priority::P1
+- id: RHCSA-23-O03-QA-004
+  type: qa
+  question: 一个文件 `ls -lh` 显示 100G，而 `du -h` 很小，最可能说明什么？
+  answer: 它可能是稀疏文件，逻辑长度大但实际分配块少。
+  extra: 用 `du --apparent-size` 交叉判断。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::df-du
+  - card::output
+  - priority::P1
+- id: RHCSA-23-O03-QA-005
+  type: qa
+  question: '`df` 显示大量已用空间，而 `du -shx` 汇总明显较小，优先检查什么？'
+  answer: 已删除但仍被进程打开的文件。
+  extra: 可使用 `lsof +L1`，同时考虑权限遗漏、元数据和被挂载遮蔽的数据。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - lsof(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::df-du
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-O03-QA-006
+  type: qa
+  question: 列出链接数小于 1、仍被进程打开的文件，常用命令是什么？
+  answer: '```bash
+
+    lsof +L1
+
+    ```'
+  extra: 发现对象后应按应用和服务关系安全释放，而不是直接无调查杀进程。
+  source:
+  - lsof(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::df-du
+  - card::command
+  - priority::P1
+- id: RHCSA-23-O03-QA-007
+  type: qa
+  question: 为什么 `df` 的已用空间可能大于所有普通文件的 `du` 汇总？
+  answer: 文件系统元数据、日志、ext4 保留块、已删除但仍打开的文件或统计遗漏都可能占空间。
+  extra: 差异是调查入口，不代表其中一个命令错误。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::df-du
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-23-K04-QA-011
+  type: qa
+  question: '`df -h` 仍有可用字节，但创建新文件报“空间不足”，下一条证据是什么？'
+  answer: '```bash
+
+    df -i <PATH>
+
+    ```'
+  extra: inode 可能已经耗尽。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::capacity-model
+  - card::output
+  - priority::P0
+- id: RHCSA-23-K04-QA-012
+  type: qa
+  question: 对 `df /srv/archive/subdir`，`df` 报告的是子目录自身大小还是包含它的文件系统大小？
+  answer: 包含该路径的文件系统整体大小。
+  extra: 不同子目录通常共享同一个文件系统容量池。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::capacity-model
+  - card::concept
+  - priority::P1
+- id: RHCSA-23-K04-QA-013
+  type: qa
+  question: '`df` 显示可用空间是否足以证明目标用户一定能写入？'
+  answer: 不足。权限、ACL、只读挂载、配额、SELinux 或应用限制仍可能阻止写入。
+  extra: 容量证据不能替代功能和安全层验证。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::capacity-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-23-O03-CLOZE-001
+  type: cloze
+  text: '{{c1::df}} 读取文件系统整体分配状态；{{c2::du}} 遍历并汇总可见目录树；inode 压力使用 {{c3::df -i}}。'
+  extra: 三者回答不同问题。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::df-du
+  - card::cloze
+  - priority::P0
+- id: RHCSA-LVM-K03-QA-007
+  type: qa
+  question: 底层已扩大后，扩展已挂载 XFS 的命令骨架是什么？
+  answer: '```bash
+
+    xfs_growfs <MOUNT_POINT>
+
+    ```'
+  extra: 参数是目标 XFS 的挂载点。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - xfs_growfs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O04-QA-002
+  type: qa
+  question: '`xfs_growfs` 为什么通常以挂载点为参数？'
+  answer: XFS 必须处于挂载状态才能增长，挂载点标识要增长的已挂载文件系统。
+  extra: 先核对挂载点对应的真实源和 FSTYPE。
+  source:
+  - xfs_growfs(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::parameter
+  - priority::P0
+- id: RHCSA-23-O04-QA-003
+  type: qa
+  question: 文件系统扩容的正确层级顺序是什么？
+  answer: 先扩大底层块设备，再按类型扩大文件系统，最后验证容量和数据。
+  extra: 底层可以是分区或 LV；其扩容方法归相邻章节。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::process
+  - priority::P0
+- id: RHCSA-23-O04-QA-004
+  type: qa
+  question: 底层已扩大后，让 ext4 增长到容器最大可用范围的命令是什么？
+  answer: '```bash
+
+    resize2fs <DEVICE>
+
+    ```'
+  extra: 已挂载 ext4 可在线增长；缩小仍必须离线。
+  source:
+  - resize2fs(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::command
+  - priority::P0
+- id: RHCSA-23-O04-QA-005
+  type: qa
+  question: '`resize2fs <DEVICE>` 不指定大小时，增长通常采用什么目标？'
+  answer: 增长到当前底层容器可提供的最大范围。
+  extra: 仍需用 `df` 验证实际结果。
+  source:
+  - resize2fs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::parameter
+  - priority::P1
+- id: RHCSA-23-O04-QA-006
+  type: qa
+  question: 扩大现有文件系统前，应保存哪些最小基线？
+  answer: 挂载源和类型、底层设备大小、文件系统容量、LABEL/UUID，以及关键文件校验值。
+  extra: 基线用于证明增长没有重建身份或破坏数据。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - lsblk(8)
+  - blkid(8)
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::process
+  - priority::P1
+- id: RHCSA-23-O04-QA-007
+  type: qa
+  question: '`lsblk` 已显示新容量而 `df -hT` 未变化，最可能缺少哪一步？'
+  answer: 文件系统增长。
+  extra: XFS 用 `xfs_growfs`；ext4 用 `resize2fs`。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-O04-QA-008
+  type: qa
+  question: 文件系统增长后的分层验证组合是什么？
+  answer: '`lsblk` 验底层容量，`df` 验文件系统容量，专用信息工具验几何，`blkid` 验身份，关键文件校验验数据。'
+  extra: 不要只看增长命令退出状态。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::verification
+  - priority::P0
+- id: RHCSA-23-O04-QA-009
+  type: qa
+  question: 为什么扩容任务中保留并校验一个 marker 文件有价值？
+  answer: 它能证明已有数据在扩容前后保持一致，并帮助发现误格式化。
+  extra: 校验值不能替代全部业务验证，但比只看容量更强。
+  source:
+  - sha256sum(1)
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::verification
+  - priority::P1
+- id: RHCSA-LVM-O03-QA-010
+  type: qa
+  question: 为什么扩容现有 XFS 时不能再次执行 `mkfs.xfs`？
+  answer: 因为它会重新创建文件系统并破坏现有数据。
+  extra: 扩容使用 `xfs_growfs`，不是 `mkfs.xfs`。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-O04-QA-011
+  type: qa
+  question: '`xfs_growfs` 或 `resize2fs` 无报错，是否足以证明任务完成？'
+  answer: 不足。还要确认对象正确、容量达到目标、类型和身份未改变、数据仍完整。
+  extra: 命令成功只是局部证据。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-O04-QA-012
+  type: qa
+  question: 底层设备尚未变大时反复执行文件系统增长命令会获得新增空间吗？
+  answer: 不会。文件系统不能超出底层块设备提供的范围。
+  extra: 先回到分区或 LVM 层完成底层扩展。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-23-O04-CLOZE-001
+  type: cloze
+  text: 增长主线：先扩大{{c1::底层块设备}}，XFS 执行 {{c2::xfs_growfs <MOUNT_POINT>}}，ext4 执行 {{c3::resize2fs <DEVICE>}}，最后用 {{c4::df}} 验证文件系统容量。
+  extra: 同时验证 UUID/LABEL 和数据未被重建。
+  source:
+  - RHEL9-Managing-File-Systems
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-grow
+  - card::cloze
+  - priority::P0
+- id: RHCSA-23-K05-QA-001
+  type: qa
+  question: ext4 缩小的文件系统层标准顺序是什么？
+  answer: 卸载 → `e2fsck -f <DEVICE>` → `resize2fs <DEVICE> <TARGET_SIZE>`。
+  extra: 若还要缩底层容器，必须在文件系统成功缩小后进行。
+  source:
+  - RHEL9-Managing-File-Systems
+  - e2fsck(8)
+  - resize2fs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::shrink-boundary
+  - card::process
+  - priority::P0
+- id: RHCSA-23-K05-QA-002
+  type: qa
+  question: 为什么不能先缩小分区或 LV，再缩小 ext4？
+  answer: 会先截断文件系统可能仍在使用的块，导致损坏。
+  extra: 顺序必须是文件系统在前、底层容器在后。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::shrink-boundary
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-K05-QA-003
+  type: qa
+  question: 估算 ext 文件系统最小块数可使用什么命令？
+  answer: '```bash
+
+    resize2fs -P <DEVICE>
+
+    ```'
+  extra: 估算值不是无需备份的安全保证。
+  source:
+  - resize2fs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::shrink-boundary
+  - card::command
+  - priority::P1
+- id: RHCSA-23-K05-QA-004
+  type: qa
+  question: 为什么 `du` 汇总不能直接作为 ext4 可缩小到的最小容量？
+  answer: 文件系统还需要元数据、日志、inode 表、块组和空闲空间。
+  extra: 应使用文件系统工具估算并保留安全余量。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::shrink-boundary
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-K05-QA-005
+  type: qa
+  question: 文件系统缩小前必须具备什么恢复条件？
+  answer: 已验证备份、停机窗口、变更前记录和明确的回滚/重建方案。
+  extra: 缩小风险远高于增长。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::shrink-boundary
+  - card::security
+  - priority::P0
+- id: RHCSA-23-D01-QA-001
+  type: qa
+  question: '`fsck` 在多文件系统环境中的角色是什么？'
+  answer: 它是统一前端或分派器，实际检查由类型专用助手完成。
+  extra: 不能因此假设 XFS 与 ext4 使用相同流程。
+  source:
+  - fsck(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::concept
+  - priority::P1
+- id: RHCSA-23-D01-QA-002
+  type: qa
+  question: 只显示 `fsck` 计划调用的命令而不执行，使用什么选项？
+  answer: '```bash
+
+    fsck -N <DEVICE>
+
+    ```'
+  extra: 用于理解分派，不代表已经检查。
+  source:
+  - fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::command
+  - priority::P1
+- id: RHCSA-23-D01-QA-003
+  type: qa
+  question: '`fsck.xfs` 立即成功退出时，正确判断是什么？'
+  answer: 它没有执行传统元数据扫描，不能据此判断 XFS 健康。
+  extra: XFS 离线只读检查使用 `xfs_repair -n`。
+  source:
+  - RHEL9-Managing-File-Systems
+  - fsck.xfs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::output
+  - priority::P0
+- id: RHCSA-23-D01-QA-004
+  type: qa
+  question: 对未挂载 XFS 做只读元数据检查，命令是什么？
+  answer: '```bash
+
+    xfs_repair -n <DEVICE>
+
+    ```'
+  extra: '`-n` 不修改文件系统。'
+  source:
+  - xfs_repair(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::command
+  - priority::P0
+- id: RHCSA-23-D01-QA-005
+  type: qa
+  question: '`xfs_repair` 报告脏日志时，正常恢复思路是什么？'
+  answer: 在安全条件下先挂载并卸载以回放日志，再进行离线检查。
+  extra: 日志无法正常回放时才进入更高风险评估。
+  source:
+  - RHEL9-Managing-File-Systems
+  - xfs_repair(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-23-D01-QA-006
+  type: qa
+  question: '`xfs_repair -L` 为什么不能作为默认修复？'
+  answer: 它会清除日志，可能丢失尚未落盘的一致性信息和数据。
+  extra: 只在日志无法回放且已接受风险时作为最后手段。
+  source:
+  - RHEL9-Managing-File-Systems
+  - xfs_repair(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-D01-QA-007
+  type: qa
+  question: 对未挂载 ext4 做只读检查，命令是什么？
+  answer: '```bash
+
+    e2fsck -n <DEVICE>
+
+    ```'
+  extra: 输出仍需人工判断。
+  source:
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::command
+  - priority::P1
+- id: RHCSA-23-D01-QA-008
+  type: qa
+  question: ext4 缩小前强制完整检查的命令是什么？
+  answer: '```bash
+
+    e2fsck -f <DEVICE>
+
+    ```'
+  extra: 文件系统应处于未挂载状态。
+  source:
+  - e2fsck(8)
+  - resize2fs(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::command
+  - priority::P0
+- id: RHCSA-23-D01-QA-009
+  type: qa
+  question: 为什么不应在已挂载读写文件系统上运行实际 `fsck`/`e2fsck`？
+  answer: 文件系统仍在变化，检查结果不可靠且可能造成损坏。
+  extra: 先确认并解除挂载；根文件系统需安排离线环境。
+  source:
+  - fsck(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-D01-QA-010
+  type: qa
+  question: 文件系统修复工具无报错，能否证明所有业务文件内容完整？
+  answer: 不能。它主要恢复文件系统结构一致性，不是业务数据恢复保证。
+  extra: 还需挂载、关键文件、日志和应用层验证。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-D01-CLOZE-001
+  type: cloze
+  text: XFS 只读检查用 {{c1::xfs_repair -n}}；ext4 只读检查用 {{c2::e2fsck -n}}；ext4 缩小前使用 {{c3::e2fsck -f}}。
+  extra: 实际检查以未挂载状态为基本边界。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-check
+  - card::cloze
+  - priority::P0
+- id: RHCSA-23-D02-QA-001
+  type: qa
+  question: 文件系统诊断的证据推进链是什么？
+  answer: 症状 → 当前证据 → 假设 → 最有区分度的下一条证据 → 最小修复 → 再验证。
+  extra: 避免通过反复执行破坏性命令猜测。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-23-D02-QA-002
+  type: qa
+  question: 底层块设备已扩大而文件系统容量未变，下一步最有区分度的证据是什么？
+  answer: 确认挂载源和 FSTYPE，并比较 `lsblk` 与 `df -B1 -T`。
+  extra: 据类型选择 `xfs_growfs` 或 `resize2fs`。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-D02-QA-003
+  type: qa
+  question: '`blkid` 能识别签名但文件系统无法使用，是否应重新 `mkfs`？'
+  answer: 不应。先检查类型、对象身份、挂载冲突、日志和离线检查结果。
+  extra: 重新格式化会覆盖现有证据和数据。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-D02-QA-004
+  type: qa
+  question: '`df` 很高而 `du` 很低时，下一条高区分度命令是什么？'
+  answer: '```bash
+
+    lsof +L1
+
+    ```'
+  extra: 用于发现已删除但仍被进程打开的文件。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - lsof(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-D02-QA-005
+  type: qa
+  question: '`df -i` 显示 `IUse%` 为 100%，而 `df -h` 仍有空间，故障层是什么？'
+  answer: inode 已耗尽，而数据块容量尚未耗尽。
+  extra: 定位大量小文件的来源。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::output
+  - priority::P0
+- id: RHCSA-23-D02-QA-006
+  type: qa
+  question: 重新格式化后外部配置报旧 UUID 不存在，最小修复是什么？
+  answer: 用 `blkid`/`lsblk -f` 读取当前 UUID，并修正外部引用。
+  extra: 不要再格式化；fstab 的完整验证归下一章。
+  source:
+  - lsblk(8)
+  - blkid(8)
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-23-D02-QA-007
+  type: qa
+  question: 为什么“命令返回 0”不能作为文件系统任务唯一验收？
+  answer: 它不能证明对象正确、目标容量达到、身份未改变或数据完整。
+  extra: 必须使用独立状态和功能证据。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-D02-QA-008
+  type: qa
+  question: 文件系统容量、UUID 或挂载问题不明时，为什么 `mkfs` 不是通用排错命令？
+  answer: 它会重建文件系统并破坏原数据，通常把可修复问题变成数据丢失。
+  extra: 先识别失败层并使用最小修复。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-D02-QA-009
+  type: qa
+  question: '`du` 无法读取部分目录时，能否把汇总结果与 `df` 直接比较并下结论？'
+  answer: 不能。权限遗漏会让 `du` 低估可见文件占用。
+  extra: 用合适权限重跑，并记录错误输出。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-23-D02-QA-010
+  type: qa
+  question: 某 XFS 目录容量未增长，已知 `lsblk` 也没有显示更大的底层设备。应执行 `xfs_growfs` 吗？
+  answer: 不应。先完成或核实底层块设备扩展。
+  extra: 文件系统不能超出底层容器。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::filesystem-diagnosis
+  - card::task
+  - priority::P1
+- id: RHCSA-23-T01-QA-001
+  type: qa
+  question: 在候选空设备上创建带标签 XFS 的完整流程是什么？
+  answer: 调查设备和签名 → 排除挂载/上层归属 → 确认无需保留 → `mkfs.xfs -L` → `blkid`/`lsblk -f`/`xfs_info`。
+  extra: 没有要求时不进入 fstab。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::classic-task-create
+  - card::task
+  - priority::P0
+- id: RHCSA-23-T01-QA-002
+  type: qa
+  question: 创建带标签文件系统任务中，哪些现象必须让你停止 `mkfs`？
+  answer: 已有需保留文件系统或数据、当前挂载、上层存储归属、设备身份/容量与题意不符。
+  extra: 不以强制参数覆盖这些证据。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::classic-task-create
+  - card::boundary
+  - priority::P0
+- id: RHCSA-23-T02-QA-001
+  type: qa
+  question: 已有 XFS 底层扩容后，保留数据完成增长的完整流程是什么？
+  answer: 保存源/类型/容量/UUID/校验值 → 确认底层已增大 → `xfs_growfs <MOUNT_POINT>` → 验证容量、身份和数据。
+  extra: 不得重新 `mkfs`。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::classic-task-grow
+  - card::task
+  - priority::P0
+- id: RHCSA-23-T02-QA-002
+  type: qa
+  question: XFS 增长任务为什么同时检查 `df`、`blkid` 和 marker 校验值？
+  answer: '`df` 证明容量，`blkid` 证明身份未重建，校验值证明已有数据未改变。'
+  extra: 三条证据分别覆盖不同终态。
+  source:
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - lsblk(8)
+  - blkid(8)
+  - sha256sum(1)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::classic-task-grow
+  - card::verification
+  - priority::P0
+- id: RHCSA-23-T02-QA-003
+  type: qa
+  question: 面对“扩大文件系统”题，怎样根据类型选择命令并判断缩小边界？
+  answer: XFS 用 `xfs_growfs` 且不能原地缩小；ext4 用 `resize2fs`，在线可增长，缩小必须离线检查。
+  extra: 两者都要求底层容量先满足目标。
+  source:
+  - RHEL9-Managing-File-Systems
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::classic-task-grow
+  - card::comprehensive
+  - priority::P0
+- id: RHCSA-23-H01-QA-001
+  type: qa
+  question: 本章核心命令的本地帮助入口有哪些？
+  answer: '`man mkfs.xfs`、`man mkfs.ext4`、`man xfs_info`、`man xfs_growfs`、`man resize2fs`、`man xfs_repair`、`man e2fsck`、`man
+    df`、`man du`、`man blkid`。'
+  extra: 参数和版本边界优先以本机手册为准。
+  source:
+  - mkfs.xfs(8)
+  - xfs_info(8)
+  - xfs_growfs(8)
+  - xfs_repair(8)
+  - xfs_admin(8)
+  - mkfs.ext4(8)
+  - tune2fs(8)
+  - resize2fs(8)
+  - e2fsck(8)
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::help-entry
+  - card::command
+  - priority::P1
+- id: RHCSA-23-H01-QA-002
+  type: qa
+  question: 为什么上游 `xfs_growfs` 手册出现缩小相关文字时，RHCSA 仍按 XFS 不可缩小处理？
+  answer: 考试与本章采用 RHEL 9 的受支持管理边界，不把上游实验性能力当作稳定操作。
+  extra: 版本和支持范围冲突时以 RHEL 9 官方文档为准。
+  source:
+  - RHEL9-Managing-File-Systems
+  - xfs_growfs(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::help-entry
+  - card::boundary
+  - priority::P1
+- id: RHCSA-23-T02-CLOZE-001
+  type: cloze
+  text: XFS 增长验收至少覆盖：{{c1::底层设备容量}}、{{c2::文件系统容量}}、{{c3::LABEL/UUID 身份}}、{{c4::已有数据校验}}。
+  extra: 单一退出状态不足以证明终态。
+  source:
+  - RH124-RHEL9
+  - RH134-RHEL9
+  - df(1)
+  - du(1)
+  - GNU-coreutils-manual
+  - lsblk(8)
+  - blkid(8)
+  tags:
+  - exam::rhcsa
+  - chapter::filesystems-labels-uuid-capacity
+  - topic::classic-task-grow
+  - card::cloze
+  - priority::P0

@@ -1,0 +1,1698 @@
+chapter_id: RHCSA-19
+chapter_slug: hostname-nss-dns
+deck: RedHat::RHCSA-RHEL9
+schema_version: 1
+notes:
+- id: RHCSA-19-K01-QA-001
+  type: qa
+  question: static、transient 与 pretty hostname 分别表达什么？
+  answer: static 是持久机器身份；transient 是当前运行期的临时名称；pretty 是面向人的描述。
+  extra: 设置可解析主机身份时重点通常是 static。
+  source:
+  - hostnamectl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-19-K01-QA-002
+  type: qa
+  question: RHEL 9 的静态主机名通常持久保存在哪个文件？
+  answer: '`/etc/hostname`。'
+  extra: 优先通过 `hostnamectl set-hostname` 修改，并用文件与当前状态交叉验证。
+  source:
+  - hostnamectl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::configuration
+  - priority::P0
+- id: RHCSA-19-K01-QA-003
+  type: qa
+  question: 执行 `hostnamectl set-hostname node1.example.com` 后，能否据此断言 DNS 中已经存在同名 A 记录？
+  answer: 不能。该命令修改本机 hostname，不会自动发布 DNS 记录。
+  extra: 仍需用 `dig` 检查 DNS，并用 `getent` 检查系统解析路径。
+  source:
+  - hostnamectl(1)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-K01-QA-004
+  type: qa
+  question: '`hostname` 与 `cat /etc/hostname` 分别主要证明什么？'
+  answer: '`hostname` 主要显示当前内核名称；`/etc/hostname` 显示静态持久配置。'
+  extra: 当前正确不代表重启后一定保持，持久文件正确也不代表当前状态已应用。
+  source:
+  - hostname(1)
+  - hostname(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::comparison
+  - priority::P0
+- id: RHCSA-19-K01-QA-005
+  type: qa
+  question: pretty hostname 可以直接作为 DNS 主机名使用吗？
+  answer: 不应。pretty hostname 是描述性文本，可包含空格或大小写，不受 DNS 标签语法约束。
+  extra: 可解析身份应使用合规的 static hostname。
+  source:
+  - hostnamectl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::boundary
+  - priority::P1
+- id: RHCSA-19-K01-QA-006
+  type: qa
+  question: '`hostnamectl status` 中静态主机名正确，但 `getent hosts` 查询该名称失败。下一步应调查哪一层？'
+  answer: 调查 NSS、`/etc/hosts`、resolver 配置和 DNS 记录，而不是重复设置 hostname。
+  extra: 主机身份与名称解析是不同对象。
+  source:
+  - hostnamectl(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-K01-QA-007
+  type: qa
+  question: 为什么 `hostname -f` 不能被当作 `/etc/hostname` 的简单显示？
+  answer: 它会尝试通过名称解析得到规范名称，其结果依赖当前 hostname 和 NSS。
+  extra: 解析链不完整时，`hostname -f` 可能失败或返回意外名称。
+  source:
+  - hostname(1)
+  - nsswitch.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::concept
+  - priority::P1
+- id: RHCSA-19-K01-QA-008
+  type: qa
+  question: 题目要求主机名重启后保持。静态验证至少要检查哪两类证据？
+  answer: 检查当前 hostname 状态和 `/etc/hostname` 的持久配置。
+  extra: 真实重启仍需在 live VM 中执行，静态检查不能代替。
+  source:
+  - hostnamectl(1)
+  - hostname(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::verification
+  - priority::P0
+- id: RHCSA-NETWORK-O02-QA-001
+  type: qa
+  question: 设置静态主机名 `node1.training.example` 的典型命令是什么？
+  answer: '```bash
+
+    hostnamectl set-hostname node1.training.example
+
+    ```'
+  extra: 执行后用 `hostnamectl status`、`hostname` 和 `/etc/hostname` 分层验证。
+  source:
+  - hostnamectl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::command
+  - priority::P0
+  - id::preserved
+- id: RHCSA-19-K01-QA-009
+  type: qa
+  question: 只设置描述性 pretty hostname 的典型形式是什么？
+  answer: '```bash
+
+    hostnamectl --pretty set-hostname "Training Web Node 1"
+
+    ```'
+  extra: 执行后仍不能把该描述当作 DNS 名称。
+  source:
+  - hostnamectl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-model
+  - card::command
+  - priority::P2
+- id: RHCSA-19-K02-QA-001
+  type: qa
+  question: 短名 `node1` 与 `node1.training.example` 的关键区别是什么？
+  answer: 短名需要 search domain 或其他上下文补全；后者已包含所属域，歧义更小。
+  extra: 关键服务配置优先使用明确 FQDN。
+  source:
+  - resolv.conf(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::comparison
+  - priority::P0
+- id: RHCSA-19-K02-QA-002
+  type: qa
+  question: DNS 文本名称末尾的点表示什么？
+  answer: 表示名称已经到达 DNS 根，是绝对名称，不再追加搜索域。
+  extra: 例如 `node1.training.example.`。
+  source:
+  - resolver(3)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::concept
+  - priority::P1
+- id: RHCSA-19-K02-QA-003
+  type: qa
+  question: '`resolv.conf` 中哪个指令用于列出短名搜索域？'
+  answer: '`search`。'
+  extra: 它只定义补全规则，不创建 DNS 记录。
+  source:
+  - resolv.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::configuration
+  - priority::P0
+- id: RHCSA-19-K02-QA-004
+  type: qa
+  question: 配置 `search training.example` 后，`node1` 是否必然能解析？
+  answer: 不必然。扩展后的 `node1.training.example` 仍必须在某个 NSS 来源中存在。
+  extra: search 只生成候选名称。
+  source:
+  - resolv.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-K02-QA-005
+  type: qa
+  question: '`getent hosts node1` 失败，而 `getent hosts node1.training.example` 成功。下一条最有区分度的证据是什么？'
+  answer: 检查当前 search domain 的持久配置和有效状态。
+  extra: 读取 NetworkManager profile、device view 与 `/etc/resolv.conf`。
+  source:
+  - getent(1)
+  - resolv.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-K02-QA-006
+  type: qa
+  question: 用 `dig` 显式启用 search list 查询短名的形式是什么？
+  answer: '```bash
+
+    dig +search node1 A
+
+    ```'
+  extra: 应用短名路径仍应使用 `getent hosts node1` 验证。
+  source:
+  - dig(1)
+  - resolv.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::command
+  - priority::P1
+- id: RHCSA-19-K02-QA-007
+  type: qa
+  question: 怎样用 `dig` 明确查询绝对名称、排除 search 追加？
+  answer: '```bash
+
+    dig node1.training.example. A
+
+    ```'
+  extra: 末尾点明确到 DNS 根。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::command
+  - priority::P1
+- id: RHCSA-19-K02-QA-008
+  type: qa
+  question: '`options ndots:N` 主要影响什么？'
+  answer: 影响包含多少个点的名称会优先按绝对名称尝试，以及与 search 的尝试顺序。
+  extra: RHCSA 不必背所有分支，但诊断时应分别测试短名、FQDN 和绝对名称。
+  source:
+  - resolv.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::concept
+  - priority::P2
+- id: RHCSA-19-K02-QA-009
+  type: qa
+  question: 多个 search domain 使短名命中错误目标时，最小风险修复有哪些？
+  answer: 调整正确 profile 的 search 顺序，或让关键配置使用明确 FQDN。
+  extra: 删除搜索域前要评估其他业务依赖。
+  source:
+  - resolv.conf(5)
+  - nm-settings-nmcli(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-19-K02-QA-010
+  type: qa
+  question: 为什么 `dig node1` 的结果不能直接等同于应用解析短名的结果？
+  answer: '`dig` 面向 DNS 查询，默认不代表完整 NSS 路径，也不一定使用与应用相同的 search 行为。'
+  extra: 应用路径用 `getent` 或应用自身验证。
+  source:
+  - dig(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-forms-search
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-K03-QA-001
+  type: qa
+  question: '`/etc/nsswitch.conf` 中的 `hosts:` 表示什么？'
+  answer: 它定义 NSS 的主机数据库应使用哪些来源以及使用顺序。
+  extra: 它不是 nameserver 地址列表。
+  source:
+  - nsswitch.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::concept
+  - priority::P0
+- id: RHCSA-19-K03-QA-002
+  type: qa
+  question: '在 `hosts: files dns` 中，`files` 与 `dns` 通常分别对应什么？'
+  answer: '`files` 通常读取 `/etc/hosts`；`dns` 通过 resolver 查询 DNS。'
+  extra: 当前系统可能还有 `myhostname`、`resolve` 等模块。
+  source:
+  - nsswitch.conf(5)
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::comparison
+  - priority::P0
+- id: RHCSA-19-K03-QA-003
+  type: qa
+  question: '`/etc/hosts` 有旧地址且 `files` 位于 `dns` 前时，`getent` 与 `dig` 可能出现什么差异？'
+  answer: '`getent` 可能返回旧本地地址，而 `dig` 返回 DNS 中的新地址。'
+  extra: 优先修正坏条目，不要用全局重排来源掩盖冲突。
+  source:
+  - nsswitch.conf(5)
+  - getent(1)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-K03-QA-004
+  type: qa
+  question: NSS 中类似 `[NOTFOUND=return]` 的结构控制什么？
+  answer: 控制某个来源返回特定状态时是停止并返回，还是继续下一个来源。
+  extra: 没有明确证据时不要修改全局动作。
+  source:
+  - nsswitch.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::syntax
+  - priority::P1
+- id: RHCSA-19-K03-QA-005
+  type: qa
+  question: NSS 常见状态 `SUCCESS`、`NOTFOUND`、`UNAVAIL`、`TRYAGAIN` 分别表示什么方向？
+  answer: 成功、有权威的未找到、来源不可用、暂时失败。
+  extra: 具体来源如何映射状态应结合模块和手册。
+  source:
+  - nsswitch.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::comparison
+  - priority::P2
+- id: RHCSA-19-K03-QA-006
+  type: qa
+  question: 查看当前主机数据库 NSS 策略的命令是什么？
+  answer: '```bash
+
+    grep -E ''^[[:space:]]*hosts:'' /etc/nsswitch.conf
+
+    ```'
+  extra: 不要背诵某一发行镜像的默认行来代替实际读取。
+  source:
+  - nsswitch.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::command
+  - priority::P0
+- id: RHCSA-19-K03-QA-007
+  type: qa
+  question: 为什么 `cat /etc/hosts` 不能证明应用一定使用其中的条目？
+  answer: 它只证明文件内容存在；NSS 顺序、动作和应用自己的解析方式仍可能改变结果。
+  extra: 应使用 `getent hosts` 并最终验证应用。
+  source:
+  - hosts(5)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-K03-QA-008
+  type: qa
+  question: 为修复一个旧 hosts 条目，把 `dns` 调到 `files` 前面是否是默认正确做法？
+  answer: 不是。应修正过期数据，避免改变所有主机查询的全局语义。
+  extra: 只有明确设计要求和影响评估后才修改 NSS 顺序。
+  source:
+  - nsswitch.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-K03-QA-009
+  type: qa
+  question: '`myhostname` NSS 模块的存在说明什么边界？'
+  answer: 系统可能合成本机名称和本地地址，而不只依赖 `/etc/hosts` 或外部 DNS。
+  extra: 诊断必须读取真实 `hosts:` 行。
+  source:
+  - nss-myhostname(8)
+  - nsswitch.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::concept
+  - priority::P2
+- id: RHCSA-19-K03-QA-010
+  type: qa
+  question: '`getent` 成功能否证明目标服务可用？'
+  answer: 不能。它只证明系统数据库查询得到结果；路由、端口、TLS 和应用状态仍需验证。
+  extra: 名称解析通过后应离开本层继续功能验收。
+  source:
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::nss-hosts-order
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-O01-QA-001
+  type: qa
+  question: 安全修改主机名的推荐流程是什么？
+  answer: 建立当前/持久基线 → 设置目标 hostname → 检查当前状态 → 检查 `/etc/hostname` → 验证名称解析 → 在 live 环境复验重启持久性。
+  extra: 不要把单条命令成功扩大为完整终态。
+  source:
+  - hostnamectl(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-operations
+  - card::process
+  - priority::P0
+- id: RHCSA-19-O01-QA-002
+  type: qa
+  question: 建立主机名基线的最小命令组是什么？
+  answer: '```bash
+
+    hostnamectl status
+
+    hostname
+
+    cat /etc/hostname
+
+    ```'
+  extra: 三者分别提供 systemd 视图、当前内核名称和持久静态配置。
+  source:
+  - hostnamectl(1)
+  - hostname(1)
+  - hostname(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-operations
+  - card::command
+  - priority::P0
+- id: RHCSA-19-O01-QA-003
+  type: qa
+  question: 设置 hostname 后为什么还要运行 `getent hosts <FQDN>`？
+  answer: 确认该名称能沿 NSS 映射到地址，而不是仅在本机身份层存在。
+  extra: 解析失败时进入 hosts/NSS/DNS 调查。
+  source:
+  - getent(1)
+  - hostnamectl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-operations
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-O01-QA-004
+  type: qa
+  question: 直接修改 Shell 提示符能否完成主机名配置？
+  answer: 不能。提示符只是显示层，不会改变内核 hostname 或 `/etc/hostname`。
+  extra: 验证必须使用 hostname 接口。
+  source:
+  - bash(1)
+  - hostnamectl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-operations
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-O01-QA-005
+  type: qa
+  question: '`hostnamectl status` 同时显示 static、transient、pretty 时，应怎样解释？'
+  answer: 把它们作为三个状态维度，不因其中一个正确就推断另外两个或 DNS 已正确。
+  extra: 题目要求持久可解析身份时重点检查 static 和 NSS。
+  source:
+  - hostnamectl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-operations
+  - card::output
+  - priority::P0
+- id: RHCSA-19-O01-QA-006
+  type: qa
+  question: '`hostname` 与 `/etc/hostname` 不一致时，首先要问什么？'
+  answer: 题目要求当前生效还是重启后保持，以及系统是否刚修改但尚未正确应用。
+  extra: 先建立证据，不盲目覆盖。
+  source:
+  - hostnamectl(1)
+  - hostname(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-operations
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-19-O01-QA-007
+  type: qa
+  question: 为什么本章不把重启持久性标记为“已验证”？
+  answer: 当前会话没有可控 RHEL 9 VM，静态配置核对不能代替真实重启。
+  extra: 应在 统一验证记录 中列出后续 live test。
+  source:
+  - 项目验证边界
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-operations
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-O01-QA-008
+  type: qa
+  question: 怎样记录当前 hostname 对应的 NSS 结果？
+  answer: '```bash
+
+    getent hosts "$(hostname)"
+
+    ```'
+  extra: 若 hostname 为短名，结果还可能受 search domain 影响。
+  source:
+  - getent(1)
+  - hostname(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::hostname-operations
+  - card::command
+  - priority::P1
+- id: RHCSA-NETWORK-O02-QA-002
+  type: qa
+  question: '`/etc/hosts` 一行的典型字段顺序是什么？'
+  answer: 地址、规范名称、零个或多个别名。
+  extra: 例如 `192.0.2.44 repo.training.example repo-local`。
+  source:
+  - hosts(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::etc-hosts
+  - card::syntax
+  - priority::P0
+  - id::preserved
+- id: RHCSA-NETWORK-O02-QA-003
+  type: qa
+  question: 使用 NSS 验证 `/etc/hosts` 中名称的命令是什么？
+  answer: '```bash
+
+    getent hosts repo-local
+
+    ```'
+  extra: '`dig` 和 `host` 不会证明本地 hosts 条目被使用。'
+  source:
+  - getent(1)
+  - hosts(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::etc-hosts
+  - card::command
+  - priority::P0
+  - id::preserved
+- id: RHCSA-19-O02-QA-001
+  type: qa
+  question: '`/etc/hosts` 中加入映射后，其他主机会自动得到该映射吗？'
+  answer: 不会。它通常只影响读取该文件的本机环境。
+  extra: 多节点集中解析应使用 DNS 或配置管理。
+  source:
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::etc-hosts
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-O02-QA-002
+  type: qa
+  question: 编辑 `/etc/hosts` 前应至少检查哪三类冲突？
+  answer: 同名不同地址、同地址的旧规范名/别名、IPv4 与 IPv6 的不同预期。
+  extra: 还要避免破坏 localhost 基础条目。
+  source:
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::etc-hosts
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-19-O02-QA-003
+  type: qa
+  question: 怎样查找 `/etc/hosts` 中精确别名 `repo-local`？
+  answer: '```bash
+
+    grep -nE ''(^|[[:space:]])repo-local([[:space:]]|$)'' /etc/hosts
+
+    ```'
+  extra: 精确边界比简单子串匹配更可靠。
+  source:
+  - grep(1)
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::etc-hosts
+  - card::command
+  - priority::P1
+- id: RHCSA-19-O02-QA-004
+  type: qa
+  question: 为什么不推荐无条件反复执行 `echo ... >> /etc/hosts`？
+  answer: 重复运行会产生重复或冲突条目，缺乏幂等性。
+  extra: 考试可用编辑器；工作中优先配置管理。
+  source:
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::etc-hosts
+  - card::boundary
+  - priority::P1
+- id: RHCSA-19-O02-QA-005
+  type: qa
+  question: 查看到正确 hosts 文件内容后，下一条高价值证据是什么？
+  answer: 运行 `getent hosts` 查询规范名和别名。
+  extra: 这能同时验证 NSS 顺序和解析结果。
+  source:
+  - getent(1)
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::etc-hosts
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-O02-QA-006
+  type: qa
+  question: 本机 `/etc/hosts` 能否证明 PTR 已修复？
+  answer: 不能。PTR 是 DNS 反向区域中的独立记录。
+  extra: '`dig -x` 才是反向 DNS 证据。'
+  source:
+  - hosts(5)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::etc-hosts
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-K04-QA-001
+  type: qa
+  question: DNS A 记录的方向是什么？
+  answer: 名称到 IPv4 地址。
+  extra: 查询时显式指定 `A` 能避免地址族歧义。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::concept
+  - priority::P0
+- id: RHCSA-19-K04-QA-002
+  type: qa
+  question: DNS AAAA 记录的方向是什么？
+  answer: 名称到 IPv6 地址。
+  extra: A 成功不代表 AAAA 存在。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::concept
+  - priority::P0
+- id: RHCSA-19-K04-QA-003
+  type: qa
+  question: DNS PTR 记录的方向是什么？
+  answer: 地址到名称的反向映射。
+  extra: 它位于独立反向命名空间。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::concept
+  - priority::P0
+- id: RHCSA-19-K04-QA-004
+  type: qa
+  question: 查询名称的 IPv4 记录的命令是什么？
+  answer: '```bash
+
+    dig node1.training.example A
+
+    ```'
+  extra: 失败诊断时保留完整输出。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::command
+  - priority::P0
+- id: RHCSA-19-K04-QA-005
+  type: qa
+  question: 查询名称的 IPv6 记录的命令是什么？
+  answer: '```bash
+
+    dig node1.training.example AAAA
+
+    ```'
+  extra: 不要用 A 查询代替。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::command
+  - priority::P0
+- id: RHCSA-19-K04-QA-006
+  type: qa
+  question: 查询地址的 PTR 记录的命令是什么？
+  answer: '```bash
+
+    dig -x 192.0.2.44
+
+    ```'
+  extra: 正向记录正确不能代替反向验证。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::command
+  - priority::P0
+- id: RHCSA-19-K04-QA-007
+  type: qa
+  question: '`dig` 返回 `NOERROR` 但 ANSWER 为 0，应该怎样解释？'
+  answer: 查询成功到达 DNS 语义层，但该名称可能没有所请求类型的数据。
+  extra: 不能只凭 `NOERROR` 宣布记录存在。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::output
+  - priority::P0
+- id: RHCSA-19-K04-QA-008
+  type: qa
+  question: '`NXDOMAIN` 与 `SERVFAIL` 的核心区别是什么？'
+  answer: NXDOMAIN 表示被查询名称不存在；SERVFAIL 表示服务器无法完成解析。
+  extra: 两者下一步调查方向不同。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::output
+  - priority::P0
+- id: RHCSA-19-K04-QA-009
+  type: qa
+  question: 一个名称返回多个 A 记录是否必然是错误？
+  answer: 不是。可能是负载分担或容错。
+  extra: 按题目判断是要求包含某地址还是唯一地址。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::boundary
+  - priority::P1
+- id: RHCSA-19-K04-QA-010
+  type: qa
+  question: 为什么 A/PTR 不必机械一一对应？
+  answer: DNS 允许一个名称多地址、多个名称同地址；正反向由独立区域维护。
+  extra: 特定应用可能要求一致，但那是应用策略。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::dns-records
+  - card::comparison
+  - priority::P1
+- id: RHCSA-19-O03-QA-001
+  type: qa
+  question: 列出活动 NetworkManager connection 的命令是什么？
+  answer: '```bash
+
+    nmcli connection show --active
+
+    ```'
+  extra: 修改前先确认目标 profile，不要只凭接口名猜测。
+  source:
+  - nmcli(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::command
+  - priority::P0
+- id: RHCSA-19-O03-QA-002
+  type: qa
+  question: 读取 profile 的 IPv4 DNS、search 和自动 DNS 设置的命令骨架是什么？
+  answer: '```bash
+
+    nmcli -f ipv4.dns,ipv4.dns-search,ipv4.ignore-auto-dns connection show exam-net
+
+    ```'
+  extra: 这是持久 profile 视图。
+  source:
+  - nmcli(1)
+  - nm-settings-nmcli(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::command
+  - priority::P0
+- id: RHCSA-19-O03-QA-003
+  type: qa
+  question: 替换 profile 的 IPv4 DNS 列表为 `192.0.2.53` 的命令是什么？
+  answer: '```bash
+
+    nmcli connection modify exam-net ipv4.dns "192.0.2.53"
+
+    ```'
+  extra: 默认赋值通常替换现有列表。
+  source:
+  - nmcli(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::command
+  - priority::P0
+- id: RHCSA-19-O03-QA-004
+  type: qa
+  question: 在 NetworkManager 多值属性前加 `+` 或 `-` 分别表示什么？
+  answer: '`+` 追加条目，`-` 删除指定条目。'
+  extra: 先确定题目要求替换、追加还是删除。
+  source:
+  - nmcli(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::parameter
+  - priority::P0
+- id: RHCSA-19-O03-QA-005
+  type: qa
+  question: 为 profile 配置 IPv4 search domain 的命令是什么？
+  answer: '```bash
+
+    nmcli connection modify exam-net ipv4.dns-search "training.example"
+
+    ```'
+  extra: 配置后需重新应用并用短名查询验证。
+  source:
+  - nmcli(1)
+  - nm-settings-nmcli(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::command
+  - priority::P0
+- id: RHCSA-19-O03-QA-006
+  type: qa
+  question: '`ipv4.ignore-auto-dns yes` 的作用是什么？'
+  answer: 忽略自动配置提供的 IPv4 DNS server 和相关 DNS 信息。
+  extra: 只有题目明确要求不使用自动 DNS 时才启用。
+  source:
+  - nm-settings-nmcli(5)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::parameter
+  - priority::P0
+- id: RHCSA-19-O03-QA-007
+  type: qa
+  question: 题目只要求增加一个 DNS server 时，是否应默认设置 `ignore-auto-dns yes`？
+  answer: 不应。这样可能丢弃原有自动 DNS 和 search domain。
+  extra: 先读当前配置和题目终态。
+  source:
+  - nm-settings-nmcli(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-O03-QA-008
+  type: qa
+  question: 常见的重新激活 profile 命令是什么？
+  answer: '```bash
+
+    nmcli connection up exam-net
+
+    ```'
+  extra: 远程操作前评估连接中断风险。
+  source:
+  - nmcli(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::command
+  - priority::P0
+- id: RHCSA-19-O03-QA-009
+  type: qa
+  question: NetworkManager DNS 变更后为什么既要看 connection view 又要看 device view？
+  answer: connection view 证明保存的持久配置；device view 证明当前活动设备已得到对应 DNS 状态。
+  extra: 两者都不能代替实际查询。
+  source:
+  - nmcli(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-O03-QA-010
+  type: qa
+  question: 查看当前设备 DNS 和 domain 的字段骨架是什么？
+  answer: '```bash
+
+    nmcli -f GENERAL.CONNECTION,IP4.DNS,IP4.DOMAIN device show
+
+    ```'
+  extra: 多设备时应定位具体接口。
+  source:
+  - nmcli(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::command
+  - priority::P1
+- id: RHCSA-19-O03-QA-011
+  type: qa
+  question: '`/etc/resolv.conf` 中只看到 `127.0.0.53` 时，是否说明没有上游 DNS？'
+  answer: 不一定。它可能指向本地 stub resolver。
+  extra: 继续检查文件链接、NetworkManager device DNS 和实际 resolver 服务。
+  source:
+  - resolv.conf(5)
+  - NetworkManager documentation
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-19-O03-QA-012
+  type: qa
+  question: 为什么直接编辑并锁定 `/etc/resolv.conf` 不是标准持久方案？
+  answer: NetworkManager 可能覆盖它；锁定会阻止正常网络状态更新。
+  extra: 默认应修改 connection profile。
+  source:
+  - resolv.conf(5)
+  - NetworkManager documentation
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-O03-QA-013
+  type: qa
+  question: NetworkManager DNS 的四层验证顺序是什么？
+  answer: 持久 profile → 当前 device 状态 → resolver 入口 → `getent`/`dig` 查询。
+  extra: 最后再做应用功能验证。
+  source:
+  - nmcli(1)
+  - resolv.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::process
+  - priority::P0
+- id: RHCSA-19-O03-QA-014
+  type: qa
+  question: IPv4 DNS 配置能否自动代表 IPv6 DNS 配置？
+  answer: 不能。`ipv4.*` 与 `ipv6.*` 是独立属性。
+  extra: 双栈任务应分别读取和验证。
+  source:
+  - nm-settings-nmcli(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::networkmanager-dns
+  - card::boundary
+  - priority::P1
+- id: RHCSA-NETWORK-O02-QA-004
+  type: qa
+  question: '`getent hosts` 与 `dig` 的主要边界是什么？'
+  answer: '`getent` 观察 NSS/系统解析路径；`dig` 直接检查 DNS 查询。'
+  extra: '`dig` 成功不能证明 `/etc/hosts`、NSS 或应用结果。'
+  source:
+  - getent(1)
+  - dig(1)
+  - RH124
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::comparison
+  - priority::P0
+  - id::preserved
+- id: RHCSA-19-O04-QA-001
+  type: qa
+  question: 查询系统 NSS 主机数据库的典型命令是什么？
+  answer: '```bash
+
+    getent hosts node1.training.example
+
+    ```'
+  extra: 返回结果可能来自 files、dns 或其他已配置模块。
+  source:
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::command
+  - priority::P0
+- id: RHCSA-19-O04-QA-002
+  type: qa
+  question: 只观察 IPv4 地址族的系统解析结果可使用什么？
+  answer: '```bash
+
+    getent ahostsv4 node1.training.example
+
+    ```'
+  extra: IPv6 对应 `ahostsv6`。
+  source:
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::command
+  - priority::P1
+- id: RHCSA-19-O04-QA-003
+  type: qa
+  question: 向指定 DNS server 查询 A 记录的命令是什么？
+  answer: '```bash
+
+    dig @192.0.2.53 node1.training.example A
+
+    ```'
+  extra: 它只证明这台服务器的回答，不证明系统默认路径使用它。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::command
+  - priority::P0
+- id: RHCSA-19-O04-QA-004
+  type: qa
+  question: '`dig +short` 的优势和边界是什么？'
+  answer: 便于提取答案值，但隐藏状态码、ANSWER 结构和失败原因。
+  extra: 失败诊断应使用完整输出。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::parameter
+  - priority::P0
+- id: RHCSA-19-O04-QA-005
+  type: qa
+  question: 验证短名 search 是否对系统应用生效，优先使用什么命令？
+  answer: '```bash
+
+    getent hosts node1
+
+    ```'
+  extra: 同时用 FQDN 查询作为对照。
+  source:
+  - getent(1)
+  - resolv.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-O04-QA-006
+  type: qa
+  question: 指定服务器 `dig` 成功、普通 `dig` 失败时，下一步检查什么？
+  answer: 检查默认 resolver、`/etc/resolv.conf`、NetworkManager 当前 DNS 顺序和本地 stub。
+  extra: 不要继续修改已确认正确的指定服务器记录。
+  source:
+  - dig(1)
+  - resolv.conf(5)
+  - nmcli(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-O04-QA-007
+  type: qa
+  question: 普通 `dig` 成功而 `getent` 失败时，应固定哪些变量再比较？
+  answer: 固定同一 FQDN、同一地址族，并检查 NSS `hosts:` 行。
+  extra: 避免短名/FQDN或 A/AAAA 不一致引入假差异。
+  source:
+  - getent(1)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-O04-QA-008
+  type: qa
+  question: 为什么 `ping name` 不能作为完整 DNS 验收？
+  answer: 它还依赖 ICMP、路由、防火墙和对端响应。
+  extra: ping 失败不直接等于解析失败。
+  source:
+  - ping(8)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-O04-QA-009
+  type: qa
+  question: '`getent` 返回多行或多地址时，应该重点判断什么？'
+  answer: 是否包含预期地址族和目标地址，而不是背诵固定行序。
+  extra: 排序可能受 resolver 和 RFC 地址选择策略影响。
+  source:
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::output
+  - priority::P1
+- id: RHCSA-19-O04-QA-010
+  type: qa
+  question: 名称解析最小矩阵应至少覆盖哪些方向？
+  answer: NSS FQDN、NSS 短名、DNS A、DNS AAAA、PTR、指定服务器和应用功能。
+  extra: 按任务删减，但不能用一条命令替代所有层。
+  source:
+  - getent(1)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-O04-QA-011
+  type: qa
+  question: '`dig @SERVER` 成功能否证明应用正在使用该 SERVER？'
+  answer: 不能。它显式绕过系统 nameserver 选择。
+  extra: 还需检查默认 resolver 和应用路径。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::getent-dig
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-D01-QA-001
+  type: qa
+  question: 短名失败、FQDN 成功时的诊断链是什么？
+  answer: 确认 search domain 持久配置 → 检查当前 resolver → 最小修改正确 profile → 重新 `getent` 短名和 FQDN。
+  extra: 不要先改 IP 或路由。
+  source:
+  - resolv.conf(5)
+  - nmcli(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-D01-QA-002
+  type: qa
+  question: '`hostnamectl` 正确但 `hostname -f` 异常时，下一条证据是什么？'
+  answer: '`getent hosts "$(hostname)"`、`/etc/hosts` 和 `hosts:` 顺序。'
+  extra: 不要重复设置已正确的 static hostname。
+  source:
+  - hostname(1)
+  - getent(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-D01-QA-003
+  type: qa
+  question: A 有答案、AAAA 无答案时，第一判断是什么？
+  answer: 确认任务或应用是否需要 IPv6；无 AAAA 可能是正常设计。
+  extra: 不能宣布 DNS 全部失败。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-D01-QA-004
+  type: qa
+  question: 正向 A 正确、PTR 失败时，客户端最有价值的证据包是什么？
+  answer: 地址、期望名称、A 查询、`dig -x` 结果和所用 DNS server。
+  extra: PTR 区域修改属于 DNS 服务端职责。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-19-D01-QA-005
+  type: qa
+  question: 能否用 `/etc/hosts` 让远端客户端认为 PTR 已修复？
+  answer: 不能。它只改变本机 NSS，本质上没有修改反向 DNS。
+  extra: 应将证据交给反向区域管理方。
+  source:
+  - hosts(5)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-D01-QA-006
+  type: qa
+  question: 短名解析到错误域时，怎样区分 search 顺序问题？
+  answer: 读取 search 列表，并对每个候选 FQDN 使用带末尾点的 `dig` 查询。
+  extra: 随后调整顺序或使用明确 FQDN。
+  source:
+  - resolv.conf(5)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-19-D01-QA-007
+  type: qa
+  question: '`SERVFAIL` 出现时，为什么不能按 NXDOMAIN 处理？'
+  answer: SERVFAIL 表示解析过程失败，不等于名称不存在。
+  extra: 可能涉及上游、DNSSEC、权威服务器或临时错误。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::output
+  - priority::P1
+- id: RHCSA-19-D01-QA-008
+  type: qa
+  question: DNS 查询超时能否直接证明名称不存在？
+  answer: 不能。超时是传输或服务响应问题，名称存在性未知。
+  extra: 检查可达性、53/UDP/TCP 和服务器状态。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::output
+  - priority::P0
+- id: RHCSA-19-D01-QA-009
+  type: qa
+  question: 名称形式诊断为什么要分别测试短名、FQDN 和绝对名称？
+  answer: 用来隔离 search 补全、多标签 ndots 行为和真实记录本身。
+  extra: 每次保留实际查询字符串。
+  source:
+  - resolv.conf(5)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::process
+  - priority::P1
+- id: RHCSA-19-D01-QA-010
+  type: qa
+  question: 修复 search domain 后，为什么必须重复原来的短名请求？
+  answer: 只有重复原始失败路径，才能证明故障条件已消失。
+  extra: 只看 profile 字段不等于功能恢复。
+  source:
+  - getent(1)
+  - nmcli(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::name-diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-D02-QA-001
+  type: qa
+  question: '`dig` 返回新地址、`getent` 返回旧地址时，第一优先检查什么？'
+  answer: '`/etc/hosts` 中的过期映射和 `hosts:` 来源顺序。'
+  extra: 这是典型的 DNS 与 NSS 路径差异。
+  source:
+  - getent(1)
+  - dig(1)
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-D02-QA-002
+  type: qa
+  question: 修复旧 hosts 条目时，为什么不应直接删除整个 `/etc/hosts`？
+  answer: 会破坏 localhost 和其他有效映射，影响范围过大。
+  extra: 只进行有证据支持的最小修改。
+  source:
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-D02-QA-003
+  type: qa
+  question: '`getent` 已返回新地址，但应用仍访问旧地址。下一步调查什么？'
+  answer: 应用自身 DNS 缓存、长期运行时、本地缓存 resolver 和已建立连接。
+  extra: 不要继续改已正确的 DNS。
+  source:
+  - getent(1)
+  - 应用文档
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-D02-QA-004
+  type: qa
+  question: 名称缓存是否存在一个适用于所有 RHEL 应用的万能清理命令？
+  answer: 不存在。缓存持有者可能是不同服务或应用，甚至当前系统没有统一缓存。
+  extra: 先识别组件，再使用其官方刷新方式。
+  source:
+  - nsswitch.conf(5)
+  - 应用文档
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-D02-QA-005
+  type: qa
+  question: '`dig` 成功但应用失败的推荐分层链是什么？'
+  answer: 同名比较 `getent`/`dig` → 查 hosts/NSS → 查默认 resolver → 查应用缓存/连接 → 做应用功能验证。
+  extra: 每步选择最有区分度的证据。
+  source:
+  - getent(1)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::process
+  - priority::P0
+- id: RHCSA-19-D02-QA-006
+  type: qa
+  question: 所有名称工具都成功，而 HTTPS 仍失败时，应转向哪些层？
+  answer: 路由、端口监听、firewalld、SELinux、TLS/证书、应用协议和认证。
+  extra: 名称解析层已基本通过。
+  source:
+  - 章节边界
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::diagnosis
+  - priority::P0
+- id: RHCSA-19-D02-QA-007
+  type: qa
+  question: 无调查重启整台主机作为缓存修复有什么问题？
+  answer: 扩大影响、破坏证据，且不能解释真正的缓存持有者。
+  extra: 优先最小 reload/restart。
+  source:
+  - 项目安全规范
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-D02-QA-008
+  type: qa
+  question: 应用缓存刷新后，什么才是最终验收？
+  answer: 使用应用本身的请求路径，检查目标地址、端口、响应和日志。
+  extra: 进程重启成功不是业务终态。
+  source:
+  - 项目验证规范
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-D02-QA-009
+  type: qa
+  question: 容器内应用解析与宿主机 `getent` 不一致时，应考虑什么？
+  answer: 容器可能有独立 `/etc/hosts`、`resolv.conf` 或网络命名空间。
+  extra: 容器深度归第 31/32 章，本章只识别边界。
+  source:
+  - podman documentation
+  - resolv.conf(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::diagnosis
+  - priority::P2
+- id: RHCSA-19-D02-QA-010
+  type: qa
+  question: '`getent ahostsv4` 正确、`getent ahostsv6` 异常时，说明应继续隔离哪一维？'
+  answer: 地址族与 AAAA/IPv6 resolver 路径。
+  extra: 不要用 IPv4 成功代替双栈验证。
+  source:
+  - getent(1)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::resolver-application-diagnosis
+  - card::diagnosis
+  - priority::P1
+- id: RHCSA-19-T01-QA-001
+  type: qa
+  question: 现有 profile `exam-net` 不允许修改 IP/路由；要求设置 hostname、指定唯一 DNS、search 和本地别名。操作顺序是什么？
+  answer: 基线 → 设置 hostname → 查冲突并编辑 hosts → 修改现有 profile DNS/search/ignore-auto-dns → 激活 → 分层验证。
+  extra: 重新激活前评估远程连接中断。
+  source:
+  - RH124
+  - lecture RHCSA-19 classic task 1
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::classic-task-config
+  - card::task
+  - priority::P0
+- id: RHCSA-19-T01-QA-002
+  type: qa
+  question: 经典任务一中，怎样证明没有越界修改 IP 和路由？
+  answer: 变更前后对比 profile 地址/网关和当前 device 地址/路由。
+  extra: DNS 任务不能把网络前置对象静默改掉。
+  source:
+  - nmcli(1)
+  - ip(8)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::classic-task-config
+  - card::verification
+  - priority::P1
+- id: RHCSA-19-T01-QA-003
+  type: qa
+  question: 题目要求“只使用指定 DNS”时，为什么 `ignore-auto-dns yes` 才有意义？
+  answer: 它排除 DHCP 等自动 DNS，保证最终列表不混入其他服务器。
+  extra: 若题目只要求新增则不应机械使用。
+  source:
+  - nm-settings-nmcli(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::classic-task-config
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-T01-QA-004
+  type: qa
+  question: 经典任务一的持久性证据和真实重启验证分别是什么？
+  answer: 持久证据是 `/etc/hostname` 与 connection profile；真实重启后还要重复 hostname、NSS、DNS 和应用测试。
+  extra: 本章未执行 live reboot。
+  source:
+  - 项目验证边界
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::classic-task-config
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-T02-QA-001
+  type: qa
+  question: '`dig @server FQDN` 正确、`getent FQDN` 旧、短名失败时的最小修复顺序是什么？'
+  answer: 固定同一 FQDN/地址族 → 查 NSS/hosts → 修正旧条目 → 配置 search → 重复 getent/dig → 必要时刷新应用缓存。
+  extra: 不重排全局 NSS 来掩盖坏条目。
+  source:
+  - lecture RHCSA-19 classic task 2
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::classic-task-diagnosis
+  - card::task
+  - priority::P0
+- id: RHCSA-19-T02-QA-002
+  type: qa
+  question: 经典任务二中，哪四条结果能证明名称层修复完整？
+  answer: '`getent` FQDN、`getent` 短名、普通/指定服务器 `dig` 可解释、应用请求使用新地址成功。'
+  extra: 每条证明不同层。
+  source:
+  - getent(1)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::classic-task-diagnosis
+  - card::verification
+  - priority::P0
+- id: RHCSA-19-T02-QA-003
+  type: qa
+  question: 经典任务二为何不默认修改 `ipv4.ignore-auto-dns`？
+  answer: 题目只缺 search domain，并未要求丢弃 DHCP DNS。
+  extra: 最小修改必须由目标终态驱动。
+  source:
+  - nm-settings-nmcli(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::classic-task-diagnosis
+  - card::boundary
+  - priority::P0
+- id: RHCSA-19-S01-QA-001
+  type: qa
+  question: 本章的完整调用路径是什么？
+  answer: 名称形式 → hostname 身份 → NSS 策略 → hosts/DNS 来源 → resolver 持久与当前状态 → A/AAAA/PTR → getent → 应用功能。
+  extra: 用于考试读题和真实故障分层。
+  source:
+  - lecture RHCSA-19
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::chapter-synthesis
+  - card::process
+  - priority::P0
+- id: RHCSA-19-C01-CLOZE-001
+  type: cloze
+  text: 主机名三种视图中，{{c1::static}} 表示持久身份，{{c2::transient}} 表示当前临时名称，{{c3::pretty}} 表示人类可读描述。
+  extra: 三者不能互相替代。
+  source:
+  - hostnamectl(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::core-cloze
+  - card::cloze
+  - priority::P0
+- id: RHCSA-19-C01-CLOZE-002
+  type: cloze
+  text: '`/etc/hosts` 的典型字段顺序是 {{c1::地址}} → {{c2::规范名称}} → {{c3::别名}}。'
+  extra: 一行可有多个别名。
+  source:
+  - hosts(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::core-cloze
+  - card::cloze
+  - priority::P0
+- id: RHCSA-19-C01-CLOZE-003
+  type: cloze
+  text: DNS 中 {{c1::A}} 映射名称到 IPv4，{{c2::AAAA}} 映射名称到 IPv6，{{c3::PTR}} 映射地址到名称。
+  extra: 三种记录独立维护。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::core-cloze
+  - card::cloze
+  - priority::P0
+- id: RHCSA-19-C01-CLOZE-004
+  type: cloze
+  text: 系统 NSS 查询优先使用 {{c1::getent}} 观察；直接 DNS 查询优先使用 {{c2::dig}} 观察。
+  extra: 工具边界是本章核心。
+  source:
+  - getent(1)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::core-cloze
+  - card::cloze
+  - priority::P0
+- id: RHCSA-19-C01-CLOZE-005
+  type: cloze
+  text: NetworkManager 中 {{c1::ipv4.dns}} 保存 DNS server，{{c2::ipv4.dns-search}} 保存 search domain，{{c3::ipv4.ignore-auto-dns}}
+    控制是否忽略自动 DNS。
+  extra: IPv6 有对应的 `ipv6.*` 属性。
+  source:
+  - nm-settings-nmcli(5)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::core-cloze
+  - card::cloze
+  - priority::P0
+- id: RHCSA-19-C01-CLOZE-006
+  type: cloze
+  text: '`dig @192.0.2.53 name A` 只证明 {{c1::指定 DNS server 的回答}}，不能证明 {{c2::系统默认解析路径正在使用该 server}}。'
+  extra: 还要检查 resolver 和 `getent`。
+  source:
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::core-cloze
+  - card::cloze
+  - priority::P0
+- id: RHCSA-19-C01-CLOZE-007
+  type: cloze
+  text: 修复名称解析后，应按 {{c1::持久配置}} → {{c2::当前状态}} → {{c3::查询结果}} → {{c4::应用功能}} 分层验收。
+  extra: 局部成功不能扩大为终态。
+  source:
+  - 项目验证规范
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::core-cloze
+  - card::cloze
+  - priority::P0
+- id: RHCSA-19-C01-CLOZE-008
+  type: cloze
+  text: 短名依赖 {{c1::search domain}}；末尾带点的名称是 {{c2::绝对 DNS 名称}}。
+  extra: 绝对名称不再追加搜索域。
+  source:
+  - resolv.conf(5)
+  - dig(1)
+  tags:
+  - exam::rhcsa
+  - chapter::hostname-nss-dns
+  - topic::core-cloze
+  - card::cloze
+  - priority::P1
+status: integrated

@@ -1,0 +1,211 @@
+schema_version: 1
+canonical_ids:
+  RHCSA-FILES-K01-QA-007:
+    chapter: copy-archive-compression-transfer
+    reason: global duplicate resolved to the chapter with primary ownership
+  RHCSA-LVM-O01-QA-006:
+    chapter: lvm
+    reason: global duplicate resolved to the chapter with primary ownership
+  RHCSA-PACKAGES-O02-QA-003:
+    chapter: dnf-repositories-modules-groups
+    reason: global duplicate resolved to the chapter with primary ownership
+  RHCSA-PACKAGES-O02-QA-004:
+    chapter: dnf-repositories-modules-groups
+    reason: global duplicate resolved to the chapter with primary ownership
+  RHCSA-PACKAGES-O02-QA-005:
+    chapter: dnf-repositories-modules-groups
+    reason: global duplicate resolved to the chapter with primary ownership
+  RHCSA-SELINUX-K02-QA-001:
+    chapter: selinux-model-context-avc
+    reason: global duplicate resolved to the chapter with primary ownership
+  RHCSA-SELINUX-K04-QA-002:
+    chapter: selinux-model-context-avc
+    reason: global duplicate resolved to the chapter with primary ownership
+  RHCSA-SELINUX-K04-QA-003:
+    chapter: selinux-model-context-avc
+    reason: global duplicate resolved to the chapter with primary ownership
+  RHCSA-SELINUX-O02-QA-001:
+    chapter: selinux-model-context-avc
+    reason: global duplicate resolved to the chapter with primary ownership
+redirects: {}
+disable_ids:
+- id: RHCSA-16-T01-QA-007
+  reason: candidate migration record removed from active chapter YAML (rpm-packages-transactions)
+- id: RHCSA-33-T06-QA-008
+  reason: candidate migration record removed from active chapter YAML (comprehensive)
+- id: RHCSA-FILESYSTEMS-QA-013
+  reason: candidate migration record removed from active chapter YAML (filesystems-labels-uuid-capacity)
+- id: RHCSA-FILESYSTEMS-QA-023
+  reason: candidate migration record removed from active chapter YAML (block-devices-partitions-signatures)
+- id: RHCSA-LVM-K03-QA-008
+  reason: candidate migration record removed from active chapter YAML (filesystems-labels-uuid-capacity)
+- id: RHCSA-LVM-O03-QA-001
+  reason: candidate migration record removed from active chapter YAML (lvm)
+- id: RHCSA-LVM-O03-QA-002
+  reason: candidate migration record removed from active chapter YAML (lvm)
+- id: RHCSA-LVM-O03-QA-003
+  reason: candidate migration record removed from active chapter YAML (lvm)
+- id: RHCSA-LVM-O03-QA-004
+  reason: candidate migration record removed from active chapter YAML (lvm)
+- id: RHCSA-LVM-O03-QA-005
+  reason: candidate migration record removed from active chapter YAML (lvm)
+- id: RHCSA-LVM-O03-QA-006
+  reason: candidate migration record removed from active chapter YAML (lvm)
+- id: RHCSA-LVM-O03-QA-007
+  reason: candidate migration record removed from active chapter YAML (lvm)
+- id: RHCSA-LVM-O03-QA-008
+  reason: candidate migration record removed from active chapter YAML (lvm)
+- id: RHCSA-NETWORK-C01-QA-001
+  reason: candidate migration record removed from active chapter YAML (networkmanager-ipv4-routing, firewalld-service-access-chain)
+- id: RHCSA-NFS-QA-007
+  reason: candidate migration record removed from active chapter YAML (nfs-client)
+- id: RHCSA-NFS-QA-008
+  reason: candidate migration record removed from active chapter YAML (nfs-client)
+- id: RHCSA-NFS-QA-009
+  reason: candidate migration record removed from active chapter YAML (nfs-client)
+- id: RHCSA-NFS-QA-010
+  reason: candidate migration record removed from active chapter YAML (nfs-client)
+- id: RHCSA-NFS-QA-011
+  reason: candidate migration record removed from active chapter YAML (nfs-client)
+- id: RHCSA-NFS-QA-015
+  reason: candidate migration record removed from active chapter YAML (nfs-client)
+- id: RHCSA-NFS-QA-016
+  reason: candidate migration record removed from active chapter YAML (nfs-client)
+- id: RHCSA-NFS-QA-017
+  reason: candidate migration record removed from active chapter YAML (nfs-client)
+- id: RHCSA-PACKAGES-C01-QA-001
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-K01-CLOZE-001
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-K01-QA-001
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-K01-QA-002
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-K01-QA-003
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-K01-QA-004
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-K01-QA-005
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-K01-QA-006
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-O01-QA-004
+  reason: candidate migration record removed from active chapter YAML (rpm-packages-transactions)
+- id: RHCSA-PACKAGES-O01-QA-005
+  reason: candidate migration record removed from active chapter YAML (rpm-packages-transactions)
+- id: RHCSA-PACKAGES-O02-QA-002
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-O03-CLOZE-001
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-O03-QA-001
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-O03-QA-002
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-O03-QA-003
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PACKAGES-O03-QA-004
+  reason: candidate migration record removed from active chapter YAML (dnf-repositories-modules-groups)
+- id: RHCSA-PODMAN-QA-012
+  reason: candidate migration record removed from active chapter YAML (podman-systemd-quadlet)
+- id: RHCSA-SELINUX-C01-CLOZE-001
+  reason: candidate migration record removed from active chapter YAML (selinux-model-context-avc)
+- id: RHCSA-SELINUX-C01-QA-002
+  reason: candidate migration record removed from active chapter YAML (selinux-model-context-avc)
+- id: RHCSA-SELINUX-K01-CLOZE-001
+  reason: candidate migration record removed from active chapter YAML (selinux-files-ports-booleans)
+- id: RHCSA-SELINUX-K04-QA-001
+  reason: candidate migration record removed from active chapter YAML (selinux-files-ports-booleans)
+- id: RHCSA-SERVICES-C01-QA-001
+  reason: candidate migration record removed from active chapter YAML (journald-rsyslog-logrotate, scheduling-at-cron-timers)
+- id: RHCSA-SERVICES-O01-CLOZE-001
+  reason: candidate migration record removed from active chapter YAML (systemd-units-services)
+- id: RHCSA-SHELL-C01-QA-001
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-C01-QA-002
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-C01-QA-003
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-D01-QA-001
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-D01-QA-002
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-D01-QA-003
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-CLOZE-001
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-QA-001
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-QA-002
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-QA-003
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-QA-004
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-QA-005
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-QA-006
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-QA-007
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O01-QA-008
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O02-CLOZE-001
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O02-QA-001
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O02-QA-002
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O02-QA-003
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O02-QA-004
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O02-QA-005
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+- id: RHCSA-SHELL-O02-QA-006
+  reason: candidate migration record removed from active chapter YAML (shell-parsing-expansion)
+conflicts_resolved:
+- id: RHCSA-FILES-K01-QA-007
+  chapters:
+  - copy-archive-compression-transfer
+  - filesystem-paths-types-links
+  action: keep canonical active Note in copy-archive-compression-transfer; remove duplicate copies
+- id: RHCSA-LVM-O01-QA-006
+  chapters:
+  - filesystems-labels-uuid-capacity
+  - lvm
+  action: keep canonical active Note in lvm; remove duplicate copies
+- id: RHCSA-PACKAGES-O02-QA-003
+  chapters:
+  - rpm-packages-transactions
+  - dnf-repositories-modules-groups
+  action: keep canonical active Note in dnf-repositories-modules-groups; remove duplicate copies
+- id: RHCSA-PACKAGES-O02-QA-004
+  chapters:
+  - rpm-packages-transactions
+  - dnf-repositories-modules-groups
+  action: keep canonical active Note in dnf-repositories-modules-groups; remove duplicate copies
+- id: RHCSA-PACKAGES-O02-QA-005
+  chapters:
+  - rpm-packages-transactions
+  - dnf-repositories-modules-groups
+  action: keep canonical active Note in dnf-repositories-modules-groups; remove duplicate copies
+- id: RHCSA-SELINUX-K02-QA-001
+  chapters:
+  - selinux-model-context-avc
+  - selinux-files-ports-booleans
+  action: keep canonical active Note in selinux-model-context-avc; remove duplicate copies
+- id: RHCSA-SELINUX-K04-QA-002
+  chapters:
+  - selinux-model-context-avc
+  - selinux-files-ports-booleans
+  action: keep canonical active Note in selinux-model-context-avc; remove duplicate copies
+- id: RHCSA-SELINUX-K04-QA-003
+  chapters:
+  - selinux-model-context-avc
+  - selinux-files-ports-booleans
+  action: keep canonical active Note in selinux-model-context-avc; remove duplicate copies
+- id: RHCSA-SELINUX-O02-QA-001
+  chapters:
+  - selinux-model-context-avc
+  - selinux-files-ports-booleans
+  action: keep canonical active Note in selinux-model-context-avc; remove duplicate copies

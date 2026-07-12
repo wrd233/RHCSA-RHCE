@@ -32,12 +32,23 @@ def load_manifest() -> dict:
 def iter_chapters(tracks: Iterable[str] = ("common", "rhcsa", "rhce")):
     manifest = load_manifest()
     for track in tracks:
-        base = ROOT / "content" / track
-        if track != "common":
-            base = base / "chapters"
-        for number, entry in enumerate(manifest[track]["chapters"], 1):
+        for fallback_number, entry in enumerate(manifest[track]["chapters"], 1):
+            if entry.get("status") == "pending" or not entry.get("enabled", True):
+                continue
             item = dict(entry)
-            item.update(track=track, number=number, path=base / entry["slug"])
+            configured_path = entry.get("path")
+            if configured_path:
+                chapter_path = ROOT / configured_path
+            else:
+                base = ROOT / "content" / track
+                if track != "common":
+                    base = base / "chapters"
+                chapter_path = base / entry["slug"]
+            item.update(
+                track=track,
+                number=entry.get("number", fallback_number),
+                path=chapter_path,
+            )
             yield item
 
 
@@ -127,7 +138,11 @@ def chrome_pdf(html_path: Path, pdf_path: Path) -> None:
             time.sleep(0.25)
         if process.poll() is None:
             process.terminate()
-        _, stderr = process.communicate(timeout=10)
+        try:
+            _, stderr = process.communicate(timeout=10)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            _, stderr = process.communicate(timeout=10)
     except Exception:
         process.kill()
         process.wait()
