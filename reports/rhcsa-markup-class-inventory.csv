@@ -1,0 +1,218 @@
+class,chapters,count,semantic_inference,canonical_component,compatibility_alias,safe_to_replace
+answer,RHCSA-01 RHCSA-03 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-15 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-27 RHCSA-31 RHCSA-32 RHCSA-33,40,reference-solution,reference-solution,True,False
+answer-heading,RHCSA-21,2,reference-solution,reference-solution,True,False
+answer-label,RHCSA-03,1,reference-solution,reference-solution,True,False
+atlas-intro,RHCSA-14,1,shared-compatible,shared-compatible,True,False
+atomic-no,RHCSA-08,78,shared-compatible,shared-compatible,True,False
+body-kicker,RHCSA-21 RHCSA-24 RHCSA-31 RHCSA-33,4,shared-compatible,shared-compatible,True,False
+body-opening,RHCSA-19,1,shared-compatible,shared-compatible,True,False
+body-start,RHCSA-11,1,shared-compatible,shared-compatible,True,False
+boot-chain-diagram,RHCSA-30,1,shared-compatible,shared-compatible,True,False
+boundary-note,RHCSA-03 RHCSA-18 RHCSA-20 RHCSA-23,4,shared-compatible,shared-compatible,True,False
+chapter-body,RHCSA-31,1,shared-compatible,shared-compatible,True,False
+chapter-cover,RHCSA-30 RHCSA-33,2,chapter-cover,chapter-cover,False,False
+chapter-eyebrow,RHCSA-19,1,shared-compatible,shared-compatible,True,False
+chapter-kicker,RHCSA-07 RHCSA-29,2,shared-compatible,shared-compatible,True,False
+chapter-label,RHCSA-04 RHCSA-09 RHCSA-10 RHCSA-13 RHCSA-23 RHCSA-32,6,shared-compatible,shared-compatible,True,False
+chapter-mark,RHCSA-12 RHCSA-15,2,shared-compatible,shared-compatible,True,False
+chapter-marker,RHCSA-25,1,shared-compatible,shared-compatible,True,False
+chapter-opening,RHCSA-01 RHCSA-04 RHCSA-09 RHCSA-10 RHCSA-12 RHCSA-15 RHCSA-18 RHCSA-23 RHCSA-27 RHCSA-29 RHCSA-30 RHCSA-32 RHCSA-33,13,shared-compatible,shared-compatible,True,False
+cheatsheet,RHCSA-03 RHCSA-14 RHCSA-19 RHCSA-21 RHCSA-24 RHCSA-32,58,shared-compatible,shared-compatible,True,False
+classic,RHCSA-15,2,shared-compatible,shared-compatible,True,False
+classic-task,RHCSA-05 RHCSA-08 RHCSA-11 RHCSA-12 RHCSA-19 RHCSA-21 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-28 RHCSA-30,26,classic-task,classic-task,False,False
+close,RHCSA-16,1,shared-compatible,shared-compatible,True,False
+closing,RHCSA-15 RHCSA-20 RHCSA-25 RHCSA-28 RHCSA-32,5,shared-compatible,shared-compatible,True,False
+closing-addendum,RHCSA-19,1,shared-compatible,shared-compatible,True,False
+closure,RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-21,5,shared-compatible,shared-compatible,True,False
+cmd-entry,RHCSA-10,5,shared-compatible,shared-compatible,True,False
+cmd-group,RHCSA-29,5,shared-compatible,shared-compatible,True,False
+command-card,RHCSA-03,7,operation-quickref,operation-quickref,True,False
+command-entry,RHCSA-11 RHCSA-16 RHCSA-23 RHCSA-25 RHCSA-26 RHCSA-31,41,operation-quickref,operation-quickref,True,False
+command-group,RHCSA-05 RHCSA-08 RHCSA-12 RHCSA-17,25,operation-quickref,operation-quickref,True,False
+concept,RHCSA-21,6,concept-block,concept-block,True,False
+concept-badge,RHCSA-04 RHCSA-08 RHCSA-13 RHCSA-17 RHCSA-19 RHCSA-22 RHCSA-23 RHCSA-30 RHCSA-32,63,concept-block,concept-block,True,False
+concept-block,RHCSA-01 RHCSA-03 RHCSA-05 RHCSA-08 RHCSA-11 RHCSA-12 RHCSA-16 RHCSA-17 RHCSA-22 RHCSA-24 RHCSA-26 RHCSA-27 RHCSA-28 RHCSA-30 RHCSA-31 RHCSA-32,114,concept-block,concept-block,False,False
+concept-box,RHCSA-33,7,concept-block,concept-block,True,False
+concept-card,RHCSA-04 RHCSA-09 RHCSA-10 RHCSA-14 RHCSA-15 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-23 RHCSA-25 RHCSA-29,76,concept-block,concept-block,True,False
+concept-chip,RHCSA-07,6,concept-block,concept-block,True,False
+concept-label,RHCSA-01 RHCSA-02 RHCSA-03 RHCSA-05 RHCSA-06 RHCSA-11 RHCSA-12 RHCSA-14 RHCSA-15 RHCSA-16 RHCSA-18 RHCSA-20 RHCSA-24 RHCSA-25 RHCSA-26 RHCSA-28 RHCSA-31 RHCSA-33,128,concept-block,concept-block,True,False
+concept-pill,RHCSA-27 RHCSA-29,12,concept-block,concept-block,True,False
+concept-stack,RHCSA-01 RHCSA-04 RHCSA-05 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-14 RHCSA-15 RHCSA-16 RHCSA-17 RHCSA-20 RHCSA-21 RHCSA-23 RHCSA-26 RHCSA-27 RHCSA-30 RHCSA-32 RHCSA-33,19,concept-block,concept-block,True,False
+concept-tag,RHCSA-09,6,concept-block,concept-block,True,False
+concept-zone,RHCSA-25 RHCSA-28,2,concept-block,concept-block,True,False
+conclusion,RHCSA-17 RHCSA-27 RHCSA-30,3,shared-compatible,shared-compatible,True,False
+continuation,RHCSA-21,1,shared-compatible,shared-compatible,True,False
+cover,RHCSA-04 RHCSA-07 RHCSA-21 RHCSA-22,4,chapter-cover,chapter-cover,True,False
+cover-edition,RHCSA-01 RHCSA-02 RHCSA-04 RHCSA-05 RHCSA-06 RHCSA-08 RHCSA-10 RHCSA-12 RHCSA-13 RHCSA-14 RHCSA-15 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-23 RHCSA-24 RHCSA-30 RHCSA-32 RHCSA-33,21,chapter-cover,chapter-cover,True,False
+cover-eyebrow,RHCSA-08 RHCSA-24,2,chapter-cover,chapter-cover,True,False
+cover-inner,RHCSA-07,1,chapter-cover,chapter-cover,True,False
+cover-kicker,RHCSA-01 RHCSA-02 RHCSA-03 RHCSA-04 RHCSA-06 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-13 RHCSA-14 RHCSA-15 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-22 RHCSA-23 RHCSA-25 RHCSA-26 RHCSA-27 RHCSA-31 RHCSA-32 RHCSA-33,24,chapter-cover,chapter-cover,True,False
+cover-mark,RHCSA-22 RHCSA-27,2,chapter-cover,chapter-cover,True,False
+cover-note,RHCSA-03 RHCSA-07 RHCSA-09 RHCSA-11 RHCSA-25 RHCSA-26 RHCSA-31,7,chapter-cover,chapter-cover,True,False
+cover-number,RHCSA-01 RHCSA-02 RHCSA-03 RHCSA-04 RHCSA-05 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-13 RHCSA-14 RHCSA-15 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-22 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-26 RHCSA-27 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,30,chapter-cover,chapter-cover,True,False
+cover-page,RHCSA-01 RHCSA-03 RHCSA-05 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-14 RHCSA-15 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-26 RHCSA-27 RHCSA-31 RHCSA-32,21,chapter-cover,chapter-cover,True,False
+cover-series,RHCSA-05 RHCSA-07 RHCSA-12 RHCSA-30,4,chapter-cover,chapter-cover,True,False
+cover-spacer,RHCSA-26,1,chapter-cover,chapter-cover,True,False
+cover-subtitle,RHCSA-01 RHCSA-02 RHCSA-03 RHCSA-04 RHCSA-05 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-13 RHCSA-14 RHCSA-15 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-22 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-26 RHCSA-27 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,30,chapter-cover,chapter-cover,True,False
+cover-tags,RHCSA-01 RHCSA-02 RHCSA-03 RHCSA-04 RHCSA-05 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-13 RHCSA-14 RHCSA-15 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-22 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-26 RHCSA-27 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,30,chapter-cover,chapter-cover,True,False
+cover-title,RHCSA-05 RHCSA-07 RHCSA-25,3,chapter-cover,chapter-cover,True,False
+danger-block,RHCSA-25,1,shared-compatible,shared-compatible,True,False
+danger-callout,RHCSA-22,1,shared-compatible,shared-compatible,True,False
+danger-entry,RHCSA-22,1,shared-compatible,shared-compatible,True,False
+decision-flow,RHCSA-28,1,shared-compatible,shared-compatible,True,False
+definition-list,RHCSA-25,4,shared-compatible,shared-compatible,True,False
+diagnosis,RHCSA-01 RHCSA-03 RHCSA-05 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-15 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-27 RHCSA-28 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,43,shared-compatible,shared-compatible,True,False
+diagnosis-flow,RHCSA-21,1,shared-compatible,shared-compatible,True,False
+diagnostic-chain,RHCSA-18,1,shared-compatible,shared-compatible,True,False
+diagram-title,RHCSA-30,1,shared-compatible,shared-compatible,True,False
+directory-card,RHCSA-04,4,shared-compatible,shared-compatible,True,False
+directory-grid,RHCSA-04,1,shared-compatible,shared-compatible,True,False
+evidence-box,RHCSA-03,4,shared-compatible,shared-compatible,True,False
+evidence-card,RHCSA-33,6,shared-compatible,shared-compatible,True,False
+evidence-cards,RHCSA-33,1,shared-compatible,shared-compatible,True,False
+evidence-chain,RHCSA-12,1,shared-compatible,shared-compatible,True,False
+evidence-note,RHCSA-04,1,shared-compatible,shared-compatible,True,False
+example-strip,RHCSA-08,1,shared-compatible,shared-compatible,True,False
+eyebrow,RHCSA-01,1,shared-compatible,shared-compatible,True,False
+field-item,RHCSA-24,6,shared-compatible,shared-compatible,True,False
+field-list,RHCSA-24,1,shared-compatible,shared-compatible,True,False
+final-boundary,RHCSA-21,1,shared-compatible,shared-compatible,True,False
+final-cheat-grid,RHCSA-04,1,shared-compatible,shared-compatible,True,False
+final-note,RHCSA-03,1,shared-compatible,shared-compatible,True,False
+flow-arrow,RHCSA-04 RHCSA-28 RHCSA-30,10,shared-compatible,shared-compatible,True,False
+flow-box,RHCSA-28,5,shared-compatible,shared-compatible,True,False
+flow-chain,RHCSA-19,1,shared-compatible,shared-compatible,True,False
+flow-plus,RHCSA-28,3,shared-compatible,shared-compatible,True,False
+flow-result,RHCSA-28,1,shared-compatible,shared-compatible,True,False
+flow-step,RHCSA-04,4,shared-compatible,shared-compatible,True,False
+force-new-page,RHCSA-18,4,page-break,page-break,True,False
+forms,RHCSA-10,5,shared-compatible,shared-compatible,True,False
+forms-label,RHCSA-26,7,shared-compatible,shared-compatible,True,False
+forms-title,RHCSA-12 RHCSA-17,12,shared-compatible,shared-compatible,True,False
+knowledge,RHCSA-01 RHCSA-03 RHCSA-05 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-15 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-27 RHCSA-28 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,106,shared-compatible,shared-compatible,True,False
+language-bash,RHCSA-01 RHCSA-04 RHCSA-20,8,shared-compatible,shared-compatible,True,False
+language-text,RHCSA-20,1,shared-compatible,shared-compatible,True,False
+lead,RHCSA-01 RHCSA-16 RHCSA-20 RHCSA-22 RHCSA-33,5,shared-compatible,shared-compatible,True,False
+lead-line,RHCSA-14,1,shared-compatible,shared-compatible,True,False
+main-start,RHCSA-03,1,shared-compatible,shared-compatible,True,False
+mainline,RHCSA-01,1,shared-compatible,shared-compatible,True,False
+matrix-item,RHCSA-33,2,shared-compatible,shared-compatible,True,False
+matrix-list,RHCSA-33,1,shared-compatible,shared-compatible,True,False
+method-box,RHCSA-20,1,shared-compatible,shared-compatible,True,False
+method-chain,RHCSA-32,1,shared-compatible,shared-compatible,True,False
+model-card,RHCSA-07 RHCSA-11 RHCSA-16 RHCSA-17 RHCSA-19 RHCSA-22 RHCSA-26 RHCSA-28 RHCSA-30 RHCSA-31,60,shared-compatible,shared-compatible,True,False
+model-flow,RHCSA-04 RHCSA-12 RHCSA-15,3,shared-compatible,shared-compatible,True,False
+model-grid,RHCSA-01 RHCSA-02 RHCSA-03 RHCSA-07 RHCSA-08 RHCSA-11 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-21 RHCSA-22 RHCSA-23 RHCSA-26 RHCSA-27 RHCSA-28 RHCSA-29 RHCSA-30 RHCSA-31 RHCSA-32,20,shared-compatible,shared-compatible,True,False
+model-step,RHCSA-02 RHCSA-03 RHCSA-23,18,shared-compatible,shared-compatible,True,False
+model-steps,RHCSA-05 RHCSA-06 RHCSA-10 RHCSA-14 RHCSA-20 RHCSA-25,6,shared-compatible,shared-compatible,True,False
+nav-bottom,RHCSA-24,1,reading-navigation,reading-navigation,True,False
+nav-callout,RHCSA-11,1,reading-navigation,reading-navigation,True,False
+nav-col,RHCSA-03 RHCSA-15,4,reading-navigation,reading-navigation,True,False
+nav-columns,RHCSA-01 RHCSA-02 RHCSA-03 RHCSA-04 RHCSA-07 RHCSA-10 RHCSA-11 RHCSA-13 RHCSA-15 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-22 RHCSA-23 RHCSA-25 RHCSA-26 RHCSA-27 RHCSA-28 RHCSA-29 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,26,reading-navigation,reading-navigation,True,False
+nav-grid,RHCSA-05 RHCSA-06 RHCSA-12,3,reading-navigation,reading-navigation,True,False
+nav-kicker,RHCSA-12,1,reading-navigation,reading-navigation,True,False
+nav-lead,RHCSA-05 RHCSA-12 RHCSA-15 RHCSA-17 RHCSA-19 RHCSA-23 RHCSA-28 RHCSA-29 RHCSA-32,9,reading-navigation,reading-navigation,True,False
+nav-left,RHCSA-03,1,reading-navigation,reading-navigation,True,False
+nav-mainline,RHCSA-04 RHCSA-10 RHCSA-24,3,reading-navigation,reading-navigation,True,False
+nav-map,RHCSA-23,1,reading-navigation,reading-navigation,True,False
+nav-note,RHCSA-06 RHCSA-10 RHCSA-14 RHCSA-15 RHCSA-17 RHCSA-19 RHCSA-22 RHCSA-27 RHCSA-30 RHCSA-32 RHCSA-33,11,reading-navigation,reading-navigation,True,False
+nav-page,RHCSA-03 RHCSA-15 RHCSA-22 RHCSA-27 RHCSA-31,5,reading-navigation,reading-navigation,True,False
+nav-panel,RHCSA-19,2,reading-navigation,reading-navigation,True,False
+nav-questions,RHCSA-04 RHCSA-07 RHCSA-23,3,reading-navigation,reading-navigation,True,False
+nav-right,RHCSA-03,1,reading-navigation,reading-navigation,True,False
+nav-section-title,RHCSA-19,2,reading-navigation,reading-navigation,True,False
+nav-steps,RHCSA-04 RHCSA-24 RHCSA-33,3,reading-navigation,reading-navigation,True,False
+nav-topic-table,RHCSA-31,1,reading-navigation,reading-navigation,True,False
+navigation,RHCSA-04 RHCSA-21,2,reading-navigation,reading-navigation,True,False
+navigation-columns,RHCSA-08,1,reading-navigation,reading-navigation,True,False
+navigation-page,RHCSA-01 RHCSA-11 RHCSA-14 RHCSA-17 RHCSA-19 RHCSA-20 RHCSA-23 RHCSA-26 RHCSA-32,9,reading-navigation,reading-navigation,True,False
+node-kind,RHCSA-24,71,shared-compatible,shared-compatible,True,False
+node-label,RHCSA-21,72,shared-compatible,shared-compatible,True,False
+node-num,RHCSA-24,71,shared-compatible,shared-compatible,True,False
+note-box,RHCSA-01 RHCSA-21 RHCSA-29,3,shared-compatible,shared-compatible,True,False
+op-entry,RHCSA-15 RHCSA-22 RHCSA-32,20,shared-compatible,shared-compatible,True,False
+op-intro,RHCSA-15,1,shared-compatible,shared-compatible,True,False
+op-spec,RHCSA-11 RHCSA-12,4,shared-compatible,shared-compatible,True,False
+opening,RHCSA-21,1,shared-compatible,shared-compatible,True,False
+opening-chain,RHCSA-05,1,shared-compatible,shared-compatible,True,False
+opening-question,RHCSA-11,1,shared-compatible,shared-compatible,True,False
+operation,RHCSA-01 RHCSA-03 RHCSA-05 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-15 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-27 RHCSA-28 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,131,operation-quickref,operation-quickref,True,False
+operation-atlas,RHCSA-14,1,operation-quickref,operation-quickref,True,False
+operation-label,RHCSA-11,1,operation-quickref,operation-quickref,True,False
+operation-quick,RHCSA-08,1,operation-quickref,operation-quickref,True,False
+operation-semantics,RHCSA-15,1,operation-quickref,operation-quickref,True,False
+ops-chip,RHCSA-07,1,shared-compatible,shared-compatible,True,False
+ops-intro,RHCSA-10,1,shared-compatible,shared-compatible,True,False
+ops-lead,RHCSA-09 RHCSA-22,2,shared-compatible,shared-compatible,True,False
+ops-quick,RHCSA-10 RHCSA-22 RHCSA-32,3,operation-quickref,operation-quickref,True,False
+ops-tag,RHCSA-09,1,shared-compatible,shared-compatible,True,False
+page-break,RHCSA-01 RHCSA-02 RHCSA-05 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-12 RHCSA-13 RHCSA-14 RHCSA-15 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-22 RHCSA-23 RHCSA-24 RHCSA-26 RHCSA-27 RHCSA-28 RHCSA-29 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,115,page-break,page-break,False,False
+page-break-after,RHCSA-04 RHCSA-12,2,page-break,page-break,True,False
+page-break-soft,RHCSA-26,1,page-break,page-break,True,False
+pagebreak,RHCSA-16 RHCSA-21,13,page-break,page-break,True,False
+param-list,RHCSA-11 RHCSA-16,14,shared-compatible,shared-compatible,True,False
+param-title,RHCSA-15 RHCSA-16 RHCSA-29,18,shared-compatible,shared-compatible,True,False
+params,RHCSA-24,6,shared-compatible,shared-compatible,True,False
+params-title,RHCSA-24,6,shared-compatible,shared-compatible,True,False
+permission-triplet,RHCSA-08,2,shared-compatible,shared-compatible,True,False
+point-label,RHCSA-03 RHCSA-07 RHCSA-08 RHCSA-11 RHCSA-12 RHCSA-19 RHCSA-25,397,shared-compatible,shared-compatible,True,False
+proof-grid,RHCSA-04,1,shared-compatible,shared-compatible,True,False
+question-box,RHCSA-10 RHCSA-19,2,shared-compatible,shared-compatible,True,False
+question-chain,RHCSA-09 RHCSA-23,2,shared-compatible,shared-compatible,True,False
+question-list,RHCSA-05 RHCSA-12 RHCSA-19 RHCSA-20,4,shared-compatible,shared-compatible,True,False
+questions,RHCSA-01 RHCSA-08 RHCSA-16 RHCSA-17 RHCSA-22 RHCSA-29 RHCSA-33,7,shared-compatible,shared-compatible,True,False
+questions-panel,RHCSA-28,1,shared-compatible,shared-compatible,True,False
+quick-command,RHCSA-04 RHCSA-19,12,operation-quickref,operation-quickref,True,False
+quick-intro,RHCSA-03 RHCSA-08 RHCSA-19 RHCSA-24,4,operation-quickref,operation-quickref,True,False
+quick-reference,RHCSA-03 RHCSA-17 RHCSA-18 RHCSA-23 RHCSA-24,5,operation-quickref,operation-quickref,True,False
+quick-zone,RHCSA-19,1,operation-quickref,operation-quickref,True,False
+quickref,RHCSA-04 RHCSA-05 RHCSA-11 RHCSA-20 RHCSA-21 RHCSA-26 RHCSA-29 RHCSA-31,9,operation-quickref,operation-quickref,True,False
+quickref-card,RHCSA-27,6,operation-quickref,operation-quickref,True,False
+quickref-intro,RHCSA-04 RHCSA-05 RHCSA-11 RHCSA-13 RHCSA-17 RHCSA-21 RHCSA-26 RHCSA-28 RHCSA-29,9,operation-quickref,operation-quickref,True,False
+quickref-item,RHCSA-20,7,operation-quickref,operation-quickref,True,False
+quickref-lead,RHCSA-20,1,operation-quickref,operation-quickref,True,False
+quickref-section,RHCSA-27,1,operation-quickref,operation-quickref,True,False
+quickref-title,RHCSA-05 RHCSA-23,2,operation-quickref,operation-quickref,True,False
+quickref-zone,RHCSA-25 RHCSA-28,2,operation-quickref,operation-quickref,True,False
+reading-nav,RHCSA-05 RHCSA-07 RHCSA-10 RHCSA-12 RHCSA-16 RHCSA-18 RHCSA-24 RHCSA-25 RHCSA-28 RHCSA-29 RHCSA-33,11,reading-navigation,reading-navigation,True,False
+reading-navigation,RHCSA-30,1,reading-navigation,reading-navigation,False,False
+reading-note,RHCSA-07 RHCSA-16 RHCSA-24 RHCSA-25 RHCSA-26 RHCSA-28,6,shared-compatible,shared-compatible,True,False
+reference,RHCSA-12,2,shared-compatible,shared-compatible,True,False
+reference-answer,RHCSA-21 RHCSA-23 RHCSA-30,6,reference-solution,reference-solution,True,False
+reference-solution,RHCSA-05,2,reference-solution,reference-solution,False,False
+self-help,RHCSA-28,1,shared-compatible,shared-compatible,True,False
+semantic-command,RHCSA-01 RHCSA-30,13,operation-quickref,operation-quickref,True,False
+semantic-intro,RHCSA-01 RHCSA-06 RHCSA-12 RHCSA-16 RHCSA-30 RHCSA-33,6,shared-compatible,shared-compatible,True,False
+semantic-item,RHCSA-33,6,shared-compatible,shared-compatible,True,False
+semantic-quick,RHCSA-12,1,operation-quickref,operation-quickref,True,False
+semantic-quick-reference,RHCSA-01,1,operation-quickref,operation-quickref,True,False
+semantic-zone,RHCSA-16 RHCSA-30 RHCSA-33,3,shared-compatible,shared-compatible,True,False
+solution,RHCSA-24,2,reference-solution,reference-solution,True,False
+solution-page,RHCSA-24 RHCSA-25 RHCSA-28,5,reference-solution,reference-solution,True,False
+special-position,RHCSA-08,1,shared-compatible,shared-compatible,True,False
+stage,RHCSA-30,7,shared-compatible,shared-compatible,True,False
+stage-no,RHCSA-30,7,shared-compatible,shared-compatible,True,False
+static-note,RHCSA-09 RHCSA-12 RHCSA-32,3,shared-compatible,shared-compatible,True,False
+step-no,RHCSA-13,6,shared-compatible,shared-compatible,True,False
+summary,RHCSA-01 RHCSA-03 RHCSA-05 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-18 RHCSA-19 RHCSA-23 RHCSA-24 RHCSA-31 RHCSA-33,14,shared-compatible,shared-compatible,True,False
+summary-label,RHCSA-03,1,shared-compatible,shared-compatible,True,False
+syn-label,RHCSA-08 RHCSA-10 RHCSA-16 RHCSA-19 RHCSA-20 RHCSA-22 RHCSA-29 RHCSA-33,48,shared-compatible,shared-compatible,True,False
+synopsis-label,RHCSA-01 RHCSA-02 RHCSA-04 RHCSA-05 RHCSA-11 RHCSA-13 RHCSA-17 RHCSA-23 RHCSA-26 RHCSA-27 RHCSA-30 RHCSA-32,79,shared-compatible,shared-compatible,True,False
+synopsis-title,RHCSA-12 RHCSA-15 RHCSA-24,19,shared-compatible,shared-compatible,True,False
+task,RHCSA-01 RHCSA-03 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-20 RHCSA-24 RHCSA-27 RHCSA-31 RHCSA-32 RHCSA-33,34,classic-task,classic-task,True,False
+task-heading,RHCSA-21,2,classic-task,classic-task,True,False
+task-label,RHCSA-03,1,classic-task,classic-task,True,False
+task-note,RHCSA-21,2,classic-task,classic-task,True,False
+task-page,RHCSA-24 RHCSA-25 RHCSA-28,5,classic-task,classic-task,True,False
+topic,RHCSA-01 RHCSA-03 RHCSA-05 RHCSA-06 RHCSA-07 RHCSA-08 RHCSA-09 RHCSA-10 RHCSA-11 RHCSA-12 RHCSA-15 RHCSA-16 RHCSA-17 RHCSA-18 RHCSA-19 RHCSA-20 RHCSA-21 RHCSA-23 RHCSA-24 RHCSA-25 RHCSA-27 RHCSA-28 RHCSA-30 RHCSA-31 RHCSA-32 RHCSA-33,370,shared-compatible,shared-compatible,True,False
+topic-badge,RHCSA-24,16,shared-compatible,shared-compatible,True,False
+topic-heading,RHCSA-21,11,shared-compatible,shared-compatible,True,False
+topic-kicker,RHCSA-08,16,shared-compatible,shared-compatible,True,False
+topic-label,RHCSA-03 RHCSA-07 RHCSA-11 RHCSA-12 RHCSA-19 RHCSA-25,88,shared-compatible,shared-compatible,True,False
+topic-map,RHCSA-01 RHCSA-04 RHCSA-05 RHCSA-07 RHCSA-08 RHCSA-12 RHCSA-16 RHCSA-17 RHCSA-20 RHCSA-22 RHCSA-24 RHCSA-29 RHCSA-33,13,shared-compatible,shared-compatible,True,False
+topic-map-list,RHCSA-19 RHCSA-25,2,shared-compatible,shared-compatible,True,False
+topic-map-panel,RHCSA-28,1,shared-compatible,shared-compatible,True,False
+topic-row,RHCSA-07 RHCSA-19 RHCSA-28,29,shared-compatible,shared-compatible,True,False
+version-callout,RHCSA-32,1,shared-compatible,shared-compatible,True,False
+version-title,RHCSA-32,1,shared-compatible,shared-compatible,True,False
+warning-block,RHCSA-24,1,shared-compatible,shared-compatible,True,False

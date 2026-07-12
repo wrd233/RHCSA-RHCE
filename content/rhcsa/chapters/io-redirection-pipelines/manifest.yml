@@ -1,0 +1,121 @@
+package_version: 1
+chapter:
+  id: RHCSA-02
+  exam: RHCSA
+  part: 1
+  number: 2
+  slug: io-redirection-pipelines
+  title: 标准输入输出、重定向与管道
+  canonical_lecture: content/rhcsa/chapters/io-redirection-pipelines/lecture.md
+  canonical_anki: content/rhcsa/chapters/io-redirection-pipelines/anki.yml
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+  previous_recorded_commit: 39e873dab15347a0f1a7611a6f212c3d26bd3562
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/io-redirection-pipelines/lecture.md
+  anki: content/rhcsa/chapters/io-redirection-pipelines/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T14:20:00+08:00'
+  archive_name: RHCSA-02-io-redirection-pipelines-v5.1-final.zip
+files:
+  lecture:
+    path: lecture.md
+    sha256: 030ca26fb0ff5c4d1b632b6947427be5558635f75e31f7390faacc93270e3e9c
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 93566820232f8531200029e071ce8f5b631f18c10316dce0d139aa2a7eca7c8e
+  anki:
+    path: anki.yml
+    sha256: 31aa00edbe3e36285bf64bc7abe7b8c35a26ec5cbdeb84549c882f32e770b895
+  preview:
+    path: anki-preview.html
+    sha256: 28305d69035e7a34125f3d403322742d8e9edbd580798948ffe8a86db0200857
+  summary:
+    path: anki-summary.md
+    sha256: 93f67bc1185d01a6fed6a5aceb5155f2580849b3d2d3d3c5b4d21910e58952e6
+  anki_impact:
+    path: anki-impact.md
+    sha256: 885997d950d78efd2f35280db15bc306734fb19587bf6803e1bc3a6d57d02a6f
+  source_map:
+    path: source-map.md
+    sha256: cf9b8b88924cb635d703989355e52756a4e4d03ed091d181e14d7af5283c041e
+  structure_report:
+    path: structure-report.md
+    sha256: a95e61ee76d512e3d0ef7f9447fba1e4af1fdbe297e03f0693689e8ad49536ab
+  visual_qa:
+    path: visual-qa.md
+    sha256: 2ee7ff3cec28f12ca2033db2668a13023d5269bcae7004ec4b4217117a5ca125
+  qa_report:
+    path: qa-report.md
+    sha256: 1ef3f99baa0754c4ad5b8d70081c5918c373109cd6e3a9e377739133dc8992dc
+  revision_notes:
+    path: revision-notes.md
+    sha256: 8e783290b8a84b4e2da602fce4e3bcbe568a501f65c195078389d0965062467c
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 8381691837a7529b56ec4899871fe2fc80def686782a4ab4f19e9a8aff9a13a4
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- RHEL 9 command-level live tests were not performed.
+- Full-book Section ID and Anki ID uniqueness, cross-chapter duplication, unified PDF, APKG, AnkiConnect, Git integration
+  and release remain Codex responsibilities.
+extensions:
+  structure:
+    core_concepts: 6
+    full_width_concept_blocks: 6
+    quick_reference_groups: 7
+    knowledge_topics: 4
+    operation_topics: 5
+    diagnosis_topics: 1
+    classic_tasks: 2
+    reference_answers: 2
+    section_ids_preserved: 15
+    section_ids_added: 0
+  anki:
+    notes: 67
+    qa: 58
+    cloze: 9
+    ids_preserved: 67
+    ids_modified:
+    - RHCSA-SHELL-O01-QA-005
+    - RHCSA-02-O03-QA-005
+    ids_added: []
+    ids_disabled: []
+    source_complete: true
+    exact_duplicates: 0
+    near_duplicate_warnings: 0
+  section_ids:
+  - RHCSA-02-K01
+  - RHCSA-02-O01
+  - RHCSA-02-O02
+  - RHCSA-02-K02
+  - RHCSA-02-K03
+  - RHCSA-02-O03
+  - RHCSA-02-O04
+  - RHCSA-02-O05
+  - RHCSA-02-D01
+  - RHCSA-02-W01
+  - RHCSA-02-T01
+  - RHCSA-02-T02
+  - RHCSA-02-A01
+  - RHCSA-02-A02
+  - RHCSA-02-S01

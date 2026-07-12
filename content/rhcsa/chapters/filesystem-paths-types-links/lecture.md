@@ -4,10 +4,10 @@ chapter_id: RHCSA-04
 exam: RHCSA
 part: "第一篇 命令行与本地信息处理"
 slug: filesystem-paths-types-links
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
-base_commit: 39e873dab15347a0f1a7611a6f212c3d26bd3562
+base_commit: 961a29b3af4c07a828078a5de90c221a036546df
 sources:
   - RH124-RHEL9-Ch03
   - RHCSA-Course-03
@@ -17,39 +17,144 @@ sources:
   - util-linux-namei
 ---
 
-<!-- 维护元数据、来源和静态验证状态不得显示在正式发布版正文中。 -->
+<!-- 维护元数据、来源、Section ID 与静态验证状态不得显示在阅读版 PDF 中。 -->
 
-# 第 04 章　文件系统层次、路径、文件类型与链接
+<div class="cover">
+<div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+<div class="cover-number">04</div>
+<h1>文件系统层次、路径、<br>文件类型与链接</h1>
+<p class="cover-subtitle">从名称到对象：沿路径分量看清目录项、inode、链接与删除后的生命周期。</p>
+<div class="cover-tags">
+<span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+</div>
+<div class="cover-edition">大字号阅读版</div>
+</div>
 
-在命令行里看到 `/srv/app/current/config.yml` 时，人很容易把它当作一个完整、固定的“文件”。Linux 实际接收到的是一串路径分量：从某个起点开始，逐层查找目录中的名称；名称映射到 inode；inode 再描述对象类型、元数据和数据位置。路径中还可能经过符号链接，最终到达的对象甚至可以与路径表面呈现的名称完全不同。
+<div class="navigation page-break-after">
+<h1>本章阅读导航</h1>
+<p class="nav-mainline">先抓住一条主线：路径只是逐级查找名称的指令；目录项把名称映射到 inode；真正的对象身份、链接行为和删除结果必须从 inode 与剩余引用中判断。</p>
 
-这套对象模型解释了许多常见现象：两个名称为什么可以修改同一份数据；删除“原文件”后硬链接为什么仍能读取；符号链接为什么可以跨文件系统，却会在目标移动后失效；一个路径为什么报告 `No such file or directory`，而 `readlink` 仍能显示内容；文件已经删除，磁盘空间为什么可能暂时没有释放。
+<div class="nav-steps">
+<div><b>01</b><strong>目录树与起点</strong><span>先判断路径从 `/` 还是当前目录开始</span></div>
+<div><b>02</b><strong>逐级解析</strong><span>把路径拆成分量，找第一处无法继续的位置</span></div>
+<div><b>03</b><strong>名称与 inode</strong><span>把目录项、inode 和对象数据分开</span></div>
+<div><b>04</b><strong>文件类型</strong><span>区分名称后缀、inode 类型和内容格式</span></div>
+<div><b>05</b><strong>硬链与软链</strong><span>判断同 inode 还是独立路径对象</span></div>
+<div><b>06</b><strong>验证与诊断</strong><span>按名称、链接原文、路径链和对象身份取证</span></div>
+</div>
 
-本章不把 `ls`、`stat`、`ln`、`readlink` 和 `namei` 当作孤立命令，而是围绕“名称如何解析到对象”建立统一判断链。完成本章后，读者应能从路径出发，分清目录项、inode、文件类型、硬链接、符号链接和对象生命周期，并能用分层证据定位路径故障。
+<div class="nav-columns">
+<div>
+<h2>专题地图</h2>
+<ul class="topic-map">
+<li><span>知识专题</span>单根目录树与 FHS 职责</li>
+<li><span>知识专题</span>路径解析与逻辑/物理路径</li>
+<li><span>知识专题</span>目录项、inode 与对象生命周期</li>
+<li><span>知识专题</span>文件类型与证据边界</li>
+<li><span>操作专题</span>从路径表面深入真实对象</li>
+<li><span>知识专题</span>硬链接与符号链接</li>
+<li><span>操作专题</span>创建、验证、替换和删除链接</li>
+<li><span>诊断专题</span>逐级定位路径和链接故障</li>
+<li><span>经典任务</span>修复相对链接；观察删除后的分化</li>
+</ul>
+</div>
+<div>
+<h2>阅读时持续回答</h2>
+<ol class="nav-questions">
+<li>这条路径从哪里开始解析？</li>
+<li>第一个失败的路径分量是哪一个？</li>
+<li>我看到的是名称、链接文本还是最终对象？</li>
+<li>两个名称是否处于同一文件系统并共享 inode？</li>
+<li>当前命令会观察链接自身还是跟随目标？</li>
+<li>删除的是哪个目录项，还有哪些引用存在？</li>
+<li>这条证据能证明什么，又不能证明什么？</li>
+</ol>
+</div>
+</div>
+</div>
 
-**[概念]** Linux 文件命名空间表现为从 `/` 开始的单根目录树。一个路径由若干路径分量组成；绝对路径从根目录开始，相对路径从进程当前工作目录开始。
+<div class="chapter-opening">
+<div class="chapter-label">第 04 章 · 正文</div>
 
-**[概念]** 目录项保存“名称到 inode”的映射。inode 保存对象类型、所有者、大小、时间、链接计数以及数据位置等元数据。名称不是 inode 的固有组成部分。
+<p>在命令行里看到 <code>/srv/app/current/config.yml</code> 时，人很容易把它当作一个完整、固定的“文件”。Linux 实际处理的是一串路径分量：从根目录或当前工作目录出发，在每一级目录中查找名称；名称通过目录项映射到 inode；inode 再描述对象类型、元数据、链接计数以及数据位置。路径中还可能插入符号链接保存的目标文本，所以表面名称与最终对象可能完全不同。</p>
 
-**[概念]** 硬链接是另一个指向同一 inode 的目录项；符号链接是拥有自己 inode 的独立对象，其数据是一段目标路径文本。
+<p>如果把名称、对象和内容混在一起，就会产生高频误判：内容相同就认为是同一个文件；删除“原文件”就认为对象已经消失；<code>readlink</code> 有输出就认为目标可访问；硬链接失败后改用复制却仍声称“同 inode”；路径报错时只检查最终文件，而没有寻找第一个失败的目录分量。</p>
 
-**[操作语义]** `pwd` 和 `ls -ld` 建立命名上下文；`stat` 检查 inode、类型和链接计数；`file` 判断内容或格式；`readlink` 读取符号链接保存的原始目标；`realpath` 规范化路径；`namei` 逐层展开路径链。
+<p>本章以“路径文本如何解析到对象”为主线，先建立目录树、目录项、inode 和文件类型模型，再用 <code>pwd</code>、<code>stat</code>、<code>readlink</code>、<code>realpath</code> 与 <code>namei</code> 分层取证，最后解释硬链接、符号链接和删除名称后的生命周期。传统权限留给第 08 章，完整的 <code>find</code> 留给第 05 章，挂载遮蔽与持久配置留给第 24 章。</p>
+</div>
 
-**[操作语义]** `ln` 创建硬链接，`ln -s` 创建符号链接；`rm` 或 `unlink` 删除名称。删除名称是否导致对象最终消失，取决于剩余硬链接和进程打开引用。
+<div class="concept-stack">
+<div class="concept-card"><span class="concept-badge">概念</span><p><strong>目录项（directory entry）</strong> 是目录中“名称到 inode”的映射。路径解析每前进一级，都是在当前目录中查找下一个目录项。名称属于目录项而不是普通文件 inode，因此重命名、硬链接和删除名称首先改变的是目录中的映射关系。</p></div>
+<div class="concept-card"><span class="concept-badge">概念</span><p><strong>inode</strong> 是文件系统内部描述对象身份与元数据的记录，包含对象类型、模式位、所有者、大小、时间、链接计数以及数据引用。inode 编号只在所属文件系统内唯一，所以比较对象身份至少要同时核对文件系统标识和 inode。</p></div>
+<div class="concept-card"><span class="concept-badge">概念</span><p><strong>路径解析（path resolution）</strong> 是从某个起点逐级解释路径分量的过程。中间分量必须能够继续作为目录使用；遇到符号链接时，系统把链接保存的目标文本插入剩余路径继续解析。诊断的关键不是重复访问最终文件，而是找到第一处无法继续的分量。</p></div>
+<div class="concept-card"><span class="concept-badge">概念</span><p><strong>绝对路径与相对路径</strong> 的差别首先是解析起点：绝对路径从 <code>/</code> 开始，相对路径从进程当前工作目录开始。<code>.</code> 与 <code>..</code> 是路径分量；波浪号 <code>~</code> 则属于 Shell 展开，不是内核路径解析规则。</p></div>
+<div class="concept-card"><span class="concept-badge">概念</span><p><strong>文件类型</strong> 是 inode 的对象属性，普通文件、目录、符号链接、块设备、字符设备、FIFO 和 socket 的操作语义不同。扩展名只是名称的一部分，<code>file</code> 判断的是内容或格式；名称后缀、inode 类型和内容格式必须分开取证。</p></div>
+<div class="concept-card"><span class="concept-badge">概念</span><p><strong>硬链接（hard link）</strong> 是另一个指向同一 inode 的目录项。多个硬链接是平等名称，不存在永久的“原件”和“副本”；它们必须位于同一文件系统，普通工作流也不为目录建立硬链接。删除一个名称只会减少链接计数。</p></div>
+<div class="concept-card"><span class="concept-badge">概念</span><p><strong>符号链接（symbolic link）</strong> 是拥有自己 inode 的独立对象，其数据是一段目标路径文本。它可以跨文件系统、可以指向目录、也可以在目标不存在时创建；代价是目标移动或删除后可能悬空，并在同一路径后来出现新对象时重新绑定。</p></div>
+</div>
 
-## 章节地图
+<div class="quickref">
+<div class="quickref-intro"><span>操作语义</span><p>以下入口构成本章最小接口地图。先明确命令观察或改变的对象，再选择参数；正文专题会继续解释证据边界，不在每个小节点重复整套手册页。</p></div>
 
-| 学习层 | 核心问题 | 主要证据 |
-|---|---|---|
-| 对象模型 | 名称、目录项、inode、数据是什么关系？ | `stat`、`ls -i` |
-| 状态模型 | 链接自身、目标和最终对象分别处于什么状态？ | `ls -ld`、`readlink`、`stat -L` |
-| 查询接口 | 哪条命令回答名称、类型、内容、路径链或对象身份？ | `pwd`、`file`、`realpath`、`namei` |
-| 操作接口 | 硬链接和符号链接分别创建了什么？ | `ln`、`ln -s` |
-| 验证 | 如何证明两个名称是同一个对象？ | 文件系统标识 + inode |
-| 诊断 | 路径在哪一层失败，下一条最有区分度的证据是什么？ | `namei -l` |
-| 生命周期 | 删除名称后对象何时真正回收？ | 链接计数、打开引用 |
+<div class="quick-command">
+<h3><code>pwd</code> / <code>realpath</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>pwd [-LP]
+realpath [OPTION]... FILE...</code></pre>
+<p>确认相对路径的解析起点，并在需要时展开符号链接得到规范路径。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>pwd</code></dt><dd>显示 Shell 记录的逻辑工作目录。</dd><dt><code>pwd -P</code></dt><dd>显示展开符号链接后的物理工作目录。</dd><dt><code>realpath -e PATH</code></dt><dd>要求所有分量存在，用于证明当前路径完整可解析。</dd><dt><code>realpath -m PATH</code></dt><dd>允许分量缺失，适合规范化计划创建或当前失效的路径文本。</dd></dl>
+</div>
 
-<section id="RHCSA-04-K01">
+<div class="quick-command">
+<h3><code>ls</code> / <code>stat</code> / <code>file</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>ls [OPTION]... [FILE]...
+stat [OPTION]... FILE...
+file [OPTION]... FILE...</code></pre>
+<p>分别观察目录项摘要、inode 元数据和内容格式；三者回答的是不同层次的问题。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>ls -ld -- PATH</code></dt><dd>查看名称自身；<code>-d</code> 避免把目录展开为内容列表。</dd><dt><code>stat -- PATH</code></dt><dd>默认不解引用最终符号链接，因此可观察链接自身的 inode。</dd><dt><code>stat -L -- LINK</code></dt><dd>跟随最终符号链接，观察目标对象。</dd><dt><code>%d / %i / %h / %F / %N</code></dt><dd>设备标识、inode、硬链接计数、类型和名称/链接表示。</dd><dt><code>file -L -- LINK</code></dt><dd>跟随链接判断目标内容格式；它不证明两个名称共享 inode。</dd></dl>
+</div>
+
+<div class="quick-command">
+<h3><code>ln</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>ln [OPTION]... TARGET LINK_NAME</code></pre>
+<p>默认创建硬链接：在目标目录中增加一个指向现有 inode 的新名称。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>ln TARGET HARD_LINK</code></dt><dd>要求目标存在，并且新名称与目标位于同一文件系统。</dd><dt><code>--</code></dt><dd>结束选项解析，避免以 <code>-</code> 开头的名称被当作选项。</dd><dt>跨文件系统</dt><dd>会失败并出现类似 <code>Invalid cross-device link</code> 的错误；不能用复制后仍声称“同一 inode”。</dd><dt>目录硬链接</dt><dd>普通管理员工作流不使用；题目要求链接目录时选择符号链接。</dd></dl>
+</div>
+
+<div class="quick-command">
+<h3><code>ln -s</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>ln -s [OPTION]... TARGET_TEXT LINK_NAME</code></pre>
+<p>创建独立的符号链接对象，并把 <code>TARGET_TEXT</code> 原样保存为链接数据。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>-s</code></dt><dd>创建符号链接而不是硬链接。</dd><dt><code>-r</code></dt><dd>与 <code>-s</code> 配合，按链接位置生成相对目标；使用前仍要验证最终文本。</dd><dt>相对目标</dt><dd>从符号链接所在目录解释，而不是从创建命令时的当前目录解释。</dd><dt><code>-f</code></dt><dd>会删除已有目标名称，风险较高；本章不把无调查的 <code>ln -sf</code> 当作默认修复。</dd></dl>
+</div>
+
+<div class="quick-command">
+<h3><code>readlink</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>readlink [OPTION]... FILE...</code></pre>
+<p>无参数时读取符号链接保存的原始目标；带规范化参数时可跟随路径链。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>readlink -- LINK</code></dt><dd>只显示链接保存的原始文本，不保证目标存在。</dd><dt><code>readlink -f PATH</code></dt><dd>递归跟随符号链接并规范化；除最后一个分量外必须存在。</dd><dt><code>readlink -e PATH</code></dt><dd>要求所有路径分量都存在。</dd><dt><code>readlink -m PATH</code></dt><dd>允许分量缺失；结果不是“当前对象存在”的证明。</dd></dl>
+</div>
+
+<div class="quick-command">
+<h3><code>namei</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>namei [OPTION]... PATHNAME...</code></pre>
+<p>沿路径逐级显示分量，遇到符号链接时展开目标，是定位第一处路径故障的核心入口。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>namei -l -- PATH</code></dt><dd>长格式显示类型、模式摘要、所有者与组，并跟随符号链接。</dd><dt><code>namei -x -- PATH</code></dt><dd>标记挂载点或文件系统边界；具体字符表现以目标 util-linux 版本为准。</dd><dt><code>namei -n -- PATH</code></dt><dd>不跟随符号链接，用于只观察表面路径分量。</dd><dt>证据边界</dt><dd>它能定位路径层次，但传统权限的完整计算留给第 08 章。</dd></dl>
+</div>
+</div>
+
+<section id="RHCSA-04-K01" markdown="1">
 
 ## [知识专题] 单根目录树与 FHS：先知道路径大致属于哪里
 
@@ -63,20 +168,24 @@ Linux 把普通文件、设备节点、运行时接口和挂载进来的其他�
 
 ### ② [知识点] 常用目录按职责理解，而不是孤立背诵
 
-| 目录 | 主要职责 | 典型判断边界 |
-|---|---|---|
-| `/etc` | 系统和服务的主机特定配置 | 不应把普通业务数据默认写入这里 |
-| `/home` | 普通用户主目录 | 用户实际主目录仍以账户配置为准 |
-| `/root` | `root` 用户主目录 | 不是所有用户主目录的上级 |
-| `/usr` | 发行版提供的程序、库和共享数据 | 通常不放频繁变化的运行数据 |
-| `/usr/local` | 本地管理员安装的软件和数据 | 用于与发行版管理内容分离 |
-| `/var` | 日志、队列、缓存、数据库等可变持久数据 | “可变”不代表可以随意删除 |
-| `/run` | 当前启动周期的运行时状态 | 通常是易失数据，重启后重建 |
-| `/tmp` | 临时文件 | 可能被清理，不能当作可靠持久存储 |
-| `/boot` | 引导加载器、内核和启动相关内容 | 具体启动流程留到启动章节 |
-| `/dev` | 设备节点 | 名称是设备访问接口，不是普通业务文件 |
-| `/proc` | 进程和内核运行信息接口 | 多数内容由内核动态提供 |
-| `/sys` | 设备、驱动和内核对象接口 | 多数内容不是普通磁盘数据 |
+<div class="directory-grid">
+<div class="directory-card">
+<h4>配置与身份</h4>
+<p><code>/etc</code> 保存主机特定的系统与服务配置；<code>/home</code> 是普通用户主目录的常见上级；<code>/root</code> 是 root 自己的主目录。用户真实主目录仍以账户记录为准。</p>
+</div>
+<div class="directory-card">
+<h4>软件与共享内容</h4>
+<p><code>/usr</code> 主要承载发行版提供的程序、库和共享数据；<code>/usr/local</code> 用于把本地管理员安装内容与发行版管理内容分开；<code>/boot</code> 保存启动相关内容。</p>
+</div>
+<div class="directory-card">
+<h4>可变与临时状态</h4>
+<p><code>/var</code> 保存日志、队列、缓存和数据库等可变持久数据；<code>/run</code> 保存当前启动周期的运行状态；<code>/tmp</code> 可能被自动清理，不能当作可靠持久存储。</p>
+</div>
+<div class="directory-card">
+<h4>内核与设备接口</h4>
+<p><code>/dev</code> 提供设备节点；<code>/proc</code> 提供进程与内核运行信息；<code>/sys</code> 暴露设备、驱动和内核对象。它们都在目录树中，但多数内容不是普通持久磁盘数据。</p>
+</div>
+</div>
 
 ### ③ [知识点] RHEL 9 的兼容目录可能本身就是符号链接
 
@@ -96,7 +205,7 @@ realpath -e /bin
 
 </section>
 
-<section id="RHCSA-04-K02">
+<section id="RHCSA-04-K02" markdown="1">
 
 ## [知识专题] 路径解析：路径字符串怎样一步步到达对象
 
@@ -170,15 +279,27 @@ realpath -e .
 
 </section>
 
-<section id="RHCSA-04-K03">
+<section id="RHCSA-04-K03" markdown="1">
 
 ## [知识专题] 目录项与 inode：名称不是对象本身
 
 人通常通过名称识别文件，内核则需要把名称解析到 inode。这个区别是理解链接和删除行为的核心。看到两个路径内容相同，不代表它们是同一个对象；看到 inode 数字相同，也必须先确认它们属于同一文件系统。
 
-### ① [知识点] 目录保存“名称到 inode”的映射
+<div class="model-flow">
+<div class="flow-step"><span>01</span><strong>路径文本</strong><small>/srv/app/current/config.yml</small></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><span>02</span><strong>逐级目录项</strong><small>名称 → inode</small></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><span>03</span><strong>inode</strong><small>类型、元数据、链接计数</small></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><span>04</span><strong>对象数据</strong><small>内容或特殊对象接口</small></div>
+</div>
 
-目录的内容不是普通业务文本，而是一组目录项。每个目录项至少把一个名称映射到所属文件系统中的 inode。路径解析本质上是在每一级目录中查找下一个名称。
+<div class="evidence-note"><strong>判断边界：</strong>路径是查找指令，不是对象身份；名称相同、内容相同或 inode 数字相同，都不足以脱离文件系统上下文单独证明“同一对象”。</div>
+
+### ① [知识点] 目录项保存“名称到 inode”的映射
+
+目录不是“装着文件内容的盒子”；从命名角度看，它维护一组目录项。每个目录项至少把一个名称映射到所属文件系统中的 inode。路径解析本质上是在每一级目录中查找下一个名称。
 
 因此，重命名或在同一文件系统中移动文件，通常主要改变目录项：旧目录删除一条名称映射，新目录增加一条名称映射，对象 inode 可以保持不变。跨文件系统移动无法直接沿用原 inode，工具通常需要复制数据并删除旧名称。
 
@@ -218,7 +339,7 @@ stat -c 'device=%d inode=%i links=%h type=%F name=%N' PATH
 
 </section>
 
-<section id="RHCSA-04-K04">
+<section id="RHCSA-04-K04" markdown="1">
 
 ## [知识专题] 文件类型：名称、inode 类型和内容格式是三个维度
 
@@ -271,11 +392,18 @@ file -L -- LINK
 
 </section>
 
-<section id="RHCSA-04-O01">
+<section id="RHCSA-04-O01" markdown="1">
 
 ## [操作专题] 从路径表面深入到真实对象：选择正确的查询接口
 
 调查路径时，最常见的错误是只执行一条 `ls -l` 就下结论。稳定流程应从命名上下文开始，分别检查名称自身、链接原文、解析链、最终对象和对象身份。每条命令都只证明一个层次。
+
+<div class="proof-grid">
+<div><strong>名称层</strong><span><code>ls -ld</code></span><small>证明目录项表面状态，不证明整条路径可达。</small></div>
+<div><strong>对象层</strong><span><code>stat</code></span><small>证明 inode 元数据，不证明内容符合业务目标。</small></div>
+<div><strong>链接原文</strong><span><code>readlink</code></span><small>证明保存的文本，不证明目标存在。</small></div>
+<div><strong>路径链</strong><span><code>namei -l</code></span><small>定位逐级解析，不替代权限规则分析。</small></div>
+</div>
 
 ### ① [操作] 使用 `pwd` 与 `ls -ld` 固定命名上下文
 
@@ -362,7 +490,7 @@ man namei
 
 </section>
 
-<section id="RHCSA-04-K05">
+<section id="RHCSA-04-K05" markdown="1">
 
 ## [知识专题] 硬链接：多个平等名称共享同一个 inode
 
@@ -410,7 +538,7 @@ rm -- ONE_NAME
 
 </section>
 
-<section id="RHCSA-04-K06">
+<section id="RHCSA-04-K06" markdown="1">
 
 ## [知识专题] 符号链接：独立对象保存一段目标路径
 
@@ -488,7 +616,7 @@ rm -- LINK_NAME
 
 </section>
 
-<section id="RHCSA-04-O02">
+<section id="RHCSA-04-O02" markdown="1">
 
 ## [操作专题] 创建、验证、替换和删除链接的完整闭环
 
@@ -575,7 +703,7 @@ rm -- /mnt/labfs/report.soft
 
 </section>
 
-<section id="RHCSA-04-D01">
+<section id="RHCSA-04-D01" markdown="1">
 
 ## [诊断专题] 路径与链接故障：从症状推进到第一处失败
 
@@ -685,7 +813,7 @@ stat -c 'device=%d mount=%m name=%N' -- SOURCE DEST_PARENT
 
 </section>
 
-<section id="RHCSA-04-T01">
+<section id="RHCSA-04-T01" markdown="1">
 
 ## [经典任务] 调查并修复失效的相对符号链接
 
@@ -731,7 +859,7 @@ stat -c 'device=%d mount=%m name=%N' -- SOURCE DEST_PARENT
 
 </section>
 
-<section id="RHCSA-04-T02">
+<section id="RHCSA-04-T02" markdown="1">
 
 ## [经典任务] 建立硬链接与符号链接，并观察删除名称后的分化
 
@@ -768,9 +896,8 @@ stat -c 'device=%d mount=%m name=%N' -- SOURCE DEST_PARENT
 
 </section>
 
-<div class="page-break"></div>
 
-<section id="RHCSA-04-A01">
+<section id="RHCSA-04-A01" markdown="1">
 
 ## [参考解答] 任务一：按路径链调查并最小修复
 
@@ -846,9 +973,8 @@ file -- /srv/reporting/current/bin/report
 
 </section>
 
-<div class="page-break"></div>
 
-<section id="RHCSA-04-A02">
+<section id="RHCSA-04-A02" markdown="1">
 
 ## [参考解答] 任务二：用对象身份观察硬链接与符号链接分化
 
@@ -890,7 +1016,7 @@ stat -L -c 'device=%d inode=%i links=%h type=%F name=%N' -- \
 
 - 源名称与 `report.hard` 的设备标识和 inode 相同；
 - `report.soft` 自身 inode 不同；
-- `stat -L report.soft` 到达的设备与 inode与源对象相同；
+- `stat -L report.soft` 到达的设备与 inode 与源对象相同；
 - `readlink` 显示绝对目标文本。
 
 ### ④ 删除原名称并验证分化
@@ -952,7 +1078,7 @@ cat -- /mnt/labfs/report.soft
 
 </section>
 
-<section id="RHCSA-04-S01">
+<section id="RHCSA-04-S01" markdown="1">
 
 ## [本章收束] 从“看见一个路径”升级为“识别一条对象解析链”
 
@@ -981,10 +1107,26 @@ cat -- /mnt/labfs/report.soft
 
 下一章将在这个对象模型上学习文件查找、文本筛选与批量处理。届时 `find` 选择的不是抽象“文件名”，而是目录树中满足类型、元数据和路径条件的一组对象。
 
+### 主要判断表
+
+| 你要回答的问题 | 首选证据 | 它不能单独证明 |
+|---|---|---|
+| 当前 Shell 从哪里解释相对路径？ | `pwd` / `pwd -P` | 目标是否存在 |
+| 名称自身是什么类型？ | `ls -ld -- PATH` | 符号链接目标链是否完整 |
+| 两个名称是否共享对象？ | `stat -c '%d:%i %h'` | 内容是否满足业务要求 |
+| 链接保存了什么文本？ | `readlink -- LINK` | 文本能否解析成功 |
+| 路径最终规范化到哪里？ | `realpath -e -- PATH` | 原始链接文本是什么 |
+| 哪一级目录开始失败？ | `namei -l -- PATH` | 失败是否由第 08 章权限规则造成 |
+| 删除名称后对象是否仍存活？ | 链接计数 + 打开引用 | 哪个业务进程应被终止 |
+
+### 向下一章交接
+
+下一章“文件查找、文本筛选与批量处理”会把本章对象模型变成选择条件：`find` 遍历的是目录项和对象状态，类型、路径、时间和所有者都只是筛选维度。进入下一章前应保持一个习惯：先确认自己正在选择**名称、路径还是对象状态**，再决定是否批量操作。
+
 **最终 Cheatsheet**
 
-```bash
-pwd
+<div class="final-cheat-grid">
+<pre><code class="language-bash">pwd
 ls -ld -- PATH
 stat -c 'device=%d inode=%i links=%h type=%F name=%N' -- PATH
 stat -L -- LINK
@@ -994,13 +1136,10 @@ realpath -e -- PATH
 namei -l -- PATH
 ln -- TARGET HARD_LINK
 ln -s -- TARGET_TEXT SYMLINK
-rm -- NAME
-```
-
-```text
-硬链接：同文件系统、同 inode、平等名称、删除一个名称仍可存活
+rm -- NAME</code></pre>
+<pre><code>硬链接：同文件系统、同 inode、平等名称、删除一个名称仍可存活
 符号链接：独立 inode、保存路径文本、可跨文件系统、可悬空和重新绑定
-删除：先删除目录项；最后硬链接和最后打开引用都消失后，对象才可最终回收
-```
+删除：先删除目录项；最后硬链接和最后打开引用都消失后，对象才可最终回收</code></pre>
+</div>
 
 </section>

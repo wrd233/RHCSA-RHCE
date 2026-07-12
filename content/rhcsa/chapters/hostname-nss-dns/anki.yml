@@ -1,7 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-19
 chapter_slug: hostname-nss-dns
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-19-K01-QA-001
   type: qa
@@ -16,7 +18,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K01-QA-002
   type: qa
   question: RHEL 9 的静态主机名通常持久保存在哪个文件？
@@ -31,6 +35,8 @@ notes:
   - topic::hostname-model
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K01-QA-003
   type: qa
   question: 执行 `hostnamectl set-hostname node1.example.com` 后，能否据此断言 DNS 中已经存在同名 A 记录？
@@ -44,7 +50,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-K01-QA-004
   type: qa
   question: '`hostname` 与 `cat /etc/hostname` 分别主要证明什么？'
@@ -58,7 +66,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K01-QA-005
   type: qa
   question: pretty hostname 可以直接作为 DNS 主机名使用吗？
@@ -71,7 +81,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-model
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-K01-QA-006
   type: qa
   question: '`hostnamectl status` 中静态主机名正确，但 `getent hosts` 查询该名称失败。下一步应调查哪一层？'
@@ -85,7 +97,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-model
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K01-QA-007
   type: qa
   question: 为什么 `hostname -f` 不能被当作 `/etc/hostname` 的简单显示？
@@ -100,6 +114,8 @@ notes:
   - topic::hostname-model
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K01-QA-008
   type: qa
   question: 题目要求主机名重启后保持。静态验证至少要检查哪两类证据？
@@ -114,6 +130,8 @@ notes:
   - topic::hostname-model
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O02-QA-001
   type: qa
   question: 设置静态主机名 `node1.training.example` 的典型命令是什么？
@@ -131,8 +149,10 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-model
   - card::command
-  - priority::P0
   - id::preserved
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K01-QA-009
   type: qa
   question: 只设置描述性 pretty hostname 的典型形式是什么？
@@ -149,7 +169,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-model
   - card::command
-  - priority::P2
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K02-QA-001
   type: qa
   question: 短名 `node1` 与 `node1.training.example` 的关键区别是什么？
@@ -163,7 +185,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-forms-search
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K02-QA-002
   type: qa
   question: DNS 文本名称末尾的点表示什么？
@@ -178,11 +202,13 @@ notes:
   - topic::name-forms-search
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K02-QA-003
   type: qa
   question: '`resolv.conf` 中哪个指令用于列出短名搜索域？'
   answer: '`search`。'
-  extra: 它只定义补全规则，不创建 DNS 记录。
+  extra: '`domain` 可表示单一搜索域；若 `domain` 与 `search` 同时出现，应以最后出现的有效指令所形成的搜索列表为准。'
   source:
   - resolv.conf(5)
   tags:
@@ -191,6 +217,8 @@ notes:
   - topic::name-forms-search
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K02-QA-004
   type: qa
   question: 配置 `search training.example` 后，`node1` 是否必然能解析？
@@ -203,7 +231,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-forms-search
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-K02-QA-005
   type: qa
   question: '`getent hosts node1` 失败，而 `getent hosts node1.training.example` 成功。下一条最有区分度的证据是什么？'
@@ -217,7 +247,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-forms-search
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K02-QA-006
   type: qa
   question: 用 `dig` 显式启用 search list 查询短名的形式是什么？
@@ -235,7 +267,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-forms-search
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K02-QA-007
   type: qa
   question: 怎样用 `dig` 明确查询绝对名称、排除 search 追加？
@@ -252,7 +286,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-forms-search
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K02-QA-008
   type: qa
   question: '`options ndots:N` 主要影响什么？'
@@ -265,7 +301,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-forms-search
   - card::concept
-  - priority::P2
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K02-QA-009
   type: qa
   question: 多个 search domain 使短名命中错误目标时，最小风险修复有哪些？
@@ -280,6 +318,8 @@ notes:
   - topic::name-forms-search
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K02-QA-010
   type: qa
   question: 为什么 `dig node1` 的结果不能直接等同于应用解析短名的结果？
@@ -293,7 +333,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-forms-search
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-K03-QA-001
   type: qa
   question: '`/etc/nsswitch.conf` 中的 `hosts:` 表示什么？'
@@ -306,7 +348,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::nss-hosts-order
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K03-QA-002
   type: qa
   question: '在 `hosts: files dns` 中，`files` 与 `dns` 通常分别对应什么？'
@@ -320,7 +364,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::nss-hosts-order
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K03-QA-003
   type: qa
   question: '`/etc/hosts` 有旧地址且 `files` 位于 `dns` 前时，`getent` 与 `dig` 可能出现什么差异？'
@@ -335,7 +381,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::nss-hosts-order
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K03-QA-004
   type: qa
   question: NSS 中类似 `[NOTFOUND=return]` 的结构控制什么？
@@ -348,7 +396,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::nss-hosts-order
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K03-QA-005
   type: qa
   question: NSS 常见状态 `SUCCESS`、`NOTFOUND`、`UNAVAIL`、`TRYAGAIN` 分别表示什么方向？
@@ -361,7 +411,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::nss-hosts-order
   - card::comparison
-  - priority::P2
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K03-QA-006
   type: qa
   question: 查看当前主机数据库 NSS 策略的命令是什么？
@@ -379,6 +431,8 @@ notes:
   - topic::nss-hosts-order
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K03-QA-007
   type: qa
   question: 为什么 `cat /etc/hosts` 不能证明应用一定使用其中的条目？
@@ -393,6 +447,8 @@ notes:
   - topic::nss-hosts-order
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K03-QA-008
   type: qa
   question: 为修复一个旧 hosts 条目，把 `dns` 调到 `files` 前面是否是默认正确做法？
@@ -405,7 +461,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::nss-hosts-order
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-K03-QA-009
   type: qa
   question: '`myhostname` NSS 模块的存在说明什么边界？'
@@ -419,7 +477,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::nss-hosts-order
   - card::concept
-  - priority::P2
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K03-QA-010
   type: qa
   question: '`getent` 成功能否证明目标服务可用？'
@@ -433,6 +493,8 @@ notes:
   - topic::nss-hosts-order
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O01-QA-001
   type: qa
   question: 安全修改主机名的推荐流程是什么？
@@ -446,7 +508,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-operations
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O01-QA-002
   type: qa
   question: 建立主机名基线的最小命令组是什么？
@@ -470,6 +534,8 @@ notes:
   - topic::hostname-operations
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O01-QA-003
   type: qa
   question: 设置 hostname 后为什么还要运行 `getent hosts <FQDN>`？
@@ -484,6 +550,8 @@ notes:
   - topic::hostname-operations
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O01-QA-004
   type: qa
   question: 直接修改 Shell 提示符能否完成主机名配置？
@@ -497,7 +565,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-operations
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-O01-QA-005
   type: qa
   question: '`hostnamectl status` 同时显示 static、transient、pretty 时，应怎样解释？'
@@ -511,6 +581,8 @@ notes:
   - topic::hostname-operations
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O01-QA-006
   type: qa
   question: '`hostname` 与 `/etc/hostname` 不一致时，首先要问什么？'
@@ -525,19 +597,25 @@ notes:
   - topic::hostname-operations
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O01-QA-007
   type: qa
-  question: 为什么本章不把重启持久性标记为“已验证”？
-  answer: 当前会话没有可控 RHEL 9 VM，静态配置核对不能代替真实重启。
-  extra: 应在 统一验证记录 中列出后续 live test。
+  question: 题目要求主机名重启后保持，但当前只能做静态核对。哪些证据可先确认，哪一步仍必须在目标系统执行？
+  answer: 先检查当前 hostname 状态和 `/etc/hostname` 的持久配置；真实重启后的状态、解析和应用功能仍必须在目标系统复验。
+  extra: 静态配置正确不能代替真实重启。
   source:
-  - 项目验证边界
+  - hostnamectl(1)
+  - hostname(5)
+  - RH124
   tags:
   - exam::rhcsa
   - chapter::hostname-nss-dns
   - topic::hostname-operations
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-O01-QA-008
   type: qa
   question: 怎样记录当前 hostname 对应的 NSS 结果？
@@ -555,7 +633,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::hostname-operations
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O02-QA-002
   type: qa
   question: '`/etc/hosts` 一行的典型字段顺序是什么？'
@@ -569,8 +649,10 @@ notes:
   - chapter::hostname-nss-dns
   - topic::etc-hosts
   - card::syntax
-  - priority::P0
   - id::preserved
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O02-QA-003
   type: qa
   question: 使用 NSS 验证 `/etc/hosts` 中名称的命令是什么？
@@ -589,8 +671,10 @@ notes:
   - chapter::hostname-nss-dns
   - topic::etc-hosts
   - card::command
-  - priority::P0
   - id::preserved
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O02-QA-001
   type: qa
   question: '`/etc/hosts` 中加入映射后，其他主机会自动得到该映射吗？'
@@ -603,7 +687,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::etc-hosts
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-O02-QA-002
   type: qa
   question: 编辑 `/etc/hosts` 前应至少检查哪三类冲突？
@@ -617,6 +703,8 @@ notes:
   - topic::etc-hosts
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O02-QA-003
   type: qa
   question: 怎样查找 `/etc/hosts` 中精确别名 `repo-local`？
@@ -634,7 +722,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::etc-hosts
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O02-QA-004
   type: qa
   question: 为什么不推荐无条件反复执行 `echo ... >> /etc/hosts`？
@@ -647,7 +737,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::etc-hosts
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-O02-QA-005
   type: qa
   question: 查看到正确 hosts 文件内容后，下一条高价值证据是什么？
@@ -662,6 +754,8 @@ notes:
   - topic::etc-hosts
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O02-QA-006
   type: qa
   question: 本机 `/etc/hosts` 能否证明 PTR 已修复？
@@ -675,7 +769,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::etc-hosts
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-K04-QA-001
   type: qa
   question: DNS A 记录的方向是什么？
@@ -688,7 +784,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::dns-records
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K04-QA-002
   type: qa
   question: DNS AAAA 记录的方向是什么？
@@ -701,7 +799,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::dns-records
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K04-QA-003
   type: qa
   question: DNS PTR 记录的方向是什么？
@@ -714,7 +814,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::dns-records
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-K04-QA-004
   type: qa
   question: 查询名称的 IPv4 记录的命令是什么？
@@ -732,6 +834,8 @@ notes:
   - topic::dns-records
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K04-QA-005
   type: qa
   question: 查询名称的 IPv6 记录的命令是什么？
@@ -749,6 +853,8 @@ notes:
   - topic::dns-records
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K04-QA-006
   type: qa
   question: 查询地址的 PTR 记录的命令是什么？
@@ -766,6 +872,8 @@ notes:
   - topic::dns-records
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K04-QA-007
   type: qa
   question: '`dig` 返回 `NOERROR` 但 ANSWER 为 0，应该怎样解释？'
@@ -779,6 +887,8 @@ notes:
   - topic::dns-records
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K04-QA-008
   type: qa
   question: '`NXDOMAIN` 与 `SERVFAIL` 的核心区别是什么？'
@@ -792,6 +902,8 @@ notes:
   - topic::dns-records
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-K04-QA-009
   type: qa
   question: 一个名称返回多个 A 记录是否必然是错误？
@@ -804,7 +916,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::dns-records
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-K04-QA-010
   type: qa
   question: 为什么 A/PTR 不必机械一一对应？
@@ -818,6 +932,8 @@ notes:
   - topic::dns-records
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O03-QA-001
   type: qa
   question: 列出活动 NetworkManager connection 的命令是什么？
@@ -836,6 +952,8 @@ notes:
   - topic::networkmanager-dns
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-002
   type: qa
   question: 读取 profile 的 IPv4 DNS、search 和自动 DNS 设置的命令骨架是什么？
@@ -854,6 +972,8 @@ notes:
   - topic::networkmanager-dns
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-003
   type: qa
   question: 替换 profile 的 IPv4 DNS 列表为 `192.0.2.53` 的命令是什么？
@@ -872,6 +992,8 @@ notes:
   - topic::networkmanager-dns
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-004
   type: qa
   question: 在 NetworkManager 多值属性前加 `+` 或 `-` 分别表示什么？
@@ -886,6 +1008,8 @@ notes:
   - topic::networkmanager-dns
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-005
   type: qa
   question: 为 profile 配置 IPv4 search domain 的命令是什么？
@@ -904,6 +1028,8 @@ notes:
   - topic::networkmanager-dns
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-006
   type: qa
   question: '`ipv4.ignore-auto-dns yes` 的作用是什么？'
@@ -918,6 +1044,8 @@ notes:
   - topic::networkmanager-dns
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-007
   type: qa
   question: 题目只要求增加一个 DNS server 时，是否应默认设置 `ignore-auto-dns yes`？
@@ -930,7 +1058,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::networkmanager-dns
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-O03-QA-008
   type: qa
   question: 常见的重新激活 profile 命令是什么？
@@ -949,6 +1079,8 @@ notes:
   - topic::networkmanager-dns
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-009
   type: qa
   question: NetworkManager DNS 变更后为什么既要看 connection view 又要看 device view？
@@ -962,6 +1094,8 @@ notes:
   - topic::networkmanager-dns
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-010
   type: qa
   question: 查看当前设备 DNS 和 domain 的字段骨架是什么？
@@ -978,7 +1112,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::networkmanager-dns
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O03-QA-011
   type: qa
   question: '`/etc/resolv.conf` 中只看到 `127.0.0.53` 时，是否说明没有上游 DNS？'
@@ -993,6 +1129,8 @@ notes:
   - topic::networkmanager-dns
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O03-QA-012
   type: qa
   question: 为什么直接编辑并锁定 `/etc/resolv.conf` 不是标准持久方案？
@@ -1006,7 +1144,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::networkmanager-dns
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-O03-QA-013
   type: qa
   question: NetworkManager DNS 的四层验证顺序是什么？
@@ -1020,7 +1160,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::networkmanager-dns
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O03-QA-014
   type: qa
   question: IPv4 DNS 配置能否自动代表 IPv6 DNS 配置？
@@ -1033,7 +1175,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::networkmanager-dns
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-NETWORK-O02-QA-004
   type: qa
   question: '`getent hosts` 与 `dig` 的主要边界是什么？'
@@ -1048,8 +1192,10 @@ notes:
   - chapter::hostname-nss-dns
   - topic::getent-dig
   - card::comparison
-  - priority::P0
   - id::preserved
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O04-QA-001
   type: qa
   question: 查询系统 NSS 主机数据库的典型命令是什么？
@@ -1067,6 +1213,8 @@ notes:
   - topic::getent-dig
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O04-QA-002
   type: qa
   question: 只观察 IPv4 地址族的系统解析结果可使用什么？
@@ -1083,7 +1231,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::getent-dig
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O04-QA-003
   type: qa
   question: 向指定 DNS server 查询 A 记录的命令是什么？
@@ -1101,6 +1251,8 @@ notes:
   - topic::getent-dig
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O04-QA-004
   type: qa
   question: '`dig +short` 的优势和边界是什么？'
@@ -1114,6 +1266,8 @@ notes:
   - topic::getent-dig
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O04-QA-005
   type: qa
   question: 验证短名 search 是否对系统应用生效，优先使用什么命令？
@@ -1132,6 +1286,8 @@ notes:
   - topic::getent-dig
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O04-QA-006
   type: qa
   question: 指定服务器 `dig` 成功、普通 `dig` 失败时，下一步检查什么？
@@ -1146,7 +1302,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::getent-dig
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O04-QA-007
   type: qa
   question: 普通 `dig` 成功而 `getent` 失败时，应固定哪些变量再比较？
@@ -1160,7 +1318,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::getent-dig
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-O04-QA-008
   type: qa
   question: 为什么 `ping name` 不能作为完整 DNS 验收？
@@ -1174,7 +1334,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::getent-dig
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-O04-QA-009
   type: qa
   question: '`getent` 返回多行或多地址时，应该重点判断什么？'
@@ -1187,7 +1349,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::getent-dig
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O04-QA-010
   type: qa
   question: 名称解析最小矩阵应至少覆盖哪些方向？
@@ -1202,6 +1366,8 @@ notes:
   - topic::getent-dig
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-O04-QA-011
   type: qa
   question: '`dig @SERVER` 成功能否证明应用正在使用该 SERVER？'
@@ -1214,7 +1380,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::getent-dig
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-D01-QA-001
   type: qa
   question: 短名失败、FQDN 成功时的诊断链是什么？
@@ -1229,7 +1397,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D01-QA-002
   type: qa
   question: '`hostnamectl` 正确但 `hostname -f` 异常时，下一条证据是什么？'
@@ -1243,7 +1413,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D01-QA-003
   type: qa
   question: A 有答案、AAAA 无答案时，第一判断是什么？
@@ -1256,7 +1428,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D01-QA-004
   type: qa
   question: 正向 A 正确、PTR 失败时，客户端最有价值的证据包是什么？
@@ -1270,6 +1444,8 @@ notes:
   - topic::name-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D01-QA-005
   type: qa
   question: 能否用 `/etc/hosts` 让远端客户端认为 PTR 已修复？
@@ -1283,7 +1459,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-D01-QA-006
   type: qa
   question: 短名解析到错误域时，怎样区分 search 顺序问题？
@@ -1298,6 +1476,8 @@ notes:
   - topic::name-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D01-QA-007
   type: qa
   question: '`SERVFAIL` 出现时，为什么不能按 NXDOMAIN 处理？'
@@ -1310,7 +1490,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::name-diagnosis
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-D01-QA-008
   type: qa
   question: DNS 查询超时能否直接证明名称不存在？
@@ -1324,6 +1506,8 @@ notes:
   - topic::name-diagnosis
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-D01-QA-009
   type: qa
   question: 名称形式诊断为什么要分别测试短名、FQDN 和绝对名称？
@@ -1338,6 +1522,8 @@ notes:
   - topic::name-diagnosis
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D01-QA-010
   type: qa
   question: 修复 search domain 后，为什么必须重复原来的短名请求？
@@ -1352,6 +1538,8 @@ notes:
   - topic::name-diagnosis
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-D02-QA-001
   type: qa
   question: '`dig` 返回新地址、`getent` 返回旧地址时，第一优先检查什么？'
@@ -1366,7 +1554,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::resolver-application-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D02-QA-002
   type: qa
   question: 修复旧 hosts 条目时，为什么不应直接删除整个 `/etc/hosts`？
@@ -1379,7 +1569,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::resolver-application-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D02-QA-003
   type: qa
   question: '`getent` 已返回新地址，但应用仍访问旧地址。下一步调查什么？'
@@ -1393,7 +1585,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::resolver-application-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D02-QA-004
   type: qa
   question: 名称缓存是否存在一个适用于所有 RHEL 应用的万能清理命令？
@@ -1407,7 +1601,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::resolver-application-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-D02-QA-005
   type: qa
   question: '`dig` 成功但应用失败的推荐分层链是什么？'
@@ -1421,7 +1617,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::resolver-application-diagnosis
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D02-QA-006
   type: qa
   question: 所有名称工具都成功，而 HTTPS 仍失败时，应转向哪些层？
@@ -1434,7 +1632,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::resolver-application-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D02-QA-007
   type: qa
   question: 无调查重启整台主机作为缓存修复有什么问题？
@@ -1447,7 +1647,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::resolver-application-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-D02-QA-008
   type: qa
   question: 应用缓存刷新后，什么才是最终验收？
@@ -1461,11 +1663,13 @@ notes:
   - topic::resolver-application-diagnosis
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-D02-QA-009
   type: qa
   question: 容器内应用解析与宿主机 `getent` 不一致时，应考虑什么？
   answer: 容器可能有独立 `/etc/hosts`、`resolv.conf` 或网络命名空间。
-  extra: 容器深度归第 31/32 章，本章只识别边界。
+  extra: 容器可能拥有独立解析环境；先识别环境边界，再进入容器网络与持久化配置的专属诊断。
   source:
   - podman documentation
   - resolv.conf(5)
@@ -1474,7 +1678,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::resolver-application-diagnosis
   - card::diagnosis
-  - priority::P2
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-D02-QA-010
   type: qa
   question: '`getent ahostsv4` 正确、`getent ahostsv6` 异常时，说明应继续隔离哪一维？'
@@ -1489,6 +1695,8 @@ notes:
   - topic::resolver-application-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-T01-QA-001
   type: qa
   question: 现有 profile `exam-net` 不允许修改 IP/路由；要求设置 hostname、指定唯一 DNS、search 和本地别名。操作顺序是什么？
@@ -1496,16 +1704,20 @@ notes:
   extra: 重新激活前评估远程连接中断。
   source:
   - RH124
-  - lecture RHCSA-19 classic task 1
+  - hostnamectl(1)
+  - hosts(5)
+  - nm-settings-nmcli(5)
   tags:
   - exam::rhcsa
   - chapter::hostname-nss-dns
   - topic::classic-task-config
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-T01-QA-002
   type: qa
-  question: 经典任务一中，怎样证明没有越界修改 IP 和路由？
+  question: DNS 配置任务明确禁止修改 IP 地址和路由。怎样用证据证明没有越界？
   answer: 变更前后对比 profile 地址/网关和当前 device 地址/路由。
   extra: DNS 任务不能把网络前置对象静默改掉。
   source:
@@ -1516,7 +1728,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::classic-task-config
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-T01-QA-003
   type: qa
   question: 题目要求“只使用指定 DNS”时，为什么 `ignore-auto-dns yes` 才有意义？
@@ -1529,36 +1743,48 @@ notes:
   - chapter::hostname-nss-dns
   - topic::classic-task-config
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-T01-QA-004
   type: qa
-  question: 经典任务一的持久性证据和真实重启验证分别是什么？
-  answer: 持久证据是 `/etc/hostname` 与 connection profile；真实重启后还要重复 hostname、NSS、DNS 和应用测试。
-  extra: 本章未执行 live reboot。
+  question: 题目要求主机名和 DNS 配置重启后保持。静态持久性证据是什么，真实重启后还要复验什么？
+  answer: 静态证据是 `/etc/hostname` 与 NetworkManager connection profile；真实重启后还要重复 hostname、NSS、DNS 和应用功能测试。
+  extra: 持久输入正确不等于重启后的运行状态已经验证。
   source:
-  - 项目验证边界
+  - hostname(5)
+  - nm-settings-nmcli(5)
+  - RH124
   tags:
   - exam::rhcsa
   - chapter::hostname-nss-dns
   - topic::classic-task-config
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-T02-QA-001
   type: qa
   question: '`dig @server FQDN` 正确、`getent FQDN` 旧、短名失败时的最小修复顺序是什么？'
   answer: 固定同一 FQDN/地址族 → 查 NSS/hosts → 修正旧条目 → 配置 search → 重复 getent/dig → 必要时刷新应用缓存。
   extra: 不重排全局 NSS 来掩盖坏条目。
   source:
-  - lecture RHCSA-19 classic task 2
+  - getent(1)
+  - dig(1)
+  - hosts(5)
+  - nsswitch.conf(5)
+  - resolv.conf(5)
   tags:
   - exam::rhcsa
   - chapter::hostname-nss-dns
   - topic::classic-task-diagnosis
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-T02-QA-002
   type: qa
-  question: 经典任务二中，哪四条结果能证明名称层修复完整？
+  question: '`dig` 与 `getent` 曾返回不同地址。修复后哪四类结果应共同验收？'
   answer: '`getent` FQDN、`getent` 短名、普通/指定服务器 `dig` 可解释、应用请求使用新地址成功。'
   extra: 每条证明不同层。
   source:
@@ -1570,9 +1796,11 @@ notes:
   - topic::classic-task-diagnosis
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-19-T02-QA-003
   type: qa
-  question: 经典任务二为何不默认修改 `ipv4.ignore-auto-dns`？
+  question: 仅缺少 search domain，且题目未要求排除 DHCP DNS 时，为什么不应默认设置 `ipv4.ignore-auto-dns yes`？
   answer: 题目只缺 search domain，并未要求丢弃 DHCP DNS。
   extra: 最小修改必须由目标终态驱动。
   source:
@@ -1582,20 +1810,29 @@ notes:
   - chapter::hostname-nss-dns
   - topic::classic-task-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-19-S01-QA-001
   type: qa
-  question: 本章的完整调用路径是什么？
+  question: 排查主机名与名称解析问题时，完整调用路径是什么？
   answer: 名称形式 → hostname 身份 → NSS 策略 → hosts/DNS 来源 → resolver 持久与当前状态 → A/AAAA/PTR → getent → 应用功能。
   extra: 用于考试读题和真实故障分层。
   source:
-  - lecture RHCSA-19
+  - RH124
+  - hostnamectl(1)
+  - nsswitch.conf(5)
+  - resolv.conf(5)
+  - getent(1)
+  - dig(1)
   tags:
   - exam::rhcsa
   - chapter::hostname-nss-dns
   - topic::chapter-synthesis
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-19-C01-CLOZE-001
   type: cloze
   text: 主机名三种视图中，{{c1::static}} 表示持久身份，{{c2::transient}} 表示当前临时名称，{{c3::pretty}} 表示人类可读描述。
@@ -1607,7 +1844,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::core-cloze
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-19-C01-CLOZE-002
   type: cloze
   text: '`/etc/hosts` 的典型字段顺序是 {{c1::地址}} → {{c2::规范名称}} → {{c3::别名}}。'
@@ -1619,7 +1858,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::core-cloze
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-19-C01-CLOZE-003
   type: cloze
   text: DNS 中 {{c1::A}} 映射名称到 IPv4，{{c2::AAAA}} 映射名称到 IPv6，{{c3::PTR}} 映射地址到名称。
@@ -1631,11 +1872,13 @@ notes:
   - chapter::hostname-nss-dns
   - topic::core-cloze
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-19-C01-CLOZE-004
   type: cloze
   text: 系统 NSS 查询优先使用 {{c1::getent}} 观察；直接 DNS 查询优先使用 {{c2::dig}} 观察。
-  extra: 工具边界是本章核心。
+  extra: 两条查询路径回答不同问题，不能互相替代。
   source:
   - getent(1)
   - dig(1)
@@ -1644,7 +1887,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::core-cloze
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-19-C01-CLOZE-005
   type: cloze
   text: NetworkManager 中 {{c1::ipv4.dns}} 保存 DNS server，{{c2::ipv4.dns-search}} 保存 search domain，{{c3::ipv4.ignore-auto-dns}}
@@ -1657,7 +1902,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::core-cloze
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-19-C01-CLOZE-006
   type: cloze
   text: '`dig @192.0.2.53 name A` 只证明 {{c1::指定 DNS server 的回答}}，不能证明 {{c2::系统默认解析路径正在使用该 server}}。'
@@ -1669,7 +1916,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::core-cloze
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-19-C01-CLOZE-007
   type: cloze
   text: 修复名称解析后，应按 {{c1::持久配置}} → {{c2::当前状态}} → {{c3::查询结果}} → {{c4::应用功能}} 分层验收。
@@ -1681,7 +1930,9 @@ notes:
   - chapter::hostname-nss-dns
   - topic::core-cloze
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-19-C01-CLOZE-008
   type: cloze
   text: 短名依赖 {{c1::search domain}}；末尾带点的名称是 {{c2::绝对 DNS 名称}}。
@@ -1695,4 +1946,5 @@ notes:
   - topic::core-cloze
   - card::cloze
   - priority::P1
-status: integrated
+  model: RedHat-Cloze
+  priority: P1

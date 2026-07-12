@@ -4,7 +4,8 @@ chapter_id: RHCSA-14
 exam: RHCSA
 slug: time-timezone-rtc-chrony
 validation: static
-status: integrated
+status: content_frozen_for_integration
+version: 5.1
 sources:
   - RH124-RHEL9
   - RHEL9-official-time-synchronization
@@ -18,32 +19,277 @@ sources:
 
 <!-- 维护元数据、来源、稳定 ID 与静态核对状态不进入正式讲义版面。 -->
 
-# 第 14 章　系统时间、时区、RTC 与 chrony
+<section class="cover-page">
 
-一台 Linux 主机上可以同时看到本地时间、UTC、RTC 时间、NTP 服务状态和 chrony 的来源状态。它们看起来都在回答“现在几点”，实际却属于不同对象。时区错误时，系统可能仍然保存着正确的 UTC 时刻；`chronyd.service` 正在运行时，也可能一个有效时间源都没有；`chronyc sources -v` 已经列出服务器时，也不一定代表本机已经进入有效跟踪。
+<div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+<div class="cover-number">14</div>
 
-本章的目标不是背几条校时命令，而是建立一条可以验证和诊断的时间链：
+# 系统时间、时区、RTC 与 chrony
 
-```text
-外部时间源
-→ 名称解析与 UDP 123 往返
-→ chronyd 取得测量并选择参考源
-→ system clock 被渐进或跳变校正
-→ 时区把 UTC 时刻转换为本地显示
-→ RTC 为下一次启动保存时间基准
+<div class="cover-subtitle">从“现在几点”拆出显示、硬件基准、时间源选择与本机跟踪：用证据证明时间链真正成立。</div>
+
+<div class="cover-tags">
+<span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+</div>
+
+<div class="cover-edition">大字号阅读版</div>
+
+</section>
+
+<section class="navigation-page">
+
+# 本章阅读导航
+
+<div class="lead-line">先抓住一条主线：外部时间源只有经过解析、NTP 往返、样本积累、来源选择和本机跟踪，才可能真正控制 system clock；时区和 RTC 又分别处在显示层与启动基准层。</div>
+
+## 专题地图
+
+- **知识专题**　一个“时间”为什么要拆成 UTC、本地时间、系统时钟与 RTC
+- **操作专题**　用 `date` 与 `timedatectl` 建立可比较的时间基线
+- **操作专题**　查询 RTC，并控制 system clock 与 RTC 的复制方向
+- **知识专题**　chronyd 从“知道一个服务器”到“控制系统时钟”经历哪些状态
+- **操作专题**　配置 `server`、`pool`、`iburst` 与持久校时策略
+- **操作专题**　解读 `chronyc activity`、`sources -v` 与 `tracking`
+- **诊断专题**　`chronyd` active，但指定来源持续显示 `^?`
+- **诊断专题**　大偏差时怎样选择 slew、step 与 `makestep`
+- **经典任务**　配置指定时区和时间源，并恢复有效跟踪
+- **参考解答**　从基线、最小修改到分层验收
+- **本章收束**　把时间管理变成证据矩阵
+
+## 阅读时持续回答
+
+1. 当前问题发生在显示层、system clock、RTC，还是时间同步链？
+2. `active`、`enabled`、来源可用、来源被选中和本机已同步分别由什么证据证明？
+3. `sources` 与 `tracking` 各自回答哪个问题？
+4. `^?` 的下一条最有区分度的证据是什么？
+5. 当前偏差应继续 slew，还是确有授权执行 step？
+6. 这条验证能证明什么，又不能证明什么？
+
+<div class="model-steps">
+<div><strong>01</strong><span>分清时间对象</span><small>UTC / local / system clock / RTC</small></div>
+<div><strong>02</strong><span>建立基线</span><small>date / timedatectl / hwclock</small></div>
+<div><strong>03</strong><span>核对配置</span><small>server / pool / iburst / makestep</small></div>
+<div><strong>04</strong><span>观察来源</span><small>activity / sources -v</small></div>
+<div><strong>05</strong><span>判断跟踪</span><small>tracking / offset / leap status</small></div>
+<div><strong>06</strong><span>诊断与控制风险</span><small>DNS / UDP 123 / slew / step</small></div>
+</div>
+
+<div class="nav-note">本章只轻量引用第 13 章的日志证据、第 15 章的计划任务影响，以及网络、DNS 与防火墙章节的接口；不展开 PTP。</div>
+
+</section>
+
+<div class="page-break"></div>
+
+# 第 14 章 · 正文
+
+一台 Linux 主机上同时存在多种“时间事实”。`date` 展示的是 system clock 经时区规则转换后的结果；RTC 在主机关闭时保留启动基准；`chronyd.service` 只描述守护进程是否在运行；`chronyc sources -v` 描述时间源的测量与选择；`chronyc tracking` 才进一步说明本机时钟正在怎样跟随参考时间。把这些对象混为一谈，就会出现最典型的误判：服务明明是 active，却仍然没有有效参考源；时区差八小时，却误以为必须强制校时；来源名称已经出现，就提前宣布同步成功。
+
+本章沿着“对象 → 状态 → 查询 → 配置 → 来源证据 → 本机跟踪 → 诊断与风险控制”推进。前一章负责日志检索，本章只说明时间错误会怎样削弱日志证据；下一章负责计划任务，本章只建立时区变更和时间跳变对日历调度的接口边界。
+
+<section class="concept-stack">
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>系统时钟（system clock）</strong> 是内核维护、运行中程序通常读取的墙上时钟。文件时间戳、日志记录、证书有效期和许多认证判断依赖它。它可以由管理员手工修改，也可以由 chronyd 通过改变走速或直接跳变来校正；因此“系统时钟当前可读”不等于“它来自可信来源”，更不等于“校正过程对业务无风险”。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>UTC、本地时间与时区</strong> 描述的是同一时刻的不同解释层。UTC 提供跨主机比较的共同基准；时区规则把 UTC 转换为本地显示和日历语义。修改时区通常不会平移绝对时刻，却会改变用户看到的时间以及按本地日历解释的任务。显示差八小时可能只是时区错误，不能直接推出 system clock 偏差八小时。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>RTC（Real-Time Clock）</strong> 是硬件或虚拟硬件提供的持久时钟，主要在关机期间继续计时，并在启动阶段为 system clock 提供初始基准。运行中应用通常不直接依赖 RTC。`hwclock --systohc` 与 `--hctosys` 的复制方向相反，任一方向都可能把错误值扩散到另一个对象，因此操作前必须先明确谁是真源、谁是目标。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>NTP 同步状态</strong> 不是单一布尔值，而是一条状态链：服务正在运行、来源名称可解析、NTP 报文可往返、样本足够、来源可选、来源被选中、本机进入有效跟踪。`systemctl is-active chronyd` 只覆盖第一层；即使 `timedatectl` 显示 NTP service active，也不能替代 `sources` 与 `tracking` 的证据。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>时间源（time source）</strong> 是 chronyd 用来测量参考时间的服务器、对等体或参考时钟。配置文件中出现一个名称，只说明“声明过这个对象”；它还要经过名称解析、网络往返、时间质量检查与来源选择。`sources -v` 中的模式字符说明来源类型，选择字符则说明它当前能否参与同步以及是否被选中。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>offset</strong> 表示本地时钟与参考时间之间估计的差异，但不同输出中的 offset 语义并不完全相同：`sources` 面向某个来源的最近测量，`tracking` 面向本机时钟相对当前参考时间的剩余校正与统计。offset 越小通常越好，却不存在适用于所有系统的固定毫秒阈值；验收必须结合任务、网络延迟和业务容忍度。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>stratum</strong> 表示时间源距离参考时钟的层级，而不是“数值越小就绝对越准确”的排行榜。一个网络不稳定的低层级来源可能不如稳定的高一层来源。判断来源时应同时观察可达性、测量误差、选择状态和本机 tracking，不能只盯住 Stratum 一列。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>slew 与 step</strong> 是两种不同的校正方式。slew 通过暂时加快或减慢时钟走速逐步消除偏差，时间连续但大偏差收敛较慢；step 直接把墙上时钟跳到新值，修正迅速却可能让日志顺序、缓存过期、认证、数据库事务和调度行为发生异常。`makestep` 是对这种风险的有限授权，不是看到 `^?` 后的通用修复命令。</p></div>
+
+</section>
+
+<section class="operation-atlas">
+
+<div class="atlas-intro"><span>操作语义</span> 以下入口分别观察显示层、系统配置、RTC、来源状态和本机跟踪。先理解命令作用对象，再记关键形式。</div>
+
+## `date`
+
+**SYNOPSIS**
+
+```bash
+date [OPTION]... [+FORMAT]
+date [-u] [+FORMAT]
 ```
 
-**[概念]** 系统时钟（system clock）是内核维护、运行中程序实际使用的墙上时钟。文件时间戳、日志时间、证书有效期和许多认证判断都依赖它。
+读取 system clock，并按当前时区或 UTC 格式化输出。它适合建立本地时间与 UTC 的并列基线，但不能证明时间源有效。
 
-**[概念]** UTC 是统一的时间基准；本地时间是“UTC 时刻 + 时区规则”的显示和日历解释结果。改变时区不会改变同一绝对时刻。
+**重要参数 / 形式**
 
-**[概念]** RTC（Real-Time Clock）是硬件或虚拟硬件时钟，能够在主机关闭或低功耗时继续计时。系统启动时可用它初始化系统时钟，但它不是运行中应用通常读取的主时钟。
+`date '+%F %T %z %Z'`
+: 显示日期、时间、数值偏移和时区缩写。
 
-**[概念]** chrony 由 `chronyd` 守护进程和 `chronyc` 客户端组成。`chronyd` 采集 NTP 测量、选择参考源并校正系统时钟；`chronyc` 查询或控制正在运行的守护进程。
+`date -u '+%F %T %z %Z'`
+: 按 UTC 显示同一 system clock。
 
-**[操作语义]** `date` 读取或格式化系统时间；`timedatectl` 统一查询和修改系统时间、时区、RTC 模式与网络时间同步开关；`hwclock` 直接查询或复制 RTC 与系统时钟；`chronyc` 提供来源、选择和跟踪证据。
+`date --iso-8601=seconds`
+: 生成便于记录和交换的 ISO 8601 时间。
 
 ---
+
+## `timedatectl`
+
+**SYNOPSIS**
+
+```bash
+timedatectl [OPTIONS...] COMMAND ...
+```
+
+统一查询和修改 system clock、时区、RTC 解释模式及网络时间同步开关。综合状态是入口，不是 chrony 来源与跟踪的终局证据。
+
+**重要参数 / 形式**
+
+`timedatectl`
+: 查看 Local time、Universal time、RTC、Time zone 和同步状态。
+
+`timedatectl list-timezones`
+: 列出可用时区名称。
+
+`timedatectl set-timezone Asia/Shanghai`
+: 持久设置时区。
+
+`timedatectl set-ntp true`
+: 请求启用系统识别的网络时间同步服务。
+
+---
+
+## `hwclock`
+
+**SYNOPSIS**
+
+```bash
+hwclock --show [--utc|--localtime]
+hwclock --systohc
+hwclock --hctosys
+```
+
+直接观察或复制 RTC 与 system clock。名称相似但方向相反；除只读查询外，都应先明确真源和目标。
+
+**重要参数 / 形式**
+
+`--show`
+: 只读显示 RTC。
+
+`--systohc`
+: 把 system clock 写入 RTC。
+
+`--hctosys`
+: 用 RTC 设置 system clock，运行中使用可能造成时间跳变。
+
+---
+
+## `chronyc activity` / `chronyc sources -v`
+
+**SYNOPSIS**
+
+```bash
+chronyc activity
+chronyc sources [-a] [-v]
+```
+
+`activity` 汇总来源在线、离线和未解析状态；`sources -v` 展示每个来源的模式、选择状态、可达性、最近接收和最近样本。它们回答“来源怎样”，不直接等价于“本机时钟怎样”。
+
+**重要参数 / 形式**
+
+`^*`
+: server 来源，且当前是最佳同步来源。
+
+`^+`
+: server 来源，参与组合但不是最佳来源。
+
+`^?`
+: 当前不可选，可能是不可达、未同步或样本不足。
+
+`Reach / LastRx / Last sample`
+: 分别观察近期响应历史、最近接收时间和最近偏差估计。
+
+---
+
+## `chronyc tracking`
+
+**SYNOPSIS**
+
+```bash
+chronyc tracking
+```
+
+展示 chronyd 当前如何控制本机 system clock。它回答参考来源、剩余校正、频率估计、误差边界和 leap 状态，是同步验收的核心证据之一。
+
+**重要字段**
+
+`Reference ID / Ref time`
+: 当前参考对象和最近一次参考更新时间。
+
+`System time / Last offset / RMS offset`
+: 本机剩余校正、最近偏差和偏差统计。
+
+`Frequency / Residual freq / Skew`
+: 本机振荡器频率估计及其不确定性。
+
+`Leap status`
+: `Normal` 等状态可参与正常验收；`Not synchronised` 表示尚未有效同步。
+
+---
+
+## `/etc/chrony.conf`
+
+**SYNOPSIS**
+
+```conf
+server hostname [option ...]
+pool hostname [option ...]
+makestep threshold limit
+```
+
+这是 RHEL 9 中 chronyd 的主要持久配置入口。编辑时应保留既有有效指令、避免重复来源，并通过服务重启和运行时证据确认新配置真正生效。
+
+**重要参数 / 形式**
+
+`server time.example.com iburst`
+: 配置一个 NTP 服务器，并在初始阶段加快获得首批有效测量。
+
+`pool pool.example.com iburst`
+: 从一个池名称管理多个可替换来源。
+
+`iburst`
+: 加快首次更新，不表示长期高频轮询。
+
+`makestep 1.0 3`
+: 在有限的前几次更新中，允许超过阈值的偏差被 step。
+
+---
+
+## `chronyc makestep`
+
+**SYNOPSIS**
+
+```bash
+chronyc makestep
+chronyc makestep <threshold> <limit>
+```
+
+控制正在运行的 chronyd 立即或临时允许 step。它可能造成墙上时钟跳变，不会修复 DNS、UDP 123 或错误时间源。
+
+**重要参数 / 形式**
+
+`chronyc makestep`
+: 取消剩余 slew，并按当前估计立即跳变。
+
+`threshold`
+: 触发自动 step 的偏差阈值，单位为秒。
+
+`limit`
+: 该临时规则允许作用的后续更新次数。
+
+</section>
+
 
 <section id="RHCSA-14-K01" data-kind="knowledge-topic">
 
@@ -99,7 +345,7 @@ RTC 本身通常不保存时区信息，系统必须约定其读数按 UTC 还�
 
 每个等号右侧都需要独立证据。任何一个局部状态都不能替代整条时间链。
 
-**[Cheatsheet]** UTC 是时刻基准；时区负责显示和日历解释；system clock 是运行中程序使用的墙上时钟；RTC 为关机期间保存基准；改时区不等于校时。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>UTC 是时刻基准；时区负责显示和日历解释；system clock 是运行中程序使用的墙上时钟；RTC 为关机期间保存基准；改时区不等于校时。</p></div>
 
 </section>
 
@@ -169,7 +415,7 @@ timedatectl set-time '2026-07-12 15:30:00'
 timedatectl set-ntp true
 ```
 
-`set-time` 直接改变系统时钟；`set-ntp true` 请求启用系统识别的网络时间同步服务。在 RHEL 9 课程环境中通常由 chronyd 承担这一职责。启用同步后不应再把手工设置时间作为常规维护路径。
+`set-time` 直接改变系统时钟；系统正在使用网络时间同步时，通常应先明确停用该同步机制，否则手工设时可能被拒绝或很快被重新校正。`set-ntp true` 请求启用系统识别的网络时间同步服务；在 RHEL 9 中通常由 chronyd 承担这一职责。启用同步后，不应再把手工设置时间作为常规维护路径。
 
 **安全边界：** 手工改时可能导致日志倒序、认证失败、证书判断异常和计划任务行为变化。考试题目未明确要求时，不应为了让输出“看起来正确”而手工设置时间。
 
@@ -190,7 +436,7 @@ timedatectl set-ntp true
 
 本讲义不提供虚构的 IP、offset、Reference ID 或 Reach 值。真实环境中必须读取本机证据。
 
-**[Cheatsheet]** 先记录 `date`、`date -u`、`timedatectl`；列时区用 `list-timezones`，设置用 `set-timezone`；改时区后验证 `/etc/localtime` 和本地/UTC 显示。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>先记录 `date`、`date -u`、`timedatectl`；列时区用 `list-timezones`，设置用 `set-timezone`；改时区后验证 `/etc/localtime` 和本地/UTC 显示。</p></div>
 
 </section>
 
@@ -240,9 +486,9 @@ hwclock --hctosys
 
 ### ⑤ [边界] 虚拟机中的 RTC 可能不是独立物理设备
 
-云平台或虚拟机可能提供虚拟 RTC，也可能由宿主机、虚拟化工具或启动机制影响客户机时间。`hwclock` 失败或 RTC 与宿主机相关，并不直接证明 chronyd 配置错误。此类平台特性需要真实环境验证，记录在 `统一验证记录` 中。
+云平台或虚拟机可能提供虚拟 RTC，也可能由宿主机、虚拟化工具或启动机制影响客户机时间。`hwclock` 失败或 RTC 与宿主机相关，并不直接证明 chronyd 配置错误。此类平台特性需要真实环境验证。
 
-**[Cheatsheet]** `--show` 只读 RTC；`--systohc` 是系统时钟写 RTC；`--hctosys` 是 RTC 写系统时钟；操作前先明确真源和目标。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>`--show` 只读 RTC；`--systohc` 是系统时钟写 RTC；`--hctosys` 是 RTC 写系统时钟；操作前先明确真源和目标。</p></div>
 
 </section>
 
@@ -297,7 +543,7 @@ stratum 反映来源与参考时钟之间的层级。直接连接参考时钟的
 
 `chronyc sources -v` 和 `chronyc tracking` 中有多个偏差指标。它们表达的对象和时间窗口不同。不能规定所有主机都必须小于同一个毫秒值。考试最小判断通常是进入有效同步；生产环境还要按 Kerberos、证书、数据库和分布式系统要求设定偏差目标。
 
-**[Cheatsheet]** 配置只声明来源；active/enabled 只证明服务层；activity 看来源解析状态；sources 看测量与选择；tracking 看本机时钟。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>配置只声明来源；active/enabled 只证明服务层；activity 看来源解析状态；sources 看测量与选择；tracking 看本机时钟。</p></div>
 
 </section>
 
@@ -371,7 +617,7 @@ systemctl enable --now chronyd.service
 
 仍要分别验证 active 与 enabled，不能用一条 `status` 的视觉印象代替明确检查。
 
-**[Cheatsheet]** 先备份并保留既有配置；`server` 单来源，`pool` 池来源；`iburst` 加快初始采样；`makestep` 是策略；`rtcsync` 让同步状态下的内核更新 RTC。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>先备份并保留既有配置；`server` 单来源，`pool` 池来源；`iburst` 加快初始采样；`makestep` 是策略；`rtcsync` 让同步状态下的内核更新 RTC。</p></div>
 
 </section>
 
@@ -443,7 +689,7 @@ adjusted_offset[measured_offset] +/- error_bound
 → tracking 不再 Not synchronised
 ```
 
-**[Cheatsheet]** activity 看总体；`^` 是 server；`*` 选中、`+` 候选、`-` 未选、`?` 不可选、`x` 错误源；Reach 持续 0 查往返链；最后必须进入 tracking。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>activity 看总体；`^` 是 server；`*` 选中、`+` 候选、`-` 未选、`?` 不可选、`x` 错误源；Reach 持续 0 查往返链；最后必须进入 tracking。</p></div>
 
 </section>
 
@@ -503,7 +749,7 @@ Leap status 不是 Not synchronised
 System time/offset 没有持续发散
 ```
 
-**[Cheatsheet]** sources 回答“来源怎样”；tracking 回答“本机怎样”；重点看 Reference、Stratum、System/Last/RMS offset、Frequency/Skew、Update interval、Leap status。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>sources 回答“来源怎样”；tracking 回答“本机怎样”；重点看 Reference、Stratum、System/Last/RMS offset、Frequency/Skew、Update interval、Leap status。</p></div>
 
 </section>
 
@@ -583,7 +829,7 @@ chronyc tracking
 timedatectl
 ```
 
-**[Cheatsheet]** `^?` 链路：配置加载 → DNS → 路由 → UDP 123 往返 → 远端状态 → 样本 → 选择 → tracking。修复哪一层，就重新验证哪一层及其下游。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>`^?` 链路：配置加载 → DNS → 路由 → UDP 123 往返 → 远端状态 → 样本 → 选择 → tracking。修复哪一层，就重新验证哪一层及其下游。</p></div>
 
 </section>
 
@@ -641,7 +887,7 @@ timedatectl
 
 还要检查关键应用、日志时间和计划任务影响。应用专项验证不在本章完整展开，但必须写入变更记录。
 
-**[Cheatsheet]** slew 保持连续、渐进收敛；step 立即跳变；配置 `makestep` 是有限策略，`chronyc makestep` 是运行时动作；没有有效来源时先修来源。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>slew 保持连续、渐进收敛；step 立即跳变；配置 `makestep` 是有限策略，`chronyc makestep` 是运行时动作；没有有效来源时先修来源。</p></div>
 
 </section>
 
@@ -682,13 +928,13 @@ activity / sources / tracking
 
 在脚本或自动化中，`systemctl start chronyd` 返回成功仅表示启动请求完成。需要时间正确后再启动关键业务时，应使用 `chronyc waitsync` 等条件式等待，并根据目标版本定义可接受尝试次数和偏差；本章只作为扩展，不把它替代人工理解。
 
-**[Cheatsheet]** 后续同步只改善未来，不改写历史；跨主机比较 sources/tracking，不只看 active；变更记录要包括是否发生 step。
+<div class="cheatsheet"><strong>Cheatsheet</strong><p>后续同步只改善未来，不改写历史；跨主机比较 sources/tracking，不只看 active；变更记录要包括是否发生 step。</p></div>
 
 </section>
 
-<section id="RHCSA-14-T01" data-kind="classic-task">
-
 <div class="page-break"></div>
+
+<section id="RHCSA-14-T01" data-kind="classic-task">
 
 ## [经典任务] 配置指定时区和时间源，并诊断 active 但持续 `^?`
 
@@ -746,9 +992,9 @@ server time.example.com iburst
 
 </section>
 
-<section id="RHCSA-14-A01" data-kind="reference-answer">
-
 <div class="page-break"></div>
+
+<section id="RHCSA-14-A01" data-kind="reference-answer">
 
 ## [参考解答] 从基线、最小修改到分层验收
 
@@ -909,6 +1155,8 @@ chronyc makestep
 
 </section>
 
+<div class="page-break"></div>
+
 <section id="RHCSA-14-S01" data-kind="chapter-summary">
 
 ## [本章收束] 把时间管理变成证据矩阵
@@ -929,32 +1177,35 @@ UTC / 本地显示 / 时区
 
 面对时间异常时，先问“哪个对象错误”，再选择命令。面对 `^?`，按照配置、解析、网络、远端、样本、选择、跟踪推进。面对大偏差，先建立可信来源和影响评估，再决定是否允许 step。
 
+### 主要判断表
+
+| 看到的证据 | 可以证明 | 不能证明 |
+|---|---|---|
+| `chronyd.service` 为 active | 守护进程当前运行 | 已有有效来源或已经同步 |
+| `sources -v` 中出现来源名称 | chronyd 知道该来源 | 来源可达、可选或被选中 |
+| 来源显示 `^*` 或 `^+` | 来源已被选中或参与组合 | 偏差已经满足具体业务阈值 |
+| `tracking` 的 Leap status 为 `Normal` | 本机正处于有效跟踪状态 | 其他主机也与本机一致 |
+| `date` 显示看起来正确 | 当前显示结果合理 | 来源可信、RTC 正确或历史日志已修复 |
+
 ### 最终 Cheatsheet
 
 ```bash
-# 本地时间、UTC、综合状态
-date '+%F %T %z %Z'
-date -u '+%F %T %z %Z'
+date '+%F %T %z %Z'; date -u '+%F %T %z %Z'
 timedatectl
-# 时区
-timedatectl list-timezones
 timedatectl set-timezone Asia/Shanghai
-# RTC
 hwclock --show
-# 高风险方向性操作：hwclock --systohc / --hctosys
-# chronyd 当前与持久状态
 systemctl is-active chronyd.service
 systemctl is-enabled chronyd.service
-# 来源与跟踪
 chronyc activity
 chronyc sources -v
 chronyc tracking
-# ^? 诊断入口
 getent ahosts time.example.com
 ip route get <resolved-address>
 journalctl -u chronyd.service -b --no-pager
 ```
 
-下一章《一次性任务、周期任务与 systemd Timer》将使用本章建立的时区和墙上时钟语义，但计划任务的日历表达、执行环境和验收归下一章完整展开。
+### 向下一章交接
+
+本章已经建立“时区改变本地日历解释、step 造成墙上时钟跳变”的边界。第 15 章将在此基础上讨论 `at`、cron 与 systemd timer 的持久配置、执行环境和实际触发行为。
 
 </section>

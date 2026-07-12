@@ -4,7 +4,7 @@ chapter_id: RHCSA-01
 exam: RHCSA
 part: "第一篇　命令行与本地信息处理"
 slug: shell-parsing-expansion
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
 sources:
@@ -14,58 +14,150 @@ sources:
   - help(type/printf/export/set)
 ---
 
+<!--
+维护层说明：本章保留既有 Section ID；验证模式为 static，未执行 RHEL 9 live test。
+-->
 
-# RHCSA-01　Shell 解析、引用、展开与命令组合
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">01</div>
+  <h1>Shell 解析、引用、展开与命令组合</h1>
+  <p class="cover-subtitle">从输入字符到最终 argv：把引用、变量、glob、环境与退出状态放进同一条推理链。</p>
+  <div class="cover-tags">
+    <span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+  </div>
+  <div class="cover-edition">大字号阅读版</div>
+</div>
 
-你在终端里看到的是一行字符，程序真正接收到的却是一组参数。两者之间存在一段由 Bash 完成的处理过程：Shell 先识别词和控制操作符，再根据引用上下文执行变量展开、命令替换、词拆分和路径名展开，最后才选择命令并执行。如果这一过程没有形成清晰模型，很多错误看起来像“命令不会用”，本质上却是程序从一开始就收到了错误的参数。
+<div class="navigation-page">
+  <h1>本章阅读导航</h1>
+  <p class="lead"><strong>先抓住一条主线：</strong>Shell 不会把输入行原样交给程序。它先识别词和操作符，再按引用上下文完成展开、拆分和路径名匹配，最终形成命令名、参数列表、执行环境与退出状态。</p>
+  <div class="model-grid">
+    <div><b>01</b><strong>识别词与引用</strong><span>判断哪些字符仍是 Shell 语法</span></div>
+    <div><b>02</b><strong>参数与命令替换</strong><span>把变量值或命令输出嵌入当前词</span></div>
+    <div><b>03</b><strong>词拆分</strong><span>未引用展开结果可能变成多个参数</span></div>
+    <div><b>04</b><strong>路径名展开</strong><span>glob 模式可能变成多个真实路径</span></div>
+    <div><b>05</b><strong>最终 argv</strong><span>确认参数数量、顺序与精确文本</span></div>
+    <div><b>06</b><strong>执行与状态</strong><span>区分环境边界并保存退出状态</span></div>
+  </div>
+  <div class="nav-columns">
+    <div>
+      <h2>专题地图</h2>
+      <ol class="topic-map">
+        <li><span>知识专题</span>从输入文本到最终参数列表</li>
+        <li><span>知识专题</span>引用与转义：决定哪些字符还是语法</li>
+        <li><span>知识专题</span>展开流水线：一个词为什么改变内容或数量</li>
+        <li><span>操作专题</span>Shell 变量、导出属性与子进程环境</li>
+        <li><span>操作专题</span>从目标参数反向构造安全命令</li>
+        <li><span>知识专题</span>退出状态与命令组合</li>
+        <li><span>知识专题</span>当前 Shell 与子 Shell</li>
+        <li><span>诊断专题</span>从异常结果反推解析阶段</li>
+      </ol>
+    </div>
+    <div>
+      <h2>阅读时持续回答</h2>
+      <ol class="questions">
+        <li>哪些字符仍属于 Shell 语法？</li>
+        <li>哪些内容会发生展开？</li>
+        <li>展开结果会不会继续被拆分？</li>
+        <li>glob 会生成几个真实路径？</li>
+        <li>程序最终获得几个参数？</li>
+        <li>变量是否进入子进程环境？</li>
+        <li>哪一条命令的退出状态被保存？</li>
+        <li>状态修改发生在当前 Shell 还是子 Shell？</li>
+      </ol>
+      <div class="note-box"><strong>章节边界</strong><br>重定向、文件描述符与管道留给第 02 章；本地帮助体系完整展开留给第 03 章；本章不扩展为完整 Bash 脚本编程课程。</div>
+    </div>
+  </div>
+</div>
 
-例如，下面三条命令视觉上只差几对引号：
+<div class="chapter-opening">
+  <div class="eyebrow">第 01 章 · 正文</div>
+  <h1>输入行不是程序参数：先重建 Bash 的处理链</h1>
+  <p>你在终端里看到的是一行字符，程序真正接收到的却是一组参数。Bash 会先识别词和控制操作符，再根据引用上下文执行参数展开、命令替换、词拆分和路径名展开，最后才选择命令并执行。很多看似“命令不会用”的故障，本质上是程序从一开始就收到了错误数量或错误内容的参数。</p>
+  <pre><code class="language-bash">name='report final'
+printf '&lt;%s&gt;\n' $name
+printf '&lt;%s&gt;\n' "$name"
+printf '&lt;%s&gt;\n' '$name'</code></pre>
+  <p>这三条命令分别可能产生两个参数、一个展开后的参数和一个字面的 <code>$name</code>。本章不把“变量外面最好加引号”当作口号，而是要求你始终能回答：输入中的哪些字符仍是语法、哪些内容会被替换、替换结果是否会再拆分、模式会匹配多少路径、程序最终获得多少参数，以及命令结束后哪一个状态被保留。</p>
+  <div class="mainline">源文本 → Shell 词 → 引用上下文 → 参数展开 / 命令替换 → 词拆分 → glob → 最终 argv → 执行环境 → 退出状态</div>
+</div>
 
-```bash
-name='report final'
-printf '<%s>\n' $name
-printf '<%s>\n' "$name"
-printf '<%s>\n' '$name'
-```
+<section class="concept-stack" id="RHCSA-01-CONCEPTS">
+  <h2>核心概念：先把对象和边界分清</h2>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>Shell 词与最终 argv</strong>　Shell 词是 Bash 解析命令行时识别的语法单位，它可能最终成为命令名或一个参数；最终 argv 则是展开、拆分、路径名匹配和引用移除之后真正交给程序的字符串数组。源文本里看见三个“片段”不代表程序一定收到三个参数，反过来也一样。最可靠的证据不是目测命令行，而是用参数观察器确认参数数量和每个参数的精确文本。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>引用上下文</strong>　单引号、双引号与反斜杠不是执行前最后添加的保护壳，而是从解析阶段开始改变字符是否仍具有语法含义。单引号使内部字符保持字面值；双引号允许参数展开和命令替换，但通常保持展开结果为一个词；反斜杠只保护紧随其后的一个字符。引用只能保证 Shell 层的参数边界，不能证明路径存在、权限正确或业务目标完成。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>参数展开</strong>　参数展开用 <code>$name</code> 或 <code>${name}</code> 读取当前 Shell 中的变量值。花括号最重要的基础作用是明确变量名边界，例如 <code>${name}01</code> 表示变量 <code>name</code> 后接字面 <code>01</code>。未设置、已设置为空、未引用空展开和显式空参数并不是同一状态，必须通过最终参数数量来区分。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>命令替换</strong>　<code>$(command)</code> 会在子 Shell 环境中执行命令，并把其标准输出嵌入当前词；末尾连续换行会被移除。命令替换捕获的是文本，不是“成功或失败”这一状态。若替换结果应当保持一个参数，应把整个替换放在双引号中；若希望修改当前 Shell 的目录或变量，则不能依赖命令替换内部的状态变化。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>词拆分</strong>　词拆分主要作用于未引用的参数展开和命令替换结果，并依据 <code>IFS</code> 将文本分成字段。因此变量值中已有空格时，<code>$value</code> 可能生成多个参数，而 <code>"$value"</code> 通常保持一个参数。源文本中的空格属于较早的词法边界，变量值中的空格是否再次拆分则由引用上下文决定。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>路径名展开（glob）</strong>　glob 由 Shell 在目标程序启动前完成，<code>*</code>、<code>?</code> 和字符集合模式可能被替换成零个、一个或多个路径。模式被双引号包住后不会展开；默认情况下 <code>*</code> 通常不匹配名称开头的点，无匹配模式通常会保留为字面文本。Shell 选项和 locale 会改变部分边界，因此异常时要先调查当前 Shell 状态。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>Shell 变量与导出属性</strong>　Shell 变量属于当前 Shell 的状态；<code>export</code> 添加的是“随后启动的子进程可以继承”这一属性。<code>set</code>、<code>export -p</code> 和 <code>env</code> 观察的对象不同：当前 Shell 状态、带导出属性的变量，以及当前进程环境。子进程获得的是启动时的环境副本，不能反向修改父 Shell。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>退出状态</strong>　命令或命令列表完成后会向 Shell 返回一个整数状态，<code>0</code> 通常表示按该命令自身约定成功，非零表示未成功。<code>$?</code> 只保存最近一条命令或命令列表的状态，会被下一条命令立即覆盖；<code>&amp;&amp;</code> 与 <code>||</code> 正是依据这个状态短路执行。命令状态为零只能证明局部接口成功，不能自动证明完整业务终态正确。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>当前 Shell 与子 Shell</strong>　<code>{ list; }</code> 在当前 Shell 中执行，变量和工作目录修改可能保留；<code>( list )</code> 与 <code>$(...)</code> 建立子 Shell 边界，内部状态通常不会回写父 Shell。选择分组形式的核心不是括号外观，而是任务是否要求保留状态，以及是否只需要捕获文本或隔离影响。</p></div>
+</section>
 
-它们分别可能产生两个参数、一个展开后的参数和一个字面的 `$name`。真正需要掌握的不是“变量外面最好加引号”这一句口号，而是能够回答：
+<section class="semantic-quick-reference" id="RHCSA-01-SEMANTICS">
+  <h2>操作语义速查：先记住关键入口的接口形状</h2>
+  <p class="semantic-intro">这里不是完整 man page，而是本章最关键的查询、构造和验证入口。进入正文后，每个专题再按对象、证据和边界展开。</p>
 
-```text
-输入中的哪些字符属于 Shell 语法？
-哪些内容会被展开？
-展开结果是否还会被拆分？
-模式是否会匹配文件名？
-最终命令获得多少个参数？
-命令结束后，哪个状态会被保留？
-```
+  <div class="semantic-command">
+    <h3><code>type</code> / <code>type -a</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>type [-afptP] name [name ...]</code></pre>
+    <p>确认当前 Bash 如何解析一个名称，区分 alias、函数、builtin 和 <code>PATH</code> 中的外部命令。</p>
+    <dl><dt><code>type name</code></dt><dd>显示当前优先解析结果。</dd><dt><code>-a</code></dt><dd>尽可能列出所有可用入口。</dd><dt><code>-P</code></dt><dd>只按 <code>PATH</code> 查找外部可执行文件；它会忽略 builtin 和函数。</dd></dl>
+  </div>
 
-本章以“输入文本到最终参数列表”为主线，建立引用、展开、变量环境、退出状态、命令组合和子 Shell 的统一模型。后续章节会在这个模型上继续讲标准输入输出、重定向和管道；本章不会提前把它们完整展开。
+  <div class="semantic-command">
+    <h3><code>printf</code> 与参数观察器</h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>printf format [arguments ...]
+bash -c 'command_string' name [argument ...]</code></pre>
+    <p><code>printf</code> 用显式格式显示字符串边界；<code>bash -c</code> 启动新的 Bash，把 <code>name</code> 作为 <code>$0</code>，其余参数依次成为 <code>$1</code>、<code>$2</code>……。</p>
+    <dl><dt><code>printf 'arg=&lt;%s&gt;\n' "$@"</code></dt><dd>逐个显示参数，并给每个参数增加可见边界。</dd><dt><code>"$#"</code></dt><dd>读取位置参数数量。</dd><dt><code>"$@"</code></dt><dd>在双引号内保留每个位置参数的独立边界。</dd></dl>
+  </div>
 
-**[概念]** Shell 词（word）是解析后可能形成命令名或参数的单位。空白、换行和控制操作符通常建立词或命令边界，但引用可以让空白成为普通数据。
+  <div class="semantic-command">
+    <h3><code>set</code> / <code>export -p</code> / <code>env</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>set
+export [-fn] [name[=value] ...]
+env [name=value ...] [command [argument ...]]</code></pre>
+    <p>三个入口分别观察当前 Shell 状态、带导出属性的变量和进程环境，不能互相替代。</p>
+    <dl><dt><code>set</code></dt><dd>显示当前 Shell 的变量和函数，范围最宽。</dd><dt><code>export -p</code></dt><dd>显示具有导出属性的变量。</dd><dt><code>env</code></dt><dd>显示当前进程环境，或给单条命令构造临时环境。</dd></dl>
+  </div>
 
-**[概念]** 展开（expansion）是 Bash 在执行命令前把某些语法替换成文本或路径列表的过程。参数展开读取变量值，命令替换读取命令输出，路径名展开把模式替换成匹配的文件名。
+  <div class="semantic-command">
+    <h3>变量赋值、临时环境与清理</h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>name=value
+name=value command
+unset name
+export -n name</code></pre>
+    <p>赋值改变当前 Shell 变量；命令前赋值只为该次命令提供环境；删除变量和取消导出属性是两种不同操作。</p>
+    <dl><dt><code>name=value</code></dt><dd>等号两侧不能随意加入空格。</dd><dt><code>name=value command</code></dt><dd>为该命令提供临时环境，不等于永久持久配置。</dd><dt><code>unset name</code></dt><dd>删除变量。</dd><dt><code>export -n name</code></dt><dd>保留当前 Shell 变量值，但取消后续子进程继承属性。</dd></dl>
+  </div>
 
-**[概念]** Shell 变量属于当前 Shell 的状态；具有导出属性的变量会进入随后启动的子进程环境。子进程继承的是启动时的环境副本，不能反向修改父 Shell。
+  <div class="semantic-command">
+    <h3><code>;</code> / <code>&amp;&amp;</code> / <code>||</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>command1 ; command2
+command1 &amp;&amp; command2
+command1 || command2</code></pre>
+    <p>使用前一命令的退出状态决定后续命令是否执行；<code>;</code> 不判断状态，<code>&amp;&amp;</code> 成功继续，<code>||</code> 失败继续。</p>
+    <dl><dt><code>status=$?</code></dt><dd>在执行任何其他命令前立即保存最近状态。</dd><dt>左结合</dt><dd><code>a &amp;&amp; b || c</code> 在 <code>a</code> 失败或 <code>b</code> 失败时都可能执行 <code>c</code>，不能无条件当成严格 if/else。</dd><dt>短路</dt><dd>被跳过的命令没有运行，也不会产生新的退出状态。</dd></dl>
+  </div>
 
-**[概念]** 退出状态是命令或命令列表完成后交给 Shell 的整数结果。`0` 通常表示按该命令自身约定成功，非零表示未成功。它既能供 `$?` 读取，也能控制 `&&` 和 `||` 的短路执行。
-
-**[操作语义]** `type` 确认一个名称实际解析为什么；`printf` 用明确格式显示字符串和参数边界；`set`、`export -p` 和 `env` 分别观察当前 Shell 变量、导出属性和进程环境；`bash -c` 用于建立新的 Bash 进程并验证参数或环境继承。
-
-## 本章学习路径
-
-```text
-输入字符
-→ 词、操作符与引用上下文
-→ 参数展开 / 命令替换
-→ 未引用结果的词拆分
-→ 路径名展开
-→ 最终命令名与参数列表
-→ 命令执行与退出状态
-→ `;`、`&&`、`||` 决定后续执行
-→ 当前 Shell 或子 Shell 决定状态是否保留
-```
-
----
+  <div class="semantic-command">
+    <h3><code>( ... )</code> / <code>{ ...; }</code> / <code>$(...)</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>( list )
+{ list; }
+result=$(command)</code></pre>
+    <p>三种形式分别用于隔离执行环境、在当前 Shell 中分组，以及捕获子 Shell 命令输出。</p>
+    <dl><dt><code>( list )</code></dt><dd>在子 Shell 环境执行，变量和目录修改通常不保留。</dd><dt><code>{ list; }</code></dt><dd>在当前 Shell 执行；右花括号前必须有分号或换行，左右花括号需要词边界。</dd><dt><code>$(command)</code></dt><dd>捕获标准输出并嵌入当前词；若结果应保持一个参数，通常使用 <code>"$(command)"</code>。</dd></dl>
+  </div>
+</section>
 
 <section class="topic knowledge" id="RHCSA-01-K01" data-kind="knowledge-topic">
 
@@ -479,7 +571,7 @@ Bash 在执行 `printf` 前把模式替换成匹配路径列表。`printf` 自�
 2. **无匹配时通常保留原模式**：程序可能收到字面 `*.txt`；
 3. **匹配顺序受 locale 等状态影响**：不要把显示顺序当成跨环境不变的业务事实。
 
-Bash 选项如 `nullglob`、`failglob` 和 `dotglob` 可以改变这些行为。RHEL 9 实机上的默认选项应通过真实 Shell 查询，不在本候选章中伪造实测结果。
+Bash 选项如 `nullglob`、`failglob` 和 `dotglob` 可以改变这些行为。RHEL 9 实机上的默认选项应通过真实 Shell 查询，应在目标 Shell 中查询，本章不预设其状态。
 
 ### ⑩ [操作] 只让需要的部分参与 glob
 
@@ -1244,6 +1336,8 @@ type -a name
 
 <section class="topic task" id="RHCSA-01-T01" data-kind="classic-task">
 
+<div class="page-break"></div>
+
 ## [经典任务] 精确构造并验证一个复杂参数列表
 
 ### 任务环境
@@ -1322,9 +1416,9 @@ printf "arg=<%s>\n" "$@"
 
 </section>
 
-<div class="page-break"></div>
-
 <section class="topic answer" id="RHCSA-01-A01" data-kind="reference-answer">
+
+<div class="page-break"></div>
 
 ## [参考解答] 先重建参数，再验证环境和状态
 
@@ -1379,7 +1473,7 @@ arg=</tmp/rhcsa01 data/report 01.txt>
 arg=</tmp/rhcsa01 data/report 02.txt>
 ```
 
-这里的 `YYYY-MM-DD` 只表示执行时的实际日期格式，不应在讲义中编造一个固定实测日期。
+这里的 `YYYY-MM-DD` 只表示执行时的实际日期格式，本章不预设一个固定日期。
 
 ### ③ 分析三个典型错误
 

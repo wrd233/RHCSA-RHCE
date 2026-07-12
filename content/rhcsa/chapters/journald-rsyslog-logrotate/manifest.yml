@@ -1,0 +1,76 @@
+package_version: 1
+chapter:
+  id: RHCSA-13
+  exam: RHCSA
+  part: 3
+  number: 13
+  slug: journald-rsyslog-logrotate
+  title: 系统日志、Journal、rsyslog 与日志轮转
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/journald-rsyslog-logrotate/lecture.md
+  anki: content/rhcsa/chapters/journald-rsyslog-logrotate/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:17:49+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 593d94b13c68996c36fe72c89ab179aff970bc30a0301df06fce7555ef086991
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 286f598df0cf84d7004ef25be24a4cf6d790e755bebc6a27dabfa3825a56cbfa
+  anki:
+    path: anki.yml
+    sha256: 250cd1d637a61b20405d4ff79cf382d570c1a1a9b093715b92ea98ac189906f6
+  preview:
+    path: anki-preview.html
+    sha256: 56130e8f27c965b6db9c2d7a1adc7e59821bb6ce9fafc475c6608f6738649f69
+  summary:
+    path: anki-summary.md
+    sha256: 8b50d9a0ec34c5e2c79527f3ba69a1e6d0cbd2999e23a696f2bdfbb5fde2b29c
+  anki_impact:
+    path: anki-impact.md
+    sha256: 2394ec3a6e1324868fafcb315e767d3f6b31a4cfda678d94d2288b5754906a93
+  source_map:
+    path: source-map.md
+    sha256: 1089a25960815dd59aed613cb1c514570eebfc10188d0b175fe1d85307ca7dd1
+  structure_report:
+    path: structure-report.md
+    sha256: 33c79e38e2605ee7612ac6ddb5007266fee289a686c55a4f5f0e03c7d3cfce35
+  visual_qa:
+    path: visual-qa.md
+    sha256: 83b6305d4bf55b43f36d75ff3e87ac7cb24af7e06e14be76ddadcb2352825675
+  qa_report:
+    path: qa-report.md
+    sha256: c38248fdadbd5a02aa0937c06f5f2f0aaf94087fa19b1e90fac53b2302fc6b82
+  revision_notes:
+    path: revision-notes.md
+    sha256: fb2154c3cea195826045456ae9ccbe66a72a62cbc44cdc173dd6ed11d2834912
+  integration_note:
+    path: codex-integration-note.md
+    sha256: bf27e0c4cafcdac0eaf85d2e11aa1c3b8441e354759b27c3fccfe53229decc7d
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- 未执行 RHEL 9 命令级 live test。
+- 跨 boot journal、rsyslog 实际路由与远端接收、logrotate 真实轮转和写入者 reopen 仍需实机验证。
+- 全书 Section ID/Anki ID 唯一性、跨章重复、统一 PDF/APKG、Git 集成和发布由 Codex 完成。

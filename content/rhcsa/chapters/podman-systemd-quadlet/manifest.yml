@@ -1,0 +1,90 @@
+package_version: 1
+chapter:
+  id: RHCSA-32
+  exam: RHCSA
+  part: 8
+  number: 32
+  slug: podman-systemd-quadlet
+  title: 容器持久化、用户 systemd 与 Quadlet
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/podman-systemd-quadlet/lecture.md
+  anki: content/rhcsa/chapters/podman-systemd-quadlet/anki.yml
+  lecture_sha256: 9331394d4d3e25d402ab2a11d198c92a500dd9a06a72260a3025b9e327c5103f
+  anki_sha256: 405659be14450d53ac2b19db0e611816a0f03398ba3320b6c78bad258f942e21
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:25:20+08:00'
+  archive_name: RHCSA-32-podman-systemd-quadlet-v5.1-final.zip
+files:
+  lecture:
+    path: lecture.md
+    sha256: afc700551e0c03bea7697ad8d708ba1e93f71fe6ab98e79af6e2c7542059cd27
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: af2126275523befc00616be5eaa660d0124aeb205cfff06bcb248fc11428e53b
+  anki:
+    path: anki.yml
+    sha256: ee8383ca49fec5a7b4ff3bf765fffbd09a8a626b833172ee358cdada0579ea93
+  preview:
+    path: anki-preview.html
+    sha256: 9d3a8b0994fbbf92102de732d8738f87ebc1a375ae5e24072490e93627f30194
+  summary:
+    path: anki-summary.md
+    sha256: a00f00d01b43dcd47111aaf086fe67b8c42d7bb0afbbbdb46dc6df653da310e0
+  anki_impact:
+    path: anki-impact.md
+    sha256: 25e5966c1fd214f1419b3bf02b906ddd121c2c6dfa962e2bf0082c8e3f8c2d5d
+  source_map:
+    path: source-map.md
+    sha256: 9b977c27b7f9da7725aac69a657d46c76acf0508b5a3cdff26c810d2fbacd14d
+  structure_report:
+    path: structure-report.md
+    sha256: 5fe96a8eca9fda2f938d1f0403b8a90df5427a4fbe6fba8bc7f632dfa8017484
+  visual_qa:
+    path: visual-qa.md
+    sha256: fdba8dc15a6a57ad682586058a3648d5754f36487bd5d84c0a3e43561c56470c
+  qa_report:
+    path: qa-report.md
+    sha256: 17ccfbdc8fa43153245d2c282a046639ebaaa7c4daa73062b483da7950081e27
+  revision_notes:
+    path: revision-notes.md
+    sha256: 9cf2bb984aea0f63047b4df7e9b618d6c1e176f8cdedbcab0b3cf46184184af7
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 7cff189071a9fddb45fa0789761d44d878451ca8ad0704ade223fbb0d67d9571
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled:
+  - RHCSA-PODMAN-QA-012
+limitations:
+- No controllable RHEL 9 virtual machine; live tests were not performed.
+- Repository-wide Section ID, Anki ID and cross-chapter duplicate checks remain for Codex.
+- Formal whole-book PDF, APKG, AnkiConnect, Git integration and release remain for Codex.
+- Canonical currently omits the historical disabled migration record; Codex must adjudicate retention.
+extensions:
+  anki:
+    notes_total: 63
+    active: 62
+    qa: 62
+    cloze: 1
+    source_completeness_percent: 100
+    exact_duplicates: 0
+    near_duplicate_warnings: 0

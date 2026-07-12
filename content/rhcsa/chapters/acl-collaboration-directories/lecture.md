@@ -4,10 +4,10 @@ chapter_id: RHCSA-09
 exam: RHCSA
 part: "第二篇 身份、权限与特权控制"
 slug: acl-collaboration-directories
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
-base_commit: 39e873dab15347a0f1a7611a6f212c3d26bd3562
+base_commit: 961a29b3af4c07a828078a5de90c221a036546df
 sources:
   - RH124-RHEL9
   - RHCSA-Course-15-Advanced-Users-Groups-Permissions
@@ -17,25 +17,254 @@ sources:
   - RHCSA9-Mock
 ---
 
-<!-- 稳定 Section ID、来源与静态核对状态属于维护层；审阅 PDF 不显示这些元数据。 -->
+<!-- Section ID、来源和验证状态属于维护层；阅读版 PDF 不显示这些字段。 -->
 
-# 第 09 章　ACL 与协作目录
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">09</div>
+  <h1>ACL 与协作目录</h1>
+  <p class="cover-subtitle">从 ACL 条目到有效权限：把 access、default、mask、继承与多身份验收放进同一条证据链。</p>
+<div class="cover-tags">
+<span>对象模型</span>
+<span>操作语义</span>
+<span>验证</span>
+<span>诊断</span>
+<span>经典任务</span>
+</div>
+  <div class="cover-note">大字号阅读版</div>
+</div>
 
-传统 owner、group、other 三类权限适合表达多数单一团队场景，但真实目录常常同时存在“项目组可协作、审计员只读、个别运维人员临时维护”等要求。把所有人都塞进同一个组，或者不断放宽 `chmod`，会让授权边界越来越模糊。POSIX ACL 为文件和目录增加 named user、named group 与 mask，使管理员可以在不改变主要所属关系的前提下表达额外授权。
+:::: {.navigation-page}
 
-ACL 最容易出现的误判不是“不会写 `setfacl`”，而是混淆了三个不同事实：条目写了什么、mask 后实际还剩什么、用户最终能否完成操作。目录还多出一个时间维度：access ACL 控制当前对象，default ACL 只在未来对象创建时充当模板。只看目录上的 default 条目，不能证明已有文件已被修复；只看 named user 写着 `rw-`，也不能证明其 effective 权限仍然包含写权限。
+# 本章阅读导航
 
-本章按照“对象与条目 → 访问匹配 → mask 与 effective → 查询 → 修改 → 继承 → 协作目录 → 备份恢复 → 诊断”的顺序推进。传统模式位、umask、setgid 与 sticky 位已在第 08 章《传统权限、umask 与特殊权限位》中建立；本章只解释它们与 ACL 的接口。sudo 属于第 10 章《sudo 与最小特权授权》，SELinux 属于后续安全章节，均不在此展开。
+先抓住一条主线：ACL 不是“给用户写一行 `rwx` 就结束”，而是从主体匹配开始，经 mask 计算得到 effective permissions，再落到当前对象、未来新对象和真实身份功能测试。
 
-**[概念]** access ACL 是文件或目录当前的自主访问控制规则；default ACL 只能附着在目录上，用于初始化该目录中新建对象的 access ACL。default ACL 本身不决定当前目录能否被访问。
+::: {.model-grid}
+<div><b>01</b><strong>识别对象与主体</strong><span>确认文件、目录、owner、owning group 与 named entry</span></div>
+<div><b>02</b><strong>区分 access / default</strong><span>当前访问与未来创建不是同一状态</span></div>
+<div><b>03</b><strong>计算 effective</strong><span>named user 与 group class 还要经过 mask</span></div>
+<div><b>04</b><strong>执行最小修改</strong><span>新增、修改、删除时控制条目和递归范围</span></div>
+<div><b>05</b><strong>验证继承时点</strong><span>已有对象、新文件和新目录分别取证</span></div>
+<div><b>06</b><strong>多身份验收</strong><span>同时证明允许动作、拒绝动作和恢复依据</span></div>
+:::
 
-**[概念]** ACL entry 由主体类型、可选 qualifier 和 `rwx` 权限组成。`user::`、`group::`、`other::` 是基础条目；`user:<NAME>:` 与 `group:<NAME>:` 是额外主体条目；`mask::` 是 group class 的有效权限上限。
+::: {.navigation-columns}
 
-**[概念]** named user、文件所属组和 named group 的名义权限都要与 mask 求交，得到 effective permissions。文件所有者 `user::` 与 `other::` 不受 mask 限制。
+::: {.nav-col}
 
-**[操作语义]** `getfacl` 用于读取 access/default ACL、mask 和 effective 注释；`setfacl` 用于新增、修改、删除、复制和恢复 ACL；`ls -l` 的 `+` 只提示存在扩展 access ACL 或 default ACL，不能替代 `getfacl`。
+## 专题地图
 
-**[操作语义]** 协作目录必须分别配置当前目录、已有对象和未来对象，并以多个真实身份验证允许动作与拒绝动作。命令成功只证明 ACL 修改请求被接受，不能证明最终功能正确。
+| 类型 | 专题 |
+|---|---|
+| 知识专题 | ACL 对象、条目与作用时点 |
+| 知识专题 | 访问匹配、mask 与 effective |
+| 操作专题 | `ls`、`stat` 与 `getfacl` 取证 |
+| 操作专题 | `setfacl` 新增、修改、删除与 mask 控制 |
+| 操作专题 | default ACL 与创建时继承 |
+| 操作专题 | 协作目录的当前、历史与未来状态 |
+| 操作专题 | ACL 复制、备份与恢复 |
+| 诊断专题 | 条目存在但仍然 `Permission denied` |
+| 经典任务 | 建设协作目录与修复 mask |
+
+:::
+
+::: {.nav-col}
+
+## 阅读时持续回答
+
+1. 当前判断的是 access ACL，还是 default ACL？
+2. 进程会匹配 owner、named user、group class 还是 other？
+3. 该条目是否受 mask 限制？
+4. `#effective:` 与名义权限是否一致？
+5. 目标是已有对象还是未来新对象？
+6. `chmod` 是否改变了 mask？
+7. 查询证据能证明什么，不能证明什么？
+8. 哪个真实身份动作才是最终验收？
+
+
+:::
+
+:::
+
+::::
+
+<div class="chapter-opening">
+
+<div class="chapter-label">第 09 章 · 正文</div>
+
+# ACL 与协作目录：声明的权限为何不一定真正生效
+
+传统 owner、group、other 三类权限适合表达多数单一团队场景，但真实目录常常同时存在“项目组可协作、审计员只读、个别人员需要额外权限”等要求。ACL 在不改变主要 owner 与 owning group 的前提下增加 named user、named group 和 mask，使授权能够精确到额外主体。
+
+本章最重要的不是记住 `setfacl` 选项，而是避免三种误判：**ACL 条目存在不等于有效权限存在；default ACL 存在不等于已有对象已经改变；命令成功不等于目标身份能够完成业务动作。** 因此，本章沿着“对象与条目 → access/default → mask/effective → 查询与修改 → 继承 → 多身份验证 → 诊断与恢复”推进。
+
+传统模式位、umask、setgid 和 sticky 位已在第 08 章《传统权限、umask 与特殊权限位》中建立；本章只解释它们与 ACL 的接口。sudo 属于第 10 章《sudo 与最小特权授权》；SELinux 属于后续安全章节，本章在证据闭环后只指出分流方向，不提前展开。
+
+<div class="question-chain">
+  <p>当前对象存储了哪些 ACL 条目？</p>
+  <p>目标身份会匹配哪一种主体类别？</p>
+  <p>mask 后真正剩下哪些 effective permissions？</p>
+  <p>失败对象是历史文件、当前目录，还是未来新对象？</p>
+  <p>结构证据之后，哪个真实动作才能完成最终验收？</p>
+</div>
+
+</div>
+
+<div class="concept-stack">
+<div class="concept-card"><span class="concept-tag">概念</span><strong>Access ACL</strong> 是文件或目录当前参与自主访问判断的规则集合。它描述 owner、named user、owning group、named group、mask 与 other 在“现在访问这个对象”时如何工作。目录上出现 default ACL，并不会替代当前目录的 access ACL；判断当前能否进入或读写，仍要读取 access 部分。</div>
+<div class="concept-card"><span class="concept-tag">概念</span><strong>Default ACL</strong> 只能附着在目录上，是创建新对象时使用的 ACL 模板。它不会回溯修改已经存在的文件和子目录，也不直接决定父目录本身能否被访问。要验证 default ACL，必须真正创建新文件和新目录，再读取它们的 access ACL。</div>
+<div class="concept-card"><span class="concept-tag">概念</span><strong>ACL entry</strong> 由主体类型、可选 qualifier 与 `rwx` 权限组成。`user::`、`group::`、`other::` 是基础条目；`user:alice:` 与 `group:qa:` 是额外主体条目；`mask::` 则描述整个 group class 的有效权限上限。读输出时要先判断“这一行代表谁”，再谈权限。</div>
+<div class="concept-card"><span class="concept-tag">概念</span><strong>ACL mask</strong> 不是一个新的用户或组，而是 named user、owning group 与所有 named group 的统一上限。提高 mask 可能同时放宽多个条目的 effective 权限，收窄 mask 也可能让多个主体一起失去权限，因此修改 mask 前必须审阅整个 group class。</div>
+<div class="concept-card"><span class="concept-tag">概念</span><strong>Effective permissions</strong> 是条目权限经过匹配规则与 mask 约束后真正参与访问判断的结果。`user:analyst:rw-` 与 `mask::r--` 同时存在时，analyst 实际只有 `r--`；`getfacl` 的 `#effective:` 比单独看到 named entry 更接近内核的最终判断。</div>
+<div class="concept-card"><span class="concept-tag">概念</span><strong>继承、已有对象与新对象</strong> 构成 ACL 的时间维度。父目录的 default ACL 只初始化未来对象；已经存在的对象保留原 access ACL。协作目录因此必须分别处理当前目录、历史树和未来模板，并通过新文件、新目录以及不同身份的真实动作完成验证。</div>
+</div>
+
+::: {.ops-quickref}
+<div class="ops-lead"><span class="ops-tag">操作语义</span>以下入口分别观察 ACL 结构、修改当前规则、建立未来模板、复制或恢复元数据，并验证 `chmod` 与 mask 的交互。先理解命令作用对象，再记关键形式。</div>
+
+## `getfacl`
+
+**SYNOPSIS**
+
+```bash
+getfacl [-a|-d] [-e] [-p] file ...
+getfacl -R -P -p directory
+```
+
+读取文件或目录的 access/default ACL、mask 与 effective 注释。它证明“对象存储了什么”，不能单独证明当前会话身份和最终业务动作。
+
+**重要参数 / 形式**
+
+`getfacl -p PATH`
+: 保留绝对路径的前导 `/`，适合基线与审阅。
+
+`-a` / `-d`
+: 分别只显示 access ACL 或 default ACL，避免把当前规则与未来模板混读。
+
+`-e`
+: 强制显示所有受 mask 约束条目的 effective permissions。
+
+`-R -P`
+: 物理递归目录树，不跟随目录符号链接越出预期范围。
+
+---
+
+## `setfacl -m` / `-x` / `-b`
+
+**SYNOPSIS**
+
+```bash
+setfacl [-n|--mask] -m acl_spec file ...
+setfacl -x acl_spec file ...
+setfacl -b file ...
+```
+
+新增或修改 access ACL、删除指定条目，或清除扩展 access ACL。`-b` 是策略级清理，不应作为“不知道原因时”的默认排错动作。
+
+**重要参数 / 形式**
+
+`-m u:alice:rw-`
+: 新增或修改 named user 条目。
+
+`-m g:qa:r--`
+: 新增或修改 named group 条目。
+
+`-m m::rw-`
+: 设置 group class 的统一上限；必须同时审阅其他受影响条目。
+
+`-x u:alice` / `-x g:qa`
+: 删除指定主体条目，不在删除规格中重复权限字段。
+
+`-b`
+: 清除 named user、named group、mask 等扩展 access ACL，保留基础 owner/group/other 条目。
+
+`-n` / `--mask`
+: 分别抑制 mask 重算，或强制根据条目重算 mask；两者都需要在完整 group class 证据下使用。
+
+---
+
+## `setfacl -d` / `-k`
+
+**SYNOPSIS**
+
+```bash
+setfacl -d -m acl_spec directory ...
+setfacl -k directory ...
+```
+
+管理目录的 default ACL。default 只负责未来创建，不能证明当前目录或历史文件已经获得相同权限。
+
+**重要参数 / 形式**
+
+`d:u:auditor:r-x`
+: 为未来对象模板加入 named user；目录通常需要穿越位。
+
+`d:g::rwx` / `d:m::rwx` / `d:o::---`
+: 明确 default owning group、default mask 与 default other。
+
+`-k`
+: 删除目录的 default ACL，不清除当前 access ACL。
+
+新文件 / 新目录
+: 必须分别创建并读取 ACL；普通文件不会因为模板中写了 `x` 就自动得到执行位。
+
+---
+
+## ACL 复制、备份与恢复
+
+**SYNOPSIS**
+
+```bash
+getfacl --access SOURCE | setfacl --set-file=- TARGET
+getfacl -R -P -p DIRECTORY > acl.backup
+setfacl --test --restore=acl.backup
+setfacl --restore=acl.backup
+```
+
+把参考对象 ACL 复制到目标，或对目录树建立可审计的 ACL 元数据备份。恢复前应先预演，并确认备份中的路径、owner、group 与特殊位注释。
+
+**重要参数 / 形式**
+
+`--set-file=-`
+: 从标准输入读取完整 ACL 并替换目标 ACL；不是增量追加。
+
+`-R -P -p`
+: 递归、物理遍历并保留绝对路径，适合目录树基线。
+
+`--test --restore=FILE`
+: 只显示恢复将产生的 ACL，不修改对象。
+
+`--restore=FILE`
+: 按备份恢复 ACL，并可能处理 owner、group 和特殊位；真实系统应先在测试树核对。
+
+---
+
+## `chmod` 与 ACL 交互验证
+
+**SYNOPSIS**
+
+```bash
+getfacl -e -p file
+chmod g=MODE file
+getfacl -e -p file
+```
+
+带扩展 ACL 的对象上，传统 group mode bits 通常映射 `mask::`。因此 `chmod g=...` 可能同时改变 named user、owning group 和 named group 的 effective 上限。
+
+**重要参数 / 形式**
+
+变更前后对比
+: 对带 `+` 的对象执行 `chmod` 前后都运行 `getfacl -e`，不要只看 `ls -l`。
+
+`ls -l` 的 group 位
+: 在扩展 ACL 中通常显示 mask，而不一定直接等于 `group::` 条目。
+
+最小修复
+: 若目标只是恢复一个主体，先检查其他 group class 条目，避免通过放宽 mask 意外扩大授权。
+
+:::
+
 
 <section class="topic knowledge" id="RHCSA-09-K01" data-kind="knowledge-topic">
 
@@ -306,7 +535,7 @@ setfacl -x u:alice /srv/atlas/plan.md
 setfacl -x g:qa /srv/atlas/plan.md
 ```
 
-删除语法只描述 entry 类型和 qualifier，不应把权限字段作为目标。删除不存在的条目通常不构成错误，但仍应再次 `getfacl` 确认最终结构。
+删除语法只描述 entry 类型和 qualifier，不应把权限字段作为目标。若目标条目不存在，命令可能报告无可删除的条目或保持不变；无论返回信息如何，都应再次用 `getfacl` 确认最终结构。
 
 ### ⑤ [操作] 区分 `-b` 与 `-k`
 
@@ -452,10 +681,10 @@ find /srv/atlas -xdev -type d -print
 find /srv/atlas -xdev -type f -print
 
 find /srv/atlas -xdev -type d -print0 \
-  | xargs -0 setfacl -m g::rwx,u:auditor:r-x,m::rwx,o::---
+  | xargs -0 -r setfacl -m g::rwx,u:auditor:r-x,m::rwx,o::---
 
 find /srv/atlas -xdev -type f -print0 \
-  | xargs -0 setfacl -m g::rw-,u:auditor:r--,m::rw-,o::---
+  | xargs -0 -r setfacl -m g::rw-,u:auditor:r--,m::rw-,o::---
 ```
 
 这里按目录和普通文件分开，避免误给普通文件执行位。真实环境还应评估是否包含需要保持可执行的脚本；若有，应按题意保留而不是机械覆盖。
@@ -663,6 +892,8 @@ getfacl -e -p /srv/atlas/report.txt
 
 <section class="topic task" id="RHCSA-09-C01" data-kind="classic-task">
 
+<div class="page-break"></div>
+
 ## [经典任务] 维护一个已有内容的项目协作目录
 
 ### 环境
@@ -728,13 +959,13 @@ getfacl -e -p /srv/atlas/report.txt
 
 </section>
 
-<div class="page-break"></div>
-
 <section class="topic answer" id="RHCSA-09-A01" data-kind="reference-answer">
+
+<div class="page-break"></div>
 
 ## [参考解答] 维护已有项目协作目录
 
-以下命令是依据题目环境给出的候选解法。当前会话没有 RHEL 9 live VM，所有输出均应在真实练习环境中取得，不应照抄虚构结果。
+以下命令是依据题目环境给出的参考操作路径。本章未执行 RHEL 9 命令级实机验证，所有输出均应在真实练习环境中取得，不应照抄虚构结果。
 
 ### ① [调查] 确认基线、身份和对象范围
 
@@ -784,10 +1015,10 @@ find /srv/atlas -xdev -type f -print
 
 ```bash
 find /srv/atlas -xdev -type d -print0 \
-  | xargs -0 setfacl -m g::rwx,u:auditor:r-x,m::rwx,o::---
+  | xargs -0 -r setfacl -m g::rwx,u:auditor:r-x,m::rwx,o::---
 
 find /srv/atlas -xdev -type f -print0 \
-  | xargs -0 setfacl -m g::rw-,u:auditor:r--,m::rw-,o::---
+  | xargs -0 -r setfacl -m g::rw-,u:auditor:r--,m::rw-,o::---
 ```
 
 这里没有删除或重建任何文件。目录与普通文件分开，避免给所有普通文件增加执行位。若树中存在原本必须可执行的脚本，应在真实任务中按清单单独保留其执行权限，而不是机械套用第二条命令。
@@ -806,7 +1037,7 @@ setfacl -m \
 
 ```bash
 find /srv/atlas -xdev -type d -print0 \
-  | xargs -0 setfacl -m \
+  | xargs -0 -r setfacl -m \
       d:u::rwx,d:u:auditor:r-x,d:g::rwx,d:m::rwx,d:o::---
 ```
 
@@ -888,6 +1119,8 @@ setfacl --test --restore=/root/atlas-acl.before
 
 <section class="topic task" id="RHCSA-09-C02" data-kind="classic-task">
 
+<div class="page-break"></div>
+
 ## [经典任务] 诊断 named user 有 `rw-` 但实际无法写入
 
 ### 环境与症状
@@ -932,9 +1165,9 @@ chmod g=r /srv/atlas/report.txt
 
 </section>
 
-<div class="page-break"></div>
-
 <section class="topic answer" id="RHCSA-09-A02" data-kind="reference-answer">
+
+<div class="page-break"></div>
 
 ## [参考解答] 修复被 `chmod` 收窄的 mask
 
@@ -997,37 +1230,54 @@ sudo -u analyst tail -n 1 /srv/atlas/report.txt
 
 </section>
 
+
+
+
 <section class="topic summary" id="RHCSA-09-S01" data-kind="chapter-summary">
 
-## [本章收束] 用四层证据判断 ACL，而不是只背一条命令
+## [本章收束] 把 ACL 还原成声明、有效、创建与功能四层证据
 
-ACL 的稳定判断路径可以压缩为四层：
+ACL 的稳定工作方法不是“先加 `rwx`”，而是从对象与证据推进：
 
 ```text
-声明层
-→ access/default ACL 写了什么
-
-effective 层
-→ mask 后实际剩下什么
-
-创建层
-→ 已有对象与新对象是否处于同一策略
-
-功能层
-→ 真实身份能否完成允许动作，并被拒绝禁止动作
+建立基线与对象范围
+→ 分离 access ACL 和 default ACL
+→ 识别主体匹配与 mask
+→ 对当前、历史、未来状态做最小修改
+→ 用结构证据验证存储结果
+→ 用真实身份验证允许动作与拒绝动作
+→ 保存恢复依据
 ```
 
-从工作迁移角度看，ACL 变更应像其他配置变更一样具备基线、最小修改、范围控制、分层验证和回滚依据。目录树越大，越不能用未经预览的递归命令猜测结果；授权主体越多，越不能用无条件放宽 mask 替代逐条审阅。
+### 章末检查清单
 
-本章完成后，应能回答：
+- [ ] 已明确目标是当前对象、已有树还是未来新对象；
+- [ ] 已分别读取 access ACL 和 default ACL；
+- [ ] 已确认目标身份会匹配 owner、named user、group class 或 other；
+- [ ] 已检查 `mask::` 和 `#effective:`；
+- [ ] 已评估 `chmod` 是否改变 mask；
+- [ ] 递归操作前已列出范围，并避免跟随目录符号链接越界；
+- [ ] 新文件和新目录已分别验证继承；
+- [ ] 已用至少两个协作身份完成交叉写入；
+- [ ] 已验证只读主体既“能读”又“不能写/创建”；
+- [ ] 已保存 ACL 基线或恢复文件，并理解 `--restore` 的影响范围。
 
-1. 当前对象与未来对象分别由哪类 ACL 控制；
-2. 某个主体会匹配哪一类 entry；
-3. mask 会限制哪些条目；
-4. `ls -l` 的 group 位为什么可能不是 `group::`；
-5. 怎样新增、修改、删除、复制、备份和恢复 ACL；
-6. default ACL 为什么不能回溯已有对象；
-7. 怎样为协作目录建立允许与拒绝两类功能证据；
-8. 条目存在但权限不足时，下一条最有区分度的证据是什么。
+### 主要判断表
+
+| 观察或症状 | 首先说明什么 | 下一条最有区分度的证据 | 不能直接证明什么 |
+|---|---|---|---|
+| `ls -l` 末尾出现 `+` | 存在扩展 access ACL 或 default ACL | `getfacl -p` | 具体主体与实际权限 |
+| `user:analyst:rw-` | 名义条目包含读写 | `getfacl -e -p` | effective 一定包含写 |
+| `default:user:auditor:r-x` | 未来对象模板含 auditor | 新建对象后 `getfacl` | 父目录和旧文件已授权 |
+| 新文件可协作、旧文件失败 | default 可能正常 | 对比旧/新对象 access ACL | 应继续修改 default ACL |
+| `chmod g=r` 后 named user 失写 | mask 可能被收窄 | 变更前后 `getfacl -e` | 只有 owning group 被修改 |
+| ACL 结构正确仍拒绝 | 失败可能不在 ACL 层 | `id`、`namei -l`、挂载状态，再转其他安全层 | 不能据此认定放宽为 `chmod 777` 是正确修复 |
+| `setfacl` 返回成功 | 修改请求被接受 | 重新 `getfacl` + 真实身份动作 | 业务终态正确 |
+
+### 向下一章交接
+
+本章解决的是“对象本身允许谁访问”的自主访问控制。下一章《sudo 与最小特权授权》处理的是“某个已登录用户可以代表谁执行哪些管理命令”。ACL 不授予提权能力，sudo 也不替代目标文件和目录的 ACL；两者分别控制数据访问边界与管理命令边界。
+
+<div class="static-note"><strong>静态可信声明：</strong>本章依据 RHEL 9 课程资料以及 <code>acl(5)</code>、<code>getfacl(1)</code>、<code>setfacl(1)</code> 进行静态核对；未执行命令级实机验证，文中命令均作为推荐操作与验证路径。</div>
 
 </section>

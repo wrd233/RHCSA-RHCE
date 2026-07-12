@@ -1,0 +1,77 @@
+package_version: 1
+chapter:
+  id: RHCSA-09
+  exam: RHCSA
+  part: 2
+  number: 9
+  slug: acl-collaboration-directories
+  title: ACL 与协作目录
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/acl-collaboration-directories/lecture.md
+  anki: content/rhcsa/chapters/acl-collaboration-directories/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T14:18:22Z'
+files:
+  lecture:
+    path: lecture.md
+    sha256: c72a49d4f05e4de9e1f306f3b616541994c48bf8ac1463851f45466b222d6e94
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 37b9f92a9c099fe799f5d7476f2ffc9eb28571469312f89429af720aaffe630c
+  anki:
+    path: anki.yml
+    sha256: 09a05e982f8484652af55473898cedb1a15be501b517853831f9758530f3c349
+  preview:
+    path: anki-preview.html
+    sha256: ac5a99633c79ea311506907615fd97bc5a75e9e96f7ed22ab6300ba9bc6e5159
+  summary:
+    path: anki-summary.md
+    sha256: 4352f93031aa2e1b188efb59903dc9b370e1312f0c6ccc6ea89146b4a8920e58
+  anki_impact:
+    path: anki-impact.md
+    sha256: 51cfd463b6af8a57b3380487f986abf10f137073e9be453e44a7e9a5b4c0e72b
+  source_map:
+    path: source-map.md
+    sha256: ed0fbe4e3e5007167f12a53a972de717ff0a780e48fd0e4c4de8d9bcf682635f
+  structure_report:
+    path: structure-report.md
+    sha256: b7114a4348ee89960a5aa7dfdbed067c2002c062d606a6ce980d4b63fe8df833
+  visual_qa:
+    path: visual-qa.md
+    sha256: e80e9abdf9c2661d844f99abf962ecf1f1b194689e071de3a54d79b57ab72b81
+  qa_report:
+    path: qa-report.md
+    sha256: a30fa4a91bbecbcbc11e1ae43cb00ddfa0ce2e48f539fab9817a25137e2f5800
+  revision_notes:
+    path: revision-notes.md
+    sha256: a1ade3a57197312da379caf15e4f24c496b6da6e63f5d15c44ec957386bc562a
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 13f17ebd9e3406612066528b4b06c73fb83bfdf531654577aaf7c6fa4fb2ca09
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM was available; command-level live tests were not performed.
+- Global Section ID uniqueness, global Anki ID uniqueness, cross-chapter similarity, unified book PDF and APKG remain Codex
+  integration tasks.
+- The review PDF is a chapter review artifact; Codex must rebuild the formal PDF with the repository-wide template.

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "anki-chapter.schema.json",
+  "type": "object",
+  "required": ["schema_version", "chapter_id", "chapter_slug", "deck", "status", "notes"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "chapter_id": {"type": "string", "pattern": "^RHCSA-[0-9]{2}$"},
+    "chapter_slug": {"type": "string"},
+    "deck": {"type": "string"},
+    "status": {"const": "content_frozen_for_integration"},
+    "validation": {"type": "string"},
+    "notes": {"type": "array", "items": {"$ref": "#/$defs/note"}}
+  },
+  "additionalProperties": false,
+  "$defs": {"note": {
+    "type": "object",
+    "required": ["id", "type", "model", "source", "tags", "priority"],
+    "properties": {
+      "id": {"type": "string"}, "type": {"enum": ["qa", "cloze"]},
+      "model": {"enum": ["RedHat-QA", "RedHat-Cloze"]},
+      "question": {"type": "string"}, "answer": {"type": "string"}, "text": {"type": "string"},
+      "extra": {"type": "string"}, "source": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+      "tags": {"type": "array", "items": {"type": "string"}}, "priority": {"enum": ["P0", "P1", "P2"]},
+      "disabled": {"type": "boolean"}
+    },
+    "additionalProperties": false
+  }}
+}

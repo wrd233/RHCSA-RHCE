@@ -6,7 +6,8 @@ exam: RHCSA
 part: "第三篇 进程、服务与系统运行"
 validation: static
 live_test: not_performed
-status: integrated
+status: content_frozen_for_integration
+version: 5.1
 sources:
   - RH124-RHEL9-Ch8
   - RH134-RHEL9-performance-sections
@@ -16,23 +17,233 @@ sources:
   - bash-job-control
 ---
 
-<!-- 维护元数据、稳定 ID、来源和静态核对状态不进入正式发布版。 -->
+<!-- 维护元数据、稳定 Section ID、来源和静态核对状态不进入阅读版 PDF。 -->
 
-# 第 11 章　进程、作业、信号与调度优先级
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">11</div>
+  <h1>进程、作业、信号与<br>调度优先级</h1>
+  <p class="cover-subtitle">从“看到一个 PID”到可审计的运行控制：先确认实例，再观察状态，最后实施最小干预。</p>
+  <div class="cover-tags">
+    <span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+  </div>
+  <div class="cover-note">大字号阅读版</div>
+</div>
 
-服务器上出现“程序正在运行”“负载很高”“进程杀不掉”“SSH 断开后任务也没了”时，真正需要处理的并不是一条命令，而是一组彼此相关但不能混为一谈的对象：程序文件、进程实例、线程、父子关系、进程组、会话、控制终端和 Shell 作业。只有先确认自己正在观察哪一个对象，`ps`、`pgrep`、`top`、`jobs`、`kill` 与 `renice` 才不会变成随机试错工具。
+<div class="navigation-page">
 
-本章建立一条统一的调查与控制路径：先把运行实例和身份关系说清，再把状态、资源与负载拆开观察；随后训练精确选择、持续采样、Shell 作业控制、信号和普通调度优先级。最后用两个经典任务把“调查—操作—再验证”串成完整证据链。
+# 本章阅读导航
 
-**[概念]** 程序（program）是磁盘上的可执行内容；进程（process）是程序的一次运行实例；线程（thread）是进程内部可独立参与调度的执行单元。同一个程序可同时存在多个进程实例，一个进程也可包含多个线程。
+先抓住一条主线：**进程控制不是先找一条“能杀掉它”的命令，而是先证明目标进程是谁、当前处于什么状态、由谁管理，再选择最小影响的操作并用同一组证据复核。**
 
-**[概念]** PID 只在进程存活期间标识当前实例。进程退出后，PID 可能被重新分配；因此对即将终止或调优的对象，必须同时核对用户、启动时间、完整命令行、父进程和必要的会话信息。
+<div class="model-grid">
+  <div class="model-card"><b>01　确认运行实例</b><span>PID、用户、启动时间、完整命令行</span></div>
+  <div class="model-card"><b>02　还原关系</b><span>PPID、线程、PGID、SID、TTY</span></div>
+  <div class="model-card"><b>03　判断状态</b><span>R、S、D、T、Z 与资源维度</span></div>
+  <div class="model-card"><b>04　持续采样</b><span>ps 快照、top 趋势、/proc 下钻</span></div>
+  <div class="model-card"><b>05　实施最小干预</b><span>作业控制、TERM、nice / renice</span></div>
+  <div class="model-card"><b>06　分层验收</b><span>原 PID、原业务特征、非目标实例、管理者</span></div>
+</div>
 
-**[概念]** Shell 作业（job）是当前交互 Shell 对一条命令或一条管道的管理视图。作业号只在所属 Shell 中有意义；进程组和会话则由内核维护，用来把终端的前台、后台和信号控制关联到一组进程。
+<div class="nav-columns">
+<div>
 
-**[操作语义]** `ps`、`pgrep`、`pidof`、`pstree`、`top` 与 `/proc/<PID>` 用于建立证据；`jobs`、`bg`、`fg`、`nohup` 与 `disown` 管理当前 Shell 和终端关系；`kill`、`pkill` 发送信号；`nice` 与 `renice` 调整普通 CPU 调度倾向。
+## 专题地图
 
-**[操作语义]** 对 systemd 管理的服务，本章只要求识别“外部管理者可能重新拉起进程”这一接口。unit 生命周期、依赖和持久服务配置在下一章《systemd Unit、服务与依赖关系》中完整展开。
+| 类型 | 专题 |
+|---|---|
+| 知识专题 | 从程序文件到运行实例：进程、线程与身份关系 |
+| 知识专题 | 进程状态、生命周期与资源维度 |
+| 操作专题 | 用 `ps`、`pidof` 与 `pstree` 建立可信快照 |
+| 操作专题 | 用 `pgrep` 精确缩小集合，再决定是否操作 |
+| 操作专题 | 用 `top` 和 `/proc/<PID>` 建立持续证据 |
+| 操作专题 | Bash 前台、后台与作业生命周期 |
+| 操作专题 | 信号控制：先请求协作，再决定是否强制 |
+| 操作专题 | `nice` 与 `renice` 调整普通调度倾向 |
+| 诊断专题 | 从状态和负载症状推进到下一条证据 |
+| 经典任务 | 安全停止旧 worker；调查高负载无单一热点 |
+
+</div>
+<div>
+
+## 阅读时持续回答
+
+1. 当前 PID 仍然属于刚才确认的业务实例吗？
+2. 这个对象是单个进程、线程、进程组，还是 Shell 作业？
+3. `STAT` 是瞬时状态，还是持续性异常证据？
+4. 负载来自可运行竞争，还是不可中断等待？
+5. 当前命令会影响一个 PID，还是一个匹配集合？
+6. 命令成功能证明请求已发送，还是终态已达到？
+7. 原 PID 消失后，原业务特征是否出现了新 PID？
+8. 当前对象是否受 systemd 或其他监督器管理？
+
+<div class="nav-callout"><b>阅读边界：</b>本章建立进程实例和 Shell 作业的调查与控制模型；systemd unit 生命周期留给第 12 章，日志证据留给第 13 章，cgroup 深度治理不在 RHCSA 主线展开。</div>
+
+</div>
+</div>
+</div>
+
+<div class="body-start"></div>
+
+# 第 11 章 · 正文
+
+服务器上出现“程序正在运行”“负载很高”“进程杀不掉”“SSH 断开后任务也没了”时，真正需要处理的不是某一条孤立命令，而是一组容易混淆的运行对象：程序文件、进程实例、线程、父子关系、进程组、会话、控制终端和 Shell 作业。把命令名当作唯一身份、把 load average 当作 CPU 百分比、把 `kill` 返回成功当作进程已经退出，都会让一次看似简单的处理变成误伤或反复试错。
+
+本章以“**身份组合 → 状态与资源 → 查询证据 → 最小操作 → 再验证 → 管理层交接**”为主线。先用 PID、PPID、用户、启动时间和完整命令行建立可复核的实例身份，再区分 `R/S/D/T/Z`、RSS、VSZ、I/O 和负载；随后训练 `ps`、`pgrep`、`top`、`/proc`、Shell 作业控制、信号以及 nice 值。若进程被外部管理者重新拉起，本章只负责识别这一边界，完整 systemd 控制留到下一章。
+
+<div class="opening-question">
+<b>遇到任何“停掉它”或“调低它”的请求，先写出四个问题：</b>
+
+- 我要操作的是哪个实例，身份由哪些字段共同证明？
+- 作用范围是单个 PID、进程组、作业，还是匹配集合？
+- 当前证据支持终止、暂停、继续，还是只支持继续调查？
+- 操作后怎样证明目标达到终态、非目标未受影响、管理者没有重新创建它？
+</div>
+
+<div class="concept-stack">
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>进程实例（process instance）</strong> 是程序一次实际运行形成的内核对象，拥有 PID、凭据、地址空间、打开文件和当前状态。同一个可执行文件可以同时形成多个实例，因此程序路径或短命令名只能说明“它可能是什么”，不能单独证明“它就是本次要操作的对象”。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>线程（thread）</strong> 是进程内部参与调度的执行单元；同一进程的线程通常共享地址空间和多数资源。进程级视图适合定位业务实例，线程级视图适合继续定位同一实例内部的 CPU 热点；线程转储和应用栈分析则超出本章边界。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>PID 与 PPID</strong> 分别标识当前进程实例和它的直接父进程。PID 只在进程存活期间唯一，退出后可能被复用；因此高风险操作前必须重新核对用户、启动时间、完整命令行和 PPID，不能把几分钟前记录的裸 PID 当作长期业务身份。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>进程组（process group）</strong> 用 PGID 把若干进程组织成一个控制对象。一条 Shell 管道通常包含多个 PID，却位于同一进程组；终端的前台属性和由键盘触发的信号通常面向前台进程组，而不是只面向管道中的某个成员。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>会话与控制终端（session / TTY）</strong> 连接了登录环境、进程组和终端控制。SID 标识会话，TTY 表示控制终端；`TTY=?` 常见于守护进程、systemd 服务或已经脱离终端的任务，它只说明没有控制终端，并不自动表示异常。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>进程状态（process state）</strong> 是采样瞬间任务处于运行、可中断等待、不可中断等待、停止或已退出待回收等状态的压缩表示。状态字符不是健康评分：`S` 往往正常，`D` 需要调查等待依赖，`Z` 表示父进程尚未回收，均不能用一条更强的 `kill` 统一处理。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Shell 作业（job）</strong> 是当前交互 Shell 对一条命令或管道的管理记录。`%1` 这样的 jobspec 只在创建它的 Shell 中有效；它不是 PID，也不是跨会话的持久身份。后台运行、脱离终端和长期服务是三个不同问题。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>信号（signal）</strong> 是内核向进程或进程组传递的异步通知。`SIGTERM` 是可协作处理的终止请求，`SIGKILL` 是无清理机会的强制终止；`SIGSTOP`/`SIGCONT` 控制停止与继续。发送成功只证明请求被内核接受，不证明业务终态已经达到。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>nice 值（niceness）</strong> 表示普通 CPU 调度中的相对礼让程度，常见范围为 `-20` 到 `19`：数值越低越有利，越高越礼让。它不是 CPU 配额，也不能修复 I/O 等待、锁竞争、内存压力或错误的管理策略。</p></div>
+
+</div>
+
+<div class="quickref">
+<div class="quickref-intro"><span class="operation-label">操作语义</span>以下入口分别负责“建立身份、缩小集合、保存趋势、读取上下文、控制作业、发送信号和调整调度倾向”。先理解作用对象，再记关键形式。</div>
+
+<div class="command-entry">
+<h3>`ps` / `pidof` / `pstree`</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>ps [selection] -o FIELDS [--sort=KEY]
+pidof [options] PROGRAM
+pstree [options] [PID|USER]</code></pre>
+<p>读取进程快照、快速取得程序 PID，或观察父子结构。`ps` 的核心是把“选谁”和“显示什么”分开。</p>
+<dl class="param-list">
+<dt>`-e` / `-p PID`</dt><dd>选择全部进程，或只选择明确 PID。</dd>
+<dt>`--ppid PID`</dt><dd>选择直接子进程，不递归整个后代树。</dd>
+<dt>`-o pid,ppid,user,lstart,stat,args`</dt><dd>建立可复核的身份、关系和状态视图。</dd>
+<dt>`--sort=-%cpu` / `--sort=-rss`</dt><dd>按 CPU 或 RSS 降序排列；负号表示降序。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3>`pgrep` / `pkill`</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>pgrep [options] PATTERN
+pkill [options] PATTERN</code></pre>
+<p>按名称、用户、父进程、会话、终端或完整命令行缩小集合；`pkill` 对同一集合发送信号。</p>
+<dl class="param-list">
+<dt>`-a`</dt><dd>显示 PID 和完整命令行，适合在操作前人工审阅。</dd>
+<dt>`-f` / `-x`</dt><dd>匹配完整命令行，或要求短命令名精确匹配。</dd>
+<dt>`-u USER` / `-P PPID`</dt><dd>按有效用户或直接父 PID 收缩范围。</dd>
+<dt>同条件预览</dt><dd>任何 `pkill` 前先运行对应 `pgrep -a`，之后再用原条件验收。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3>`top`</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>top [-b] [-d SECONDS] [-n ITERATIONS] [-H] [-p PID]</code></pre>
+<p>周期采样系统和任务状态；批处理模式可把多个采样窗口保存为证据。</p>
+<dl class="param-list">
+<dt>`-b`</dt><dd>批处理输出，适合重定向到文件。</dd>
+<dt>`-d 2 -n 5`</dt><dd>每 2 秒采样一次，共 5 轮；先固定窗口再比较。</dd>
+<dt>`-H`</dt><dd>展开线程视图，继续定位进程内部热点。</dd>
+<dt>`-p PID`</dt><dd>只观察指定进程；与 `-H` 组合可观察该进程的线程。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3><code>/proc/&lt;PID&gt;</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>cat /proc/PID/status
+tr '\0' ' ' &lt; /proc/PID/cmdline
+readlink /proc/PID/exe
+ls -l /proc/PID/fd</code></pre>
+<p>读取活进程的身份、状态、命令行、路径、文件描述符、I/O 和等待点。</p>
+<dl class="param-list">
+<dt>`status` / `stat`</dt><dd>查看人类可读状态，或紧凑的机器字段。</dd>
+<dt>`cmdline` / `exe` / `cwd`</dt><dd>确认参数、真实可执行文件和工作目录。</dd>
+<dt>`fd/` / `io` / `wchan`</dt><dd>观察打开资源、I/O 计数和当前等待位置。</dd>
+<dt>活对象竞态</dt><dd>进程可在读取途中退出；“文件不存在”不等于它从未存在。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3>`jobs` / `bg` / `fg`</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>jobs [-l]
+bg [JOBSPEC]
+fg [JOBSPEC]</code></pre>
+<p>管理当前交互 Shell 的作业表，把停止的作业放到后台继续，或拉回前台。</p>
+<dl class="param-list">
+<dt>`jobs -l`</dt><dd>同时显示作业号和 PID，连接 Shell 与内核视图。</dd>
+<dt>`bg %N`</dt><dd>向指定作业发送继续信号并在后台运行。</dd>
+<dt>`fg %N`</dt><dd>把指定作业放回终端前台并等待。</dd>
+<dt>`%N`</dt><dd>jobspec 只属于当前 Shell，不可带到另一个登录会话使用。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3>`nohup` / `disown`</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>nohup COMMAND [ARG]... &amp;
+disown [-h] [JOBSPEC]</code></pre>
+<p>分别处理挂断信号和 Shell 作业表关系；二者都不等于把命令配置成长期系统服务。</p>
+<dl class="param-list">
+<dt>`nohup COMMAND &`</dt><dd>让命令忽略常见挂断影响，并明确放入后台。</dd>
+<dt>`disown %N`</dt><dd>从当前 Shell 作业表移除作业。</dd>
+<dt>`disown -h %N`</dt><dd>保留作业记录，但标记为不随 Shell 发送 HUP。</dd>
+<dt>边界</dt><dd>重启持久性、依赖、自动恢复和统一日志应交给 systemd。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3>`kill`</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>kill [-SIGNAL] PID|JOBSPEC ...
+kill -0 PID
+kill -SIGNAL -- -PGID</code></pre>
+<p>向明确 PID、jobspec 或进程组发送信号；默认信号通常是 `SIGTERM`。</p>
+<dl class="param-list">
+<dt>`-TERM` / `-KILL`</dt><dd>先请求有序退出；重新确认后才考虑无清理机会的强制终止。</dd>
+<dt>`-STOP` / `-CONT`</dt><dd>无条件停止，或继续已停止的任务。</dd>
+<dt>`-0`</dt><dd>检查 PID 存在和发送权限，不验证业务身份或健康。</dd>
+<dt>`-- -PGID`</dt><dd>负目标表示进程组，可能同时影响整条管道或一个作业。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3>`nice` / `renice`</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>nice -n ADJUSTMENT COMMAND [ARG]...
+renice --priority VALUE --pid PID
+renice --priority VALUE --pgrp PGID
+renice --priority VALUE --user USER</code></pre>
+<p>在启动时或运行中调整普通 CPU 调度倾向；只有证据支持 CPU 竞争时才是合适的最小干预。</p>
+<dl class="param-list">
+<dt>`nice -n N`</dt><dd>在继承值基础上增加调整量，常见默认调整量为 10。</dd>
+<dt>`--priority VALUE`</dt><dd>为运行中对象设置绝对 nice 值，避免 `-n` 兼容语义歧义。</dd>
+<dt>`--pid` / `--pgrp` / `--user`</dt><dd>明确后续标识符是 PID、进程组还是用户集合。</dd>
+<dt>权限</dt><dd>普通用户通常只能让自己的任务更礼让；提高调度有利程度需要适当特权。</dd>
+</dl>
+</div>
+
+</div>
 
 <section class="topic knowledge" id="RHCSA-11-K01" data-kind="knowledge-topic">
 
@@ -363,7 +574,7 @@ top -b -d 2 -n 5 -w 200 > /tmp/top-5x2s.txt
 | `-w 200` | 扩大输出宽度，减少命令行截断 |
 | `-o %CPU` | 指定排序字段 |
 
-固定间隔和轮数可以让前后对比使用相同采样窗口。第一轮百分比可能受累计统计影响，不应只取第一屏下结论。
+固定间隔和轮数可以让前后对比使用相同采样窗口。首次采样中的百分比可能受累计统计影响，不应只取第一屏下结论。
 
 ### ② <span class="point-label">[操作]</span> 按 PID、用户或线程下钻
 
@@ -743,8 +954,6 @@ jobs -l
 
 <section class="topic classic-task" id="RHCSA-11-T01" data-kind="classic-task">
 
-<div class="page-break"></div>
-
 ## <span class="topic-label">[经典任务]</span> 精确定位并安全停止多个同名 worker 中的旧实例
 
 ### 环境与当前状态
@@ -785,10 +994,7 @@ jobs -l
 
 </section>
 
-<div class="answer-start"></div>
 <section class="topic answer" id="RHCSA-11-A01" data-kind="answer-topic">
-
-<div class="page-break"></div>
 
 ## <span class="topic-label">[参考解答]</span> 先固定集合，再终止并检查是否被重新拉起
 
@@ -894,7 +1100,6 @@ pgrep -a -u appsvc -f \
 
 </section>
 
-<div class="answer-start"></div>
 <section class="topic answer" id="RHCSA-11-A02" data-kind="answer-topic">
 
 ## <span class="topic-label">[参考解答]</span> 用固定采样窗口区分 R、D、线程与短命进程
@@ -986,64 +1191,92 @@ tr '\0' ' ' < /proc/<PID>/cmdline; echo
 
 </section>
 
+
 <section class="topic summary" id="RHCSA-11-S01" data-kind="summary-topic">
 
 ## <span class="topic-label">[本章收束]</span> 从“看到一个 PID”迁移到可审计的运行控制
 
-本章的核心不是记住最多参数，而是建立稳定顺序：
+本章真正需要保留的不是一长串参数，而是一套可重复的操作顺序：
 
 ```text
-对象模型
-→ 身份组合
-→ 状态与资源维度
+身份组合
+→ 关系与状态
 → 精确选择
-→ 持续采样
-→ 最小信号或优先级操作
-→ 原 PID + 原业务特征再验证
-→ 识别外部管理者
+→ 固定窗口采样
+→ 最小影响操作
+→ 同字段再验证
+→ 检查原业务特征与管理者
 ```
 
-考试中，这条链能避免误伤同名实例、把 `kill -9` 当作第一步、把命令成功扩大为业务正确。工作中，它还能形成变更前基线和可审计证据，为下一章将长期进程迁移到 systemd 管理打下基础。
+### 工作方法
+
+1. **先建立基线。** 记录目标 PID、用户、启动时间、完整命令行、PPID、PGID、SID、TTY 和状态；高负载场景还要固定采样间隔和轮数。
+2. **把选择集合与操作分开。** `pgrep`、`ps` 先证明候选集合；`pkill`、`kill`、`renice` 后改变状态。
+3. **优先最小干预。** 能用 `SIGTERM` 请求有序退出，就不直接 `SIGKILL`；根因未知时不先重启或 renice。
+4. **复用同一证据。** 操作前后使用同一字段和同一业务匹配条件，才能比较原实例、替代实例和非目标实例。
+5. **识别管理层。** 原 PID 消失却出现新 PID，说明“进程实例”可能不是最终控制对象；应比较 PPID、祖先和启动时间，转向实际管理者。
+
+### 主要判断表
+
+| 看到的证据 | 能支持的判断 | 不能直接推出 | 下一条高区分度证据 |
+|---|---|---|---|
+| `ps` 中 PID 存在 | 当前采样时存在一个该 PID | 仍是几分钟前确认的实例；业务健康 | 用户、`lstart`、`PPID`、完整 `args` |
+| `kill` 返回成功 | 发送请求被内核接受 | 进程已经退出；数据已安全落盘 | 等待后再次 `ps`，并按原特征 `pgrep` |
+| `kill -0` 成功 | PID 存在且当前用户有发送权限 | 身份正确、状态健康、终态正确 | 完整身份字段和业务验证 |
+| `Z` 状态 | 子进程已退出，父进程尚未回收 | 继续 `kill -9` 可以清除 | `PPID`、父进程健康和僵尸增长趋势 |
+| `D` 状态 | 正处于不可中断等待 | 更强信号会立即生效 | `wchan`、`/proc/PID/io`、共同挂载或设备 |
+| load average 高 | 可运行或不可中断等待任务较多 | CPU 使用率一定高 | 多轮 `top`、R/D 数量、线程和短命进程 |
+| VSZ 很大 | 虚拟地址空间较大 | 已占用同等物理内存 | RSS、系统可用内存、趋势和映射 |
+| 原 PID 消失 | 原进程表项已不存在 | 业务实例不会再次出现 | 原匹配条件、PPID/祖先、启动时间 |
+| nice 值改变 | 普通调度倾向已变化 | 获得固定 CPU 份额；根因被修复 | 同窗口 CPU/负载采样和业务影响 |
 
 ### 最终 Cheatsheet
 
 ```bash
-# 身份和资源快照
-ps -eo pid,ppid,user,lstart,etimes,sid,pgid,tty,stat,ni,%cpu,%mem,rss,vsz,args
+# 身份与关系
+ps -p PID -o pid,ppid,user,lstart,etimes,sid,pgid,tty,stat,ni,%cpu,%mem,rss,vsz,args
+pstree -aps PID
 
-# 精确选择
-pgrep -a -x NAME
-pgrep -a -u USER -f 'PATH .*KEY=VALUE'
+# 精确选择并预览
+pgrep -a -u USER -f 'STABLE_PATH .*KEY_ARGUMENT'
 
 # 趋势与线程
 top -b -d 2 -n 5 -w 200
 top -b -H -p PID -d 2 -n 5 -w 200
 
-# /proc 上下文
+# /proc 下钻
 cat /proc/PID/status
 tr '\0' ' ' < /proc/PID/cmdline; echo
-readlink -f /proc/PID/exe
-readlink -f /proc/PID/cwd
 cat /proc/PID/io
 cat /proc/PID/wchan
 
 # 作业控制
 jobs -l
-bg %1
-fg %1
-nohup COMMAND >LOG 2>&1 &
-disown -h %1
+bg %N
+fg %N
 
-# 信号
+# 安全终止
 kill -TERM PID
-kill -0 PID
-kill -CONT PID
-# 重新确认后，最后才考虑：kill -KILL PID
+sleep 2
+ps -p PID -o pid,ppid,user,lstart,stat,args
+# 重新确认身份和影响后，最后才考虑：kill -KILL PID
 
-# 优先级
+# 普通调度倾向
 nice -n 10 COMMAND
 renice --priority 15 --pid PID
-ps -p PID -o pid,user,lstart,ni,pri,stat,%cpu,args
 ```
+
+### 向下一章交接
+
+本章把一个运行实例识别为“可能受外部管理的进程树”，但不负责定义持久服务终态。进入下一章《systemd Unit、服务与依赖关系》后，需要把这里的证据继续映射到 unit：由哪个 unit 创建进程、主 PID 与工作进程是什么关系、为什么进程会被重新拉起，以及如何通过 unit 状态而不是追逐 PID 完成控制与验收。
+
+> **进入下一章时继续回答：**
+>
+> 1. 哪个 unit 是这棵进程树的实际管理者？
+> 2. `MainPID`、工作进程与 `Restart=` 策略怎样对应本章看到的 PID 变化？
+> 3. “进程存在”“service active”和“业务功能正常”分别需要什么证据？
+> 4. 停止、启动、重启与开机启用为什么是不同的状态维度？
+
+本章不会提前展开 unit 文件、依赖顺序、启用状态和 drop-in。这里保留的交接证据是：完整身份、进程树、启动时间、原业务匹配条件，以及“原 PID 消失后是否出现替代实例”的观察结果。
 
 </section>

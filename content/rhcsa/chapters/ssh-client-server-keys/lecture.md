@@ -4,34 +4,173 @@ chapter_id: RHCSA-20
 exam: RHCSA
 part: "第五篇 网络与远程管理"
 slug: ssh-client-server-keys
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
+content_version: "5.1"
 sources:
   - RH124-RHEL9-Ch10
   - RH134-RHEL9
-  - RH294-RHEL9
   - OpenSSH-man-pages
   - RHEL9-official-documentation
+  - RHCSA-20-v5.0-review-baseline
 ---
 
-<!-- 本文件是讲义真源。来源、稳定 ID 和静态验证状态属于维护层，正式正文不显示。 -->
+
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">20</div>
+  <h1>SSH 客户端、服务端与密钥认证</h1>
+  <p class="cover-subtitle">从“连得上”走到“身份可信、认证可证、配置可回退”：把客户端、服务端、密钥和证据放进同一条链。</p>
+  <div class="cover-tags">对象模型 · 操作语义 · 验证 · 诊断 · 经典任务</div>
+  <div class="cover-edition">大字号阅读版</div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="navigation-page">
+  <h1>本章阅读导航</h1>
+  <p class="lead"><strong>先抓住一条主线：</strong>客户端先确认服务器是谁，服务器再确认用户是谁；配置、权限和进程状态只是这条双向信任链的输入，独立新连接才是功能终态。</p>
+
+  <div class="model-steps">
+<div><b>01</b><strong>解析目标</strong><small>确认别名、真实主机、用户与端口</small></div>
+<div><b>02</b><strong>建立传输</strong><small>区分名称、路由、过滤与监听</small></div>
+<div><b>03</b><strong>验证主机</strong><small>用可信指纹约束 known_hosts</small></div>
+<div><b>04</b><strong>选择身份</strong><small>确认私钥、agent 与客户端匹配</small></div>
+<div><b>05</b><strong>服务端授权</strong><small>检查有效配置、authorized_keys 与路径可信性</small></div>
+<div><b>06</b><strong>分层验收</strong><small>证明方法、远端用户、主机和策略终态</small></div>
+</div>
+
+<div class="nav-columns">
+<div>
+<h2>专题地图</h2>
+<ul class="topic-map">
+<li><strong>知识专题</strong> SSH 连接阶段与双向身份</li>
+<li><strong>知识专题</strong> 主机密钥与 known_hosts</li>
+<li><strong>操作专题</strong> 用户密钥、authorized_keys 与 ssh-copy-id</li>
+<li><strong>操作专题</strong> 客户端匹配与 ssh-agent</li>
+<li><strong>知识专题</strong> sshd 配置层与有效值</li>
+<li><strong>操作专题</strong> 安全修改、reload 与第二连接</li>
+<li><strong>诊断专题</strong> 从 ssh -vvv 到服务端日志</li>
+<li><strong>经典任务</strong> 建立密钥认证并安全收紧 sshd</li>
+</ul>
+</div>
+<div>
+<h2>阅读时持续回答</h2>
+<ol class="question-list">
+<li>当前失败停在传输、主机身份还是用户认证？</li>
+<li>客户端最终连接到谁、使用哪个账号和端口？</li>
+<li>known_hosts 记录的是哪类身份？</li>
+<li>私钥、公钥和 authorized_keys 分别位于哪一端？</li>
+<li>客户端是否真的发送了预期密钥？</li>
+<li>sshd 对目标连接实际采用了哪些配置？</li>
+<li>权限、所有权和 SELinux 标签分别证明什么？</li>
+<li>当前证据能否证明独立新连接的最终功能？</li>
+</ol>
+<div class="boundary-note"><strong>章节边界：</strong>网络与路由留给第 18 章，名称解析留给第 19 章，firewalld 留给第 21 章，持久 SELinux 规则留给第 29 章。本章只建立 SSH 所需的接口和验收位置。</div>
+</div>
+</div>
+</div>
+
+<div class="page-break"></div>
 
 # 第 20 章　SSH 客户端、服务端与密钥认证
 
-远程登录常被简化成一条 `ssh user@host`，但一条可用、可信、可维护的 SSH 链路至少包含四个阶段：客户端先找到并连接目标；客户端确认正在连接的确实是预期服务器；服务器确认来访者是否有权作为目标用户登录；认证完成后，双方才创建交互 Shell、远程命令或其他会话通道。把这些阶段混在一起，会产生很典型的误判：端口可达就认为认证一定正常；看到密码提示就认为主机身份已经可信；登录成功却不知道实际回退到了密码；删除 `known_hosts` 条目后没有核验新指纹；修改 `sshd_config` 后只看服务仍为 `active`，却没有验证新连接。
+远程登录看起来只是一条 `ssh user@host`，但真正完成的系统工作远不止“连接一个端口”。客户端必须先把别名还原为真实目标并建立传输，再验证服务器主机身份；服务器随后才判断来访者是否可以作为目标用户登录；认证通过后，双方才创建交互 Shell 或远程命令通道。只要把这些阶段混在一起，就会出现高频误判：端口可达便开始重建用户密钥，看到密码提示便忽略主机身份，登录成功却没有发现公钥失败后回退到了密码，或修改 `sshd` 后只看服务仍为 `active` 就宣布完成。
 
-本章围绕 SSH 的双向信任模型组织内容。客户端保存服务器身份，服务器保存用户授权；客户端私钥、服务端主机私钥、`known_hosts` 和 `authorized_keys` 是四类不同对象。每项操作均回答“改了什么、从哪里读取、如何验证、证据能证明什么、下一层还需要验证什么”。目标不仅是完成 RHCSA 中的远程管理任务，也是在真实服务器上变更 SSH 时不锁死管理入口、不绕过身份校验，并能把稳定的连接状态交给后续自动化使用。
+本章以“双向身份链”为中心组织对象。客户端侧保存目标、主机信任、用户私钥和 agent 状态；服务端侧保存主机私钥、用户授权、配置层、路径权限和运行状态。讲义将持续区分三种证据：**配置文本**说明管理员写了什么，**有效配置与进程状态**说明软件当前采用什么，**独立功能测试**才说明指定用户能否按指定方法连接到指定主机。
 
-**[概念]** SSH 主机身份回答“这台服务器是谁”。服务端使用 `/etc/ssh/ssh_host_*_key` 中的主机私钥证明身份，客户端把核验过的主机公钥记录在用户级 `~/.ssh/known_hosts` 或系统级 `/etc/ssh/ssh_known_hosts` 中。
+本章不完整讲解地址、路由、DNS、防火墙或 SELinux 策略。遇到这些对象时，只指出 SSH 链路需要读取什么证据，并把完整修改方法交还给相邻章节。这样可以避免用“关闭防火墙、关闭 SELinux、删除整个 known_hosts”之类捷径掩盖真正的失败层。
 
-**[概念]** SSH 用户身份回答“来访者能否作为这个账号登录”。公钥认证中，客户端持有私钥并完成签名，服务端目标账号的 `~/.ssh/authorized_keys` 保存被授权的公钥。私钥不应复制到服务器。
+<div class="concept-stack">
+  <div class="concept-card"><span class="concept-label">概念</span><p><strong>主机身份</strong>回答“正在连接的服务器究竟是谁”。服务端使用 `/etc/ssh/ssh_host_*_key` 中的主机私钥证明身份，客户端将核验后的主机公钥记录在 `known_hosts`。主机身份验证发生在用户认证之前；即使账号密码或用户私钥正确，也不应把凭据交给一个尚未确认身份的对端。可观察证据是首次连接指纹、既有 known_hosts 记录和主机密钥变化警告。</p></div>
+  <div class="concept-card"><span class="concept-label">概念</span><p><strong>用户身份</strong>回答“来访者是否有权作为目标账号登录”。公钥认证中，客户端持有私钥并完成签名，服务端目标账号只保存相应公钥；密码认证则由服务端验证口令。用户身份与主机身份是两条独立信任链：`authorized_keys` 不能证明服务器是谁，`known_hosts` 也不能授权某个用户登录。</p></div>
+  <div class="concept-card"><span class="concept-label">概念</span><p><strong>known_hosts</strong>是客户端保存的主机信任记录，而不是“连接缓存”。首次连接时，记录必须来自可信指纹核验；后续密钥变化可能来自重装、轮换、目标错误或中间人攻击。删除条目只能清除旧记录，不能证明新密钥可信，因此安全顺序始终是先调查变化，再核对新指纹，最后只更新相关目标。</p></div>
+  <div class="concept-card"><span class="concept-label">概念</span><p><strong>authorized_keys</strong>是服务端账号的授权入口。一行公钥表示该账号允许对应私钥持有者尝试认证，但文件存在并不等于认证一定成功：`sshd` 还要按有效配置找到该文件，并确认 home、`.ssh`、授权文件的所有权和可写权限可信，RHEL 上还可能受到 SELinux 标签影响。</p></div>
+  <div class="concept-card"><span class="concept-label">概念</span><p><strong>客户端配置匹配</strong>把命令行目标映射为真实主机、用户、端口和候选身份。`Host` 可以是别名或模式，`HostName` 才是实际目标；命令行、用户配置和系统配置共同参与取值。不能只靠肉眼阅读某一段配置，应该用 `ssh -G` 查看完成 `Host` 与 `Match` 计算后的最终选择。</p></div>
+  <div class="concept-card"><span class="concept-label">概念</span><p><strong>sshd 配置层</strong>包含主配置、`Include` 引入的 drop-in 和可能改变特定连接的 `Match` 块。管理员看到的某一行不一定就是守护进程采用的值；`sshd -t` 只能证明配置可解析，`sshd -T` 和 `sshd -T -C ...` 才分别展示全局及特定连接上下文的有效配置。</p></div>
+  <div class="concept-card"><span class="concept-label">概念</span><p><strong>认证阶段</strong>位于传输建立和主机验证之后。客户端可能依次尝试多种方法，公钥失败后仍可能回退到 password 或 keyboard-interactive。因而“进入了 Shell”不能单独证明公钥认证成功；需要限制回退、读取 `ssh -vvv` 的关键阶段，并用远端 `id`、`hostname` 和退出状态完成终态确认。</p></div>
+</div>
 
-**[概念]** SSH 的当前状态、持久配置和功能终态是三个维度。`sshd` 进程正在运行是当前状态；配置文件是持久输入；只有从独立客户端完成主机核验、指定认证方法并确认远端身份，才能证明功能终态。
+<section class="quickref">
+<h2>操作语义速查区</h2>
+<p class="quickref-lead">这里先建立接口地图。后续专题解释为什么这样用、操作改变哪个对象，以及每条证据能够证明到哪一层。</p>
 
-**[操作语义]** `ssh` 建立连接、选择客户端配置、验证主机并进行用户认证；`ssh-keygen` 生成或检查密钥和指纹；`ssh-copy-id` 把公钥追加到远端授权文件；`ssh-agent` 与 `ssh-add` 在本地会话中缓存私钥解锁状态。
+<div class="quickref-item">
+<h3><code>ssh</code></h3><div class="syn-label">SYNOPSIS</div>
+<pre><code class="language-bash">ssh [-v] [-F configfile] [-i identity_file] [-J destination]
+    [-p port] [-o option] [user@]hostname [command [argument ...]]</code></pre>
+<p>建立 SSH 客户端会话，完成目标选择、主机验证、用户认证，并请求交互 Shell 或远程命令。</p>
+<dl><dt><code>-i identity_file</code></dt><dd>显式指定候选私钥；它不自动限制 agent 中其他身份。</dd><dt><code>-p port</code></dt><dd>连接非默认服务端端口；端口放行和 SELinux 端口类型分别交给后续章节。</dd><dt><code>-F configfile</code></dt><dd>使用指定客户端配置文件，适合隔离测试。</dd><dt><code>-J destination</code></dt><dd>通过跳转主机建立连接；本章只认识接口，不展开复杂跳板拓扑。</dd><dt><code>-v / -vv / -vvv</code></dt><dd>逐级增加调试信息。诊断时只抓连接目标、主机密钥、密钥 offer、服务端接受和最终方法等关键阶段。</dd></dl>
+</div>
 
-**[操作语义]** `sshd -t` 检查服务端配置能否解析，`sshd -T` 输出有效配置，`sshd -T -C ...` 模拟特定连接的 `Match` 条件；`systemctl` 控制守护进程，`ss` 检查监听，`journalctl -u sshd` 提供服务端认证证据。
+<div class="quickref-item">
+<h3><code>ssh-keygen</code></h3><div class="syn-label">SYNOPSIS</div>
+<pre><code class="language-bash">ssh-keygen -t type [-b bits] [-C comment] [-f output_keyfile]
+ssh-keygen -lf public_key
+ssh-keygen -F host | ssh-keygen -R host</code></pre>
+<p>生成和管理用户或主机密钥，并以指纹识别密钥材料；同一工具也可查询或删除 known_hosts 中的目标记录。</p>
+<dl><dt><code>-t type</code></dt><dd>显式选择密钥算法。Ed25519 不适用于 FIPS 模式；不要把版本默认值当成稳定考试结论。</dd><dt><code>-b bits</code></dt><dd>为支持位数设置的算法指定长度，例如 RSA。</dd><dt><code>-f path</code></dt><dd>指定输出或输入文件，避免覆盖既有默认密钥。</dd><dt><code>-C comment</code></dt><dd>写入便于审计和轮换的注释，不参与加密验证。</dd><dt><code>-l</code></dt><dd>显示公钥或已知主机条目的指纹。</dd><dt><code>-F / -R</code></dt><dd>查找或移除指定主机记录；移除前必须完成可信核验。</dd></dl>
+</div>
+
+<div class="quickref-item">
+<h3><code>ssh-copy-id</code></h3><div class="syn-label">SYNOPSIS</div>
+<pre><code class="language-bash">ssh-copy-id [-i identity_file.pub] [user@]hostname</code></pre>
+<p>使用已有可用认证路径登录远端，并把指定公钥追加到目标账号的授权位置。它不会复制私钥，也不会自动修改 sshd 认证策略。</p>
+<dl><dt><code>-i identity_file.pub</code></dt><dd>明确选择要安装的公钥文件。指向私钥是对象方向错误。</dd><dt><code>user@hostname</code></dt><dd>决定公钥授权给哪个服务端账号；连接成功后仍要核对远端身份和授权文件状态。</dd></dl>
+</div>
+
+<div class="quickref-item">
+<h3><code>ssh-agent</code> / <code>ssh-add</code></h3><div class="syn-label">SYNOPSIS</div>
+<pre><code class="language-bash">eval "$(ssh-agent -s)"
+ssh-add [-t life] private_key
+ssh-add -l | ssh-add -L | ssh-add -d private_key | ssh-add -D</code></pre>
+<p>agent 是客户端本地签名服务；`ssh-add` 管理当前 agent 中已经解锁的身份。agent 中存在身份不代表服务端账号已经授权。</p>
+<dl><dt><code>SSH_AUTH_SOCK</code></dt><dd>当前 Shell 访问 agent 的 Unix socket；变量为空或 socket 不可达时，客户端无法使用该 agent。</dd><dt><code>-l / -L</code></dt><dd>分别列出指纹或公钥内容。</dd><dt><code>-d / -D</code></dt><dd>移除一个或全部 agent 身份；不删除磁盘私钥，也不撤销服务端授权。</dd><dt><code>-t life</code></dt><dd>为缓存身份设置有限生命周期。</dd></dl>
+</div>
+
+<div class="quickref-item">
+<h3>客户端匹配：<code>ssh_config</code> 与 <code>ssh -G</code></h3><div class="syn-label">SYNOPSIS</div>
+<pre><code class="language-bash">ssh -G [-F configfile] destination
+
+Host alias
+    HostName server.example.com
+    User operator
+    Port 22
+    IdentityFile ~/.ssh/operator_key
+    IdentitiesOnly yes</code></pre>
+<p>客户端配置把别名和匹配条件转换为实际连接参数；`ssh -G` 输出计算后的结果，适合证明客户端最终选择。</p>
+<dl><dt><code>Host</code></dt><dd>定义别名或匹配模式；更具体的规则应优先于通用规则。</dd><dt><code>Match</code></dt><dd>按连接条件应用客户端配置；使用时必须通过有效配置而不是肉眼猜测。</dd><dt><code>HostName / User / Port</code></dt><dd>分别指定实际目标、远端账号和端口。</dd><dt><code>IdentityFile</code></dt><dd>增加候选身份文件。</dd><dt><code>IdentitiesOnly yes</code></dt><dd>限制客户端使用显式配置的身份，减少多密钥误选。</dd></dl>
+</div>
+
+<div class="quickref-item">
+<h3>服务端配置：<code>sshd_config</code> / drop-in / <code>Match</code></h3><div class="syn-label">SYNOPSIS</div>
+<pre><code class="language-text">Include /etc/ssh/sshd_config.d/*.conf
+PermitRootLogin no
+PubkeyAuthentication yes
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+AuthorizedKeysFile .ssh/authorized_keys
+Match User operator
+    ...</code></pre>
+<p>服务端配置决定监听、认证方法、账号边界和授权文件位置。主配置、drop-in 顺序与 `Match` 上下文共同决定最终值。</p>
+<dl><dt><code>Include</code></dt><dd>引入其他配置源；必须检查它在主文件中的实际位置。</dd><dt><code>Match</code></dt><dd>让一部分指令只作用于指定用户、组或地址。</dd><dt><code>PermitRootLogin</code></dt><dd>控制 root 远程登录边界。</dd><dt><code>PasswordAuthentication</code></dt><dd>控制 SSH password 方法；不能自动代表 keyboard-interactive 也已关闭。</dd><dt><code>PubkeyAuthentication</code></dt><dd>控制用户公钥认证。</dd><dt><code>AuthorizedKeysFile</code></dt><dd>指定服务端从何处读取用户授权公钥。</dd></dl>
+</div>
+
+<div class="quickref-item">
+<h3>验证链：<code>sshd -t/-T</code>、<code>systemctl</code>、<code>ss</code>、<code>journalctl</code></h3><div class="syn-label">SYNOPSIS</div>
+<pre><code class="language-bash">sshd -t
+sshd -T
+sshd -T -C user=name,host=host,addr=remote,laddr=local,lport=22
+systemctl reload sshd
+ss -lntp
+journalctl -u sshd --since '-5 min' --no-pager</code></pre>
+<p>这一组命令分别证明配置可解析、有效值、特定连接上下文、服务应用、监听状态和服务端认证证据；它们必须分层使用。</p>
+<dl><dt><code>sshd -t</code></dt><dd>证明配置可解析及关键文件满足基本检查；不证明已 reload。</dd><dt><code>sshd -T</code></dt><dd>输出全局有效配置。</dd><dt><code>sshd -T -C ...</code></dt><dd>模拟连接条件并应用 `Match`。</dd><dt><code>systemctl reload sshd</code></dt><dd>让新连接采用新配置；执行前必须先通过静态检查并保留旧会话。</dd><dt><code>ss -lntp</code></dt><dd>证明本机监听；不证明外部防火墙已放行。</dd><dt><code>journalctl -u sshd</code></dt><dd>解释服务端接受或拒绝；应与客户端最小复现按时间关联。</dd></dl>
+</div>
+</section>
+
+<div class="page-break"></div>
 
 <section class="topic knowledge" id="RHCSA-20-K01" data-kind="knowledge-topic">
 
@@ -89,7 +228,7 @@ ssh operator@servera 'id && hostname'
 
 没有 `.pub` 后缀的是服务端主机私钥，必须只由特权进程读取；带 `.pub` 的文件可用于通过控制台或其他可信渠道发布指纹。用户自己的 `~/.ssh/id_*` 不应替代主机密钥，主机密钥也不应复制到用户的 `authorized_keys`。
 
-### ② [操作] 在服务端生成并核对主机公钥指纹
+### ② [查询] 在服务端核对主机公钥指纹
 
 在能够可信访问服务器本地控制台的前提下，可读取某个主机公钥的指纹：
 
@@ -258,6 +397,8 @@ ssh -i ~/.ssh/rhcsa20_operator \
 
 </section>
 
+<div class="page-break"></div>
+
 <section class="topic operation" id="RHCSA-20-O03" data-kind="operation-topic">
 
 ## [操作专题] 客户端配置与匹配：让别名、用户、端口和身份可预测
@@ -292,7 +433,7 @@ Host *
 
 `Host` 是客户端匹配模式或别名；`HostName` 才是实际连接目标；`User` 指定远端账号；`Port` 指定服务端端口；`IdentityFile` 指定候选私钥；`IdentitiesOnly yes` 限制客户端只使用显式配置的身份，而不是把 agent 中所有密钥都依次尝试。
 
-### ③ [操作] 保护用户配置文件并检查最终值
+### ③ [验证] 保护用户配置文件并检查最终值
 
 ```bash
 chmod 600 ~/.ssh/config
@@ -368,6 +509,8 @@ ssh-add -t 1h ~/.ssh/rhcsa20_operator
 
 </section>
 
+<div class="page-break"></div>
+
 <section class="topic knowledge" id="RHCSA-20-K03" data-kind="knowledge-topic">
 
 ## [知识专题] `sshd` 配置源、加载顺序和连接上下文
@@ -378,7 +521,7 @@ ssh-add -t 1h ~/.ssh/rhcsa20_operator
 
 `sshd` 负责监听、协商和认证；主机私钥证明服务器身份；目标用户的授权文件决定哪些用户公钥可用。`sshd.service` 为 `active` 不表示主机密钥一定有效，也不表示某个用户的 `authorized_keys` 可读。
 
-### ② [操作] 先读取实际配置入口和 drop-in 列表
+### ② [查询] 先读取实际配置入口和 drop-in 列表
 
 ```bash
 grep -nE '^[[:space:]]*(Include|Match|Port|PasswordAuthentication|KbdInteractiveAuthentication|PubkeyAuthentication|PermitRootLogin|AuthorizedKeysFile|AllowUsers|DenyUsers)\b' \
@@ -392,7 +535,7 @@ find /etc/ssh/sshd_config.d -maxdepth 1 -type f -name '*.conf' -printf '%f\n' | 
 
 `Match User`、`Match Group`、`Match Address` 等可对特定连接改变部分指令。进入 `Match` 块后，后续允许的指令只作用于匹配连接，直到新的 `Match` 或文件结束。把全局指令误写进条件块，或只运行不带上下文的 `sshd -T`，都可能漏掉目标用户的实际配置。
 
-### ④ [操作] 使用 `sshd -t`、`-T` 和 `-T -C` 分别回答三个问题
+### ④ [验证] 使用 `sshd -t`、`-T` 和 `-T -C` 分别回答三个问题
 
 ```bash
 sshd -t
@@ -515,7 +658,7 @@ chmod 644 ~/.ssh/rhcsa20_operator.pub
 
 私钥过宽时客户端通常拒绝使用。配置文件可改变目标、用户、代理和命令，虽然不含私钥，也不应允许其他用户改写。
 
-### ② [操作] 在服务端逐层检查路径，而不是只看最终文件
+### ② [查询] 在服务端逐层检查路径，而不是只看最终文件
 
 ```bash
 namei -l /home/operator/.ssh/authorized_keys
@@ -528,7 +671,7 @@ stat -c '%U:%G %a %n' /home/operator /home/operator/.ssh /home/operator/.ssh/aut
 
 `StrictModes yes` 时，`sshd` 在接受登录前检查用户文件和 home 的所有权、权限。关闭 `StrictModes` 会掩盖根因并降低安全性，不应作为默认修复。更合理的做法是沿路径修正 owner 和可写位，再重新触发一次登录并查看日志。
 
-### ④ [操作] 检查并恢复默认 home 路径的 SELinux 标签
+### ④ [验证] 检查并恢复默认 home 路径的 SELinux 标签
 
 ```bash
 ls -ldZ /home/operator /home/operator/.ssh /home/operator/.ssh/authorized_keys
@@ -544,6 +687,8 @@ restorecon -Rv /home/operator/.ssh
 **[Cheatsheet]** `namei -l` 看每一级路径；`.ssh` 700、授权文件 600 是保守基线；不关闭 `StrictModes`；`ls -Z` 与 mode 分开；默认 home 标签用 `restorecon`，非标准路径转 SELinux 章节。
 
 </section>
+
+<div class="page-break"></div>
 
 <section class="topic diagnosis" id="RHCSA-20-D01" data-kind="diagnosis-topic">
 
@@ -645,6 +790,8 @@ journalctl -u sshd --since '-5 min' --no-pager
 
 </section>
 
+<div class="page-break"></div>
+
 <section class="task" id="RHCSA-20-T01" data-kind="classic-task">
 
 ## [经典任务] 任务一：为指定用户建立可审计的密钥认证
@@ -686,6 +833,8 @@ journalctl -u sshd --since '-5 min' --no-pager
 - 服务端 `.ssh`、`authorized_keys` 的 owner、mode 和 SELinux 标签。
 
 </section>
+
+<div class="page-break"></div>
 
 <section class="task" id="RHCSA-20-T02" data-kind="classic-task">
 
@@ -1048,7 +1197,7 @@ ssh \
   operator1@serverb.example.com
 ```
 
-预期结果是认证失败。失败本身必须结合客户端方法限制和服务端日志解释，不能只看到 `Permission denied` 就结束。
+预期结果是认证失败。该负向测试只能在客户端方法限制、`sshd -T -C` 有效配置和服务端日志三者一致时证明策略终态；不能只看到 `Permission denied` 就结束。
 
 ### 10. 关联服务端日志并收束
 
@@ -1073,25 +1222,45 @@ journalctl -u sshd --since '-10 min' --no-pager
 
 </section>
 
+
+
 <section class="closing" id="RHCSA-20-C01" data-kind="closing">
 
-## [本章收束] 把 SSH 视为双向身份链，而不是一条登录命令
+## [本章收束] 把 SSH 还原成一条可证明、可回退的身份链
 
-SSH 的稳定判断可以压缩为一条证据链：
+处理 SSH 时，先不要问“该改哪个配置”，而要把当前事实放回正确层次：客户端最终选中了哪个目标；服务器用哪把主机密钥证明身份；客户端实际发送了哪个用户身份；服务端对这个用户和来源应用了什么有效策略；授权路径是否同时满足内容、所有权、权限和标签；最后，独立新连接能否以指定方法到达指定用户和主机。按照这条链推进，才能让每次修复只改变一个被证据指向的对象。
 
-```text
-客户端选择了正确目标和参数
-→ TCP 连接到预期监听
-→ 主机密钥与可信记录一致
-→ 客户端选择并发送预期用户身份
-→ 服务端按目标连接上下文读取授权
-→ 文件权限、所有权和 SELinux 标签可信
-→ 指定认证方法完成
-→ 远端用户、主机和命令结果符合任务
-```
+<div class="method-box"><strong>可执行工作方法</strong><ol><li>用 `ssh -G` 建立客户端选择基线。</li><li>用 `ssh -vvv` 定位失败阶段，只摘取关键状态。</li><li>主机密钥异常先带外核验，不先删除信任记录。</li><li>客户端没有 offer 目标密钥时，只查客户端身份选择。</li><li>已 offer 但未接受时，转查 `sshd -T -C`、授权路径和日志。</li><li>修改 sshd 前保留旧会话，`sshd -t` 通过后才 reload。</li><li>从第二终端分别验证允许路径和禁止路径。</li><li>用远端 `id`、`hostname` 和退出状态确认终态。</li></ol></div>
 
-本章最重要的边界不是记住更多选项，而是知道每条证据只能证明哪一层。`ssh -G` 证明客户端配置选择；`ssh -vvv` 证明连接推进；`sshd -t` 证明配置可解析；`sshd -T -C` 证明特定连接的有效值；`systemctl` 与 `ss` 证明守护进程和监听；`journalctl`、路径权限和标签解释服务端拒绝；独立 key-only 连接才证明目标认证链真正成立。
+### 章末检查清单
 
-进入下一章后，firewalld 会补齐“外部流量如何到达监听端口”的访问链。本章已经提供监听和端口接口，但不以关闭防火墙作为 SSH 排错捷径。
+- 主机身份与用户身份没有混写；
+- 私钥只保留在客户端或控制节点；
+- `known_hosts` 更新前已经核验合法变化；
+- `ssh-copy-id -i` 指向公钥文件；
+- 客户端有效配置已经用 `ssh -G` 核对；
+- 公钥测试禁止了 password 和 keyboard-interactive 回退；
+- `sshd -t` 先于 reload；
+- `sshd -T -C` 覆盖了目标连接的 `Match` 上下文；
+- owner、mode 与 SELinux label 分别检查；
+- 旧管理会话在第二连接验收前保持可用；
+- active、listen 与真实登录没有被扩大为同一个结论。
+
+### 主要判断表
+
+| 证据或症状 | 能证明什么 | 不能证明什么 | 下一条高区分度证据 |
+|---|---|---|---|
+| `ssh -G alias` | 客户端最终目标、用户、端口和身份选择 | 服务器在线或会接受认证 | `ssh -vvv alias` |
+| `Connection refused` | 目标返回了端口拒绝 | 一定是 firewalld 或 sshd 唯一问题 | 服务端 `ss -lntp` |
+| 主机密钥变化警告 | 当前对端密钥与记录不一致 | 新密钥一定恶意或一定合法 | 带外主机指纹与目标地址 |
+| `Offering public key` | 客户端发送了某把候选公钥 | 服务端已授权或已接受 | 服务端 journal 与授权路径 |
+| `sshd -t` 无输出 | 配置可解析并通过基本检查 | 已 reload、目标 Match 正确或能登录 | `sshd -T/-T -C` |
+| `systemctl is-active sshd` | 守护进程当前处于 active | 端口对外可达或用户认证成功 | `ss -lntp` 与独立客户端测试 |
+| `authorized_keys` 有目标公钥 | 授权文本存在 | 路径可信、标签正确或 sshd 会读取 | `namei -l`、`ls -Z`、`sshd -T -C` |
+| key-only 新连接成功 | 指定用户公钥链可用 | 禁止路径也符合目标策略 | root/password-only 负向验证 |
+
+### 向下一章交接
+
+本章已经证明本机 `sshd` 的有效配置、运行状态和监听入口，也给出了从独立客户端发起连接的功能测试。下一章“firewalld 与完整服务访问链”将在此基础上继续回答：监听端口怎样关联 zone、service、runtime/permanent 规则，以及为什么“本机正在监听”仍不等于外部流量一定能到达。遇到外部 timeout 时，不关闭防火墙作为捷径，而是把 SSH 已建立的监听证据交给下一章继续调查。
 
 </section>

@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "packages": 33,
+  "accepted": 33,
+  "rejected": 0,
+  "self_hash_migrations": [
+    "RHCSA-18",
+    "RHCSA-19"
+  ],
+  "forbidden_archive_files": 0
+}

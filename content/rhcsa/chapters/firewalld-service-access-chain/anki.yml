@@ -1,8 +1,8 @@
+schema_version: 1
 chapter_id: RHCSA-21
 chapter_slug: firewalld-service-access-chain
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-status: integrated
+status: content_frozen_for_integration
 validation: static
 notes:
 - id: RHCSA-NETWORK-O04-QA-001
@@ -11,6 +11,7 @@ notes:
   answer: '`firewall-cmd --get-zone-of-interface=<INTERFACE>`'
   extra: 再用 `--get-active-zones` 查看所有当前 interface/source 绑定；不要默认认为流量进入 default zone。
   source:
+  - lecture.md#RHCSA-21-O01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -19,12 +20,15 @@ notes:
   - topic::zone-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O04-QA-002
   type: qa
   question: 标准 HTTP 服务需要在 `public` zone 中立即放行，命令是什么？
   answer: '`firewall-cmd --zone=public --add-service=http`'
   extra: 这是 runtime 修改。若还要求 reload 或重启后保留，需要再执行带 `--permanent` 的同一修改。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -33,12 +37,15 @@ notes:
   - topic::service-port
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O04-QA-003
   type: qa
   question: 应用真实监听 `8088/tcp`，系统没有合适的预定义 service。立即放行应使用什么命令？
   answer: '`firewall-cmd --zone=<ZONE> --add-port=8088/tcp`'
   extra: 端口必须同时指定协议；`8088/tcp` 与 `8088/udp` 是不同规则。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -47,12 +54,15 @@ notes:
   - topic::service-port
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O04-QA-004
   type: qa
   question: 同一条 firewalld 修改怎样同时满足“现在生效”和“reload 后保留”？
   answer: 分别执行一次 runtime 修改和一次带 `--permanent` 的持久修改。
   extra: 例如先 `--add-port=8088/tcp`，再执行 `--permanent --add-port=8088/tcp`。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -60,13 +70,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NETWORK-O04-QA-005
   type: qa
   question: '`firewall-cmd --reload` 对 runtime-only 规则有什么影响？'
   answer: 用 permanent 重建 runtime；未写入 permanent 的 runtime-only 修改会丢失。
   extra: 普通 reload 尽量保留连接状态；不要把它和更激进的 `--complete-reload` 混同。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -74,7 +87,9 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NETWORK-O04-QA-006
   type: qa
   question: 怎样分别确认 `public` zone 当前和持久配置都允许 `8088/tcp`？
@@ -87,6 +102,7 @@ notes:
     ```'
   extra: 两个查询回答不同状态维度。`yes` 的退出码为 0，`no` 的退出码为 1。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -95,12 +111,15 @@ notes:
   - topic::runtime-permanent
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O04-QA-007
   type: qa
   question: '`firewall-cmd --zone=public --query-port=8088/tcp` 返回 `yes`，能否证明服务正在监听？'
   answer: 不能。它只证明该 zone 的当前规则包含此端口。
   extra: 应使用 `ss -lntp` 或 `ss -lnup` 检查真实 listener。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -108,13 +127,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::access-chain
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-NETWORK-O04-QA-008
   type: qa
   question: 本机 `curl 127.0.0.1:8088` 成功，能否证明远端客户端可访问？
   answer: 不能。
   extra: 回环请求可能不经过远端使用的接口和 zone；还要测试服务器地址、双态规则和远端协议访问。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -122,13 +144,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::access-chain
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-NETWORK-D01-QA-002
   type: qa
   question: 服务 active、本机服务器地址请求成功，但远端失败。下一条最有区分度的 firewalld 证据是什么？
   answer: 确认实际入站 zone，再查询该 zone 的 runtime 规则。
   extra: 优先使用 `--get-active-zones`、`--get-zone-of-interface`，不要只检查 default zone。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -136,12 +161,15 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NETWORK-O04-CLOZE-001
   type: cloze
   text: firewalld 的 {{c1::runtime}} 配置回答“当前实际规则”，{{c2::permanent}} 配置回答“reload、服务重启或系统重启后加载什么”。
   extra: 两者可以不同，因此重要规则必须分别查询。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -149,13 +177,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-21-K01-QA-001
   type: qa
   question: firewalld 开放一个端口后，是否会自动创建应用 listener？
   answer: 不会。firewalld 只改变包过滤规则，不启动应用或创建 socket。
   extra: 用 `systemctl` 检查服务，用 `ss` 检查 listener。
   source:
+  - lecture.md#RHCSA-21-K01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -163,13 +194,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::access-chain
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K01-QA-002
   type: qa
   question: 一个远端网络服务的完整验收至少需要哪些层？
   answer: 服务状态、真实 listener、本机协议响应、实际 zone、runtime、permanent 和远端协议访问。
   extra: 非标准端口还应把 SELinux 端口类型作为独立层。
   source:
+  - lecture.md#RHCSA-21-K01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -177,13 +211,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::access-chain
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K01-QA-003
   type: qa
   question: '`systemctl is-active` 成功能证明什么？'
   answer: systemd 认为该服务当前 active。
   extra: 它不能证明监听地址、端口、协议和远端功能正确。
   source:
+  - lecture.md#RHCSA-21-K01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -191,13 +228,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::access-chain
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-K01-QA-004
   type: qa
   question: '`ss -lntp` 能证明什么？'
   answer: 当前 TCP 监听的地址、端口及相关进程。
   extra: 它不能证明 HTTP/TLS 等应用协议响应，也不能证明远端防火墙路径。
   source:
+  - lecture.md#RHCSA-21-K01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -206,12 +246,15 @@ notes:
   - topic::access-chain
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K01-QA-005
   type: qa
   question: 为什么本机回环请求不等于远端访问验证？
   answer: 回环请求可能不经过远端使用的接口、路由和 zone。
   extra: 应再使用服务器地址，并从独立远端客户端发起真实协议请求。
   source:
+  - lecture.md#RHCSA-21-K01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -219,13 +262,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::access-chain
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-K01-QA-006
   type: qa
   question: firewalld 与 SELinux 端口类型分别控制什么？
   answer: firewalld 控制网络流量是否允许到达；SELinux 端口类型控制受限域能否绑定或使用相应端口。
   extra: 两者是独立层，不能互相替代。
   source:
+  - lecture.md#RHCSA-21-K01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -233,13 +279,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::selinux-boundary
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K02-QA-001
   type: qa
   question: firewalld zone 的本质是什么？
   answer: 一组信任边界、流量绑定和允许/拒绝规则的容器。
   extra: zone 可包含 interfaces、sources、services、ports 和 rich rules。
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -247,13 +296,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::zone-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K02-QA-002
   type: qa
   question: '`--get-default-zone` 回答什么？'
   answer: 未显式选择 zone 的连接和接口使用哪个回落 zone。
   extra: default zone 不一定是某个接口当前显式绑定的 zone。
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -261,13 +313,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::zone-query
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K02-QA-003
   type: qa
   question: '`--get-active-zones` 中“active”的含义是什么？'
   answer: 该 zone 当前至少绑定了 interface 或 source。
   extra: 它不表示 zone 中有允许规则，也不表示它是 default zone。
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -276,12 +331,15 @@ notes:
   - topic::zone-query
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K02-QA-004
   type: qa
   question: 怎样列出系统可用的全部 zones？
   answer: '`firewall-cmd --get-zones`'
   extra: '`--get-active-zones` 只列当前有绑定的 zones。'
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -290,12 +348,15 @@ notes:
   - topic::zone-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K02-QA-005
   type: qa
   question: 怎样查看 `public` zone 的当前完整规则概览？
   answer: '`firewall-cmd --zone=public --list-all`'
   extra: 加 `--permanent` 才查看持久配置。
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -304,12 +365,15 @@ notes:
   - topic::zone-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K02-QA-006
   type: qa
   question: '`firewall-cmd --set-default-zone=internal` 是 runtime 还是 permanent 修改？'
   answer: 它同时改变 runtime 和 permanent。
   extra: 它会影响所有仍使用 default zone 的连接或接口，变更前要评估范围。
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -317,13 +381,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::zone-binding
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K02-QA-007
   type: qa
   question: 为什么不能仅凭“默认 zone 是 public”就向 public 加规则？
   answer: 目标接口或来源可能显式绑定到其他 zone。
   extra: 先查询实际 interface/source 绑定。
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -331,13 +398,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::zone-query
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K02-QA-008
   type: qa
   question: source binding 支持使用主机名吗？
   answer: 不支持。
   extra: 应使用 IP、CIDR、MAC 或 `ipset:`；名称解析归独立章节。
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -345,13 +415,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::zone-binding
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-O01-QA-001
   type: qa
   question: 怎样查询来源网段 `192.0.2.0/24` 当前绑定到哪个 zone？
   answer: '`firewall-cmd --get-zone-of-source=192.0.2.0/24`'
   extra: 加 `--permanent` 可查询持久绑定。
   source:
+  - lecture.md#RHCSA-21-O01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -360,12 +433,15 @@ notes:
   - topic::zone-binding
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O01-QA-002
   type: qa
   question: 怎样把 `192.0.2.0/24` 当前绑定到 `internal`？
   answer: '`firewall-cmd --zone=internal --add-source=192.0.2.0/24`'
   extra: 若要求持久化，再执行带 `--permanent` 的同一命令。
   source:
+  - lecture.md#RHCSA-21-O01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -374,12 +450,15 @@ notes:
   - topic::zone-binding
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O01-QA-003
   type: qa
   question: '`--change-interface=enp1s0` 与 `--add-interface=enp1s0` 的区别是什么？'
   answer: '`change` 会把接口移到目标 zone；未绑定时行为类似 add。'
   extra: 接口由 NetworkManager 管理时，firewalld 会尝试修改对应连接的 zone。
   source:
+  - lecture.md#RHCSA-21-O01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -387,13 +466,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::zone-binding
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-O01-QA-004
   type: qa
   question: 怎样确认 `enp1s0` 是否属于 `internal` zone？
   answer: '`firewall-cmd --zone=internal --query-interface=enp1s0`'
   extra: 成立时退出码 0，不成立时退出码 1。
   source:
+  - lecture.md#RHCSA-21-O01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -402,12 +484,15 @@ notes:
   - topic::zone-binding
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O01-QA-005
   type: qa
   question: 怎样移除接口当前的 zone 绑定？
   answer: '`firewall-cmd --remove-interface=<INTERFACE>`'
   extra: 移除后接口可能回落到 default zone；远程操作前先确认管理通道。
   source:
+  - lecture.md#RHCSA-21-O01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -416,12 +501,15 @@ notes:
   - topic::zone-binding
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O01-QA-006
   type: qa
   question: 移动承载当前 SSH 会话的接口前，最重要的安全准备是什么？
   answer: 确认目标 zone 已允许管理流量，并准备第二会话或控制台和回滚命令。
   extra: 不要先把接口移到 trusted 来规避调查。
   source:
+  - lecture.md#RHCSA-21-O01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -430,12 +518,15 @@ notes:
   - topic::remote-safety
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O01-QA-007
   type: qa
   question: 为什么 `--runtime-to-permanent` 不是“保存刚才一条规则”？
   answer: 它用完整 runtime 覆盖 permanent。
   extra: 执行前应审查所有 runtime-only 规则，避免把临时测试一并持久化。
   source:
+  - lecture.md#RHCSA-21-O01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -443,13 +534,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-K03-QA-001
   type: qa
   question: 不带 `--permanent` 的 `--add-service` 修改哪一层？
   answer: 只修改 runtime，并立即影响当前规则。
   extra: reload、firewalld 重启或系统重启后不保留。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -457,13 +551,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K03-QA-002
   type: qa
   question: 带 `--permanent` 的修改会立即改变当前规则吗？
   answer: 不会。
   extra: 需要相同 runtime 修改，或在审查后 reload。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -471,13 +568,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K03-QA-003
   type: qa
   question: runtime=yes、permanent=no 表示什么？
   answer: 当前允许，但 reload 或重启后会丢失。
   extra: 若题目要求持久化，补充 permanent。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -486,12 +586,15 @@ notes:
   - topic::runtime-permanent
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K03-QA-004
   type: qa
   question: runtime=no、permanent=yes 表示什么？
   answer: 持久配置存在，但当前未应用或后来被改变。
   extra: 可以补 runtime，或审查后 reload。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -500,12 +603,15 @@ notes:
   - topic::runtime-permanent
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K03-QA-005
   type: qa
   question: '`--complete-reload` 为什么不应作为普通刷新命令？'
   answer: 它会完全重载防火墙，可能丢失连接跟踪状态并中断连接。
   extra: 普通配置应用通常使用 `--reload`。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -513,13 +619,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-K03-QA-006
   type: qa
   question: '`--query-port` 返回 `no` 时常见退出码是什么？'
   answer: 1。
   extra: 返回 yes 时为 0，可直接用于 shell 条件判断。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -528,12 +637,15 @@ notes:
   - topic::runtime-permanent
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K03-QA-007
   type: qa
   question: 某规则只需临时开放 20 分钟，命令骨架是什么？
   answer: '`firewall-cmd --zone=<ZONE> --add-port=<PORT>/<PROTO> --timeout=20m`'
   extra: timeout 只用于 runtime，不能与 `--permanent` 组合。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -541,13 +653,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O02-QA-001
   type: qa
   question: 怎样查看 `http` service 实际包含的端口和协议？
   answer: '`firewall-cmd --info-service=http`'
   extra: 不要仅凭 service 名猜测定义。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -556,12 +671,15 @@ notes:
   - topic::service-port
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O02-QA-002
   type: qa
   question: 怎样查看 `http` service 当前来自哪个配置文件？
   answer: '`firewall-cmd --path-service=http`'
   extra: 可用于判断 vendor 文件还是管理员覆盖文件生效。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -570,12 +688,15 @@ notes:
   - topic::configuration
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O02-QA-003
   type: qa
   question: 标准服务与直接端口规则应如何选择？
   answer: 有合适的标准 service 时优先 service；非标准端口或无合适定义时使用 port/protocol。
   extra: 最终必须与 `ss` 观察到的真实 listener 对齐。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -583,13 +704,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::service-port
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-O02-QA-004
   type: qa
   question: 为什么 `http` service 不能自动放行应用改到的 `8088/tcp`？
   answer: service 使用其定义中的端口，不会动态读取应用配置。
   extra: 对照 `--info-service=http` 和 `ss`，再决定添加端口或自定义 service。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -597,13 +721,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::service-port
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-O02-QA-005
   type: qa
   question: 怎样列出 `public` zone 当前允许的直接端口？
   answer: '`firewall-cmd --zone=public --list-ports`'
-  extra: 加 `--permanent` 查看持久端口。
+  extra: 此命令只列出直接 port 规则；通过 service 放行的端口不会出现在这里，应同时查看 `--list-services` 或 `--list-all`。加 `--permanent` 查看持久状态。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -612,12 +739,15 @@ notes:
   - topic::service-port
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O02-QA-006
   type: qa
   question: 怎样从 `public` 当前配置移除 `8088/tcp`？
   answer: '`firewall-cmd --zone=public --remove-port=8088/tcp`'
   extra: 持久层要单独带 `--permanent` 删除。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -626,12 +756,15 @@ notes:
   - topic::service-port
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O02-QA-007
   type: qa
   question: '`8000-8010/tcp` 在 firewalld 中表示什么？'
   answer: 一个 TCP 端口范围。
   extra: 只有应用确实需要整个范围时才开放，避免扩大暴露面。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -640,12 +773,15 @@ notes:
   - topic::service-port
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O02-QA-008
   type: qa
   question: 同一个端口号的 TCP 和 UDP 规则是否等价？
   answer: 不等价。
   extra: '`53/tcp` 与 `53/udp` 是两个独立对象，必须按真实服务协议配置。'
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -653,13 +789,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::service-port
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-O02-QA-009
   type: qa
   question: '`--add-protocol=icmp` 与 `--add-port=8088/tcp` 的对象有何区别？'
   answer: 前者允许 IP 层协议，后者允许指定传输层端口/协议。
   extra: 普通应用端口不要用“允许整个 tcp 协议”来替代精确端口规则。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -667,13 +806,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::service-port
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K04-QA-001
   type: qa
   question: firewalld vendor service 文件通常位于哪里？
   answer: '`/usr/lib/firewalld/services/`'
   extra: 管理员不应直接修改 vendor 文件。
   source:
+  - lecture.md#RHCSA-21-K04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -681,13 +823,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::configuration
   - card::path
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K04-QA-002
   type: qa
   question: 管理员自定义或覆盖 service 通常放在哪里？
   answer: '`/etc/firewalld/services/`'
   extra: 同名管理员对象可覆盖 vendor 对象。
   source:
+  - lecture.md#RHCSA-21-K04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -695,13 +840,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::configuration
   - card::path
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-K04-QA-003
   type: qa
   question: 手工编辑 firewalld XML 后，应用前的静态检查命令是什么？
   answer: '`firewall-cmd --check-config`'
   extra: 它检查 permanent XML 的有效性和语义。
   source:
+  - lecture.md#RHCSA-21-K04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -710,12 +858,15 @@ notes:
   - topic::configuration
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K04-QA-004
   type: qa
   question: '`--check-config` 成功能否证明远端访问成功？'
   answer: 不能。
-  extra: 它不检查 runtime、listener、应用协议、SELinux 或远端路径。
+  extra: 它只说明 permanent 配置可解析；不检查 runtime、listener、应用协议、SELinux 或远端路径。
   source:
+  - lecture.md#RHCSA-21-K04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -723,13 +874,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::configuration
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-K04-QA-005
   type: qa
   question: 自定义 `training-web` service 的文件名应是什么？
   answer: '`/etc/firewalld/services/training-web.xml`'
   extra: service 名来自 XML 文件名，不包含 `.xml`。
   source:
+  - lecture.md#RHCSA-21-K04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -737,13 +891,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::configuration
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-K04-QA-006
   type: qa
   question: 自定义 service 中开放 TCP 8088 的核心 XML 元素是什么？
   answer: '`<port protocol="tcp" port="8088"/>`'
   extra: 还可加入 short 和 description，但端口元素决定核心通信需求。
   source:
+  - lecture.md#RHCSA-21-K04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -751,13 +908,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::configuration
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O03-QA-001
   type: qa
   question: 什么时候应从简单 port/service 升级到 rich rule？
   answer: 需要组合来源限制、目标 service/port 和特定动作时。
   extra: 仅开放一个端口时，简单规则更清晰。
   source:
+  - lecture.md#RHCSA-21-O03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -765,13 +925,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::rich-rule
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-O03-QA-002
   type: qa
   question: 只允许 `192.0.2.0/24` 访问 `8088/tcp` 的 rich rule 骨架是什么？
   answer: '`rule family="ipv4" source address="192.0.2.0/24" port port="8088" protocol="tcp" accept`'
   extra: 将该完整字符串传给 `--add-rich-rule`。
   source:
+  - lecture.md#RHCSA-21-O03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -780,12 +943,15 @@ notes:
   - topic::rich-rule
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O03-QA-003
   type: qa
   question: rich rule 中使用 IPv4 source address 时为什么应写 `family="ipv4"`？
   answer: 用于明确地址族并保证地址与规则族一致。
   extra: IPv6 地址对应 `family="ipv6"`。
   source:
+  - lecture.md#RHCSA-21-O03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -794,12 +960,15 @@ notes:
   - topic::rich-rule
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O03-QA-004
   type: qa
   question: rich rule 的 `reject` 与 `drop` 有什么客户端表现差异？
   answer: reject 主动返回拒绝；drop 静默丢弃，常表现为超时。
   extra: 超时仍不是 drop 的唯一证据。
   source:
+  - lecture.md#RHCSA-21-O03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -807,13 +976,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::rich-rule
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-O03-QA-005
   type: qa
   question: 怎样列出某 zone 的当前 rich rules？
   answer: '`firewall-cmd --zone=<ZONE> --list-rich-rules`'
   extra: 读取系统输出后再复制用于 query/remove，减少字符串不一致。
   source:
+  - lecture.md#RHCSA-21-O03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -822,12 +994,15 @@ notes:
   - topic::rich-rule
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O03-QA-006
   type: qa
   question: 为什么删除 rich rule 时应复用完整规则字符串？
   answer: query/remove 按完整规则匹配；遗漏属性或引用不一致会导致未命中。
   extra: 可先把规则保存到 shell 变量。
   source:
+  - lecture.md#RHCSA-21-O03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -835,13 +1010,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::rich-rule
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-O04-QA-001
   type: qa
   question: 检查 TCP listener 的推荐命令是什么？
   answer: '`ss -lntp`'
   extra: UDP 使用 `ss -lnup`。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -850,12 +1028,15 @@ notes:
   - topic::listener
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O04-QA-002
   type: qa
   question: '`127.0.0.1:8088` 与 `0.0.0.0:8088` 对远端访问意味着什么？'
   answer: 前者仅监听回环；后者监听所有 IPv4 本地地址。
   extra: 防火墙放行不能把回环 listener 变成外部 listener。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -864,12 +1045,15 @@ notes:
   - topic::listener
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-O04-QA-003
   type: qa
   question: 为什么要分别 `curl 127.0.0.1` 和服务器地址？
   answer: 用于区分回环应用路径与外部地址监听/本地路由路径。
   extra: 两者成功后仍需从独立远端客户端验证。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -877,13 +1061,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::verification
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-O04-QA-004
   type: qa
   question: '`nc -vz` 成功能证明 HTTP 服务完整正常吗？'
   answer: 不能，只能证明 TCP 连接建立。
   extra: HTTP 内容、TLS、认证等必须使用真实协议客户端。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -891,13 +1078,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::verification
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-O04-QA-005
   type: qa
   question: 远端最终验收为什么应从题目指定客户端执行？
   answer: 它能覆盖真实来源地址、路由、入口接口、zone 和应用协议路径。
   extra: 在服务器本机执行不能替代这条证据。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -905,13 +1095,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::verification
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-O04-QA-006
   type: qa
   question: 非标准端口服务启动失败时，防火墙之外要独立检查什么？
   answer: SELinux 端口类型与服务日志。
   extra: 具体 `semanage port` 操作归 SELinux 章节。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -919,13 +1112,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::selinux-boundary
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-D01-QA-001
   type: qa
   question: 远端收到 `Connection refused`，第一条高区分度证据是什么？
   answer: 在服务器上用 `ss` 检查目标地址/端口是否存在 listener。
   extra: 也可能有显式 reject，因此确认 listener 后再看防火墙动作。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -933,13 +1129,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-D01-QA-002
   type: qa
   question: 远端连接超时，能否直接判定 firewalld 在 drop？
   answer: 不能。
   extra: 路由、中间设备、来源 zone、rich rule 和 listener 等都需分层检查。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -947,13 +1146,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-D01-QA-003
   type: qa
   question: 服务 active 但没有目标 listener，下一步应查什么？
   answer: 服务配置、启动日志、监听地址/端口和非标准端口的 SELinux 边界。
   extra: 此时重复加防火墙规则没有区分度。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -961,13 +1163,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-D01-QA-004
   type: qa
   question: 回环请求成功但服务器地址请求失败，优先检查什么？
   answer: 监听地址、地址族、服务器地址和应用虚拟主机。
   extra: 还没到远端防火墙结论。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -975,13 +1180,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-D01-QA-005
   type: qa
   question: 规则在 public 中存在，但接口属于 internal。问题本质是什么？
   answer: 规则配置在不处理实际流量的 zone。
   extra: 应在实际 zone 建立规则，而不是反复向 public 添加。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -990,12 +1198,15 @@ notes:
   - topic::diagnosis
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-D01-QA-006
   type: qa
   question: 执行 reload 后规则仍不能让远端访问，哪种 zone 错误可能被忽略？
   answer: 规则虽进入 runtime，但仍位于错误 zone。
   extra: reload 只同步双态，不会自动把规则移动到实际 zone。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1003,13 +1214,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-D01-QA-007
   type: qa
   question: 普通 service/port 显示允许，但某个来源仍失败，应继续查看什么？
   answer: source bindings 和 rich rules。
   extra: 该来源可能进入不同 zone，或被更具体的 rich rule 拒绝。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1017,13 +1231,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-D01-QA-008
   type: qa
   question: UDP 服务排错时为什么不能只用 `ss -lntp`？
   answer: '`-t` 只查看 TCP。'
   extra: 使用 `ss -lnup`，并用实际 UDP 协议客户端完成验证。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1032,12 +1249,15 @@ notes:
   - topic::diagnosis
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-D02-QA-001
   type: qa
   question: 为什么“停止 firewalld 后服务可访问”不能作为最终修复？
   answer: 它移除了大量安全边界，只能作为高风险对照，不能满足最小放行终态。
   extra: 应恢复 firewalld，并建立精确 zone/service/port 规则。
   source:
+  - lecture.md#RHCSA-21-D02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1046,12 +1266,15 @@ notes:
   - topic::remote-safety
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-D02-QA-002
   type: qa
   question: 为什么把接口加入 trusted 不是推荐排错方法？
   answer: trusted 接受几乎所有流量，会扩大暴露面且掩盖原规则错误。
   extra: 应读取实际 zone 和最小规则。
   source:
+  - lecture.md#RHCSA-21-D02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1060,12 +1283,15 @@ notes:
   - topic::remote-safety
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-D02-QA-003
   type: qa
   question: reload 前为什么要比对 runtime 和 permanent 的 `list-all`？
   answer: 识别会在 reload 时丢失的 runtime-only 规则。
   extra: 这也是远程变更风险评估的一部分。
   source:
+  - lecture.md#RHCSA-21-D02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1074,12 +1300,15 @@ notes:
   - topic::remote-safety
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-D02-QA-004
   type: qa
   question: 删除一个旧端口规则前应确认什么？
   answer: 是否仍有其他接口、来源或业务依赖该 zone 中的端口。
   extra: 清理也需要证据，不能只因当前任务不使用就删除。
   source:
+  - lecture.md#RHCSA-21-D02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1087,13 +1316,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::remote-safety
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-T01-QA-001
   type: qa
   question: 发布非标准端口 Web 服务时，推荐的完整操作顺序是什么？
   answer: 确认服务和 listener → 本机协议 → 实际 zone → runtime/permanent 最小规则 → 双态查询 → 远端协议。
   extra: 非标准端口启动失败时加入 SELinux 独立分支。
   source:
+  - lecture.md#RHCSA-21-T01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1102,12 +1334,15 @@ notes:
   - topic::classic-task
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-21-T01-QA-002
   type: qa
   question: 任务要求现在和重启后都开放 `8088/tcp`，但不希望 reload 影响其他临时规则。最合适的做法是什么？
   answer: 分别添加 runtime 和 permanent 规则，不执行全局 reload。
   extra: 完成后分别 query 两层。
   source:
+  - lecture.md#RHCSA-21-T01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1115,13 +1350,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::classic-task
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-T02-QA-001
   type: qa
   question: permanent 中规则存在、runtime 中不存在、且规则位于错误 zone。为什么单独 reload 仍可能失败？
   answer: reload 只会把规则加载到原来的错误 zone，实际接口仍使用另一个 zone。
   extra: 必须同时修复 zone 归属和双态。
   source:
+  - lecture.md#RHCSA-21-T02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1129,13 +1367,16 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::classic-task
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-21-T02-QA-002
   type: qa
   question: 修复错误 zone 后，是否应立即删除旧 zone 中的规则？
   answer: 不一定。先确认旧 zone 是否还有其他接口、来源或业务依赖。
   extra: 确认无依赖后再分别清理需要的状态层。
   source:
+  - lecture.md#RHCSA-21-T02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1143,12 +1384,15 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::classic-task
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-21-K02-CLOZE-001
   type: cloze
   text: '`firewall-cmd --get-active-zones` 中 active 表示 zone 当前绑定了 {{c1::interface 或 source}}，不表示其中一定开放了服务。'
   extra: active 是绑定状态，不是业务健康状态。
   source:
+  - lecture.md#RHCSA-21-K02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1156,12 +1400,15 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::zone-query
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-21-K03-CLOZE-001
   type: cloze
   text: '`firewall-cmd --reload` 使用 {{c1::permanent}} 重建 {{c2::runtime}}，未持久化的 runtime-only 变化会丢失。'
   extra: reload 前应比对两套配置。
   source:
+  - lecture.md#RHCSA-21-K03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1169,12 +1416,15 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::runtime-permanent
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-21-O02-CLOZE-001
   type: cloze
   text: 应用监听 `8088/tcp` 时，firewalld 端口对象必须同时包含 {{c1::端口号}} 和 {{c2::协议}}。
   extra: TCP 和 UDP 同号端口互不等价。
   source:
+  - lecture.md#RHCSA-21-O02
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1182,12 +1432,15 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::service-port
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-21-K04-CLOZE-001
   type: cloze
   text: 发行版 firewalld 对象通常位于 {{c1::/usr/lib/firewalld/}}，管理员配置和覆盖通常位于 {{c2::/etc/firewalld/}}。
   extra: 不要直接修改 vendor 文件。
   source:
+  - lecture.md#RHCSA-21-K04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1196,11 +1449,14 @@ notes:
   - topic::configuration
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-21-O03-CLOZE-001
   type: cloze
   text: 需要“只允许指定来源访问某端口”时，rich rule 的核心组合是 {{c1::source}} + {{c2::port/service}} + {{c3::action}}。
   extra: 简单放行仍优先普通 port/service。
   source:
+  - lecture.md#RHCSA-21-O03
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1208,12 +1464,15 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::rich-rule
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-21-O04-CLOZE-001
   type: cloze
   text: 完整服务访问链中，`systemctl` 证明 {{c1::服务管理状态}}，`ss` 证明 {{c2::真实 listener}}，远端协议客户端证明 {{c3::功能访问}}。
   extra: 每条证据只覆盖一个层次。
   source:
+  - lecture.md#RHCSA-21-O04
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1221,12 +1480,15 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::access-chain
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-21-D01-CLOZE-001
   type: cloze
   text: 远端 TCP 立即 `Connection refused` 时，优先检查 {{c1::listener}}；远端超时时，按 {{c2::监听、本机、zone、规则与路径}} 分层调查。
   extra: 症状不能直接等同根因。
   source:
+  - lecture.md#RHCSA-21-D01
   - firewall-cmd(1)
   - RHEL 9 Configuring firewalls and packet filters
   tags:
@@ -1234,4 +1496,6 @@ notes:
   - chapter::firewalld-service-access-chain
   - topic::diagnosis
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1

@@ -5,7 +5,8 @@ exam: RHCSA
 part: "第二篇 身份、权限与特权控制"
 slug: unix-permissions-umask-special-bits
 validation: static
-status: integrated
+status: content_frozen_for_integration
+package_version: 5.1
 sources:
   - RH124-RHEL9-Ch7
   - chmod(1)
@@ -19,29 +20,148 @@ sources:
 ---
 
 
-# 第 08 章　传统权限、umask 与特殊权限位
+<div class="cover-page">
+<div class="cover-eyebrow">RHEL 9 · RHCSA 实操讲义</div>
+<div class="cover-number">08</div>
+<h1>传统权限、<code>umask</code><br>与特殊权限位</h1>
+<p class="cover-subtitle">从访问主体到路径逐级求值：把 owner/group/other、文件与目录 <code>rwx</code>、创建屏蔽和特殊位放进同一条证据链。</p>
+<div class="cover-tags"><span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span></div>
+<div class="cover-edition">大字号阅读版</div>
+</div>
 
-用户看到 `Permission denied` 时，最容易犯的错误是盯着最终文件反复执行 `chmod`。Linux 的传统访问控制并不是“看一行 `ls -l` 就结束”：访问请求由一个具有有效 UID、有效 GID 和附加组的进程发起；内核先逐级解析路径，再为每个相关 inode 选择 owner、group 或 other 中唯一一类权限；创建、删除和重命名还主要受父目录控制；新对象的权限则取决于程序请求的模式、进程的 `umask` 以及父目录是否具有 setgid 等属性。
+<div class="page-break"></div>
 
-本章建立一套可用于考试和真实运维的 DAC（Discretionary Access Control，自主访问控制）判断链。重点不是背诵 `755`、`644`，而是能够回答：**谁在访问、访问哪一层对象、需要哪一种操作能力、当前证据能证明什么、下一条最有区分度的证据是什么。**
+# 本章阅读导航
 
-**[概念]** 文件系统对象由 inode 记录类型、所有者 UID、所属组 GID、普通权限位和特殊权限位。用户名、组名只是数字身份的可读映射；权限检查最终围绕进程凭据和 inode 元数据发生。
+先抓住一条主线：权限不是一串孤立数字。每一次访问都由一个具有实际凭据的进程发起，内核逐级解析路径、为每个对象选中 owner/group/other 中唯一一类，再依据具体动作检查文件或目录的权限；新对象还要经过 `umask` 与父目录特殊位的影响。
 
-**[概念]** 普通权限分为 owner、group、other 三类，每类含 `rwx`。内核不是把三类权限相加，而是根据访问进程与对象 owner/group 的关系选择唯一一类。
+<div class="model-grid">
+<div><b>01</b><strong>确认真实主体</strong><span>有效 UID、有效 GID 与附加组</span></div>
+<div><b>02</b><strong>逐级解析路径</strong><span>每一级父目录都可能因缺少 <code>x</code> 阻断</span></div>
+<div><b>03</b><strong>选择权限类</strong><span>owner / group / other 只命中一类，不叠加、不回退</span></div>
+<div><b>04</b><strong>把动作映射到权限</strong><span>文件与目录的 <code>rwx</code> 含义不同</span></div>
+<div><b>05</b><strong>处理创建与特殊位</strong><span><code>umask</code>、setuid、setgid、sticky</span></div>
+<div><b>06</b><strong>用真实用户验收</strong><span>静态状态、正向功能与负向隔离分层证明</span></div>
+</div>
 
-**[概念]** 路径不是一个整体字符串。访问 `/srv/team/reports/q1.txt` 时，必须能逐级搜索 `/`、`/srv`、`/srv/team`、`/srv/team/reports`，最后才检查 `q1.txt` 本身所需的权限。
+<div class="navigation-columns">
+<div>
+<h2>专题地图</h2>
+<table class="topic-map">
+<tr><th>知识专题</th><td>传统 DAC 如何选择 owner/group/other</td></tr>
+<tr><th>知识专题</th><td>文件与目录的 <code>rwx</code> 及父目录控制</td></tr>
+<tr><th>操作专题</th><td>使用 <code>ls/stat/id/namei</code> 建立证据</td></tr>
+<tr><th>操作专题</th><td><code>chmod</code>、<code>chown</code>、<code>chgrp</code> 的最小变更</td></tr>
+<tr><th>知识/操作</th><td><code>umask</code> 计算、当前状态与持久验证</td></tr>
+<tr><th>知识/操作</th><td>setuid/setgid/sticky 与组协作目录</td></tr>
+<tr><th>诊断专题</th><td>路径不可达与递归修改风险</td></tr>
+<tr><th>经典任务</th><td>协作目录；文件可读但路径不可达</td></tr>
+</table>
+</div>
+<div>
+<h2>阅读时持续回答</h2>
+<ol class="questions">
+<li>当前真正发起操作的进程是谁？</li>
+<li>路径中第一处可能阻断的位置在哪里？</li>
+<li>当前对象会选中 owner、group 还是 other？</li>
+<li>原始动作需要文件权限还是父目录权限？</li>
+<li>新对象的请求模式是什么，<code>umask</code> 清除了哪些位？</li>
+<li>特殊位作用于可执行文件还是目录？</li>
+<li>当前证据能证明什么，不能证明什么？</li>
+<li>下一条最有区分度的证据是什么？</li>
+</ol>
 
-**[操作语义]** `ls` 与 `stat` 读取对象元数据；`id` 读取主体身份；`namei -l` 展开路径分量；`chmod` 修改模式位；`chown` 与 `chgrp` 修改所有权；`umask` 修改当前进程及其后代的新对象权限屏蔽规则；`sudo -u` 在本章只作为实际用户测试入口。
+</div>
+</div>
 
-**[操作语义]** 权限变更必须形成“调查 → 最小修改 → 静态核对 → 实际用户正向测试 → 非授权用户负向测试”的闭环。root 能完成操作，不能证明普通目标用户也能完成。
+<div class="page-break"></div>
+
+# 第 08 章 · 正文
+
+用户看到 `Permission denied` 时，最容易犯的错误是盯着最终文件反复执行 `chmod`。Linux 的传统访问控制不是“看一行 `ls -l` 就结束”：访问请求由一个具有有效 UID、有效 GID 和附加组的进程发起；内核先逐级解析路径，再为每个相关 inode 选择 owner、group 或 other 中唯一一类权限；创建、删除和重命名还主要受父目录控制；新对象的权限则取决于程序请求的模式、进程的 `umask` 以及父目录是否具有 setgid 等属性。
+
+本章沿着“主体 → 路径 → 权限类 → 动作 → 创建规则 → 功能证据”推进。前一章已经建立用户、组与会话身份，本章不重复账号生命周期；ACL 留给第 09 章，sudo 授权留给第 10 章，SELinux 留给第 28/29 章。这里使用 `sudo -u` 只为建立指定普通用户的验证进程。
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>DAC（Discretionary Access Control，自主访问控制）</strong> 是由对象 owner、group 与传统 mode bits 共同表达的访问控制层。它回答的是“这个进程按当前身份，能否对这个 inode 完成某个具体动作”，而不是抽象地判断“某用户有没有权限”。观察 DAC 时，要把进程凭据、路径分量和 inode 元数据放在一起。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>owner / group / other</strong> 是三个互斥的权限类别。内核先比较有效 UID；未命中 owner 时再检查有效 GID 与附加组；都未命中才使用 other。命中一类后不会把另外两类相加，也不会因为该类权限不足而回退到更宽松的一类。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>普通文件的 <code>rwx</code></strong> 分别控制读取内容、修改现有内容和直接执行。文件自身的 <code>w</code> 不决定能否删除文件名，因为名称属于父目录；文件有 <code>r</code> 也不代表路径一定可达。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>目录的 <code>rwx</code></strong> 分别控制枚举名称、修改目录项和 search/穿越。访问深层文件时，路径中的每一级目录都需要目标主体所选权限类的 <code>x</code>；创建、删除和重命名通常要求父目录的 <code>w+x</code>。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong><code>umask</code></strong> 是进程持有的创建屏蔽状态，不是已有对象的默认 mode，也不是普通减法。最终传统权限等于程序请求模式按位清除 mask 中的位；它只能删除请求中的权限，不能凭空增加权限。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>setuid、setgid 与 sticky</strong> 是位于普通 <code>rwx</code> 之外的特殊位。setuid/setgid 可执行文件影响执行后进程的有效身份；setgid 目录影响新对象的 group 继承；sticky 目录限制公共可写目录中的删除与重命名。必须结合对象类型和相应执行位一起解释。</p></div>
+
+<section class="operation-quick" id="RHCSA-08-QREF">
+<div class="quick-intro"><span>操作语义</span><p>以下入口分别观察对象元数据、修改 mode、修改 owner/group、控制新对象权限、展开路径和切换验证主体。先理解命令作用对象，再记关键形式。</p></div>
+
+<div class="command-group">
+<h3><code>ls</code> / <code>stat</code></h3>
+<div class="syn-label">SYNOPSIS</div>
+<pre><code>ls [OPTION]... [FILE]...
+stat [OPTION]... FILE...</code></pre>
+<p>快速读取对象类型、符号权限、八进制 mode、owner 与 group；它们证明静态元数据，不证明目标用户一定能完成原始动作。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>ls -ld DIR</code></dt><dd>查看目录本身，而不是列出目录内容。</dd><dt><code>ls -la DIR</code></dt><dd>包含隐藏名称，适合盘点目录项。</dd><dt><code>stat -c FORMAT PATH</code></dt><dd>固定输出 `%A %a %U:%G %u:%g %n`，便于变更前后比较。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>chmod</code></h3>
+<div class="syn-label">SYNOPSIS</div>
+<pre><code>chmod [OPTION]... MODE[,MODE]... FILE...</code></pre>
+<p>修改 mode bits。符号模式适合在现状上做最小增量，八进制适合写出精确终态。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>u/g/o/a + - = rwxXst</code></dt><dd>显式选择权限类、操作符与权限位。</dd><dt><code>0640 / 0750</code></dt><dd>普通文件与目录的完整八进制终态。</dd><dt><code>2770 / 1777</code></dt><dd>首位表达 setgid 或 sticky 等特殊位。</dd><dt><code>-R</code></dt><dd>递归修改，执行前必须盘点对象类型、符号链接和文件系统边界。</dd><dt><code>X</code></dt><dd>只对目录或原本已有执行位的对象添加执行/search 位。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>chown</code> / <code>chgrp</code></h3>
+<div class="syn-label">SYNOPSIS</div>
+<pre><code>chown [OPTION]... [OWNER][:[GROUP]] FILE...
+chgrp [OPTION]... GROUP FILE...</code></pre>
+<p>修改 inode 的 owner UID 或 group GID；它们不自动修改普通 <code>rwx</code>，也可能触发 setuid/setgid 被清除。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>chown OWNER:GROUP PATH</code></dt><dd>同时设置 owner 与 group。</dd><dt><code>chown :GROUP PATH</code></dt><dd>只修改 group。</dd><dt><code>chgrp GROUP PATH</code></dt><dd>用更直接的命令表达“只改 group”。</dd><dt><code>-R</code></dt><dd>递归改变所有权；先确认绝对路径、挂载点、链接和对象集合。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>umask</code></h3>
+<div class="syn-label">SYNOPSIS</div>
+<pre><code>umask [-p] [-S] [MODE]</code></pre>
+<p>查看或改变当前 Shell 进程及其后代的创建屏蔽状态。它不修改已有对象，持久性必须通过新会话验证。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>umask</code></dt><dd>显示当前数值 mask。</dd><dt><code>umask -S</code></dt><dd>以符号形式显示允许保留的权限。</dd><dt><code>umask 0007</code></dt><dd>当前 Shell 及其后代屏蔽 other 的全部普通权限。</dd><dt><code>requested &amp; ~umask</code></dt><dd>正确的按位清除模型。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>namei</code></h3>
+<div class="syn-label">SYNOPSIS</div>
+<pre><code>namei [OPTIONS] PATH...</code></pre>
+<p>把完整路径拆成每一级分量，适合寻找第一处缺少目录 search 权限的阻断点。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>namei -l PATH</code></dt><dd>逐级显示对象类型、符号权限、owner 与 group。</dd><dt><code>从上到下判断</code></dt><dd>结合目标用户的 <code>id</code>，确认每一级选中 owner/group/other 哪一类。</dd><dt><code>第一阻断点</code></dt><dd>优先修复第一处有区分度的问题，不一次修改多级目录。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>sudo -u</code> / <code>id</code></h3>
+<div class="syn-label">SYNOPSIS</div>
+<pre><code>sudo -u USER [--] COMMAND [ARG]...
+id [USER]</code></pre>
+<p>在本章只用于建立目标普通用户的测试进程并观察其凭据；sudoers 规则本身属于第 10 章。</p>
+<h4>重要参数 / 形式</h4>
+<dl><dt><code>id USER</code></dt><dd>查看账号数据库解析出的 UID、GID 与组。</dd><dt><code>sudo -u USER id</code></dt><dd>观察新建测试进程实际携带的身份。</dd><dt><code>sudo -iu USER bash -lc 'COMMAND'</code></dt><dd>需要登录式 Bash 环境时，通过目标用户的登录 Shell 执行命令；最终仍应按题目提供的真实登录方式复核。</dd><dt><code>正向 + 负向</code></dt><dd>目标用户完成原始动作，无关用户保持失败。</dd></dl>
+</div>
+</section>
 
 <section class="topic knowledge" id="RHCSA-08-K01" data-kind="knowledge-topic">
 
-## [知识专题] 从主体到 inode：传统 DAC 如何选择权限类
+## <span class="topic-kicker knowledge">知识专题</span> 从主体到 inode：传统 DAC 如何选择权限类
 
 权限题的第一步不是换算八进制，而是确定访问主体和最终会被选中的权限类。只有把“进程身份”“对象所有权”和“操作类型”分开，才不会出现 owner 位不足时错误地继续借用 group 或 other 权限。
 
-### ① [知识点] 访问主体是进程凭据，不是屏幕上的用户名
+### <span class="atomic-no">①</span> <span class="point-label">知识点</span> 访问主体是进程凭据，不是屏幕上的用户名
 
 每个进程都携带有效用户 ID、有效组 ID 和附加组集合。文件访问通常依据这些有效身份判断。`id USER` 查询账号数据库中该用户应具有的身份；在目标用户会话中执行 `id`，才能观察该进程当前实际携带的身份。管理员刚把用户加入新组时，旧登录会话可能仍保留旧的附加组集合，因此“数据库中已经是组成员”和“当前进程已经获得组身份”必须分开验证。
 
@@ -52,7 +172,7 @@ sudo -u alice id          # 以目标身份建立测试进程并查看身份
 
 本章假定用户和组已经由第 07 章《用户、组与账号生命周期》建立，不重复展开账号创建和组成员维护。
 
-### ② [知识点] owner、group、other 三类只选择一类
+### <span class="atomic-no">②</span> <span class="point-label">知识点</span> owner、group、other 三类只选择一类
 
 对一个对象进行传统权限检查时，可以使用以下判断顺序：
 
@@ -72,7 +192,7 @@ sudo -u alice id          # 以目标身份建立测试进程并查看身份
 
 `alice` 同时属于 `project` 组时，仍只使用 owner 的 `r--`，不能把 group 的 `rw-` 加到 owner 上，也不会在 owner 缺少写权限后继续尝试 group。
 
-### ③ [知识点] 权限判断必须先明确操作
+### <span class="atomic-no">③</span> <span class="point-label">知识点</span> 权限判断必须先明确操作
 
 “能否访问文件”不是一个可判定问题。需要先改写成具体动作：
 
@@ -86,7 +206,7 @@ sudo -u alice id          # 以目标身份建立测试进程并查看身份
 
 相同 mode 对不同动作可能给出不同结果。排错时应复现原始动作，而不是只执行 `ls` 或只执行 `test -r`。
 
-### ④ [知识点] root 与 capabilities 是普通 DAC 模型的边界
+### <span class="atomic-no">④</span> <span class="point-label">知识点</span> root 与 capabilities 是普通 DAC 模型的边界
 
 特权进程可以绕过许多普通 DAC 检查，但这不代表 mode 无意义，也不能用 root 测试代替普通用户验收。对普通可执行文件，即使是特权进程，在没有任何执行位时也不能简单把它当作普通直接执行目标；挂载选项、解释器、SELinux 等也可能继续限制执行。
 
@@ -98,27 +218,27 @@ sudo -u alice id          # 以目标身份建立测试进程并查看身份
 
 <section class="topic knowledge" id="RHCSA-08-K02" data-kind="knowledge-topic">
 
-## [知识专题] 文件与目录的 `rwx`：同一字母控制不同能力
+## <span class="topic-kicker knowledge">知识专题</span> 文件与目录的 `rwx`：同一字母控制不同能力
 
 普通文件保存内容，目录保存“名称到 inode”的映射，因此相同的 `rwx` 在两类对象上的含义不同。权限诊断必须同时检查最终对象和父目录；很多“文件权限正确但仍失败”的问题，实际阻断点在路径中间的目录。
 
-### ① [知识点] 普通文件的 `r`、`w`、`x`
+### <span class="atomic-no">①</span> <span class="point-label">知识点</span> 普通文件的 `r`、`w`、`x`
 
-| 位 | 对普通文件的主要含义 | 不能单独证明什么 |
-|---|---|---|
-| `r` | 读取文件内容 | 不保证能穿越父路径到达文件 |
-| `w` | 修改或截断现有文件内容 | 不等于可以删除文件名；删除看父目录 |
-| `x` | 允许把文件作为程序直接执行 | 不保证格式、解释器、挂载和安全策略都允许 |
+<div class="permission-triplet">
+<div><strong><code>r</code> 读取内容</strong><p>允许读取普通文件的数据；它不证明父路径可穿越。</p></div>
+<div><strong><code>w</code> 修改内容</strong><p>允许修改或截断现有内容；删除文件名主要看父目录。</p></div>
+<div><strong><code>x</code> 直接执行</strong><p>允许把文件作为程序启动；格式、解释器、挂载和其他安全层仍需成立。</p></div>
+</div>
 
 脚本即使可以被解释器显式读取，例如 `bash script.sh`，也不等同于脚本本身具有直接执行权限。题目要求“可执行”时，应按题意验证直接执行路径，而不是用解释器绕过评分对象。
 
-### ② [知识点] 目录的 `r`、`w`、`x`
+### <span class="atomic-no">②</span> <span class="point-label">知识点</span> 目录的 `r`、`w`、`x`
 
-| 位 | 对目录的主要含义 | 典型观察 |
-|---|---|---|
-| `r` | 读取目录项名称列表 | `ls DIR` 能取得名称，但没有 `x` 时很多元数据访问会失败 |
-| `w` | 修改目录项：创建、删除、重命名 | 通常必须与 `x` 配合才有实际意义 |
-| `x` | search/穿越：访问已知名称并继续路径解析 | 没有 `r` 时不能枚举名称，但知道名称仍可能访问 |
+<div class="permission-triplet">
+<div><strong><code>r</code> 枚举名称</strong><p>允许读取目录项名称；没有 <code>x</code> 时，很多条目元数据仍无法取得。</p></div>
+<div><strong><code>w</code> 修改目录项</strong><p>允许创建、删除和重命名名称；通常必须与 <code>x</code> 配合。</p></div>
+<div><strong><code>x</code> search / 穿越</strong><p>允许访问已知名称并继续路径解析；即使没有 <code>r</code>，知道准确名称时仍可能访问。</p></div>
+</div>
 
 常见组合：
 
@@ -127,7 +247,7 @@ sudo -u alice id          # 以目标身份建立测试进程并查看身份
 - `r--`：可看到名称，但不能可靠取得条目元数据或进入子路径；
 - `-wx`：可以在已知目录中创建、删除和改名，但不能正常列出全部名称；这是高风险而少见的组合。
 
-### ③ [知识点] 路径中的每一级目录都需要 `x`
+### <span class="atomic-no">③</span> <span class="point-label">知识点</span> 路径中的每一级目录都需要 `x`
 
 访问 `/srv/team/reports/q1.txt` 不只检查 `q1.txt`：
 
@@ -141,7 +261,7 @@ q1.txt           根据动作需要 r、w 或 x
 
 任一父目录缺少目标主体所选权限类的 `x`，路径解析都会在该处停止。最终文件即使是 `0644`，也可能无法读取。
 
-### ④ [知识点] 创建、删除和重命名首先由父目录控制
+### <span class="atomic-no">④</span> <span class="point-label">知识点</span> 创建、删除和重命名首先由父目录控制
 
 文件名属于父目录的目录项。创建新文件需要父目录的 `w+x`；删除或重命名现有文件也主要需要父目录的 `w+x`，而不是文件自身的 `w`。因此：
 
@@ -151,7 +271,7 @@ q1.txt           根据动作需要 r、w 或 x
 
 删除目录还必须满足对象类型和空目录等额外条件；本章关注权限控制点，不把命令自身的结构条件混同为权限。
 
-### ⑤ [知识点] 目录权限可以屏蔽更深层对象
+### <span class="atomic-no">⑤</span> <span class="point-label">知识点</span> 目录权限可以屏蔽更深层对象
 
 传统权限通常不自动从父目录复制到已有子对象，但父目录可以通过路径穿越能力屏蔽其内部所有内容。不能因为子文件是 `0644` 就推断所有用户可读，也不能因为目录是 `0755` 就推断里面所有文件可读。
 
@@ -161,11 +281,11 @@ q1.txt           根据动作需要 r、w 或 x
 
 <section class="topic operation" id="RHCSA-08-O01" data-kind="operation-topic">
 
-## [操作专题] 使用 `ls`、`stat`、`id` 与 `namei` 建立权限证据
+## <span class="topic-kicker operation">操作专题</span> 使用 `ls`、`stat`、`id` 与 `namei` 建立权限证据
 
 查询工具的职责不同。`ls -l` 适合快速阅读，`stat` 适合精确取值，`id` 确认主体，`namei -l` 则把路径逐级展开。权限排错应组合使用，而不是把任何一条命令当作完整证明。
 
-### ① [操作] 用 `ls -l` 和 `ls -ld` 区分对象与目录内容
+### <span class="atomic-no">①</span> <span class="point-label">操作</span> 用 `ls -l` 和 `ls -ld` 区分对象与目录内容
 
 **作用对象：** 指定路径或目录内容。
 **基本形式：**
@@ -188,7 +308,7 @@ drwxrws---
 
 权限串末尾可能出现 `+` 或 `.`。它们提示还存在 ACL 或安全上下文等扩展信息，但不在本章展开；出现这类标记时，应把它作为转入第 09 章 ACL 或第 28/29 章 SELinux 的信号，而不是忽略。
 
-### ② [操作] 用 `stat` 同时读取符号与八进制状态
+### <span class="atomic-no">②</span> <span class="point-label">操作</span> 用 `stat` 同时读取符号与八进制状态
 
 **作用对象：** 单个文件系统对象。
 **典型形式：**
@@ -209,7 +329,7 @@ stat -c '%F | %A | %a | %U:%G | %u:%g | %n' PATH
 
 名称解析异常时，数字 UID/GID 比显示名称更接近 inode 真相。变更前后使用相同格式，便于形成可比较基线。
 
-### ③ [操作] 用 `id` 区分账号记录与当前进程身份
+### <span class="atomic-no">③</span> <span class="point-label">操作</span> 用 `id` 区分账号记录与当前进程身份
 
 ```bash
 id alice
@@ -218,7 +338,7 @@ sudo -u alice id
 
 第一条查询系统为 alice 解析出的身份；第二条建立实际测试进程。若题目刚修改过组成员，真实登录会话可能还需要重新建立，不能仅依据 `id alice` 推断旧会话已刷新。
 
-### ④ [操作] 用 `namei -l` 逐级展开路径
+### <span class="atomic-no">④</span> <span class="point-label">操作</span> 用 `namei -l` 逐级展开路径
 
 **作用对象：** 完整路径中的每个分量。
 **典型形式：**
@@ -229,20 +349,20 @@ namei -l /srv/team/reports/q1.txt
 
 调查时从上到下寻找第一处目标主体缺少 `x` 的目录。`namei` 显示的是静态 mode 与 owner/group；仍需结合 `id` 判断该用户在每一级将选中 owner、group 还是 other。
 
-### ⑤ [输出判断] `s/S/t/T` 同时编码特殊位和执行位
+### <span class="atomic-no">⑤</span> <span class="point-label">输出判断</span> `s/S/t/T` 同时编码特殊位和执行位
 
-| 字符 | 位置 | 含义 |
-|---|---|---|
-| `s` | owner 的 `x` 位 | setuid 已设置，owner execute 也已设置 |
-| `S` | owner 的 `x` 位 | setuid 已设置，但 owner execute 未设置 |
-| `s` | group 的 `x` 位 | setgid 已设置，group execute 也已设置 |
-| `S` | group 的 `x` 位 | setgid 已设置，但 group execute 未设置 |
-| `t` | other 的 `x` 位 | sticky 已设置，other execute 也已设置 |
-| `T` | other 的 `x` 位 | sticky 已设置，但 other execute 未设置 |
+<div class="special-position">
+<p><code>-rw<strong>s</strong>r-xr-x</code><span>owner 的执行位位置：setuid 与 owner <code>x</code> 同时存在。</span></p>
+<p><code>-rw<strong>S</strong>r-xr-x</code><span>owner 的执行位位置：setuid 存在，但 owner <code>x</code> 缺失。</span></p>
+<p><code>-rwxr-<strong>s</strong>r-x</code><span>group 的执行位位置：setgid 与 group <code>x</code> 同时存在。</span></p>
+<p><code>-rwxr-<strong>S</strong>r-x</code><span>group 的执行位位置：setgid 存在，但 group <code>x</code> 缺失。</span></p>
+<p><code>drwxrwxr-<strong>t</strong></code><span>other 的执行位位置：sticky 与 other <code>x</code> 同时存在。</span></p>
+<p><code>drwxrwxr-<strong>T</strong></code><span>other 的执行位位置：sticky 存在，但 other <code>x</code> 缺失。</span></p>
+</div>
 
 大写字符不是“更强”，反而通常提示特殊位存在但相应执行位缺失，需要核对是否符合目标。
 
-### ⑥ [验证] 查询只能证明元数据，功能必须实际测试
+### <span class="atomic-no">⑥</span> <span class="point-label">验证</span> 查询只能证明元数据，功能必须实际测试
 
 `stat` 显示 `0660` 不能证明 bob 能写：bob 可能没有当前组身份，路径中间可能缺少 `x`，也可能还有 ACL 或 SELinux 限制。标准验证顺序为：
 
@@ -258,11 +378,11 @@ stat/namei/id 建立证据
 
 <section class="topic operation" id="RHCSA-08-O02" data-kind="operation-topic">
 
-## [操作专题] 使用 `chmod` 表达增量修改与精确终态
+## <span class="topic-kicker operation">操作专题</span> 使用 `chmod` 表达增量修改与精确终态
 
 `chmod` 改变的是 mode bits。符号模式适合最小增量修改，八进制适合把对象设置为明确终态。选择哪一种，应由题目是“在现状上添加/删除”还是“最终必须等于某模式”决定。
 
-### ① [操作] 符号模式的结构
+### <span class="atomic-no">①</span> <span class="point-label">操作</span> 符号模式的结构
 
 **基本形式：**
 
@@ -286,7 +406,7 @@ chmod +t /srv/dropbox          # 给目录添加 sticky
 
 在脚本和考试答案中建议显式写出 `u/g/o/a`。省略 who 时，当前 umask 可能影响哪些类别被修改，容易让相同命令在不同会话产生不同终态。
 
-### ② [操作] 八进制模式写出精确权限
+### <span class="atomic-no">②</span> <span class="point-label">操作</span> 八进制模式写出精确权限
 
 每一类权限按 `r=4`、`w=2`、`x=1` 求和：
 
@@ -307,7 +427,7 @@ chmod 1777 /srv/dropbox
 
 当特殊位属于评分终态时，使用四位形式更清楚：首位 `4=setuid`、`2=setgid`、`1=sticky`。八进制命令表达“整个模式的目标值”，执行前要确认不会意外删除本应保留的权限。
 
-### ③ [参数] 大写 `X` 适合目录树，不等于无条件 `x`
+### <span class="atomic-no">③</span> <span class="point-label">参数</span> 大写 `X` 适合目录树，不等于无条件 `x`
 
 `X` 仅在对象是目录，或者对象原本任一类别已有执行位时添加执行/search 权限。典型用途：
 
@@ -317,7 +437,7 @@ chmod -R g+rwX /srv/project
 
 它会给目录添加 group search，并为目录树中的对象添加 group read/write；普通、原本完全不可执行的文件不会仅因递归而被变成可执行文件。但若某文件原本任何类别已有 `x`，`X` 可能继续给指定类别添加执行位，因此仍要先盘点对象。
 
-### ④ [操作] 复制权限类时使用 `u/g/o` 作为权限来源
+### <span class="atomic-no">④</span> <span class="point-label">操作</span> 复制权限类时使用 `u/g/o` 作为权限来源
 
 符号模式的权限部分也可以引用另一类：
 
@@ -328,7 +448,7 @@ chmod o=g file       # 让 other 普通权限等于 group
 
 这适合“让某类与另一类一致”的任务，但不自动复制 owner/group 身份，也不等同于 ACL。
 
-### ⑤ [验证] 修改后同时检查符号、八进制与功能
+### <span class="atomic-no">⑤</span> <span class="point-label">验证</span> 修改后同时检查符号、八进制与功能
 
 ```bash
 chmod 2770 /srv/project
@@ -337,7 +457,7 @@ stat -c '%A %a %U:%G %n' /srv/project
 
 随后必须以目标身份创建或访问对象。对目录而言，仅验证 `2770` 只能证明目录 mode，不能证明新文件具有目标组和组写权限。
 
-### ⑥ [安全边界] 不把 `chmod 777` 当作诊断方法
+### <span class="atomic-no">⑥</span> <span class="point-label">安全边界</span> 不把 `chmod 777` 当作诊断方法
 
 `777` 同时向所有本地主体开放读、写、执行或目录修改能力，会掩盖 owner/group、umask、路径、ACL、SELinux 等真正问题。推荐链路：
 
@@ -353,11 +473,11 @@ stat -c '%A %a %U:%G %n' /srv/project
 
 <section class="topic operation" id="RHCSA-08-O03" data-kind="operation-topic">
 
-## [操作专题] 使用 `chown` 与 `chgrp` 修改 owner 和 group
+## <span class="topic-kicker operation">操作专题</span> 使用 `chown` 与 `chgrp` 修改 owner 和 group
 
 传统 mode 只有在正确的 owner/group 关系下才会选中预期权限类。修改所有权和修改权限是两种不同操作：`chmod` 不改变 UID/GID，`chown`/`chgrp` 也不自动补齐 `rwx`。
 
-### ① [操作] `chown` 的常用形式
+### <span class="atomic-no">①</span> <span class="point-label">操作</span> `chown` 的常用形式
 
 ```bash
 chown alice FILE             # 只改 owner
@@ -367,7 +487,7 @@ chown alice:project FILE     # 同时改 owner 与 group
 
 推荐使用冒号分隔 owner 与 group。点号可能是合法用户名的一部分，使用旧式 `owner.group` 容易产生歧义。
 
-### ② [操作] `chgrp` 只改变 group
+### <span class="atomic-no">②</span> <span class="point-label">操作</span> `chgrp` 只改变 group
 
 ```bash
 chgrp project FILE
@@ -376,11 +496,11 @@ chgrp -R project DIR
 
 `chgrp project FILE` 与 `chown :project FILE` 的目标相同。选用哪条命令可依据可读性和任务上下文，但操作后都应使用 `stat` 核对 GID。
 
-### ③ [权限边界] 普通用户不能任意转让 owner
+### <span class="atomic-no">③</span> <span class="point-label">权限边界</span> 普通用户不能任意转让 owner
 
 通常只有特权用户可以把文件 owner 改成其他用户。文件 owner 可以把 group 改成自己所属的某个组；特权用户可以设置为任意有效组。考试任务若要求确定 owner/group，通常以管理员身份执行，再以普通用户验证。
 
-### ④ [边界] 所有权变化可能清除 setuid/setgid
+### <span class="atomic-no">④</span> <span class="point-label">边界</span> 所有权变化可能清除 setuid/setgid
 
 为防止权限提升，内核或工具在改变 owner/group、写入可执行文件等操作后可能清除 setuid/setgid 位。任何涉及特殊位的对象在 `chown`、`chgrp` 或内容变更后，都应重新执行：
 
@@ -390,7 +510,7 @@ stat -c '%A %a %U:%G %n' PATH
 
 不要假定之前设置的 `4755`、`2755` 必然保留。
 
-### ⑤ [安全] 递归所有权变更要明确链接与边界
+### <span class="atomic-no">⑤</span> <span class="point-label">安全</span> 递归所有权变更要明确链接与边界
 
 `chown -R` 能在很短时间内改变整个目录树。执行前至少确认：
 
@@ -408,11 +528,11 @@ stat -c '%A %a %U:%G %n' PATH
 
 <section class="topic knowledge" id="RHCSA-08-K03" data-kind="knowledge-topic">
 
-## [知识专题] `umask`：新对象权限的按位清除模型
+## <span class="topic-kicker knowledge">知识专题</span> `umask`：新对象权限的按位清除模型
 
 `umask` 不是“默认权限值”，也不是对已有对象执行的 `chmod`。它是进程状态，用于清除创建请求中的权限位。掌握按位模型，可以避免把八进制当普通十进制做减法，也能解释为什么同一个 umask 下不同程序仍可能创建出不同权限。
 
-### ① [知识点] 正确公式是请求模式按位清除 mask
+### <span class="atomic-no">①</span> <span class="point-label">知识点</span> 正确公式是请求模式按位清除 mask
 
 ```text
 最终普通权限 = 程序请求模式 AND (NOT umask)
@@ -430,11 +550,11 @@ stat -c '%A %a %U:%G %n' PATH
 目录：0777 & ~0027 = 0750
 ```
 
-### ② [知识点] umask 只能删除权限，不能增加权限
+### <span class="atomic-no">②</span> <span class="point-label">知识点</span> umask 只能删除权限，不能增加权限
 
 如果程序主动请求 `0600`，即使 umask 为 `0000`，结果也不会变成 `0666`。同理，普通文件的常见请求不含执行位，因此 `umask 0000` 通常也不会让新普通文件自动可执行。
 
-### ③ [知识点] 不能把 umask 当普通减法
+### <span class="atomic-no">③</span> <span class="point-label">知识点</span> 不能把 umask 当普通减法
 
 `0666 - 0027` 在某些例子上看似得到正确结果，但它不是权限算法，遇到重叠位时会误导。例如请求模式本来没有某位时，mask 不能从别的位置“借位”。学习和排错应逐位清除：
 
@@ -444,7 +564,7 @@ mask  ----w-rwx
 结果  rw-r-----
 ```
 
-### ④ [知识点] umask 属于进程并由子进程继承
+### <span class="atomic-no">④</span> <span class="point-label">知识点</span> umask 属于进程并由子进程继承
 
 在当前 shell 执行 `umask 0007` 后，由该 shell 启动的命令继承相同 mask，除非程序主动修改。退出该 shell 后，父进程或新登录流程可能提供另一值。因此：
 
@@ -453,18 +573,18 @@ mask  ----w-rwx
 - 新登录会话中看到的值才是持久性证据；
 - 新建样本对象的 mode 才是功能证据。
 
-### ⑤ [边界] default ACL 会改变创建权限路径
+### <span class="atomic-no">⑤</span> <span class="point-label">边界</span> default ACL 会改变创建权限路径
 
 如果父目录存在 default ACL，新对象会先从 default ACL 继承访问 ACL，再受创建请求中的权限限制；此时不能只按简单 umask 表推断最终有效权限。发现 `ls -ld` 末尾有 `+` 或 `getfacl` 显示 default 条目时，应转入第 09 章《ACL 与协作目录》。本章只建立接口，不展开 ACL mask 计算。
 
-### ⑥ [计算表] 常见 umask 的典型结果
+### <span class="atomic-no">⑥</span> <span class="point-label">计算表</span> 常见 umask 的典型结果
 
-| umask | 常见新文件 | 常见新目录 | 典型意图 |
-|---:|---:|---:|---|
-| `0022` | `0644` | `0755` | owner 可写，其他只读/穿越 |
-| `0027` | `0640` | `0750` | owner 完整、组只读/穿越、other 无权限 |
-| `0007` | `0660` | `0770` | owner/group 协作，other 无权限 |
-| `0077` | `0600` | `0700` | 仅 owner |
+<div class="example-strip">
+<div><strong><code>0022</code></strong><span>文件 <code>0644</code> · 目录 <code>0755</code></span><p>owner 可写，其他只读或穿越。</p></div>
+<div><strong><code>0027</code></strong><span>文件 <code>0640</code> · 目录 <code>0750</code></span><p>组可读/穿越，other 隔离。</p></div>
+<div><strong><code>0007</code></strong><span>文件 <code>0660</code> · 目录 <code>0770</code></span><p>owner 与 group 协作，other 隔离。</p></div>
+<div><strong><code>0077</code></strong><span>文件 <code>0600</code> · 目录 <code>0700</code></span><p>仅 owner。</p></div>
+</div>
 
 表格是假定程序请求 `0666/0777` 的典型结果，不替代实际创建与 `stat`。
 
@@ -474,11 +594,11 @@ mask  ----w-rwx
 
 <section class="topic operation" id="RHCSA-08-O04" data-kind="operation-topic">
 
-## [操作专题] 设置并验证当前与持久 `umask`
+## <span class="topic-kicker operation">操作专题</span> 设置并验证当前与持久 `umask`
 
 持久 umask 不是“在任意配置文件末尾写一行”这么简单。必须先明确目标主体、Shell 类型和会话入口，再修改对应来源，并用新会话验证。考试题若只要求当前任务进程的创建结果，显式在同一命令环境中设置反而更可控。
 
-### ① [操作] 查看与临时设置
+### <span class="atomic-no">①</span> <span class="point-label">操作</span> 查看与临时设置
 
 ```bash
 umask           # 数值形式，常见输出如 0022
@@ -488,7 +608,7 @@ umask 0007      # 只改变当前 shell 及其后代
 
 注意：`umask -S` 表示最终允许保留的权限类，而不是直接打印 mask 数字，阅读时不要把两种输出混为一谈。
 
-### ② [验证] 创建文件和目录样本
+### <span class="atomic-no">②</span> <span class="point-label">验证</span> 创建文件和目录样本
 
 ```bash
 umask 0007
@@ -501,7 +621,7 @@ stat -c '%A %a %U:%G %n' /tmp/umask-file /tmp/umask-dir
 
 在没有 default ACL 且工具使用常见请求模式时，期望文件为 `0660`、目录为 `0770`。验证后清理测试对象，避免旧样本干扰下一次测试。
 
-### ③ [配置] 选择与目标会话匹配的启动文件
+### <span class="atomic-no">③</span> <span class="point-label">配置</span> 选择与目标会话匹配的启动文件
 
 以 Bash 为例，登录 shell 与非登录交互 shell 的读取路径不同。可按题目范围选择：
 
@@ -511,7 +631,7 @@ stat -c '%A %a %U:%G %n' /tmp/umask-file /tmp/umask-dir
 
 不要宣称 `/etc/login.defs`、`/etc/profile` 或 `~/.bashrc` 中任一处必然覆盖所有服务、计划任务和非交互程序。systemd service、容器和应用自身也可能显式设置创建模式。
 
-### ④ [验证] 新会话与创建结果缺一不可
+### <span class="atomic-no">④</span> <span class="point-label">验证</span> 新会话与创建结果缺一不可
 
 建议验收矩阵：
 
@@ -525,7 +645,7 @@ stat -c '%A %a %U:%G %n' /tmp/umask-file /tmp/umask-dir
 
 只查看配置文件不能证明它被读取；只查看 `umask` 不能证明程序请求模式；只查看样本不能说明持久来源正确。
 
-### ⑤ [边界] 协作目录不应只依赖每个人手工执行 umask
+### <span class="atomic-no">⑤</span> <span class="point-label">边界</span> 协作目录不应只依赖每个人手工执行 umask
 
 多人协作若要求稳定组写权限，setgid 负责组继承，合适 umask 负责普通创建上限；但不同入口可能具有不同 mask。若业务必须对多种程序和入口统一继承权限，应在第 09 章评估 default ACL，而不是假定所有用户都会保持同一 shell umask。
 
@@ -535,11 +655,11 @@ stat -c '%A %a %U:%G %n' /tmp/umask-file /tmp/umask-dir
 
 <section class="topic knowledge" id="RHCSA-08-K04" data-kind="knowledge-topic">
 
-## [知识专题] setuid、setgid 与 sticky：特殊位改变哪一层语义
+## <span class="topic-kicker knowledge">知识专题</span> setuid、setgid 与 sticky：特殊位改变哪一层语义
 
 特殊位不等于“额外的 rwx”。setuid 和 setgid 主要影响执行后进程的有效身份；setgid 还对目录提供组继承；sticky 则改变公共可写目录中的删除和重命名规则。判断时必须结合对象类型。
 
-### ① [知识点] 八进制首位 `4/2/1`
+### <span class="atomic-no">①</span> <span class="point-label">知识点</span> 八进制首位 `4/2/1`
 
 ```text
 4 = setuid
@@ -556,7 +676,7 @@ stat -c '%A %a %U:%G %n' /tmp/umask-file /tmp/umask-dir
 1777  sticky 公共可写目录
 ```
 
-### ② [知识点] setuid 作用于可执行文件的有效 UID
+### <span class="atomic-no">②</span> <span class="point-label">知识点</span> setuid 作用于可执行文件的有效 UID
 
 具有 setuid 的可执行文件被允许执行时，进程的有效 UID 通常取文件 owner，而真实 UID 仍表示发起用户。它用于让受控程序完成普通用户本来无权直接完成的特定操作。
 
@@ -567,11 +687,11 @@ stat -c '%A %a %U:%G %n' /tmp/umask-file /tmp/umask-dir
 - 内容或所有权变化后应重新检查特殊位；
 - 不在本章展开 capabilities 和应用安全审计。
 
-### ③ [知识点] setgid 对可执行文件改变有效 GID
+### <span class="atomic-no">③</span> <span class="point-label">知识点</span> setgid 对可执行文件改变有效 GID
 
 setgid 可执行文件运行后，进程的有效 GID通常取文件 group。它与 setuid 类似，但改变的是组身份。该机制不是 setgid 目录组继承的同义词，必须根据对象是“可执行文件”还是“目录”分别解释。
 
-### ④ [知识点] setgid 目录让新对象继承目录 group
+### <span class="atomic-no">④</span> <span class="point-label">知识点</span> setgid 目录让新对象继承目录 group
 
 在 Linux 上，setgid 目录中的新文件通常继承目录 group，而不是创建进程的主组；新建子目录通常还会继承 setgid 位，从而继续保持组归属链。
 
@@ -584,7 +704,7 @@ setgid 可执行文件运行后，进程的有效 GID通常取文件 group。它
 
 因此 `chmod 2770 DIR` 只是协作目录的一层。
 
-### ⑤ [知识点] sticky 限制公共可写目录中的删除和重命名
+### <span class="atomic-no">⑤</span> <span class="point-label">知识点</span> sticky 限制公共可写目录中的删除和重命名
 
 在可写目录上设置 sticky 后，即使用户有目录 `w+x`，通常也只能删除或重命名：
 
@@ -595,7 +715,7 @@ setgid 可执行文件运行后，进程的有效 GID通常取文件 group。它
 
 典型公共临时目录为 `1777`：所有用户可以创建，但不能随意删除其他用户的文件。sticky 不阻止读取文件内容；文件本身的 `rwx` 仍单独判断。
 
-### ⑥ [输出判断] 大写 `S/T` 是警报，不是增强
+### <span class="atomic-no">⑥</span> <span class="point-label">输出判断</span> 大写 `S/T` 是警报，不是增强
 
 ```text
 -rwSr-xr-x   setuid 已设置，但 owner 没有 x
@@ -605,7 +725,7 @@ setgid 可执行文件运行后，进程的有效 GID通常取文件 group。它
 
 对可执行文件，缺少对应执行位往往意味着特殊执行身份无法按预期生效；对目录，`T` 还提示 other 不能穿越。看到大写字符应回到题目终态，不要机械认为“特殊位已经有了就正确”。
 
-### ⑦ [边界] 特殊位的目录/文件语义并不对称
+### <span class="atomic-no">⑦</span> <span class="point-label">边界</span> 特殊位的目录/文件语义并不对称
 
 - setuid 在 Linux 目录上通常没有通用的 owner 继承意义；
 - setgid 在目录上具有重要组继承语义；
@@ -617,11 +737,11 @@ setgid 可执行文件运行后，进程的有效 GID通常取文件 group。它
 
 <section class="topic operation" id="RHCSA-08-O05" data-kind="operation-topic">
 
-## [操作专题] 构造不使用 ACL 的 setgid 组协作目录
+## <span class="topic-kicker operation">操作专题</span> 构造不使用 ACL 的 setgid 组协作目录
 
 传统权限可以实现“一个固定组共同工作、other 完全隔离”的基本协作目录。完整方案至少包含目录 group、setgid、组 `rwx`、创建进程的 umask，以及两个组成员之间的交叉验证。
 
-### ① [调查] 先确认目录、组和测试主体
+### <span class="atomic-no">①</span> <span class="point-label">调查</span> 先确认目录、组和测试主体
 
 假定组和用户已存在：
 
@@ -636,7 +756,7 @@ namei -l /srv/techdocs
 
 目标：alice、bob 是 `techdocs` 成员，carol 不是；目录 owner 为 root，group 为 techdocs，other 无权限。
 
-### ② [操作] 设置目录归属和 mode
+### <span class="atomic-no">②</span> <span class="point-label">操作</span> 设置目录归属和 mode
 
 ```bash
 install -d -o root -g techdocs -m 2770 /srv/techdocs
@@ -650,7 +770,7 @@ stat -c '%A %a %U:%G %n' /srv/techdocs
 
 期望静态终态为 `drwxrws--- 2770 root:techdocs`。
 
-### ③ [配置] 为创建进程提供组可写的 umask
+### <span class="atomic-no">③</span> <span class="point-label">配置</span> 为创建进程提供组可写的 umask
 
 在不使用 default ACL 的前提下，创建者需要使用允许 group write、屏蔽 other 的 mask，例如 `0007`：
 
@@ -660,7 +780,7 @@ sudo -u alice sh -c 'umask 0007; touch /srv/techdocs/alice.txt; mkdir /srv/techd
 
 若题目要求持久策略，应在明确的登录环境中配置，再用新会话验证；不能只在这一条测试命令中设置。
 
-### ④ [验证] 检查组继承和最终模式
+### <span class="atomic-no">④</span> <span class="point-label">验证</span> 检查组继承和最终模式
 
 ```bash
 stat -c '%A %a %U:%G %n' \
@@ -676,7 +796,7 @@ alice.d    2770 alice:techdocs
 
 子目录保留 setgid，才能让更深层新对象继续继承组。
 
-### ⑤ [验证] 第二名组员实际修改
+### <span class="atomic-no">⑤</span> <span class="point-label">验证</span> 第二名组员实际修改
 
 ```bash
 sudo -u bob sh -c 'printf "%s\n" reviewed >> /srv/techdocs/alice.txt'
@@ -685,7 +805,7 @@ sudo -u bob test -w /srv/techdocs/alice.txt
 
 `test -w` 是快速检查，实际追加才是更强的功能证据。失败时依次检查 bob 当前组、父路径 `x`、文件 group、文件 group write、ACL/SELinux。
 
-### ⑥ [负向验证] 非成员不能穿越或创建
+### <span class="atomic-no">⑥</span> <span class="point-label">负向验证</span> 非成员不能穿越或创建
 
 ```bash
 sudo -u carol test -x /srv/techdocs
@@ -694,7 +814,7 @@ sudo -u carol touch /srv/techdocs/should-fail
 
 负向命令预期失败。测试文件名必须是专用样本，避免破坏真实数据。
 
-### ⑦ [边界] setgid 不回溯修复已有对象
+### <span class="atomic-no">⑦</span> <span class="point-label">边界</span> setgid 不回溯修复已有对象
 
 目录加 setgid 后，已有文件不会自动改组、补写权限或获得 setgid。已有树若也必须迁移，应先盘点 owner/group/mode，再使用受控的 `chgrp`、`chmod` 或限定 `find` 操作；这属于一次独立变更，不能被“新对象继承”替代。
 
@@ -704,11 +824,11 @@ sudo -u carol touch /srv/techdocs/should-fail
 
 <section class="topic diagnosis" id="RHCSA-08-D01" data-kind="diagnosis-topic">
 
-## [诊断专题] 文件显示可读却仍 `Permission denied`
+## <span class="topic-kicker diagnosis">诊断专题</span> 文件显示可读却仍 `Permission denied`
 
 这类故障最适合训练证据推进。最终文件 mode 只是链路末端的一项；正确方法是从真实主体开始，逐级找到第一处具有区分度的阻断点，再做最小修复。
 
-### ① [症状] 固定原始动作和目标主体
+### <span class="atomic-no">①</span> <span class="point-label">症状</span> 固定原始动作和目标主体
 
 例如：
 
@@ -718,7 +838,7 @@ sudo -u dana cat /srv/reports/q1/report.txt
 
 不要先改权限。记录：谁执行、完整路径、动作是读内容而不是列目录、错误发生在当前系统还是远程程序中。
 
-### ② [当前证据] 确认主体身份
+### <span class="atomic-no">②</span> <span class="point-label">当前证据</span> 确认主体身份
 
 ```bash
 id dana
@@ -727,7 +847,7 @@ sudo -u dana id
 
 若组成员关系刚改变，应建立新会话。不要用管理员自己的 `id` 代表 dana。
 
-### ③ [下一条最有区分度的证据] 展开路径
+### <span class="atomic-no">③</span> <span class="point-label">下一条最有区分度的证据</span> 展开路径
 
 ```bash
 namei -l /srv/reports/q1/report.txt
@@ -735,7 +855,7 @@ namei -l /srv/reports/q1/report.txt
 
 逐行判断 dana 在每个目录上选中 owner/group/other 哪一类，找到第一处缺少 `x` 的分量。若路径均可穿越，再检查最终文件 `r`。
 
-### ④ [假设] 区分父目录、最终文件与删除语义
+### <span class="atomic-no">④</span> <span class="point-label">假设</span> 区分父目录、最终文件与删除语义
 
 - `cat` 失败：父路径 `x` 或文件 `r`；
 - `echo >> file` 失败：父路径 `x` 或文件 `w`；
@@ -745,7 +865,7 @@ namei -l /srv/reports/q1/report.txt
 
 选择与原始症状最相关的假设，不要一次改多层。
 
-### ⑤ [最小修复] 只修改阻断对象和目标权限类
+### <span class="atomic-no">⑤</span> <span class="point-label">最小修复</span> 只修改阻断对象和目标权限类
 
 如果 `/srv/reports` 的 group 为 `analysts`，dana 属于该组，但目录 mode 为 `0740`，缺的是 group search。可在确认业务终态后执行：
 
@@ -755,7 +875,7 @@ chmod g+x /srv/reports
 
 而不是把最终文件改成 `777`。修改后立即用 `stat` 和 `namei` 重建证据。
 
-### ⑥ [再验证] 用相同主体重做原始动作
+### <span class="atomic-no">⑥</span> <span class="point-label">再验证</span> 用相同主体重做原始动作
 
 ```bash
 sudo -u dana cat /srv/reports/q1/report.txt
@@ -763,7 +883,7 @@ sudo -u dana cat /srv/reports/q1/report.txt
 
 再使用一个无关用户做负向测试，确保最小修复没有扩大给 other。
 
-### ⑦ [边界] DAC 链路无异常后再进入下一安全层
+### <span class="atomic-no">⑦</span> <span class="point-label">边界</span> DAC 链路无异常后再进入下一安全层
 
 若 `id`、`namei`、`stat` 均支持传统权限允许，但操作仍被拒绝，下一步依次检查：
 
@@ -777,11 +897,11 @@ sudo -u dana cat /srv/reports/q1/report.txt
 
 <section class="topic diagnosis" id="RHCSA-08-D02" data-kind="diagnosis-topic">
 
-## [诊断专题] 递归权限修改：先控制爆炸半径
+## <span class="topic-kicker diagnosis">诊断专题</span> 递归权限修改：先控制爆炸半径
 
 递归命令会把一个小判断错误扩散到整棵树。`chmod -R 777`、`chown -R` 或对错误变量展开执行，可能破坏可执行文件、安全边界和服务数据。递归不是禁用功能，而是必须先建立对象集合、链接策略和可验证终态。
 
-### ① [调查] 先盘点对象类型和现状
+### <span class="atomic-no">①</span> <span class="point-label">调查</span> 先盘点对象类型和现状
 
 ```bash
 find /srv/project -xdev -printf '%y %m %u:%g %p\n' | less
@@ -790,7 +910,7 @@ find /srv/project -xdev -type l -print
 
 `-xdev` 可在适用时避免跨入其他文件系统，但是否使用取决于任务边界。确认树中是否有脚本、二进制、套接字、命名管道、挂载点和符号链接。
 
-### ② [假设] 文件和目录通常需要不同权限
+### <span class="atomic-no">②</span> <span class="point-label">假设</span> 文件和目录通常需要不同权限
 
 目录需要 `x` 才能穿越，普通数据文件通常不应自动获得执行位。若目标是“组成员可读写并穿越目录”，可考虑：
 
@@ -800,11 +920,11 @@ chmod -R g+rwX /srv/project
 
 仍需确认原本可执行文件是否应保持执行，以及 other 权限是否需要收紧。
 
-### ③ [边界] 明确符号链接跟随策略
+### <span class="atomic-no">③</span> <span class="point-label">边界</span> 明确符号链接跟随策略
 
 递归工具对命令行参数中的符号链接、树内符号链接以及 `-H/-L/-P` 的处理不同。默认不要假定链接会或不会跟随；执行前查看对应 man page，并尽量对真实根目录路径操作。链接指向树外时，跟随可能把变更扩散到完全不同的位置。
 
-### ④ [最小修复] 按类型和条件限定
+### <span class="atomic-no">④</span> <span class="point-label">最小修复</span> 按类型和条件限定
 
 精确迁移常使用分开的 `find`：
 
@@ -815,7 +935,7 @@ find /srv/project -xdev -type f -exec chmod 0660 {} +
 
 这只是任务示例：给每个子目录 setgid 是否符合业务、是否存在应执行脚本，必须在执行前确认。不能把示例当成任何目录树的通用答案。
 
-### ⑤ [验证] 全量静态检查与抽样功能测试结合
+### <span class="atomic-no">⑤</span> <span class="point-label">验证</span> 全量静态检查与抽样功能测试结合
 
 ```bash
 find /srv/project -xdev -printf '%y %m %u:%g %p\n'
@@ -829,7 +949,7 @@ find /srv/project -xdev -printf '%y %m %u:%g %p\n'
 
 <section class="topic classic-task" id="RHCSA-08-C01" data-kind="classic-task">
 
-## [经典任务] 建立传统权限组协作目录并完成跨用户验收
+## <span class="topic-kicker task">经典任务</span> 建立传统权限组协作目录并完成跨用户验收
 
 ### 环境与当前状态
 
@@ -839,7 +959,8 @@ find /srv/project -xdev -printf '%y %m %u:%g %p\n'
 - 用户 `alice`、`bob`，均为 `techdocs` 成员；
 - 用户 `carol`，不是该组成员；
 - `/srv` 可由所有用户穿越；
-- `/srv/techdocs` 当前不存在。
+- `/srv/techdocs` 当前不存在；
+- alice 与 bob 使用 Bash 登录，二人的 `~/.bash_profile` 已存在并会加载各自的 `~/.bashrc`，当前没有显式 `umask` 行。
 
 本任务不允许使用 ACL；sudo 仅作为测试身份切换工具，不要求修改 sudoers。
 
@@ -864,15 +985,13 @@ find /srv/project -xdev -printf '%y %m %u:%g %p\n'
 
 </section>
 
-<div class="page-break"></div>
-
 <section class="topic answer" id="RHCSA-08-A01" data-kind="answer-topic">
 
-## [参考解答] 经典任务一
+## <span class="topic-kicker answer">参考解答</span> 经典任务一
 
 以下命令是静态推荐解答，必须在真实 RHEL 9 环境中再次验证用户启动文件、实际组身份和创建结果。
 
-### ① 调查现有身份与路径
+### <span class="atomic-no">①</span> 调查现有身份与路径
 
 ```bash
 getent group techdocs
@@ -884,7 +1003,7 @@ namei -l /srv
 
 确认 alice、bob 命中 `techdocs`，carol 不命中；确认 `/srv` 的父路径允许目标用户穿越。
 
-### ② 创建目录并设置精确终态
+### <span class="atomic-no">②</span> 创建目录并设置精确终态
 
 ```bash
 install -d -o root -g techdocs -m 2770 /srv/techdocs
@@ -893,7 +1012,7 @@ stat -c '%A %a %U:%G %n' /srv/techdocs
 
 若目录已经存在，应先备份基线并分别执行最小变更，而不是假定目录为空。
 
-### ③ 配置目标用户的登录 umask
+### <span class="atomic-no">③</span> 配置目标用户的登录 umask
 
 题目明确限定“新登录 Bash 会话”。应根据系统现有 Bash 启动结构，把 `umask 0007` 放入 alice、bob 的登录配置范围，同时避免重复和覆盖其他逻辑。示意：
 
@@ -901,27 +1020,27 @@ stat -c '%A %a %U:%G %n' /srv/techdocs
 for user in alice bob; do
   home=$(getent passwd "$user" | cut -d: -f6)
   profile="$home/.bash_profile"
-  grep -qxF 'umask 0007' "$profile" 2>/dev/null ||
+  cp -a "$profile" "$profile.rhcsa08.bak"
+  grep -qxF 'umask 0007' "$profile" ||
     printf '\numask 0007\n' >> "$profile"
-  chown "$user":"$(id -gn "$user")" "$profile"
 done
 ```
 
-真实系统中应先查看文件现状，避免重复追加；若 `.bash_profile` 已通过其他文件统一设置，应修改实际生效来源而不是机械追加。
+本任务已明确这两个文件存在且属于目标用户，因此示例保留其所有权并先建立备份。真实系统仍应先查看启动链；若现有逻辑在其他文件统一设置，应修改实际生效来源，而不是机械追加多处。
 
-### ④ 建立新登录会话验证当前状态
+### <span class="atomic-no">④</span> 建立新登录会话验证当前状态
 
 ```bash
-sudo -iu alice umask
-sudo -iu bob umask
+sudo -iu alice bash -lc 'umask'
+sudo -iu bob bash -lc 'umask'
 ```
 
 期望两者为 `0007`。`sudo -iu` 在此仅模拟登录式测试入口；最终以题目提供的真实登录方式复核更可靠。
 
-### ⑤ alice 创建样本并检查继承
+### <span class="atomic-no">⑤</span> alice 创建样本并检查继承
 
 ```bash
-sudo -iu alice sh -c 'touch /srv/techdocs/alice.txt; mkdir /srv/techdocs/alice.d'
+sudo -iu alice bash -lc 'touch /srv/techdocs/alice.txt; mkdir /srv/techdocs/alice.d'
 stat -c '%A %a %U:%G %n' \
   /srv/techdocs/alice.txt /srv/techdocs/alice.d
 ```
@@ -935,16 +1054,16 @@ alice.d    2770 alice:techdocs
 
 如果 group 正确但没有 group write，检查 alice 新会话的 umask；如果 group 不正确，检查父目录 setgid 和实际创建位置。
 
-### ⑥ bob 进行交叉写入
+### <span class="atomic-no">⑥</span> bob 进行交叉写入
 
 ```bash
-sudo -iu bob sh -c 'printf "%s\n" reviewed >> /srv/techdocs/alice.txt'
+sudo -iu bob bash -lc 'printf "%s\n" reviewed >> /srv/techdocs/alice.txt'
 sudo -iu bob tail -n 1 /srv/techdocs/alice.txt
 ```
 
 这比只看 `test -w` 更接近真实终态。
 
-### ⑦ carol 做负向测试
+### <span class="atomic-no">⑦</span> carol 做负向测试
 
 ```bash
 sudo -u carol test -x /srv/techdocs
@@ -957,12 +1076,12 @@ sudo -u carol touch /srv/techdocs/should-not-exist
 test ! -e /srv/techdocs/should-not-exist
 ```
 
-### ⑧ 最终证据矩阵
+### <span class="atomic-no">⑧</span> 最终证据矩阵
 
 | 维度 | 命令 | 证明 |
 |---|---|---|
 | 目录静态状态 | `stat /srv/techdocs` | `2770 root:techdocs` |
-| 登录策略 | `sudo -iu USER umask` | 新登录会话使用 `0007` |
+| 登录策略 | `sudo -iu USER bash -lc 'umask'` | 新登录会话使用 `0007` |
 | 组继承 | `stat alice.txt` | 新文件 group 为 `techdocs` |
 | 文件 mode | `stat alice.txt` | 新文件为 `0660` |
 | 子目录延续 | `stat alice.d` | 子目录为 `2770`，继续 setgid |
@@ -982,7 +1101,7 @@ test ! -e /srv/techdocs/should-not-exist
 
 <section class="topic classic-task" id="RHCSA-08-C02" data-kind="classic-task">
 
-## [经典任务] 定位“文件可读但路径不可达”并做最小修复
+## <span class="topic-kicker task">经典任务</span> 定位“文件可读但路径不可达”并做最小修复
 
 ### 环境与当前状态
 
@@ -1016,13 +1135,11 @@ sudo -u dana cat /srv/reports/q1/report.txt
 
 </section>
 
-<div class="page-break"></div>
-
 <section class="topic answer" id="RHCSA-08-A02" data-kind="answer-topic">
 
-## [参考解答] 经典任务二
+## <span class="topic-kicker answer">参考解答</span> 经典任务二
 
-### ① 固定主体和原始失败
+### <span class="atomic-no">①</span> 固定主体和原始失败
 
 ```bash
 id dana
@@ -1032,7 +1149,7 @@ sudo -u dana cat /srv/reports/q1/report.txt
 
 记录原始失败，不先改最终文件。
 
-### ② 读取最终对象状态
+### <span class="atomic-no">②</span> 读取最终对象状态
 
 ```bash
 stat -c '%F %A %a %U:%G %n' /srv/reports/q1/report.txt
@@ -1040,7 +1157,7 @@ stat -c '%F %A %a %U:%G %n' /srv/reports/q1/report.txt
 
 `0640 root:analysts` 表明 dana 若当前组集合命中 analysts，最终文件的 group `r--` 足以读取内容；这仍不能证明路径可达。
 
-### ③ 展开每一级路径
+### <span class="atomic-no">③</span> 展开每一级路径
 
 ```bash
 namei -l /srv/reports/q1/report.txt
@@ -1054,7 +1171,7 @@ drwxr----- root analysts /srv/reports
 
 它的 group 有 `r` 但没有 `x`，因此 dana 可以命中 group，却无法穿越。
 
-### ④ 做最小修改
+### <span class="atomic-no">④</span> 做最小修改
 
 ```bash
 chmod g+x /srv/reports
@@ -1064,7 +1181,7 @@ namei -l /srv/reports/q1/report.txt
 
 修改只为 analysts 增加 search，不改变 other，不修改最终文件。
 
-### ⑤ 以相同主体再验证
+### <span class="atomic-no">⑤</span> 以相同主体再验证
 
 ```bash
 sudo -u dana cat /srv/reports/q1/report.txt
@@ -1072,7 +1189,7 @@ sudo -u dana cat /srv/reports/q1/report.txt
 
 期望成功。
 
-### ⑥ 非授权用户负向测试
+### <span class="atomic-no">⑥</span> 非授权用户负向测试
 
 ```bash
 id erin
@@ -1081,7 +1198,7 @@ sudo -u erin cat /srv/reports/q1/report.txt
 
 期望失败。若 erin 仍可读取，应检查路径中 other 权限、她的组身份以及是否存在 ACL。
 
-### ⑦ 典型错误
+### <span class="atomic-no">⑦</span> 典型错误
 
 - 把 `report.txt` 从 `0640` 改成 `0644`，但父路径仍不可穿越；
 - 把所有父目录加 `o+x`，扩大给无关用户；
@@ -1094,7 +1211,7 @@ sudo -u erin cat /srv/reports/q1/report.txt
 
 <section class="topic closure" id="RHCSA-08-S01" data-kind="closure-topic">
 
-## [本章收束] 用“主体—路径—权限类—动作—证据”解决权限题
+## <span class="topic-kicker closure">本章收束</span> 用“主体—路径—权限类—动作—证据”解决权限题
 
 传统权限的核心不是一组数字，而是一条求值链：
 

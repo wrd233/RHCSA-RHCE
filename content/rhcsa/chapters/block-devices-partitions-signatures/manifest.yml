@@ -1,0 +1,96 @@
+package_version: 1
+chapter:
+  id: RHCSA-22
+  exam: RHCSA
+  part: 6
+  number: 22
+  slug: block-devices-partitions-signatures
+  title: 块设备、分区表与设备签名
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+  verified_at: '2026-07-12T22:25:00+08:00'
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/block-devices-partitions-signatures/lecture.md
+  anki: content/rhcsa/chapters/block-devices-partitions-signatures/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:25:00+08:00'
+  archive_name: RHCSA-22-block-devices-partitions-signatures-v5.1-final.zip
+  hash_policy: SHA-256 covers every payload file; manifest.yml is excluded from self-hashing.
+files:
+  lecture:
+    path: lecture.md
+    sha256: 3afb97a9d133cc0da66ffadb41d033368456bc54b186a7e792e772972fc454b6
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 15b883d3384e7af401a6d27a541530925a42fb35acf605937f13a4e33dc36ecf
+  anki:
+    path: anki.yml
+    sha256: cc5db54354ff2e4811f223782c830c3f265664bcc9c24efec0d322a1db7d866d
+  preview:
+    path: anki-preview.html
+    sha256: a01b69eb78d00854e35b80b2de311d5eaa85d9731cd703860e3b55fc40838e9d
+  summary:
+    path: anki-summary.md
+    sha256: 82cd8f3439a1d35eaea4b00ec5a35923046c3a3ce69164250fd7cd27ea7bcdb4
+  anki_impact:
+    path: anki-impact.md
+    sha256: 72b7322c454a1deedbfe87d7211d0a8433abc890e992870fc17362a5099088df
+  source_map:
+    path: source-map.md
+    sha256: 563be70e0f5c29b80cb8eb56dba53ee411784beca0e36c8ebfd3d22d883fe245
+  structure_report:
+    path: structure-report.md
+    sha256: 6fabe846ce1593422a825a5638babaa3f07a2f4f0fce16cde80f520516afa8f7
+  visual_qa:
+    path: visual-qa.md
+    sha256: 3b135e8411f6af5e8bf6e3936e7b9e2897dee27949eacea6c9433891ccb75fbe
+  qa_report:
+    path: qa-report.md
+    sha256: 32617015d1a02d3942dea4ea68003d01fcf2948cc56104b054f46f7fd2a2d620
+  revision_notes:
+    path: revision-notes.md
+    sha256: d3b64195a6221f9bb2ed613762e336125e55440b8e3776b326a7319f0a66361b
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 7ef346e4bcc14f422598924553b4e37e7b4821fc47a9b119054a5102acba066f
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 virtual machine was available; command-level live tests were not performed.
+- Codex must perform whole-book Section ID and Anki ID checks, cross-chapter duplicate review, unified PDF/APKG build, AnkiConnect
+  synchronization, Git integration and release.
+- util-linux and udev output details remain subject to the exact RHEL 9 minor-version environment.
+extensions:
+  statistics:
+    lecture_lines: 1142
+    lecture_characters: 29668
+    core_concepts: 7
+    operation_quick_entries: 7
+    knowledge_topics: 4
+    operation_topics: 4
+    diagnosis_topics: 3
+    classic_tasks: 2
+    reference_answers: 2
+    notes_total: 112
+    notes_qa: 107
+    notes_cloze: 5
+    source_completeness: 100%
+    pdf_pages: 28

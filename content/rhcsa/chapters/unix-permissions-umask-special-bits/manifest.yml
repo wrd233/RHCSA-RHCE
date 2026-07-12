@@ -1,0 +1,76 @@
+package_version: 1
+chapter:
+  id: RHCSA-08
+  exam: RHCSA
+  part: 2
+  number: 8
+  slug: unix-permissions-umask-special-bits
+  title: 传统权限、umask 与特殊权限位
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/unix-permissions-umask-special-bits/lecture.md
+  anki: content/rhcsa/chapters/unix-permissions-umask-special-bits/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:23:30+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 850af266e9005156ce0b096268b98c03a15912f4052083d13aabb42ee54e6c97
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: b77dba0b99bcd3af286ba6fcd31b40fbf404251f2077df82bf2343db3eab3991
+  anki:
+    path: anki.yml
+    sha256: b184335ca889a365e435afee940ea98f918b87e0433933634916474cfc988da9
+  preview:
+    path: anki-preview.html
+    sha256: d7139ba3d1f6d898ff7128924405097e0f852e7221582395be2f81e1f4526997
+  summary:
+    path: anki-summary.md
+    sha256: 8ed58bcf6ec7cb5dec2b81414992c53b9d4168a1c95fcf22d80dfba8c816140e
+  anki_impact:
+    path: anki-impact.md
+    sha256: 3f5641ecbcdb8a6bd0d6a8f120126d344921d5b08737c157beaf33d7edd2dd44
+  source_map:
+    path: source-map.md
+    sha256: 40c03f1198cf2fe0d89a1dfb526aa439e376aab969eb52f738ad7169a0a591ba
+  structure_report:
+    path: structure-report.md
+    sha256: a9fdf396b4bf565a3701134112e305b01ab76a8e6d50363eb61c8c0dd6e53426
+  visual_qa:
+    path: visual-qa.md
+    sha256: b5a8a2c68a6e2d60c12cbf9236060e6b78624402a4790aa81c51ad823a2b5c92
+  qa_report:
+    path: qa-report.md
+    sha256: 07fc2e083c7d13191e5354463e15c540efbd688d4ddb3187dfd64a2214b54e03
+  revision_notes:
+    path: revision-notes.md
+    sha256: e01717b6f1d724f233aa739dba907fd92c12bf0df3a4be62abce3480338eb4ce
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 03a3991c4b20eb4118f0f856bb6f9af5336996e7b071722f2ec5e6affbf1a182
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- 未连接可控 RHEL 9 虚拟机，未执行命令级 live test。
+- 全书 Section ID、Anki ID、跨章重复和统一 integration HEAD 仍由 Codex 检查。
+- 正式整书 PDF、APKG、AnkiConnect、Git 提交和 release 不属于单章冻结范围。

@@ -1,0 +1,77 @@
+package_version: 1
+chapter:
+  id: RHCSA-31
+  exam: RHCSA
+  part: 8
+  number: 31
+  slug: podman-images-containers-rootless
+  title: Podman 镜像、容器与 Rootless 运行
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/podman-images-containers-rootless/lecture.md
+  anki: content/rhcsa/chapters/podman-images-containers-rootless/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:20:33+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 66b4242db23f85f892c0026c84681d829b95c92cc3b3a33b181c5f6f9aaa0f2e
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: f1bee6008898442d75b76072e4d02faf31af9a5e4713ab419229ff0bbcf24532
+  anki:
+    path: anki.yml
+    sha256: bfe2c645c3a13a4e122f7ead32116b1674aaa57b8486f7f96adb2d954c0c3b3e
+  preview:
+    path: anki-preview.html
+    sha256: 382257837f8d0bd9d8a31d69644d3ff06b559763d802261f67e01b10141f02e6
+  summary:
+    path: anki-summary.md
+    sha256: b44be7196f75f0e1a9602197d8fac22bd26fb585ad4823b5dd51f7006164748c
+  anki_impact:
+    path: anki-impact.md
+    sha256: 055d8cded7eff106968fb43bd47162f1fd22aab300c6d5f6ddb8d35be1ba87a9
+  source_map:
+    path: source-map.md
+    sha256: 7154ee8c219142cb08eee561416978b26bad31055230af0cdb4555d3342f3295
+  structure_report:
+    path: structure-report.md
+    sha256: 3f72616cee44f02cd830fcbe42fe56d461b0c6ebd81cfae72a4f42441357125b
+  visual_qa:
+    path: visual-qa.md
+    sha256: ac6a18b5c3bf216eb22b276e714af804dcf5fa8dcd070383a59626abb020aa4b
+  qa_report:
+    path: qa-report.md
+    sha256: 8d9cffb52f9f98b304eabc61ff4e95f382c9a8d4dedc549004ba4ed331aa3c51
+  revision_notes:
+    path: revision-notes.md
+    sha256: c16d0411130010a6e1e67ef83a511754eb455e259c103a143167ce667348dcb2
+  integration_note:
+    path: codex-integration-note.md
+    sha256: f275111f3f2345cdb4c3af67fa05b6e0ffab05e2c91cb0d040dcabed40aee7bc
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM was available; command-level live tests were not performed.
+- Codex must perform full-book Section ID and Anki ID uniqueness, cross-chapter duplicate checks, unified PDF/APKG builds,
+  AnkiConnect synchronization, Git integration, and release decisions.
+- The review PDF is a chapter-level reading artifact and should be rebuilt with the repository-wide pipeline during integration.

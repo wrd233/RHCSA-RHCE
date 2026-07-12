@@ -1,0 +1,76 @@
+package_version: 1
+chapter:
+  id: RHCSA-26
+  exam: RHCSA
+  part: 6
+  number: 26
+  slug: nfs-client
+  title: NFS 客户端与远程文件系统
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/nfs-client/lecture.md
+  anki: content/rhcsa/chapters/nfs-client/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:30:00+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: c0f59bd2dd6390c3508ae483ab31c18357c92abbe096befab8fbd13e633d6c13
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 169e92532fc8223f33e191f1f1bacaf45e59a990610beda7091e152f4683e3e4
+  anki:
+    path: anki.yml
+    sha256: fbbf89e20668d2daa0f5d6c3e4f8e87395b44ebcc07ead6ea244bd8d6cd5dfe8
+  preview:
+    path: anki-preview.html
+    sha256: c411a12708b5f854561f34ed395b0a6e3d543f906f682562ed309697bd4e2046
+  summary:
+    path: anki-summary.md
+    sha256: d9dee9c59d10045e5c8161bab750e65b3534860433ba5e540ac1d6dead56891a
+  anki_impact:
+    path: anki-impact.md
+    sha256: cdd1f5bdca5b60e8d1bbff3f75c801b935ee62c7567215cc5cfcfd4e0df1538b
+  source_map:
+    path: source-map.md
+    sha256: 69139fabe3ac6f0194e0ec38fef30a769b75572ea71c22e8707356ebbf948405
+  structure_report:
+    path: structure-report.md
+    sha256: b479216dadd084feda3d248ce3b6883ad41134c986cd26bb5cb5f888327609dd
+  visual_qa:
+    path: visual-qa.md
+    sha256: e9b1632cfcf3a4c2ed596f807c49d38bec00db62de603d68419457034abfaa51
+  qa_report:
+    path: qa-report.md
+    sha256: 0955ec8ff12a654b4c3426a1e78a4fa05f4ac81a23e60f7a7c3e8bec5b9096dd
+  revision_notes:
+    path: revision-notes.md
+    sha256: 1b204568735975d321a79999623fa49ab32368ce977d2c606b389169d0220954
+  integration_note:
+    path: codex-integration-note.md
+    sha256: be430a281f912ddf0b246ee2efacacd27246dd28d8cec08858b917b34bd7af94
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9/NFS live environment
+- Full-book Section/Anki uniqueness and cross-chapter duplication require Codex
+- No repository write, APKG build, AnkiConnect, commit or release action performed

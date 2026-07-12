@@ -5,7 +5,9 @@ exam: RHCSA
 part: "第四篇 软件与系统内容管理"
 slug: dnf-repositories-modules-groups
 validation: static
-status: integrated
+status: content_frozen_for_integration
+candidate_version: "5.1"
+base_commit: "961a29b3af4c07a828078a5de90c221a036546df"
 sources:
   - RH124-RHEL9-Ch14
   - RH134-RHEL9
@@ -16,36 +18,148 @@ sources:
   - RHEL9-Managing-Software-with-DNF
 ---
 
-<!-- 本文件是候选内容真源。稳定 Section ID、来源和静态验证状态属于维护层，正式渲染不显示。 -->
+<!-- 本文件为 RHCSA-17 冻结候选内容真源。Section ID 与来源字段属于维护层，阅读版不显示。 -->
 
-# 第 17 章　DNF 仓库、模块流与包组
+<div class="cover-page">
+  <div class="cover-kicker">R H E L 9 · R H C S A 实 操 讲 义</div>
+  <div class="cover-number">17</div>
+  <h1>DNF 仓库、模块流与包组</h1>
+  <p class="cover-subtitle">从 repo 定义到可审计事务：把来源、元数据、候选、信任和状态放进同一条证据链。</p>
+  <div class="cover-tags">
+    <span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+  </div>
+  <div class="cover-edition">大字号阅读版</div>
+</div>
 
-一条 `dnf install` 命令背后并不只有“下载一个 RPM”这一步。DNF 先读取仓库定义，定位远端或本地内容根，获取并校验仓库元数据，再依据启用状态、架构、版本、模块流、优先级和排除规则构造候选集合；随后依赖求解器生成事务计划，用户确认后才由 RPM 层改变本机的已安装状态。任何一层出现偏差，都可能表现为“找不到包”“依赖冲突”“签名失败”或“仓库看得到但不能用”。
+<div class="navigation-page">
+  <h1>本章阅读导航</h1>
+  <p class="nav-lead"><strong>先抓住一条主线：</strong>DNF 不是看到 repo 文件后就直接安装包，而是依次读取来源定义、取得元数据、形成候选集合、验证信任、求解依赖并提交事务。</p>
+  <div class="model-grid">
+    <div class="model-card"><b>01</b><strong>仓库定义</strong><span>确认 repo ID、来源、启用和信任字段</span></div>
+    <div class="model-card"><b>02</b><strong>元数据与缓存</strong><span>确认 `repomd.xml` 和本地视图是否可用</span></div>
+    <div class="model-card"><b>03</b><strong>候选包解析</strong><span>结合架构、版本、过滤、stream 与优先级</span></div>
+    <div class="model-card"><b>04</b><strong>信任验证</strong><span>区分 TLS 传输链与 GPG 包签名链</span></div>
+    <div class="model-card"><b>05</b><strong>事务计划</strong><span>先读 Transaction Summary，再决定是否提交</span></div>
+    <div class="model-card"><b>06</b><strong>历史与交接</strong><span>用 history 审计，再转交 RPM、服务与功能层</span></div>
+  </div>
+  <div class="nav-columns">
+    <div>
+      <h2>专题地图</h2>
+      <ul class="topic-map">
+        <li><em>知识专题</em>从仓库定义到事务：DNF 到底在解析什么</li>
+        <li><em>知识专题</em>repo 文件、来源定位与信任字段</li>
+        <li><em>操作专题</em>配置并分层验证一个自定义仓库</li>
+        <li><em>操作专题</em>从需求定位候选软件并审阅事务</li>
+        <li><em>知识/操作</em>模块 stream、profile 与模块过滤</li>
+        <li><em>知识专题</em>包组、环境组、优先级与排除</li>
+        <li><em>操作专题</em>建立本地仓库</li>
+        <li><em>诊断专题</em>配置、元数据、TLS、GPG、过滤和依赖</li>
+        <li><em>经典任务</em>配置可信仓库；诊断可见但不可用</li>
+      </ul>
+    </div>
+    <div>
+      <h2>阅读时持续回答</h2>
+      <ol class="questions">
+        <li>当前证据是在证明配置、元数据、候选还是事务？</li>
+        <li>仓库 ID、显示名和文件名分别是什么身份？</li>
+        <li>URL 是否真正指向包含 `repodata` 的仓库根？</li>
+        <li>目标包为什么进入或离开当前候选集合？</li>
+        <li>TLS 与 GPG 分别验证哪一条信任链？</li>
+        <li>stream 与 profile 改变的是同一个状态吗？</li>
+        <li>Transaction Summary 会增加、升级或删除什么？</li>
+        <li>DNF 成功后还需要向哪一章交接？</li>
+      </ol>
+      <div class="nav-note"><strong>阅读建议：</strong>每完成一个专题，都用“当前证据能证明什么、还不能证明什么、下一条证据是什么”复述一次；经典任务先独立完成，再对照参考解答检查证据链。</div>
+    </div>
+  </div>
+</div>
 
-本章围绕软件来源和解析模型展开。重点不是背诵所有 DNF 子命令，而是建立一条可证明的证据链：
+# 第 17 章 · 正文
+
+一条 `dnf install` 命令背后并不只有“下载一个 RPM”。DNF 必须先读取客户端仓库定义，定位远端或本地内容根，取得并校验仓库元数据，再结合启用范围、架构、版本、模块流、优先级和排除规则形成候选集合。依赖求解器随后生成事务计划；只有事务真正提交后，RPM 已安装数据库才发生变化，DNF history 才留下可审计记录。
+
+这条链上的每一层都可能独立失败。repo 文件存在，不代表仓库已被 DNF 正确识别；仓库出现在 `repolist`，不代表 `repomd.xml` 能够取得；元数据可用，不代表目标包没有被架构、exclude 或 module filtering 隐藏；候选包存在，不代表依赖一定可解；事务成功，也不代表应用配置、服务状态和外部功能已经正确。
 
 ```text
 仓库定义
 → 来源定位
 → 元数据与缓存
 → 候选包、模块和包组
+→ TLS / GPG 信任
 → 依赖求解与事务
-→ 安装数据库和历史证据
+→ RPM 状态、history 与功能交接
 ```
 
-**[概念]** 仓库（repository） 是带有元数据的软件内容集合。仓库根通常包含 `repodata/repomd.xml`，该文件再指向包清单、依赖、组和可能存在的模块元数据。一个目录中只有若干 RPM，并不自动成为 DNF 仓库。
+本章围绕这条证据链组织内容。RPM 文件归属与校验留给第 16 章；网络、路由和 DNS 的完整配置留给第 18、19 章；本章只在诊断时识别这些层并给出交接证据。`--allowerasing`、`gpgcheck=0` 和 `sslverify=0` 都不会被当成未经调查的默认答案。
 
-**[概念]** 仓库定义（repository definition） 是 `/etc/yum.repos.d/*.repo` 中的 section。section ID 是命令行引用仓库的稳定标识；`name` 只是显示名称；`baseurl`、`mirrorlist` 或 `metalink` 告诉 DNF 到哪里寻找仓库内容。
+<div class="concept-stack">
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>仓库定义（repository definition）</strong> 是 `/etc/yum.repos.d/*.repo` 中以 `[repo-id]` 开始的客户端 section。它声明仓库身份、内容位置、默认启用状态和信任策略，却不保存软件包清单本身。repo 文件能被读取只证明配置层存在；只有后续元数据请求成功，才能继续讨论候选和事务。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>仓库元数据与缓存（metadata and cache）</strong> 让 DNF 认识包名、版本、架构、依赖、文件、包组和可能存在的模块信息。仓库根通常以 `repodata/repomd.xml` 为入口，本地缓存只是客户端对该元数据的当前视图；清理缓存不能修复错误的 URL、DNS、服务器内容或 GPG key。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>GPG 信任（GPG trust）</strong> 描述安装包是否由受信任签名者签发且内容未被篡改。`gpgcheck=1` 是校验策略，`gpgkey=` 是公钥入口；它们不能互相替代。HTTPS/TLS 保护传输通道和服务器身份，GPG 保护包签名，两条信任链必须根据错误层分别调查。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>候选包（package candidate）</strong> 是当前仓库集合、架构、版本、优先级、排除规则和模块状态共同允许求解器选择的软件包构建。服务器目录中存在某个 RPM，并不意味着它一定处于客户端当前候选集合；`repoquery` 观察的正是这个被规则塑造后的视图。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>模块流（module stream）</strong> 表示同一软件栈的一条版本线。启用 stream 会改变模块化包的候选集合，但不等于已经安装其中的全部内容；流名称、默认标记和可用版本必须从当前仓库元数据读取，不能把另一台机器或另一小版本的输出当成固定事实。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>profile</strong> 是模块针对 server、client、development 等用例定义的软件包集合。`module enable NAME:STREAM` 选择版本线，`module install NAME:STREAM/PROFILE` 才按用例提交安装事务；stream 是版本状态，profile 是安装选择，两者不能混为一谈。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>包组与环境组（package group / environment group）</strong> 是仓库元数据描述的软件集合，不是一个 RPM。成员可能分为 mandatory、default、optional 和 conditional；组安装只说明一组包按元数据进入事务，不保证其中的服务已经配置、启动或能够对外提供功能。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>事务历史（transaction history）</strong> 是 DNF 对已提交软件事务的审计记录，能够回答某次操作安装、升级或删除了哪些包。history 不是无条件回滚系统的快照：`undo` 或 `rollback` 仍依赖旧构建可获得、依赖关系可满足；Red Hat 不支持借此把关键 RHEL 系统包降级到旧版本，因此它们不能被当成核心系统包的盲目恢复按钮。</p></div>
+</div>
 
-**[概念]** 候选包（package candidate） 是当前配置、仓库、架构、版本、模块和过滤规则共同允许 DNF 选择的软件包构建。仓库中存在某个 RPM，不代表它一定处于当前候选集合中。
+<section class="quick-reference">
+  <div class="quickref-intro"><span>操作语义</span><p>先理解命令作用对象，再记关键形式。速查区只覆盖本章最重要的入口；正文专题仍负责解释状态、证据、验证和边界。</p></div>
 
-**[概念]** 模块（module） 用 stream 表达同一软件栈的版本线，用 profile 表达 server、client、development 等安装用例。启用 stream 只是改变候选集合；安装 profile 才会安装该用例中的包。
+  <div class="command-group">
+    <h2>dnf repolist / makecache / repoquery</h2>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>dnf repolist [--all]\ndnf makecache [--refresh]\ndnf repoquery [OPTIONS] [PACKAGE ...]</code></pre>
+    <p>依次观察仓库是否被识别、真实刷新元数据、查询当前候选内容。三条命令证明的层次不同，不能互相替代。</p>
+    <div class="forms-title">重要参数 / 形式</div>
+    <dl><dt>`repolist --all`</dt><dd>列出启用和禁用仓库，验证配置解析与默认启用状态。</dd><dt>`makecache --refresh`</dt><dd>强制重新检查启用仓库元数据，暴露 URL、TLS、HTTP 和元数据错误。</dd><dt>`repoquery --repo ID PKG`</dt><dd>把候选查询限制到指定 repo ID，证明该仓库提供目标构建。</dd><dt>`--installed` / `--available`</dt><dd>分别观察已安装集合或当前可用候选集合。</dd></dl>
+  </div>
 
-**[概念]** 包组（package group） 和环境组是仓库元数据中的软件集合。组成员可分为 mandatory、default、optional 和 conditional。它们不是一个 RPM，也不保证组内服务已经配置或运行。
+  <div class="command-group">
+    <h2>repo 配置文件</h2>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>/etc/yum.repos.d/NAME.repo\n[repo-id]\nname=...\nbaseurl=... | mirrorlist=... | metalink=...\nenabled=0|1\ngpgcheck=0|1\ngpgkey=...</code></pre>
+    <p>持久定义仓库身份、来源、默认参与状态和包签名策略。文件名、repo ID 与显示名称是不同身份。</p>
+    <div class="forms-title">重要参数 / 形式</div>
+    <dl><dt>`baseurl`</dt><dd>直接指向包含 `repodata` 的仓库根。</dd><dt>`mirrorlist`</dt><dd>指向返回可用镜像 URL 列表的服务。</dd><dt>`metalink`</dt><dd>提供镜像选择及附加元数据。</dd><dt>`enabled`</dt><dd>控制仓库是否默认参与普通查询和求解。</dd><dt>`gpgcheck` / `gpgkey`</dt><dd>分别声明包签名校验策略和公钥入口。</dd></dl>
+  </div>
 
-**[操作语义]** `dnf repolist` 观察 DNF 是否识别仓库及其启用状态；`dnf makecache --refresh` 实际请求并刷新元数据；`dnf repoquery` 查询候选内容和依赖；`dnf install/upgrade/remove` 提交事务；`dnf history` 审计已执行事务。
+  <div class="command-group">
+    <h2>dnf install / upgrade / remove / history</h2>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>dnf install [OPTIONS] PACKAGE ...\ndnf upgrade [PACKAGE ...]\ndnf remove PACKAGE ...\ndnf history [list|info|undo|rollback] [ID]</code></pre>
+    <p>让求解器生成并提交软件事务，再通过 history 审计已发生的变化。删除和恢复类操作必须先读完整事务摘要。</p>
+    <div class="forms-title">重要参数 / 形式</div>
+    <dl><dt>`--assumeno`</dt><dd>生成事务计划但默认拒绝提交，适合预览安装、升级或删除影响。</dd><dt>`--enablerepo=ID`</dt><dd>只在当前命令临时启用指定仓库，不改变 repo 文件。</dd><dt>`--disablerepo=PATTERN`</dt><dd>只在当前命令临时缩小仓库范围；限定来源时必须保留依赖仓库。</dd><dt>`history info ID`</dt><dd>读取指定事务的命令、状态和包变化。</dd></dl>
+  </div>
 
-**[操作语义]** `createrepo_c` 为普通 RPM 目录生成仓库元数据。若内容需要保留包组或模块语义，还必须确认相应 comps 或模块元数据是否存在，不能把“有 repodata”扩大为“所有高层元数据都完整”。
+  <div class="command-group">
+    <h2>dnf module</h2>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>dnf module list [NAME]\ndnf module info NAME[:STREAM]\ndnf module enable NAME:STREAM\ndnf module install NAME:STREAM[/PROFILE]\ndnf module reset|disable NAME</code></pre>
+    <p>观察并改变模块版本线和 profile 安装选择。启用 stream 与安装 profile 改变的是不同状态。</p>
+    <div class="forms-title">重要参数 / 形式</div>
+    <dl><dt>`NAME:STREAM`</dt><dd>显式选择模块及版本线，避免依赖模糊默认值。</dd><dt>`NAME:STREAM/PROFILE`</dt><dd>按指定用例安装 profile 中的软件集合。</dd><dt>`reset`</dt><dd>清除显式 stream 选择，不等同于删除已安装包。</dd><dt>`disable`</dt><dd>使该模块的流不参与普通模块化候选解析。</dd></dl>
+  </div>
+
+  <div class="command-group">
+    <h2>dnf group</h2>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>dnf group list [--hidden]\ndnf group info GROUP\ndnf group install GROUP\ndnf group remove GROUP</code></pre>
+    <p>查询和提交包组或环境组事务。先用 `group info` 读取 mandatory、default 和 optional 成员，再决定安装范围。</p>
+    <div class="forms-title">重要参数 / 形式</div>
+    <dl><dt>`list --hidden`</dt><dd>同时查看默认隐藏的组。</dd><dt>`group info`</dt><dd>读取组 ID、描述和成员分类。</dd><dt>`group install`</dt><dd>按组元数据形成安装事务，不等于完成服务配置。</dd></dl>
+  </div>
+
+  <div class="command-group">
+    <h2>createrepo_c</h2>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>createrepo_c [OPTIONS] DIRECTORY</code></pre>
+    <p>扫描普通 RPM 目录并生成可供 DNF 读取的 `repodata`。它不会凭空恢复缺失的包组或模块语义。</p>
+    <div class="forms-title">重要参数 / 形式</div>
+    <dl><dt>`DIRECTORY`</dt><dd>包含目标 RPM 的仓库内容目录。</dd><dt>`--update`</dt><dd>在已有元数据基础上更新普通仓库索引。</dd><dt>`file:///PATH`</dt><dd>客户端 repo 定义引用本地绝对路径时使用三条斜线。</dd></dl>
+  </div>
+</section>
 
 <section class="topic knowledge" id="RHCSA-17-K01" data-kind="knowledge-topic">
 
@@ -624,7 +738,7 @@ dnf module disable <module>
 ### ⑤ [操作] 切流前使用预览和分层验证
 
 ```bash
-dnf module switch-to --assumeno <module>:<target-stream>
+dnf --assumeno module switch-to <module>:<target-stream>
 ```
 
 若当前工具支持该组合，先查看拟升级、降级、替换或删除的包；真实命令语法以 `dnf module switch-to --help` 为准。提交后分别验证：目标 stream、installed profile、代表包版本和应用功能。
@@ -1363,5 +1477,49 @@ DNF 的核心不是一组安装命令，而是一条来源和解析链。repo �
 ```
 
 仓库不见时查定义；`repomd.xml` 错时查仓库根和传输；包不见时查仓库范围、架构、排除和模块；GPG 失败时查 key 与来源；依赖冲突时读完整摘要和依赖，不默认删除现有包。只有每一层都由相应证据支撑，软件来源和事务才真正可解释、可复核、可迁移。
+
+### 工作方法：先判定失败层，再选择最小动作
+
+面对新的 DNF 题目或真实故障，优先把现象改写成一个可判定问题：是客户端没有加载仓库定义，还是元数据无法取得；是候选包被过滤，还是依赖求解失败；是包签名不可信，还是事务完成后还缺少服务配置。每次只改变能够解释当前证据的最小对象，并在同一层重新验证。
+
+```text
+先读完整错误
+→ 标记失败层
+→ 选择最有区分度的证据
+→ 做最小修复
+→ 在原层复验
+→ 再进入下一层验收
+```
+
+### 主要判断表
+
+| 看到的证据 | 可以确认 | 仍不能确认 | 下一步 |
+|---|---|---|---|
+| repo ID 出现在 `dnf repolist --all` | 配置被 DNF 识别，启用状态可见 | URL 与元数据可用 | `dnf makecache --refresh` |
+| `makecache --refresh` 成功 | 启用仓库的元数据可取得并通过当前校验 | 目标包一定可见 | 限定仓库执行 `repoquery` |
+| `repoquery` 返回目标候选 | 当前元数据和过滤规则允许看到该构建 | 依赖一定可解、事务已经提交 | `dnf install --assumeno` |
+| Transaction Summary 合理 | 求解器生成了预期事务计划 | 事务已经发生 | 明确确认后提交 |
+| `dnf history info` 记录成功事务 | DNF 事务层发生了可审计变化 | 应用配置和服务功能正确 | 转交对应配置、systemd 和功能验证 |
+| 模块 stream 已启用 | 候选版本线发生改变 | profile 已安装 | 查询模块状态与已安装 profile |
+| 包组安装完成 | 一组软件包按组元数据完成事务 | 组内服务已经配置并运行 | 转交相应服务章节 |
+
+### 本章离场检查
+
+进入下一章前，应能够在不依赖“反复试命令”的情况下完成以下判断：
+
+1. 看到一个 repo 文件时，能够区分文件名、section ID、显示名和内容 URL；
+2. 能够说明 `repolist`、`makecache --refresh`、`repoquery` 和事务摘要分别证明哪一层；
+3. 遇到“仓库有包但客户端找不到”时，能够继续检查架构、exclude、priority 和 module filtering；
+4. 能够区分 TLS 连接问题、GPG key 问题和包签名问题，而不是关闭验证；
+5. 能够区分模块 stream、profile、包组和普通包事务；
+6. 能够从 DNF history 交接到 RPM、systemd、网络和功能层验证。
+
+```text
+配置可见 → 元数据可用 → 候选可解析 → 来源可信 → 事务成功 → 功能交接
+```
+
+### 向下一章交接
+
+本章结束在“软件来源、候选集合和事务证据”这一层。第 18 章《NetworkManager、IPv4 地址与路由》将完整处理网络连接、地址和路由；第 19 章《主机名、NSS 与 DNS 名称解析》将完整处理名称解析。DNF 诊断中出现 DNS、路由或连接错误时，本章只负责识别错误层并保留证据，不在这里重复展开网络配置。RPM 已安装数据库、文件归属和校验继续由第 16 章负责。
 
 </section>

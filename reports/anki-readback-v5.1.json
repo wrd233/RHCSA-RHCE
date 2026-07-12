@@ -1,0 +1,413 @@
+{
+  "endpoint": "http://127.0.0.1:8765",
+  "api_version": 6,
+  "notes": 3363,
+  "cards": 3711,
+  "by_model": {
+    "RedHat-QA": 3092,
+    "RedHat-Cloze": 271
+  },
+  "fields": {
+    "RedHat-QA": [
+      "ID",
+      "Question",
+      "Answer",
+      "Extra",
+      "Source"
+    ],
+    "RedHat-Cloze": [
+      "ID",
+      "Text",
+      "Extra",
+      "Source"
+    ]
+  },
+  "templates_hide_source": true,
+  "duplicate_stable_ids": [],
+  "chapter_count": 34,
+  "samples": [
+    {
+      "chapter": "chapter::acl-collaboration-directories",
+      "model": "RedHat-QA",
+      "id": "RHCSA-09-K01-QA-001",
+      "fields": {
+        "ID": "RHCSA-09-K01-QA-001",
+        "Question": "<p>POSIX ACL 中，access ACL 与目录 default ACL 分别控制什么？</p>",
+        "Answer": "<p>access ACL 参与当前对象的访问检查；default ACL 用于初始化目录内未来新对象的 access ACL。</p>",
+        "Extra": "<p>default ACL 不能附着在普通文件上，也不会回溯修改已有对象。</p>",
+        "Source": "<p>acl(5); RH124</p>"
+      },
+      "tags": [
+        "card::concept",
+        "chapter::acl-collaboration-directories",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::acl-model"
+      ]
+    },
+    {
+      "chapter": "chapter::acl-collaboration-directories",
+      "model": "RedHat-QA",
+      "id": "RHCSA-09-K01-QA-002",
+      "fields": {
+        "ID": "RHCSA-09-K01-QA-002",
+        "Question": "<p><code>user::rwx</code> 与 <code>user:alice:rwx</code> 的主体有何区别？</p>",
+        "Answer": "<p><code>user::</code> 表示文件所有者；<code>user:alice:</code> 表示 named user alice。</p>",
+        "Extra": "<p>空 qualifier 不是“所有用户”，而是 owner 条目。</p>",
+        "Source": "<p>acl(5); getfacl(1)</p>"
+      },
+      "tags": [
+        "card::comparison",
+        "chapter::acl-collaboration-directories",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::acl-model"
+      ]
+    },
+    {
+      "chapter": "chapter::autofs",
+      "model": "RedHat-QA",
+      "id": "RHCSA-NFS-QA-007",
+      "fields": {
+        "ID": "RHCSA-NFS-QA-007",
+        "Question": "<p>autofs master map 的职责是什么？</p>",
+        "Answer": "<p>把 indirect map 的父挂载点或 direct map 标记 <code>/-</code> 关联到子 map。</p>",
+        "Extra": "<p>具体 key、选项和远端位置由子 map 定义。</p>",
+        "Source": "<p>auto.master(5); autofs(5); RH134-RHEL9</p>"
+      },
+      "tags": [
+        "card::concept",
+        "chapter::autofs",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::object-model"
+      ]
+    },
+    {
+      "chapter": "chapter::autofs",
+      "model": "RedHat-QA",
+      "id": "RHCSA-NFS-QA-008",
+      "fields": {
+        "ID": "RHCSA-NFS-QA-008",
+        "Question": "<p>展开 autofs 当前有效映射的命令是什么？</p>",
+        "Answer": "<p><code>automount -m</code></p>",
+        "Extra": "<p>它证明配置可读取和展开，不证明远端已经挂载或可读写。</p>",
+        "Source": "<p>automount(8); autofs(8); RHEL9-Managing-File-Systems-Ch19</p>"
+      },
+      "tags": [
+        "card::command",
+        "chapter::autofs",
+        "exam::rhcsa",
+        "priority::P0",
+        "topic::configuration-evidence"
+      ]
+    },
+    {
+      "chapter": "chapter::block-devices-partitions-signatures",
+      "model": "RedHat-QA",
+      "id": "RHCSA-FILESYSTEMS-QA-001",
+      "fields": {
+        "ID": "RHCSA-FILESYSTEMS-QA-001",
+        "Question": "<p>写操作前，怎样显式查看块设备拓扑、类型、签名标识和挂载点？</p>",
+        "Answer": "<p><code>lsblk -o NAME,PATH,SIZE,TYPE,PKNAME,FSTYPE,UUID,PARTUUID,MOUNTPOINTS</code></p>",
+        "Extra": "<p>实际调查可继续加入 <code>MAJ:MIN</code>、<code>MODEL</code>、<code>SERIAL</code>、<code>WWN</code>、<code>PTTYPE</code> 和 <code>PTUUID</code>。默认列不是稳定接口。</p>",
+        "Source": "<p>RH124-RHEL9-Ch15; lsblk(8); legacy::RHCSA-FILESYSTEMS</p>"
+      },
+      "tags": [
+        "card::command",
+        "chapter::block-devices-partitions-signatures",
+        "exam::rhcsa",
+        "priority::P0",
+        "topic::device-identity"
+      ]
+    },
+    {
+      "chapter": "chapter::block-devices-partitions-signatures",
+      "model": "RedHat-QA",
+      "id": "RHCSA-FILESYSTEMS-QA-002",
+      "fields": {
+        "ID": "RHCSA-FILESYSTEMS-QA-002",
+        "Question": "<p><code>wipefs /dev/vdb</code> 与 <code>wipefs -a /dev/vdb</code> 的区别是什么？</p>",
+        "Answer": "<p>前者列出可识别签名及偏移；后者删除可识别签名。</p>",
+        "Extra": "<p>调查时不得加 <code>-a</code>。<code>wipefs -a</code> 不是空盘检查，也不是安全擦除。</p>",
+        "Source": "<p>wipefs(8); legacy::RHCSA-FILESYSTEMS</p>"
+      },
+      "tags": [
+        "card::comparison",
+        "chapter::block-devices-partitions-signatures",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::signatures"
+      ]
+    },
+    {
+      "chapter": "chapter::boot-grub-recovery",
+      "model": "RedHat-QA",
+      "id": "RHCSA-BOOT-QA-001",
+      "fields": {
+        "ID": "RHCSA-BOOT-QA-001",
+        "Question": "<p>RHEL 9 主机从固件到登录环境的核心启动链是什么？</p>",
+        "Answer": "<p><code>firmware → GRUB → kernel 与 initramfs → 真实根文件系统 → systemd PID 1 → default target</code>。</p>",
+        "Extra": "<p>每一阶段能读取的配置和证据不同。故障诊断应先判断控制权已经到哪一层。</p>",
+        "Source": "<p>RH134-RHEL9; RHCSA细分课件18 pp.15-16</p>"
+      },
+      "tags": [
+        "card::process",
+        "chapter::boot-grub-recovery",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::boot-chain"
+      ]
+    },
+    {
+      "chapter": "chapter::boot-grub-recovery",
+      "model": "RedHat-QA",
+      "id": "RHCSA-BOOT-QA-002",
+      "fields": {
+        "ID": "RHCSA-BOOT-QA-002",
+        "Question": "<p>怎样查询当前持久默认 target，并把下次正常启动目标设置为 <code>multi-user.target</code>？</p>",
+        "Answer": "<pre><code>systemctl get-default\nsystemctl set-default multi-user.target\n</code></pre>",
+        "Extra": "<p><code>set-default</code> 不会自动切换当前运行状态；修改后再次执行 <code>get-default</code>。</p>",
+        "Source": "<p>systemctl(1); systemd.special(7); RHCSA细分课件18 p.13</p>"
+      },
+      "tags": [
+        "card::command",
+        "chapter::boot-grub-recovery",
+        "exam::rhcsa",
+        "priority::P0",
+        "topic::target-state"
+      ]
+    },
+    {
+      "chapter": "chapter::comprehensive",
+      "model": "RedHat-QA",
+      "id": "RHCSA-COMPREHENSIVE-QA-001",
+      "fields": {
+        "ID": "RHCSA-COMPREHENSIVE-QA-001",
+        "Question": "<p>面对一组跨用户、网络、服务和存储的 RHCSA 要求，第一步应产出什么？</p>",
+        "Answer": "<p>把原题拆成独立评分行，并为每行写出目标对象、精确参数、限制和必需证据。</p>",
+        "Extra": "<p>不要先把题号转换成命令清单；评分对象是终态。</p>",
+        "Source": "<p>legacy comprehensive anki; RHCSA-33 lecture</p>"
+      },
+      "tags": [
+        "card::process",
+        "chapter::comprehensive",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::method"
+      ]
+    },
+    {
+      "chapter": "chapter::comprehensive",
+      "model": "RedHat-QA",
+      "id": "RHCSA-COMPREHENSIVE-QA-002",
+      "fields": {
+        "ID": "RHCSA-COMPREHENSIVE-QA-002",
+        "Question": "<p>哪些关系应被标记为综合任务中的硬依赖？</p>",
+        "Answer": "<p>当前置对象不成立时，后续功能无法正确建立或验证的关系。</p>",
+        "Extra": "<p>例如网络和名称解析是仓库、NFS 与镜像仓库的硬依赖。</p>",
+        "Source": "<p>legacy comprehensive anki; RHCSA-33 lecture</p>"
+      },
+      "tags": [
+        "card::concept",
+        "chapter::comprehensive",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::dependency"
+      ]
+    },
+    {
+      "chapter": "chapter::copy-archive-compression-transfer",
+      "model": "RedHat-QA",
+      "id": "RHCSA-06-K01-QA-001",
+      "fields": {
+        "ID": "RHCSA-06-K01-QA-001",
+        "Question": "<p>复制或同步一个数据集合时，至少应把哪三个状态维度分开？</p>",
+        "Answer": "<p>字节内容、名称与目录层级、元数据。</p>",
+        "Extra": "<p>摘要相同只证明字节；路径、类型、模式、所有者、时间戳、ACL 和安全上下文仍需独立证据。</p>",
+        "Source": "<p>RH124 Ch.3; RH124 Ch.13; cp(1); mv(1); install(1); stat(1)</p>"
+      },
+      "tags": [
+        "card::concept",
+        "chapter::copy-archive-compression-transfer",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::object-model"
+      ]
+    },
+    {
+      "chapter": "chapter::copy-archive-compression-transfer",
+      "model": "RedHat-QA",
+      "id": "RHCSA-06-K01-QA-002",
+      "fields": {
+        "ID": "RHCSA-06-K01-QA-002",
+        "Question": "<p>“复制目录本身”和“复制目录内容”有什么终态差异？</p>",
+        "Answer": "<p>复制目录本身会在目标下形成源目录这一层；复制目录内容则让源的成员直接进入既定目标目录。</p>",
+        "Extra": "<p>执行前应先写出预期目录树，不能只看命令是否包含斜杠。</p>",
+        "Source": "<p>RH124 Ch.3; RH124 Ch.13</p>"
+      },
+      "tags": [
+        "card::comparison",
+        "chapter::copy-archive-compression-transfer",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::object-model"
+      ]
+    },
+    {
+      "chapter": "chapter::dnf-repositories-modules-groups",
+      "model": "RedHat-QA",
+      "id": "RHCSA-PACKAGES-O01-QA-001",
+      "fields": {
+        "ID": "RHCSA-PACKAGES-O01-QA-001",
+        "Question": "<p>repo 文件默认位于哪个目录？</p>",
+        "Answer": "<p><code>/etc/yum.repos.d/*.repo</code></p>",
+        "Extra": "<p>每个仓库 section ID 应在已加载配置中唯一。</p>",
+        "Source": "<p>RH124; dnf.conf(5)</p>"
+      },
+      "tags": [
+        "card::path",
+        "chapter::dnf-repositories-modules-groups",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::repo-definition"
+      ]
+    },
+    {
+      "chapter": "chapter::dnf-repositories-modules-groups",
+      "model": "RedHat-QA",
+      "id": "RHCSA-PACKAGES-O01-QA-002",
+      "fields": {
+        "ID": "RHCSA-PACKAGES-O01-QA-002",
+        "Question": "<p>repo 的 <code>baseurl</code>、<code>enabled</code>、<code>gpgcheck</code>、<code>gpgkey</code> 分别表达什么？</p>",
+        "Answer": "<p>仓库内容根、默认启用状态、包签名校验策略、可信公钥入口。</p>",
+        "Extra": "<p><code>baseurl</code> 应指向包含 <code>repodata</code> 的仓库根；四个字段不能互相替代。</p>",
+        "Source": "<p>RH124; dnf.conf(5)</p>"
+      },
+      "tags": [
+        "card::parameter",
+        "chapter::dnf-repositories-modules-groups",
+        "exam::rhcsa",
+        "priority::P0",
+        "topic::repo-definition"
+      ]
+    },
+    {
+      "chapter": "chapter::exam-strategy",
+      "model": "RedHat-QA",
+      "id": "COMMON-STRATEGY-K01-QA-001",
+      "fields": {
+        "ID": "COMMON-STRATEGY-K01-QA-001",
+        "Question": "<p>实操题的最小读题模型包含哪四项？</p>",
+        "Answer": "<p>对象、当前状态、目标终态、限制条件。</p>",
+        "Extra": "<p>再为每个目标指定能够判定对错的证据。</p>",
+        "Source": "<p>Knowledge-Tree; RHCSA9-Mock; RHCE9-Mock</p>"
+      },
+      "tags": [
+        "card::process",
+        "chapter::exam-strategy",
+        "exam::rhce",
+        "exam::rhcsa",
+        "priority::P0"
+      ]
+    },
+    {
+      "chapter": "chapter::exam-strategy",
+      "model": "RedHat-QA",
+      "id": "COMMON-STRATEGY-K01-QA-002",
+      "fields": {
+        "ID": "COMMON-STRATEGY-K01-QA-002",
+        "Question": "<p>为什么“配置服务”不能被理解为单一命令？</p>",
+        "Answer": "<p>因为它可能同时包含软件、配置、当前状态、启动状态、监听和功能访问。</p>",
+        "Extra": "<p>每个层次需要独立证据。</p>",
+        "Source": "<p>Knowledge-Tree</p>"
+      },
+      "tags": [
+        "card::concept",
+        "chapter::exam-strategy",
+        "exam::rhce",
+        "exam::rhcsa",
+        "priority::P0"
+      ]
+    },
+    {
+      "chapter": "chapter::file-search-text-processing",
+      "model": "RedHat-QA",
+      "id": "RHCSA-FILES-O02-QA-001",
+      "fields": {
+        "ID": "RHCSA-FILES-O02-QA-001",
+        "Question": "<p><code>find</code> 的通用结构是什么？</p>",
+        "Answer": "<p><code>find START... EXPRESSION</code>。表达式通常由全局选项、测试、动作和逻辑运算符组成。</p>",
+        "Extra": "<p>阅读命令时先分离搜索起点、对象条件和动作。</p>",
+        "Source": "<p>RH124 RHEL 9, Ch.15 访问 Linux 文件系统; find(1)</p>"
+      },
+      "tags": [
+        "card::syntax",
+        "chapter::file-search-text-processing",
+        "exam::rhcsa",
+        "priority::P0",
+        "topic::find-expression"
+      ]
+    },
+    {
+      "chapter": "chapter::file-search-text-processing",
+      "model": "RedHat-QA",
+      "id": "RHCSA-FILES-O02-QA-002",
+      "fields": {
+        "ID": "RHCSA-FILES-O02-QA-002",
+        "Question": "<p>用 <code>find</code> 只选择普通文件的测试是什么？</p>",
+        "Answer": "<p><code>-type f</code>。</p>",
+        "Extra": "<p>目录为 <code>-type d</code>，符号链接为 <code>-type l</code>。</p>",
+        "Source": "<p>RH124 RHEL 9, Ch.15 访问 Linux 文件系统; find(1)</p>"
+      },
+      "tags": [
+        "card::parameter",
+        "chapter::file-search-text-processing",
+        "exam::rhcsa",
+        "priority::P0",
+        "topic::find-tests"
+      ]
+    },
+    {
+      "chapter": "chapter::filesystem-paths-types-links",
+      "model": "RedHat-QA",
+      "id": "RHCSA-04-K01-QA-001",
+      "fields": {
+        "ID": "RHCSA-04-K01-QA-001",
+        "Question": "<p>Linux 普通路径的统一起点是什么？</p>",
+        "Answer": "<p><code>/</code>。绝对路径从当前进程看到的根目录开始解析。</p>",
+        "Extra": "<p>单根目录树可以接入多个文件系统；统一命名空间不代表所有目录都在同一文件系统。</p>",
+        "Source": "<p>hier(7); RH124-RHEL9-Ch03</p>"
+      },
+      "tags": [
+        "card::concept",
+        "chapter::filesystem-paths-types-links",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::fhs"
+      ]
+    },
+    {
+      "chapter": "chapter::filesystem-paths-types-links",
+      "model": "RedHat-QA",
+      "id": "RHCSA-04-K01-QA-002",
+      "fields": {
+        "ID": "RHCSA-04-K01-QA-002",
+        "Question": "<p>系统和服务的主机特定配置通常放在哪个目录？</p>",
+        "Answer": "<p><code>/etc</code>。</p>",
+        "Extra": "<p>配置文件仍可能由软件包、管理员或工具生成；具体配置加载顺序属于相应服务章节。</p>",
+        "Source": "<p>hier(7); RHCSA-Course-03</p>"
+      },
+      "tags": [
+        "card::path",
+        "chapter::filesystem-paths-types-links",
+        "exam::rhcsa",
+        "priority::P1",
+        "topic::fhs"
+      ]
+    }
+  ],
+  "errors": [],
+  "expected_notes": 3363,
+  "expected_cards": 3711
+}

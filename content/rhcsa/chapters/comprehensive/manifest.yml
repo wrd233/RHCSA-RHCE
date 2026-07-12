@@ -1,0 +1,76 @@
+package_version: 1
+chapter:
+  id: RHCSA-33
+  exam: RHCSA
+  part: 9
+  number: 33
+  slug: comprehensive
+  title: RHCSA 综合任务与证据矩阵
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/comprehensive/lecture.md
+  anki: content/rhcsa/chapters/comprehensive/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T21:45:00+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 020b428a47b42eb30da63baffae419141529f0f3b7dcfbb1a45531e6603016d0
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 89671f09188a2b0df4911c32deca785ca0dfec1feb7f985a55d14d7ca549eb28
+  anki:
+    path: anki.yml
+    sha256: 8841edd0610fc557648e48dc5f449cdb7db303c48da8addd60c10773dff5e059
+  preview:
+    path: anki-preview.html
+    sha256: 93d7df8208aea059e63103ebe21d18a29026be8dc3c8f6459ce63c5948693cd2
+  summary:
+    path: anki-summary.md
+    sha256: 494dbf0c4bc90ae9228caf213f742c84666cb296f42073099b695535e2ca0b7e
+  anki_impact:
+    path: anki-impact.md
+    sha256: 51cfd463b6af8a57b3380487f986abf10f137073e9be453e44a7e9a5b4c0e72b
+  source_map:
+    path: source-map.md
+    sha256: 54fab87e8ec4f08519db5bec999d3af2d1aa491b9042eee24e9c0c2ee6cd3d34
+  structure_report:
+    path: structure-report.md
+    sha256: 33ac561b677a23a40391ce94c71eeceefe40c460881d4c2877752ae584a870af
+  visual_qa:
+    path: visual-qa.md
+    sha256: 97b4450ed414421cbd6cd64c1a36695f038da560b82a3bcf7d46ff264e0a7c2a
+  qa_report:
+    path: qa-report.md
+    sha256: 47c5de3898114928de9766f773dd3aca47fe0206067284427aee5bf4347e207c
+  revision_notes:
+    path: revision-notes.md
+    sha256: 41d6c1d1c73693d1d27f3a35e38e976deb15a2fb54dd5812eaee6e35cc37790d
+  integration_note:
+    path: codex-integration-note.md
+    sha256: f0b3345c0b012b74e98b33a69251f83d503add7165c5a2c04b2a233691fd9d86
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 live VM was available.
+- Global Section ID/Anki ID uniqueness and cross-chapter duplicate checks remain for Codex.
+- Formal unified PDF/APKG build and AnkiConnect are not part of this chapter package.

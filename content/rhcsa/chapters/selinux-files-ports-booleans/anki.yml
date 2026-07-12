@@ -1,7 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-29
 chapter_slug: selinux-files-ports-booleans
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-SELINUX-C01-CLOZE-001
   type: cloze
@@ -17,6 +19,8 @@ notes:
   - bridge::rhce
   - topic::classic-task-web-82
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SELINUX-C01-QA-001
   type: qa
   question: 综合处理“自定义 Web 目录 + 非标准端口 + Enforcing”任务时，应拆分哪些主要目标状态？
@@ -29,9 +33,11 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::process
-  - priority::P0
   - task::nonstandard-web
   - topic::classic-task-web-82
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-C01-QA-002
   type: qa
   question: '`systemctl is-enabled httpd` 返回 `enabled`，能否证明 Web 服务当前正在运行？'
@@ -44,9 +50,11 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::output
-  - priority::P0
   - task::nonstandard-web
   - topic::classic-task-web-82
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-C01-QA-003
   type: qa
   question: 经典任务中，为什么在最终验收前再次执行 `restorecon -Rv /srv/exam-site`？
@@ -59,9 +67,11 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::verification
-  - priority::P0
   - task::nonstandard-web
   - topic::classic-task-web-82
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-C01-QA-004
   type: qa
   question: 在自定义 Web 服务任务中，`curl` 请求成功能否单独证明配置可跨重启保持？
@@ -74,9 +84,11 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::verification
-  - priority::P0
   - task::nonstandard-web
   - topic::classic-task-web-82
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-C01-QA-005
   type: qa
   question: 已知服务 active、防火墙允许 82/tcp，但访问自定义目录仍返回 403，系统为 Enforcing。下一步优先检查什么？
@@ -89,9 +101,11 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::diagnosis
-  - priority::P0
   - task::nonstandard-web
   - topic::classic-task-web-82
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-C01-QA-006
   type: qa
   question: 已知 httpd 因绑定 TCP 82 失败，AVC 显示 `name_bind`，推荐的下一步调查是什么？
@@ -104,9 +118,11 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::diagnosis
-  - priority::P0
   - task::nonstandard-web
   - topic::classic-task-web-82
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-EXTRA-QA-001
   type: qa
   question: 文件从用户家目录移动到 `/var/www/html` 后仍带有 `user_home_t`，应优先使用什么操作修复？
@@ -125,6 +141,8 @@ notes:
   - coverage::extra
   - topic::file-contexts
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-EXTRA-QA-003
   type: qa
   question: '`setsebool -P` 短时间没有输出时，为什么不应立即重复执行？'
@@ -139,6 +157,8 @@ notes:
   - coverage::extra
   - topic::booleans
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-K02-QA-004
   type: qa
   question: AVC 中出现 `denied { name_bind }`、`comm="httpd"` 和 `tclass=tcp_socket`，下一步优先检查什么？
@@ -150,8 +170,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::diagnosis
-  - priority::P0
   - topic::port-types
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-K03-QA-001
   type: qa
   question: '`httpd_sys_content_t` 与 `httpd_sys_rw_content_t` 的核心差异是什么？'
@@ -164,8 +186,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::comparison
-  - priority::P1
   - topic::least-privilege-types
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-K03-QA-002
   type: qa
   question: 目录已标记为 `httpd_sys_rw_content_t`，能否证明 httpd 一定能写入？
@@ -178,8 +202,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::diagnosis
-  - priority::P1
   - topic::least-privilege-types
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-O02-CLOZE-001
   type: cloze
   text: '`{{c1::semanage fcontext}}` 建立持久路径规则，`{{c2::restorecon}}` 将规则应用到当前对象。'
@@ -191,8 +217,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::cloze
-  - priority::P0
   - topic::file-contexts
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SELINUX-O02-CLOZE-002
   type: cloze
   text: 为目录及其后代建立 fcontext 规则时，常用路径表达式是 `'/path{{c1::(/.*)?}}'`。
@@ -205,6 +233,8 @@ notes:
   - card::cloze
   - topic::file-contexts
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SELINUX-O02-QA-002
   type: qa
   question: '`chcon` 与 `semanage fcontext` 的核心区别是什么？'
@@ -217,8 +247,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::comparison
-  - priority::P0
   - topic::file-contexts
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-O02-QA-003
   type: qa
   question: 已经为 `/srv/site` 建立持久文件上下文规则，如何将规则应用到现有目录及其内容？
@@ -235,8 +267,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::command
-  - priority::P0
   - topic::file-contexts
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O02-QA-004
   type: qa
   question: 为 `/srv/site` 及其后代路径建立持久的 `httpd_sys_content_t` 规则，推荐命令是什么？
@@ -253,8 +287,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::command
-  - priority::P0
   - topic::file-contexts
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O02-QA-005
   type: qa
   question: 在 `'/srv/site(/.*)?'` 中，`(/.*)?` 的直观作用是什么？
@@ -266,8 +302,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::concept
-  - priority::P1
   - topic::file-contexts
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-O02-QA-006
   type: qa
   question: 如何检查策略认为 `/srv/site/index.html` 应具有的 SELinux 上下文？
@@ -284,8 +322,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::command
-  - priority::P1
   - topic::file-contexts
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O02-QA-007
   type: qa
   question: 文件上下文配置的稳定闭环应分别确认哪三层？
@@ -298,8 +338,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::verification
-  - priority::P0
   - topic::file-contexts
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O02-QA-008
   type: qa
   question: '`semanage fcontext -a` 提示同一路径规则已存在时，下一步应该做什么？'
@@ -311,8 +353,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::diagnosis
-  - priority::P1
   - topic::file-contexts
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-O02-QA-009
   type: qa
   question: '`semanage` 命令不存在时，如何从已启用仓库反查提供它的软件包？'
@@ -331,7 +375,9 @@ notes:
   - card::command
   - coverage::extra
   - topic::file-contexts
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O03-CLOZE-001
   type: cloze
   text: '`semanage port -a -t {{c1::<PORT_TYPE>}} -p {{c2::tcp|udp}} {{c3::<PORT_OR_RANGE>}}` 用于新增协议相关的端口类型映射。'
@@ -344,6 +390,8 @@ notes:
   - card::cloze
   - topic::port-types
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SELINUX-O03-CLOZE-002
   type: cloze
   text: '`semanage port {{c1::-a}}` 用于新增记录；目标端口已有记录并确需变更类型时使用 `{{c2::-m}}`。'
@@ -356,6 +404,8 @@ notes:
   - card::cloze
   - topic::port-types
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SELINUX-O03-QA-001
   type: qa
   question: 如何查看 SELinux 当前允许 `httpd` 使用的端口映射？
@@ -372,8 +422,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::command
-  - priority::P0
   - topic::port-types
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O03-QA-002
   type: qa
   question: 让 SELinux 允许 httpd 绑定 TCP 82 的新增命令是什么？
@@ -391,8 +443,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::command
-  - priority::P0
   - topic::port-types
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O03-QA-003
   type: qa
   question: '`semanage port -a` 与 `semanage port -m` 的选择依据是什么？'
@@ -404,8 +458,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::comparison
-  - priority::P0
   - topic::port-types
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-O03-QA-004
   type: qa
   question: 防火墙已经放行 TCP 82，能否证明 SELinux 允许 httpd 绑定它？
@@ -418,8 +474,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::comparison
-  - priority::P0
   - topic::port-types
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-O03-QA-005
   type: qa
   question: SELinux 端口映射正确后，至少还要验证哪三个与访问链路相关的状态？
@@ -432,8 +490,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::verification
-  - priority::P0
   - topic::port-types
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O04-CLOZE-001
   type: cloze
   text: '`setsebool {{c1::-P}} <BOOLEAN> on` 使 Boolean 修改跨重启保持。'
@@ -446,6 +506,8 @@ notes:
   - card::cloze
   - topic::booleans
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SELINUX-O04-QA-001
   type: qa
   question: SELinux Boolean 主要解决什么类型的问题？
@@ -458,8 +520,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::concept
-  - priority::P1
   - topic::booleans
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-O04-QA-002
   type: qa
   question: 如何搜索与 httpd 相关的 SELinux Boolean 当前值？
@@ -475,8 +539,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::command
-  - priority::P1
   - topic::booleans
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O04-QA-003
   type: qa
   question: Web 应用确实需要主动连接 MariaDB 时，哪个 Boolean 是典型的策略入口？
@@ -488,8 +554,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::concept
-  - priority::P1
   - topic::booleans
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SELINUX-O04-QA-004
   type: qa
   question: 如何持久启用 `httpd_can_network_connect_db`？
@@ -505,8 +573,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::command
-  - priority::P1
   - topic::booleans
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SELINUX-O04-QA-005
   type: qa
   question: Boolean 已开启但服务仍失败，下一步应怎样处理？
@@ -518,8 +588,10 @@ notes:
   - exam::rhcsa
   - chapter::selinux-files-ports-booleans
   - card::diagnosis
-  - priority::P1
   - topic::booleans
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-K01-QA-001
   type: qa
   question: 已经确认 SELinux 参与拒绝时，文件上下文、端口类型和 Boolean 分别处理什么对象？
@@ -533,7 +605,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::strategy-entry
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-K01-QA-002
   type: qa
   question: AVC 指向文件 `read` 或目录 `search`，且目标路径位于自定义目录。下一步最有区分度的证据是什么？
@@ -549,7 +623,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::strategy-entry
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-K01-QA-003
   type: qa
   question: 服务启动失败，拒绝行为为 TCP socket 的 `name_bind`。优先调查哪类 SELinux 状态？
@@ -564,7 +640,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::strategy-entry
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-K01-QA-004
   type: qa
   question: 为什么不应在看到 AVC 后立即用 `audit2allow` 生成本地策略模块？
@@ -577,7 +655,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::strategy-entry
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-29-K02-QA-001
   type: qa
   question: '`ls -Z`、`matchpathcon` 和 `semanage fcontext` 分别回答什么问题？'
@@ -593,7 +673,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::file-state-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-K02-QA-002
   type: qa
   question: '`ls -Z` 显示 `httpd_sys_content_t`，为什么仍不能证明配置是持久的？'
@@ -608,6 +690,8 @@ notes:
   - topic::file-state-model
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-K02-QA-003
   type: qa
   question: 把 `chcon` 描述为“重启后必定失效”为什么不准确？
@@ -621,7 +705,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::file-state-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-29-K02-QA-004
   type: qa
   question: 怎样只列出管理员本地添加或修改的 fcontext 记录？
@@ -638,7 +724,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::file-state-model
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-K02-QA-005
   type: qa
   question: 怎样直接验证 `/srv/site/index.html` 当前标签是否符合策略默认值？
@@ -655,7 +743,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::file-state-model
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O01-QA-001
   type: qa
   question: 递归重标记现有业务目录前，怎样先预览 `restorecon` 将改变什么？
@@ -673,6 +763,8 @@ notes:
   - topic::restorecon-workflow
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O01-QA-002
   type: qa
   question: '`restorecon` 的 `-n` 参数解决什么风险？'
@@ -685,7 +777,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::restorecon-workflow
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O01-QA-003
   type: qa
   question: '`restorecon -Rv` 后没有标签变化，第一步应判断什么？'
@@ -699,7 +793,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::restorecon-workflow
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O01-QA-004
   type: qa
   question: '`restorecon` 把文件恢复成了业务不希望的类型，下一步应查什么？'
@@ -715,7 +811,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::restorecon-workflow
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O01-QA-005
   type: qa
   question: 完成 fcontext 变更后，为什么还要重新触发原始服务操作？
@@ -730,6 +828,8 @@ notes:
   - topic::restorecon-workflow
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O01-QA-006
   type: qa
   question: 为什么不建议在包含多个业务的数据根目录上直接执行大范围 `restorecon -R`？
@@ -742,7 +842,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::restorecon-workflow
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-29-O02-QA-001
   type: qa
   question: '`semanage fcontext -a`、`-m`、`-d` 的选择依据是什么？'
@@ -755,7 +857,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::fcontext-lifecycle
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O02-QA-002
   type: qa
   question: 将已有 `'/srv/site(/.*)?'` 规则修改为 `httpd_sys_content_t` 的命令是什么？
@@ -773,6 +877,8 @@ notes:
   - topic::fcontext-lifecycle
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O02-QA-003
   type: qa
   question: 删除本地 `'/srv/site(/.*)?'` fcontext 规则的命令是什么？
@@ -789,7 +895,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::fcontext-lifecycle
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O02-QA-004
   type: qa
   question: 删除 fcontext 规则后，怎样安全让现有对象回到新的默认状态？
@@ -805,7 +913,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::fcontext-lifecycle
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O02-QA-005
   type: qa
   question: 为什么 fcontext 路径表达式通常用单引号包围？
@@ -820,6 +930,8 @@ notes:
   - topic::fcontext-lifecycle
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O02-QA-006
   type: qa
   question: 两条本地 fcontext 正则都能匹配同一路径时，为什么不能只凭“更具体”判断优先级？
@@ -833,6 +945,8 @@ notes:
   - topic::fcontext-lifecycle
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O02-QA-007
   type: qa
   question: 站点只有 `/srv/site/uploads` 需要 Web 进程写入，最小授权的标签设计是什么？
@@ -847,6 +961,8 @@ notes:
   - topic::fcontext-lifecycle
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O02-QA-008
   type: qa
   question: 不确定当前 RHEL 仓库中哪个包提供 `semanage` 时，怎样查询？
@@ -864,7 +980,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::fcontext-lifecycle
   - card::command
-  - priority::P2
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-K03-QA-001
   type: qa
   question: 为什么不应为了避免 403 而把整个 Web 站点标记为 `httpd_sys_rw_content_t`？
@@ -879,6 +997,8 @@ notes:
   - topic::least-privilege-types
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-K03-QA-002
   type: qa
   question: SELinux 可写类型与 Unix 写权限是什么关系？
@@ -892,7 +1012,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::least-privilege-types
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-K03-QA-003
   type: qa
   question: 不确定某服务有哪些文件类型和 Boolean 时，优先查哪个本地帮助入口？
@@ -906,7 +1028,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::least-privilege-types
   - card::command
-  - priority::P2
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-K03-QA-004
   type: qa
   question: 目录类型和 DAC 都看似允许写入，但应用仍失败。下一步应怎样推进？
@@ -920,6 +1044,8 @@ notes:
   - topic::least-privilege-types
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O03-QA-001
   type: qa
   question: SELinux 端口映射为什么必须同时记录协议？
@@ -932,7 +1058,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::port-lifecycle
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O03-QA-002
   type: qa
   question: 怎样只列出管理员本地定制的 SELinux 端口映射？
@@ -949,7 +1077,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::port-lifecycle
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O03-QA-003
   type: qa
   question: 删除本地 TCP 82 端口映射的命令是什么？
@@ -966,7 +1096,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::port-lifecycle
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O03-QA-004
   type: qa
   question: TCP 82 已属于另一个 SELinux 类型时，为什么不能无条件执行 `-m`？
@@ -979,7 +1111,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::port-lifecycle
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O03-QA-005
   type: qa
   question: '`semanage port` 成功后，哪条证据能证明进程当前真的监听 TCP 82？'
@@ -994,6 +1128,8 @@ notes:
   - topic::port-lifecycle
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O03-QA-006
   type: qa
   question: 端口类型正确但服务仍报地址已被占用，下一步优先查什么？
@@ -1008,6 +1144,8 @@ notes:
   - topic::port-lifecycle
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O04-QA-001
   type: qa
   question: '`getsebool` 与 `semanage boolean -l` 在调查 Boolean 时各自适合做什么？'
@@ -1023,7 +1161,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::boolean-lifecycle
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O04-QA-002
   type: qa
   question: '`setsebool NAME on` 与 `setsebool -P NAME on` 的核心区别是什么？'
@@ -1036,7 +1176,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::boolean-lifecycle
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O04-QA-003
   type: qa
   question: '`setsebool -P` 暂时没有返回提示时，为什么不应立即重复执行？'
@@ -1051,6 +1193,8 @@ notes:
   - topic::boolean-lifecycle
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-O04-QA-004
   type: qa
   question: 业务只需要 httpd 连接数据库时，为什么应优先精确的数据库 Boolean，而不是更宽的任意网络连接开关？
@@ -1065,6 +1209,8 @@ notes:
   - topic::boolean-lifecycle
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-O04-QA-005
   type: qa
   question: Boolean 当前为 on，能否证明数据库功能已经恢复？
@@ -1081,6 +1227,8 @@ notes:
   - topic::boolean-lifecycle
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-D01-QA-001
   type: qa
   question: 新增可写子目录 fcontext 规则后，`matchpathcon` 仍显示父目录的只读类型。下一步查什么？
@@ -1094,7 +1242,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::file-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-D01-QA-002
   type: qa
   question: 只运行 `ls -lZ /srv/site` 可能漏掉哪个关键对象？
@@ -1108,6 +1258,8 @@ notes:
   - topic::file-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-D01-QA-003
   type: qa
   question: 文件规则修复的证据推进顺序是什么？
@@ -1123,7 +1275,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::file-diagnosis
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-D01-QA-004
   type: qa
   question: 从用户家目录移动到标准 Web 目录的文件仍为 `user_home_t`，为什么通常先用 `restorecon` 而不是新增 fcontext？
@@ -1138,6 +1292,8 @@ notes:
   - topic::file-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-D02-QA-001
   type: qa
   question: 防火墙已放行且服务为 active，但没有任何进程监听目标端口。此时是否应继续修改 firewalld？
@@ -1151,7 +1307,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::cross-layer-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-D02-QA-002
   type: qa
   question: '`systemctl is-active` 与 `ss -lntp` 分别证明什么？'
@@ -1165,7 +1323,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::cross-layer-diagnosis
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-D02-QA-003
   type: qa
   question: 本机 `curl localhost:82` 成功，为什么还要从题目指定客户端验证？
@@ -1179,6 +1339,8 @@ notes:
   - topic::cross-layer-diagnosis
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-D02-QA-004
   type: qa
   question: 怎样证明自定义 Web 目录没有依赖一次 `chcon`？
@@ -1193,7 +1355,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::cross-layer-diagnosis
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-D02-QA-005
   type: qa
   question: 为什么不能把“命令退出码为 0”扩大为 SELinux 任务完成？
@@ -1207,7 +1371,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::cross-layer-diagnosis
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-29-C01-QA-001
   type: qa
   question: 自定义目录 + TCP 82 Web 任务中，文件上下文最小持久操作骨架是什么？
@@ -1223,8 +1389,10 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-web-82
   - card::task
-  - priority::P0
   - task::nonstandard-web
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-C01-QA-002
   type: qa
   question: 自定义 Web 任务中，TCP 82 的端口规则应怎样根据现状选择？
@@ -1239,8 +1407,10 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-web-82
   - card::task
-  - priority::P0
   - task::nonstandard-web
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-C01-QA-003
   type: qa
   question: 该任务的最终证据矩阵至少包含哪些层？
@@ -1255,8 +1425,10 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-web-82
   - card::verification
-  - priority::P0
   - task::nonstandard-web
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-C01-QA-004
   type: qa
   question: 站点只提供静态文件时，为什么任务答案不应使用 `httpd_sys_rw_content_t`？
@@ -1271,8 +1443,10 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-web-82
   - card::security
-  - priority::P1
   - task::nonstandard-web
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-C02-QA-001
   type: qa
   question: 已确认 Web 应用需要主动连接 MariaDB，典型的精确 Boolean 是什么？
@@ -1286,8 +1460,10 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-boolean-db
   - card::task
-  - priority::P0
   - task::httpd-db
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-C02-QA-002
   type: qa
   question: 持久启用 httpd 数据库连接 Boolean 的命令是什么？
@@ -1304,8 +1480,10 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-boolean-db
   - card::command
-  - priority::P0
   - task::httpd-db
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-29-C02-QA-003
   type: qa
   question: Boolean 已开启但数据库功能仍失败，下一条证据应来自哪里？
@@ -1321,8 +1499,10 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-boolean-db
   - card::diagnosis
-  - priority::P0
   - task::httpd-db
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-C02-QA-004
   type: qa
   question: 为什么不应只凭网上示例选择 Boolean？
@@ -1336,8 +1516,10 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-boolean-db
   - card::boundary
-  - priority::P1
   - task::httpd-db
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-29-W01-QA-001
   type: qa
   question: 真实服务器修改 SELinux 本地定制前，应保存哪些基线？
@@ -1352,6 +1534,8 @@ notes:
   - topic::work-migration
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-29-W01-QA-002
   type: qa
   question: 自动化任务显示 changed，为什么仍要进行功能验收？
@@ -1364,7 +1548,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::work-migration
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-29-K02-CLOZE-001
   type: cloze
   text: 当前标签用 {{c1::ls -Z}} 查看，预期标签用 {{c2::matchpathcon}} 查询，持久路径规则用 {{c3::semanage fcontext}} 管理。
@@ -1379,7 +1565,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::file-state-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-29-O01-CLOZE-001
   type: cloze
   text: '`restorecon {{c1::-n}}Rv /srv/site` 只预览；去掉 `{{c2::-n}}` 后才实际修改。'
@@ -1392,6 +1580,8 @@ notes:
   - topic::restorecon-workflow
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-29-O02-CLOZE-001
   type: cloze
   text: fcontext 规则不存在时用 {{c1::-a}}；已存在且确需改变时用 {{c2::-m}}；移除本地记录用 {{c3::-d}}。
@@ -1403,7 +1593,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::fcontext-lifecycle
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-29-O03-CLOZE-001
   type: cloze
   text: SELinux 端口映射由 {{c1::协议}} 与 {{c2::端口或端口范围}} 共同标识。
@@ -1415,7 +1607,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::port-lifecycle
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-29-O04-CLOZE-001
   type: cloze
   text: 不带 `-P` 的 `setsebool` 只改变 {{c1::当前值}}；带 `-P` 同时建立 {{c2::持久值}}。
@@ -1427,7 +1621,9 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::boolean-lifecycle
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-29-C01-CLOZE-001
   type: cloze
   text: Web 任务完整访问链至少包括：配置、服务状态、{{c1::真实监听}}、firewalld、SELinux 和 {{c2::最终协议请求}}。
@@ -1441,6 +1637,7 @@ notes:
   - chapter::selinux-files-ports-booleans
   - topic::classic-task-web-82
   - card::cloze
-  - priority::P0
   - task::nonstandard-web
-status: integrated
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1

@@ -1,0 +1,78 @@
+package_version: 1
+chapter:
+  id: RHCSA-30
+  exam: RHCSA
+  part: 7
+  number: 30
+  slug: boot-grub-recovery
+  title: 启动链、GRUB、Target 与系统恢复
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/boot-grub-recovery/lecture.md
+  anki: content/rhcsa/chapters/boot-grub-recovery/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:25:56+08:00'
+  archive_name: RHCSA-30-boot-grub-recovery-v5.1-final.zip
+files:
+  lecture:
+    path: lecture.md
+    sha256: d00a2b6af0f60eca4311105073f17cdb0e438458309cd0d6597677d7277fbd08
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 3367197a0348a63f6285a1f7fb7e8961efe5c9daffdc93892f460d566fbc9699
+  anki:
+    path: anki.yml
+    sha256: f6072de220e05cb2d24e8c126f3944ed5f9ccb0702cb7a92edabdc8f61516068
+  preview:
+    path: anki-preview.html
+    sha256: d57ea01fedcae6620319927ed8e6c9da812d28bf9e2a9ee917c00fe6933feacd
+  summary:
+    path: anki-summary.md
+    sha256: ead5cc0ab26e5d3c4a45a69fbbefe9bf04fc433c7f46ae5ccb312b95401fee94
+  anki_impact:
+    path: anki-impact.md
+    sha256: e16fae529f50cc09d52d2ce3e7acb0dbd8c4adeb30bad16dba63fa1f996a7773
+  source_map:
+    path: source-map.md
+    sha256: 66aaef4fae5effef6324099a195bbe17e93ed6c0029001f33a5525ad39a21ce8
+  structure_report:
+    path: structure-report.md
+    sha256: 29add4845dd8033113d4358b607baf13f53de0a7379a1b4c2f4489ecbe3d792b
+  visual_qa:
+    path: visual-qa.md
+    sha256: 7658e5bf257365742d4657d2298bc66bd770e614cb37144c6a49e2724268050b
+  qa_report:
+    path: qa-report.md
+    sha256: 47b49c67b8f5f89776fc7b2001e6bf12b9ca7db13020e20e183d25aceefee6c0
+  revision_notes:
+    path: revision-notes.md
+    sha256: 308ae21bfba573fc45482e00a8af253478d0a59562f482f8e26140885a228fba
+  integration_note:
+    path: codex-integration-note.md
+    sha256: bb76d95f27f74f993093fd452a8b6503e719a742540a521dd7455314fb2e5fc4
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM; command-level and reboot-level live tests were not performed.
+- Full-book Section ID uniqueness, Anki ID uniqueness, cross-chapter duplicates, official full-book PDF, APKG, and AnkiConnect
+  remain Codex responsibilities.
+- The remote repository was read for baseline verification but was not modified, committed, or pushed.

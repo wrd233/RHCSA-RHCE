@@ -1,0 +1,22 @@
+{
+  "notes": 3338,
+  "qa": 3069,
+  "cloze": 269,
+  "ids_unique": true,
+  "sources_complete": true,
+  "priority_before": {
+    "P0": 2556,
+    "P1": 742,
+    "P2": 40
+  },
+  "priority_after": {
+    "P1": 1401,
+    "P0": 1421,
+    "P2": 516
+  },
+  "exact_duplicate_excess": 0,
+  "known_near_duplicate_decisions": {
+    "RHCSA-18/RHCSA-31 ss": "retain: host socket evidence versus container publication context",
+    "RHCSA-24/RHCSA-30 daemon-reload": "retain: fstab persistence versus boot recovery context"
+  }
+}

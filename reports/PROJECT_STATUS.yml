@@ -1,0 +1,10 @@
+rhcsa:
+  version: '5.1'
+  chapters_total: 33
+  chapters_integrated: 33
+  lecture_status: passed
+  pdf_status: passed
+  anki_status: passed
+  apkg_status: passed
+  anki_connect_status: passed
+  release_status: released

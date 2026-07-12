@@ -1,0 +1,227 @@
+package_version: 1
+chapter:
+  id: RHCSA-06
+  exam: RHCSA
+  part: 1
+  number: 6
+  slug: copy-archive-compression-transfer
+  title: 复制、归档、压缩与远程传输
+  canonical_lecture: content/rhcsa/chapters/copy-archive-compression-transfer/lecture.md
+  canonical_anki: content/rhcsa/chapters/copy-archive-compression-transfer/anki.yml
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+  verified_at: '2026-07-12'
+  canonical_content_commit: ff238606d0d82b95287d87a80163ba44a00cf4e1
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/copy-archive-compression-transfer/lecture.md
+  anki: content/rhcsa/chapters/copy-archive-compression-transfer/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:20:05+08:00'
+  archive_name: RHCSA-06-copy-archive-compression-transfer-v5.1-final.zip
+files:
+  lecture:
+    path: lecture.md
+    sha256: bdf5a8f0bc73ae94a5e372284f35a01ce3d7fec60ca1f48c94a768ea8eed5618
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: e7ecffb2aa1b9245ae477a401e36509d6db40847262405c27849fdc537adb26e
+  anki:
+    path: anki.yml
+    sha256: b0d7ce452d73682109593d32b5311ac7fdbb28854926a6b051d0507fc6fbc46f
+  preview:
+    path: anki-preview.html
+    sha256: 5744e4ca620a0c7411bf0c535a2c5a465c3fa311359c6b1c8b4111f53b3c5981
+  summary:
+    path: anki-summary.md
+    sha256: c62f8951346cef9133f05edd970c14b5703807ecf77415508793281d36865a7b
+  anki_impact:
+    path: anki-impact.md
+    sha256: a83d194ede5568d996e6cde19d60fd0caadc52a0911d22fa3a67105338967171
+  source_map:
+    path: source-map.md
+    sha256: 19ab920964664b712855bf23a851efc151e9052c86bf544386c111ae6a2f075a
+  structure_report:
+    path: structure-report.md
+    sha256: 54dbb5aba02871c34edcb12cd544b220425a108d504cc9679c84aaab598f4995
+  visual_qa:
+    path: visual-qa.md
+    sha256: f69e6871058b7b23278c2899098f5efcf8a0e1eff52758ae749e5d10a0ee984a
+  qa_report:
+    path: qa-report.md
+    sha256: 4cd670bcd1ee46dbc4746e1d2f84134ab4531d090900585c0873fed11f8b6caf
+  revision_notes:
+    path: revision-notes.md
+    sha256: cc895a330563f393bfdbc974161c50363758684a9b1bf4e59366997a5c21c7b3
+  integration_note:
+    path: codex-integration-note.md
+    sha256: eedba3054863ef279279c249154c867f4900d2db7a56225b605f7b3222c00316
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM was connected; command-level live tests were not performed.
+- Repository-wide Section ID, Anki ID, terminology and near-duplicate checks remain Codex responsibilities.
+- OpenSSH scp backend, tar extended metadata and rsync permission behavior require target-environment validation.
+- The repository HEAD must be rechecked if Codex imports this package after the recorded verification time.
+extensions:
+  hash_policy:
+    algorithm: sha256
+    manifest_self_hash: omitted_recursive
+    note: manifest.yml records every other delivery file; the final ZIP hash is reported separately.
+  section_ids:
+    status: preserved
+    count: 14
+    items:
+    - RHCSA-06-K01
+    - RHCSA-06-O01
+    - RHCSA-06-O02
+    - RHCSA-06-K02
+    - RHCSA-06-O03
+    - RHCSA-06-O04
+    - RHCSA-06-O05
+    - RHCSA-06-O06
+    - RHCSA-06-D01
+    - RHCSA-06-T01
+    - RHCSA-06-A01
+    - RHCSA-06-T02
+    - RHCSA-06-A02
+    - RHCSA-06-Z01
+    global_uniqueness: requires_codex
+  anki:
+    baseline: last_valid_in_session_candidate_with_canonical_path_verified
+    impact: NONE
+    note_count: 109
+    qa_count: 99
+    cloze_count: 10
+    ids:
+      preserved:
+      - RHCSA-06-K01-QA-001
+      - RHCSA-06-K01-QA-002
+      - RHCSA-06-K01-QA-003
+      - RHCSA-06-K01-QA-004
+      - RHCSA-06-K01-QA-005
+      - RHCSA-06-K01-QA-006
+      - RHCSA-FILES-K01-QA-007
+      - RHCSA-06-K01-QA-008
+      - RHCSA-06-O01-QA-001
+      - RHCSA-06-O01-QA-002
+      - RHCSA-06-O01-QA-003
+      - RHCSA-06-O01-QA-004
+      - RHCSA-06-O01-QA-005
+      - RHCSA-06-O01-QA-006
+      - RHCSA-06-O01-QA-007
+      - RHCSA-06-O01-QA-008
+      - RHCSA-06-O01-QA-009
+      - RHCSA-FILES-O01-QA-003
+      - RHCSA-06-O01-QA-011
+      - RHCSA-06-O01-QA-012
+      - RHCSA-06-O01-CLOZE-001
+      - RHCSA-FILES-O01-QA-002
+      - RHCSA-06-O02-QA-002
+      - RHCSA-06-O02-QA-003
+      - RHCSA-06-O02-QA-004
+      - RHCSA-06-O02-QA-005
+      - RHCSA-06-O02-QA-006
+      - RHCSA-06-O02-QA-007
+      - RHCSA-06-O02-QA-008
+      - RHCSA-FILES-O04-QA-001
+      - RHCSA-FILES-O04-QA-002
+      - RHCSA-FILES-O04-QA-003
+      - RHCSA-06-K02-QA-004
+      - RHCSA-06-K02-QA-005
+      - RHCSA-FILES-O04-QA-004
+      - RHCSA-06-K02-QA-007
+      - RHCSA-06-K02-QA-008
+      - RHCSA-06-K02-QA-009
+      - RHCSA-06-K02-QA-010
+      - RHCSA-06-O03-QA-001
+      - RHCSA-06-O03-QA-002
+      - RHCSA-06-O03-QA-003
+      - RHCSA-06-O03-QA-004
+      - RHCSA-06-O03-QA-005
+      - RHCSA-06-O03-QA-006
+      - RHCSA-06-O03-QA-007
+      - RHCSA-06-O03-QA-008
+      - RHCSA-06-O03-QA-009
+      - RHCSA-06-O03-QA-010
+      - RHCSA-FILES-O04-CLOZE-001
+      - RHCSA-06-O03-CLOZE-002
+      - RHCSA-06-O03-CLOZE-003
+      - RHCSA-06-O04-QA-001
+      - RHCSA-06-O04-QA-002
+      - RHCSA-06-O04-QA-003
+      - RHCSA-06-O04-QA-004
+      - RHCSA-06-O04-QA-005
+      - RHCSA-06-O04-QA-006
+      - RHCSA-06-O04-QA-007
+      - RHCSA-06-O04-QA-008
+      - RHCSA-06-O04-QA-009
+      - RHCSA-06-O04-QA-010
+      - RHCSA-06-O04-QA-011
+      - RHCSA-06-O04-QA-012
+      - RHCSA-06-O04-CLOZE-001
+      - RHCSA-06-O04-CLOZE-002
+      - RHCSA-FILES-O04-QA-005
+      - RHCSA-06-O05-QA-002
+      - RHCSA-06-O05-QA-003
+      - RHCSA-FILES-O04-QA-006
+      - RHCSA-06-O05-QA-005
+      - RHCSA-FILES-O04-QA-007
+      - RHCSA-06-O05-QA-007
+      - RHCSA-06-O05-QA-008
+      - RHCSA-06-O05-QA-009
+      - RHCSA-06-O05-QA-010
+      - RHCSA-06-O05-QA-011
+      - RHCSA-06-O05-QA-012
+      - RHCSA-06-O05-QA-013
+      - RHCSA-06-O05-QA-014
+      - RHCSA-06-O05-QA-015
+      - RHCSA-06-O05-QA-016
+      - RHCSA-06-O05-QA-017
+      - RHCSA-06-O05-CLOZE-001
+      - RHCSA-06-O05-CLOZE-002
+      - RHCSA-06-O05-CLOZE-003
+      - RHCSA-06-O06-QA-001
+      - RHCSA-06-O06-QA-002
+      - RHCSA-06-O06-QA-003
+      - RHCSA-06-O06-QA-004
+      - RHCSA-06-O06-QA-005
+      - RHCSA-FILES-C01-QA-002
+      - RHCSA-06-O06-QA-007
+      - RHCSA-06-O06-QA-008
+      - RHCSA-06-O06-QA-009
+      - RHCSA-06-O06-CLOZE-001
+      - RHCSA-06-D01-QA-001
+      - RHCSA-06-D01-QA-002
+      - RHCSA-06-D01-QA-003
+      - RHCSA-06-D01-QA-004
+      - RHCSA-06-D01-QA-005
+      - RHCSA-06-D01-QA-006
+      - RHCSA-06-D01-QA-007
+      - RHCSA-06-T01-QA-001
+      - RHCSA-06-T01-QA-002
+      - RHCSA-06-T01-QA-003
+      - RHCSA-06-T02-QA-001
+      - RHCSA-06-T02-QA-002
+      - RHCSA-06-T02-QA-003
+      modified: []
+      added: []
+      disabled: []
+    global_uniqueness: requires_codex

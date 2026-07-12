@@ -1,8 +1,8 @@
+schema_version: 1
 chapter_id: RHCSA-30
 chapter_slug: boot-grub-recovery
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-status: integrated
+status: content_frozen_for_integration
 validation: static
 notes:
 - id: RHCSA-BOOT-QA-001
@@ -18,7 +18,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-chain
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-BOOT-QA-002
   type: qa
   question: 怎样查询当前持久默认 target，并把下次正常启动目标设置为 `multi-user.target`？
@@ -40,6 +42,8 @@ notes:
   - topic::target-state
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-BOOT-QA-003
   type: qa
   question: 在远程主机执行 `systemctl isolate rescue.target` 前，最重要的风险判断是什么？
@@ -53,7 +57,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::target-state
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-BOOT-QA-004
   type: qa
   question: 使用 `rd.break` 进入 shell 后，当前 `/` 和真实系统根通常分别在哪里？
@@ -68,7 +74,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::recovery-env
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-BOOT-QA-005
   type: qa
   question: '`rd.break` shell 中，怎样把真实根重新挂载为读写并验证？'
@@ -90,6 +98,8 @@ notes:
   - topic::root-password
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-BOOT-QA-006
   type: qa
   question: '`chroot /sysroot` 在口令恢复流程中改变了什么？'
@@ -103,7 +113,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::root-password
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-BOOT-QA-007
   type: qa
   question: 在 `rd.break` 口令恢复中，为什么要在 chroot 内执行 `touch /.autorelabel`？
@@ -118,6 +130,8 @@ notes:
   - topic::selinux-relabel
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-BOOT-QA-008
   type: qa
   question: 系统因疑似 `/etc/fstab` 错误进入 emergency，推荐的证据链是什么？
@@ -133,7 +147,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::fstab-recovery
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-BOOT-QA-009
   type: qa
   question: 什么时候可以考虑在 `fstab` 中使用 `nofail`，什么时候不应使用？
@@ -147,7 +163,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::fstab-recovery
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-BOOT-QA-010
   type: qa
   question: 系统已经进入 systemd emergency，哪两类命令最适合先定位本次启动失败？
@@ -168,6 +186,8 @@ notes:
   - topic::boot-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-BOOT-QA-011
   type: qa
   question: 在 `rd.break` shell 中直接执行 `passwd root` 后，正常启动仍无法使用新口令。最可能遗漏了什么作用域步骤？
@@ -181,7 +201,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::root-password
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-BOOT-QA-012
   type: qa
   question: '`multi-user.target` 显示 active 能否证明所有服务器业务功能正确？'
@@ -196,6 +218,8 @@ notes:
   - topic::target-state
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-BOOT-QA-013
   type: qa
   question: '`rescue.target` 与 `emergency.target` 的主要区别是什么？'
@@ -208,7 +232,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::recovery-env
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-BOOT-QA-014
   type: qa
   question: 使用 `rd.break` 恢复 root 口令的核心流程是什么？
@@ -223,7 +249,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::root-password
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K01-QA-001
   type: qa
   question: firmware 在 Linux 启动链中的职责边界是什么？
@@ -237,7 +265,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-chain
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K01-QA-002
   type: qa
   question: GRUB 启动条目向下一阶段提供哪三类核心内容？
@@ -251,7 +281,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-chain
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K01-QA-003
   type: qa
   question: initramfs 为什么存在？
@@ -265,7 +297,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-chain
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K01-QA-004
   type: qa
   question: 看到启动故障时，为什么不应立即执行 `dracut -f`？
@@ -278,7 +312,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-chain
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-K01-QA-005
   type: qa
   question: initramfs 阶段的 systemd 与正常根中的 systemd 有什么关键差异？
@@ -292,7 +328,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-chain
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K01-QA-006
   type: qa
   question: 控制台仍停在固件“无可启动设备”，下一条最有区分度的证据是什么？
@@ -306,6 +344,8 @@ notes:
   - topic::boot-chain
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K01-CLOZE-001
   type: cloze
   text: firmware → {{c1::GRUB}} → {{c2::kernel 与 initramfs}} → {{c3::真实根文件系统}} → {{c4::systemd PID 1}} → {{c5::default target}}。
@@ -317,7 +357,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-chain
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-30-O01-QA-001
   type: qa
   question: 怎样查看当前运行 kernel 的 release？
@@ -335,6 +377,8 @@ notes:
   - topic::grub-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O01-QA-002
   type: qa
   question: 怎样查看本次启动中 kernel 实际收到的 command line？
@@ -351,7 +395,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::grub-query
   - card::path
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-O01-QA-003
   type: qa
   question: 怎样查看 RHEL 当前配置的默认启动 kernel 路径？
@@ -369,6 +415,8 @@ notes:
   - topic::grub-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O01-QA-004
   type: qa
   question: 怎样列出所有由 `grubby` 管理的 kernel 启动条目？
@@ -386,15 +434,17 @@ notes:
   - topic::grub-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O01-QA-005
   type: qa
   question: 怎样读取 GRUB environment block 中的变量？
   answer: '```bash
 
-    grub2-editenv list
+    grub2-editenv - list
 
     ```'
-  extra: 它不等同于列出 BLS 条目或查看 `/proc/cmdline`。
+  extra: 它读取默认 GRUB environment block；不等同于列出 BLS 条目或查看 `/proc/cmdline`。
   source:
   - grub2-editenv(1)
   tags:
@@ -402,11 +452,13 @@ notes:
   - chapter::boot-grub-recovery
   - topic::grub-query
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O01-QA-006
   type: qa
-  question: '`grub2-editenv list`、`grubby --info=ALL` 与 `/proc/cmdline` 分别回答什么？'
-  answer: 分别回答 GRUB 环境变量、持久启动条目和本次 kernel 实际参数。
+  question: '`grub2-editenv - list`、`grubby --info=ALL` 与 `/proc/cmdline` 分别回答什么？'
+  answer: 分别回答默认 GRUB 环境变量、持久启动条目和本次 kernel 实际收到的参数。
   extra: 三类输出不能互相替代。
   source:
   - grub2-editenv(1)
@@ -417,7 +469,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::grub-query
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-O01-QA-007
   type: qa
   question: 为什么不应把启动条目的固定 `index` 当作长期身份？
@@ -430,7 +484,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::grub-query
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-O01-QA-008
   type: qa
   question: RHEL 9 主机启动时没有显示 GRUB 菜单，但系统能继续启动。首先应如何理解？
@@ -445,6 +501,8 @@ notes:
   - topic::grub-query
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-O02-QA-001
   type: qa
   question: 怎样只为一次启动临时追加 kernel 参数？
@@ -457,7 +515,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::kernel-parameters
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-O02-QA-002
   type: qa
   question: 怎样为所有已安装 kernel 条目持久添加参数？
@@ -475,6 +535,8 @@ notes:
   - topic::kernel-parameters
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O02-QA-003
   type: qa
   question: 怎样从所有 kernel 条目持久删除指定参数？
@@ -492,6 +554,8 @@ notes:
   - topic::kernel-parameters
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O02-QA-004
   type: qa
   question: 用 `grubby` 添加参数后、尚未重启时，什么证据只能证明未来条目已改变？
@@ -506,6 +570,8 @@ notes:
   - topic::kernel-parameters
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O02-QA-005
   type: qa
   question: GRUB 菜单临时编辑与 `grubby --update-kernel` 的生命周期区别是什么？
@@ -519,7 +585,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::kernel-parameters
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-O02-QA-006
   type: qa
   question: 执行 `rd.break` 恢复时，为什么不应删除现有 kernel 参数直到只剩 `ro`？
@@ -533,7 +601,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::kernel-parameters
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-O02-QA-007
   type: qa
   question: 为什么日常参数管理不优先直接编辑生成后的 `grub.cfg`？
@@ -547,7 +617,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::kernel-parameters
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-O02-CLOZE-001
   type: cloze
   text: '`grubby --info=ALL` 验证{{c1::持久启动条目}}；`cat /proc/cmdline` 验证{{c2::本次 kernel 实际参数}}。'
@@ -560,7 +632,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::kernel-parameters
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-30-K02-QA-001
   type: qa
   question: systemd target 的本质是什么？
@@ -574,7 +648,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::target-state
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K02-QA-002
   type: qa
   question: '`systemctl get-default` 与 `systemctl list-units --type=target --state=active` 分别看什么？'
@@ -587,7 +663,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::target-state
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K02-QA-003
   type: qa
   question: 怎样查询当前 active target？
@@ -605,6 +683,8 @@ notes:
   - topic::target-state
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-K02-QA-004
   type: qa
   question: 怎样只让本次启动进入 rescue target，而不改变持久 default？
@@ -619,6 +699,8 @@ notes:
   - topic::target-state
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-K02-QA-005
   type: qa
   question: 怎样只让本次启动进入 emergency target？
@@ -632,7 +714,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::target-state
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-K02-QA-006
   type: qa
   question: 当前系统在维护 target 中，怎样请求回到持久 default target？
@@ -649,7 +733,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::target-state
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-K02-QA-007
   type: qa
   question: 为什么 `graphical.target` 与 `multi-user.target` 可能同时显示 active？
@@ -662,7 +748,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::target-state
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-K02-CLOZE-001
   type: cloze
   text: target 的{{c1::当前状态}}用 active/isolate 观察和改变；{{c2::持久默认状态}}用 get-default/set-default；{{c3::一次启动覆盖}}用 systemd.unit=。
@@ -675,7 +763,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::target-state
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-30-K03-QA-001
   type: qa
   question: '`rd.break` 与 `emergency.target` 最关键的阶段差异是什么？'
@@ -689,7 +779,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::recovery-env
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-K03-QA-002
   type: qa
   question: 进入 emergency shell 后，怎样判断根是否只读？
@@ -708,6 +800,8 @@ notes:
   - topic::recovery-env
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-K03-QA-003
   type: qa
   question: 正常系统或 systemd emergency 中，根为只读时怎样重挂载为读写？
@@ -725,7 +819,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::recovery-env
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-K03-QA-004
   type: qa
   question: '`chroot /sysroot` 为什么不等于启动了一个容器？'
@@ -738,7 +834,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::recovery-env
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-K03-QA-005
   type: qa
   question: 维护 shell 中不确定当前真实根在哪里，下一条最有区分度的命令是什么？
@@ -752,7 +850,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::recovery-env
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-O03-QA-001
   type: qa
   question: 在 GRUB 中为口令恢复追加的最小参数是什么？
@@ -767,6 +867,8 @@ notes:
   - topic::root-password
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O03-QA-002
   type: qa
   question: 进入 `rd.break` shell 后，怎样先证明本次确实使用了断点参数？
@@ -784,6 +886,8 @@ notes:
   - topic::root-password
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O03-QA-003
   type: qa
   question: 在真实根中交互修改 root 口令的命令是什么？
@@ -801,6 +905,8 @@ notes:
   - topic::root-password
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O03-QA-004
   type: qa
   question: 为什么本章不把 `echo 密码 | passwd --stdin root` 作为默认答案？
@@ -815,6 +921,8 @@ notes:
   - topic::root-password
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O03-QA-005
   type: qa
   question: 在 chroot 内创建重标记请求后，怎样静态确认文件位于真实根？
@@ -831,7 +939,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::selinux-relabel
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O03-QA-006
   type: qa
   question: 为什么恢复流程通常要执行两次 `exit`？
@@ -844,7 +954,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::root-password
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-O03-QA-007
   type: qa
   question: root 口令恢复后，最终功能验证是什么？
@@ -859,6 +971,8 @@ notes:
   - topic::root-password
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O03-QA-008
   type: qa
   question: 恢复后怎样确认 `rd.break` 没有被持久化？
@@ -873,6 +987,8 @@ notes:
   - topic::root-password
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-O03-QA-009
   type: qa
   question: SELinux 重标记进行时为什么不应强制断电？
@@ -885,7 +1001,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::selinux-relabel
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-O03-CLOZE-001
   type: cloze
   text: 在 `rd.break` 中先将 {{c1::/sysroot}} remount 为 rw，再 {{c2::chroot /sysroot}}，执行 `passwd root`，最后创建 {{c3::/.autorelabel}}。
@@ -897,7 +1015,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::root-password
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-30-D01-QA-001
   type: qa
   question: 怎样列出本次启动中 systemd 当前标记为失败的 unit？
@@ -915,6 +1035,8 @@ notes:
   - topic::fstab-recovery
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D01-QA-002
   type: qa
   question: 怎样对 `/etc/fstab` 做静态验证？
@@ -933,6 +1055,8 @@ notes:
   - topic::fstab-recovery
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D01-QA-003
   type: qa
   question: 怎样查看块设备真实 UUID、LABEL 和文件系统类型？
@@ -953,6 +1077,8 @@ notes:
   - topic::fstab-recovery
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D01-QA-004
   type: qa
   question: 修改 `fstab` 后，为什么要执行 `systemctl daemon-reload`？
@@ -967,6 +1093,8 @@ notes:
   - topic::fstab-recovery
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D01-QA-005
   type: qa
   question: '`mount -a` 无输出后，还必须验证什么？'
@@ -981,6 +1109,8 @@ notes:
   - topic::fstab-recovery
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D01-QA-006
   type: qa
   question: 失败 unit 为 `data.mount`，怎样把它与 `/etc/fstab` 对应起来？
@@ -994,7 +1124,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::fstab-recovery
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-D01-QA-007
   type: qa
   question: Journal 报告设备 UUID 不存在，下一条最有区分度的证据是什么？
@@ -1009,7 +1141,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::fstab-recovery
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-D01-QA-008
   type: qa
   question: 已有数据文件系统因 `fstab` 错误未挂载，为什么不能直接执行 `mkfs`？
@@ -1023,7 +1157,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::fstab-recovery
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-D01-QA-009
   type: qa
   question: 修复 `fstab` 后的当前验证顺序是什么？
@@ -1038,7 +1174,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::fstab-recovery
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-D01-QA-010
   type: qa
   question: 题目要求必需数据卷开机挂载，但当前条目错误。允许的最小修复是什么？
@@ -1052,7 +1190,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::fstab-recovery
   - card::task
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D02-QA-001
   type: qa
   question: 怎样查看本次启动的全部 Journal？
@@ -1070,6 +1210,8 @@ notes:
   - topic::boot-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D02-QA-002
   type: qa
   question: 怎样只查看本次启动的 kernel Journal？
@@ -1087,6 +1229,8 @@ notes:
   - topic::boot-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D02-QA-003
   type: qa
   question: 怎样列出 Journal 中可用的启动轮次？
@@ -1104,6 +1248,8 @@ notes:
   - topic::boot-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D02-QA-004
   type: qa
   question: 怎样查看上一次可用启动的 Journal？
@@ -1121,6 +1267,8 @@ notes:
   - topic::boot-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D02-QA-005
   type: qa
   question: '`journalctl -b` 与 `journalctl -b -p err` 的区别是什么？'
@@ -1133,7 +1281,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-evidence
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-D02-QA-006
   type: qa
   question: 为什么固件阶段故障通常无法从 `journalctl -b -1` 得到证据？
@@ -1146,7 +1296,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-evidence
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-D02-QA-007
   type: qa
   question: Journal 中出现某 service 的 “Started” 是否证明业务功能正确？
@@ -1160,7 +1312,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::boot-evidence
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D02-QA-008
   type: qa
   question: 上一次启动失败，但 `journalctl -b -1` 没有记录。合理的下一步是什么？
@@ -1175,6 +1329,8 @@ notes:
   - topic::boot-evidence
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-D03-QA-001
   type: qa
   question: 启动配置变更的稳健工作流是什么？
@@ -1187,7 +1343,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::reboot-risk
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-30-D03-QA-002
   type: qa
   question: 为什么不应同时修改默认 kernel、全部参数、default target 和多条 `fstab`？
@@ -1200,7 +1358,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::reboot-risk
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-D03-QA-003
   type: qa
   question: 持久 kernel 参数重启前后应分别用什么证据？
@@ -1215,6 +1375,8 @@ notes:
   - topic::reboot-risk
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D03-QA-004
   type: qa
   question: default target 变更重启前后应如何验证？
@@ -1228,6 +1390,8 @@ notes:
   - topic::reboot-risk
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D03-QA-005
   type: qa
   question: 远程服务器没有控制台时，为什么应谨慎执行启动链变更和 reboot？
@@ -1240,7 +1404,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::reboot-risk
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-30-D03-QA-006
   type: qa
   question: 口令恢复时把 SELinux 永久设为 permissive 能否作为完成终态？
@@ -1254,6 +1420,8 @@ notes:
   - topic::reboot-risk
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D03-QA-007
   type: qa
   question: 修改 `fstab` 后当前验证全部通过，任务还要求重启持久。重启后最少检查哪些对象？
@@ -1266,7 +1434,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::reboot-risk
   - card::task
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-D03-CLOZE-001
   type: cloze
   text: 启动类变更应遵循：{{c1::基线}} → {{c2::最小变更}} → {{c3::当前验证}} → {{c4::受控重启}} → {{c5::重启后复验}}。
@@ -1278,7 +1448,9 @@ notes:
   - chapter::boot-grub-recovery
   - topic::reboot-risk
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-30-T01-QA-001
   type: qa
   question: root 口令恢复任务的完整验收不应只看 `passwd`，还包括哪些状态？
@@ -1293,6 +1465,8 @@ notes:
   - topic::classic-task-root
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-30-T02-QA-001
   type: qa
   question: '`fstab` emergency 任务的最终持久验收是什么？'
@@ -1306,3 +1480,5 @@ notes:
   - topic::classic-task-fstab
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0

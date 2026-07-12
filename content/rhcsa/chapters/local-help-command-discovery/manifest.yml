@@ -1,0 +1,80 @@
+package_version: 1
+chapter:
+  id: RHCSA-03
+  exam: RHCSA
+  part: 1
+  number: 3
+  slug: local-help-command-discovery
+  title: 本地帮助、命令发现与软件能力查询
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/local-help-command-discovery/lecture.md
+  anki: content/rhcsa/chapters/local-help-command-discovery/anki.yml
+  lecture_sha256: e08c984827cb4b69eed4f8d533bde85e59409c62a8c03e821f9dbc1e4463017e
+  anki_sha256: 4b3940afe12266dbbc9c6db5ab4ddafc89c06ebb3e786bae86c99debc5c835dc
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T14:16:19+00:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: a9054b4852a311d46683c8bcaeef7e0d2ff38b9712284733ce98c03f791ea9a5
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 8f766cf87ed7243885cce07a8068e39bfc3a457d19fcd21b6aca3fb53ff99b74
+  anki:
+    path: anki.yml
+    sha256: 33d97bc47fe516a2fe7627fe34f45d3fb3f3bd4b735b73fae4cfb77a6c589b78
+  preview:
+    path: anki-preview.html
+    sha256: 802bbb2d375db3deee42f65d9a357e7c076767f08d654b69e46b6ae8d623e780
+  summary:
+    path: anki-summary.md
+    sha256: 03bba2eed78cd3c63bed2e489310824ef918e1df6259d0ff5c28575a3858ddc3
+  anki_impact:
+    path: anki-impact.md
+    sha256: 0c16108814aafe739f299361ba6e83b2dc4f3c8a813f5bc4c626bcc3fd45c56c
+  source_map:
+    path: source-map.md
+    sha256: fbb76fef7054acf75ff25c2c5cf065822e06eb7b4fb478a4e0192d1324539329
+  structure_report:
+    path: structure-report.md
+    sha256: 2f70dacdf1674c134ecf83122be332dcfb21043ee1e8fa6615deb20feb460636
+  visual_qa:
+    path: visual-qa.md
+    sha256: ef0b6efb3b7bb795e4f8e5748d1be4255fed593c4a024368068cdc6f052ef22a
+  qa_report:
+    path: qa-report.md
+    sha256: 84d9e9cd80bec58ad897dfd8947d38357a95bf0bcfaec8f151b9570808bed484
+  revision_notes:
+    path: revision-notes.md
+    sha256: f1771fb31f942f462262936c6dcb9558b732ead8bbd521a2faec1faf567b13c3
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 6dfaaf9d305c5ef78e7f26b83b85034bc4fddee7e5d6eb1e49dc454b2cd027a8
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controlled RHEL 9 virtual machine was available.
+- Full-book Section ID uniqueness, global Anki ID uniqueness, cross-chapter similarity, official PDF/APKG builds, AnkiConnect,
+  Git integration and release remain Codex responsibilities.
+- Locale-specific output, Info document availability, man index state, RPM database versus file-presence behavior, and DNF
+  provider results require live verification.

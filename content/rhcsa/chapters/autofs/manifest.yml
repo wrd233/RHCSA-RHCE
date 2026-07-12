@@ -1,0 +1,88 @@
+package_version: 1
+chapter:
+  id: RHCSA-27
+  exam: RHCSA
+  part: 6
+  number: 27
+  slug: autofs
+  title: autofs 自动挂载
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/autofs/lecture.md
+  anki: content/rhcsa/chapters/autofs/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:22:33+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: c02c437a135c9a5c46cb6b4b4a74243d30003a33281e03c220bca68eb9366040
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 01490b16e2940ea7203c00d8432c2f97b22dfbf4c3e05b14795f801f1fe333cd
+  anki:
+    path: anki.yml
+    sha256: 4c2ad3ef6d81ab9260ea4d9396cbf14bbe7a1976c76e8344eabc290323146271
+  preview:
+    path: anki-preview.html
+    sha256: 022f1e8faba3edd1591222c98b9aae86d793e1c1eaebfbd53a5d8ab6d97474b2
+  summary:
+    path: anki-summary.md
+    sha256: e4bd2bfc18076a6ffd59612d2cf2f9559cbce6aa24e3e5a324ca3adafacfa78d
+  anki_impact:
+    path: anki-impact.md
+    sha256: 9cd5420a0d2dcbe25461bf08721e132cd85983a3a265d23e3ca5d26e8f2edaf4
+  source_map:
+    path: source-map.md
+    sha256: 9ff401eeedd42234f52acf13c9b1905eb994571eca4535886f4492056b0b888b
+  structure_report:
+    path: structure-report.md
+    sha256: 92a3e4cbae381061695d204262ca0e5476e9fe2f517dc84b3e0c5435e1609d44
+  visual_qa:
+    path: visual-qa.md
+    sha256: 6f558046808ee394ea74600f60dab2ebb661b12bd8cc66cf287ab18b78658b51
+  qa_report:
+    path: qa-report.md
+    sha256: fb894529d17b3c2d0747881bc525f5895bfcda559022ccf2dc4bae8d19a7c081
+  revision_notes:
+    path: revision-notes.md
+    sha256: 056e94f7d2655242974aba22e269a877ad20220aed43b7b5d606fa26431681e0
+  integration_note:
+    path: codex-integration-note.md
+    sha256: efbcd89956cead4f061655ca01ba49bfb6797ef67f6b79d07a1a0c9f7e5f7cf7
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 virtual machine was available; command-level live tests were not performed.
+- Global Section/Anki ID uniqueness, cross-chapter ownership, unified PDF/APKG construction, AnkiConnect and Git publication
+  remain Codex responsibilities.
+- The review PDF is a frozen chapter review artifact, not the repository formal unified PDF.
+extensions:
+  anki:
+    notes: 87
+    qa: 79
+    cloze: 8
+    source_completeness: 1.0
+    exact_duplicate_questions: 0
+    near_duplicate_alerts: 0
+    impact: NONE
+  hash_policy: SHA-256 is recorded for every payload file. manifest.yml is excluded from its own file hash to avoid a self-referential
+    digest.

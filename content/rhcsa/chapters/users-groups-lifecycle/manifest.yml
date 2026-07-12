@@ -1,0 +1,84 @@
+package_version: 1
+chapter:
+  id: RHCSA-07
+  exam: RHCSA
+  part: 2
+  number: 7
+  slug: users-groups-lifecycle
+  title: 用户、组与账号生命周期
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+  verified_at: '2026-07-12T22:20:08+08:00'
+  previous_v5_0_base_commit: 39e873dab15347a0f1a7611a6f212c3d26bd3562
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/users-groups-lifecycle/lecture.md
+  anki: content/rhcsa/chapters/users-groups-lifecycle/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:20:08+08:00'
+  directory: RHCSA-07-users-groups-lifecycle-v5.1-final
+  archive: RHCSA-07-users-groups-lifecycle-v5.1-final.zip
+files:
+  lecture:
+    path: lecture.md
+    sha256: add3d01d8c735846bdd37cf6633f0685310107b505b20985a94e18443eb5dbc9
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 99762ae90770822e1d2691cff440d8892df18acec1dd61c0361f221431010d79
+  anki:
+    path: anki.yml
+    sha256: c1b51ccda28fc974f4b0c67c4a9cd5635c81e87b67e58447dd03845cac01b5d4
+  preview:
+    path: anki-preview.html
+    sha256: 3f96ccb112d08d078879ec946b445aaff3fa9f6be2f993992bf910cde2cfb94c
+  summary:
+    path: anki-summary.md
+    sha256: e723c61059c83909b5485233231d0cc42e6197da59bb12b474cf812817254e0e
+  anki_impact:
+    path: anki-impact.md
+    sha256: fbd29b8974da9ae6ec75c9178fe45df0350bdaac2777061aabdad74264384ee7
+  source_map:
+    path: source-map.md
+    sha256: 6ca5a6ff699b6d69278a120a029833c77260705aa022a7eaeecbd5f69290969d
+  structure_report:
+    path: structure-report.md
+    sha256: eb76183971f756054076cd84ae7f348167037028f8ced754477503111d9fef7d
+  visual_qa:
+    path: visual-qa.md
+    sha256: df004e1e6bd448f8e9a0927d495ef13b1abe1f2e1aa7dd919a273844a92cfd3f
+  qa_report:
+    path: qa-report.md
+    sha256: e4fed1a6aa0170d51cd908c50057288b1e6a4b27e6a01f6b96eecd02e619fee9
+  revision_notes:
+    path: revision-notes.md
+    sha256: eac14fabf14d6844499a269e51be4f3bfb07aa774baf9a19efa0af1a22f0463d
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 518704568ad64a1b895863d3455ba1777bcf09c6dc8a6f2bddeaad72d99e2d55
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controlled RHEL 9 VM was available; command-level live testing was not performed.
+- Full-book Section ID and Anki ID uniqueness require Codex global validation.
+- Cross-chapter near-duplicate checks, unified PDF build, APKG and AnkiConnect remain Codex responsibilities.
+- Repository HEAD must be rechecked if integration occurs after this package was generated.
+extensions:
+  integrity_note: Manifest self-hash is intentionally omitted to avoid recursive hashing; every other delivery file is hashed
+    above.

@@ -1,0 +1,90 @@
+package_version: 1
+chapter:
+  id: RHCSA-25
+  exam: RHCSA
+  part: 6
+  number: 25
+  slug: lvm
+  title: LVM 逻辑存储
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/lvm/lecture.md
+  anki: content/rhcsa/chapters/lvm/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:55:21+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: b578d7b08e3025a0284203534f5f500a28e194c6b72d438bca2845f300fc3fde
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 90100291b54b2297051e251bc35b2cd165f1a5a03d0707050d253093b11c753d
+  anki:
+    path: anki.yml
+    sha256: d18aaa73d11deed6cf36440dfbed2cb46e23d134e1e2a9a1ce41950aaf9f25d8
+  preview:
+    path: anki-preview.html
+    sha256: 333c089f140ef79dae03a4c76892e98758248d8363aa45e101a6e09be69c2abf
+  summary:
+    path: anki-summary.md
+    sha256: 06f2de59d1f468a2d0ef3e78a0975cfc95fac3da3a7d51e66b3abbb391102fad
+  anki_impact:
+    path: anki-impact.md
+    sha256: a4ed7d9a9f6e76a68231c3ca85fb47571d1fdc03315d4434719fe6f009756c51
+  source_map:
+    path: source-map.md
+    sha256: 42f0eb33602f964075828bb5eda9747128ef5fb930beb59b61a5f755afb12d0c
+  structure_report:
+    path: structure-report.md
+    sha256: 8f15df2dd07c9889e59b6966a5d8a7ea837cfa0442aa388e7d7ac716c2a07353
+  visual_qa:
+    path: visual-qa.md
+    sha256: 517767ca4562bee23ed16043e65573201819e7b3b4d5e3265d90a149bf479b51
+  qa_report:
+    path: qa-report.md
+    sha256: 8fd74e3746ab2419310a66908eea4ed31379ded14cf97736eea0b6e35512b219
+  revision_notes:
+    path: revision-notes.md
+    sha256: d6791d99569dcf502a5bee89e607ff4645e207712eb0c1c1957afaae84682909
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 6f763d84166e7d5b1ac9d32188a9105d11a3d4bbacd9008958386e7f603be4c8
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 virtual machine was available; command-level live testing was not performed.
+- Whole-book Section ID and Anki ID uniqueness, cross-chapter deduplication, unified PDF, APKG, AnkiConnect, Git integration
+  and release remain Codex responsibilities.
+- Example device names, volume names, paths and capacity values are teaching scenarios and must be replaced by current-system
+  evidence.
+extensions:
+  visual_contract:
+    a4: true
+    body_pt: 10.0
+    code_pt: 8.55
+    table_pt: 8.35
+    running_header: false
+    running_footer: false
+    page_numbers: false
+    full_width_concepts: true
+    green_operation_quickref: true
+    task_solution_new_pages: true

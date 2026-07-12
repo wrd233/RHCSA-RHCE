@@ -4,36 +4,290 @@ chapter_id: RHCSA-31
 exam: RHCSA
 part: 8
 slug: podman-images-containers-rootless
-validation: candidate-static
-status: integrated
+validation: static
+status: content_frozen_for_integration
 sources:
   - RH134-RHEL9-Running-Containers
   - RHEL9-Building-Running-Managing-Containers
-  - Podman-4.x-Man-Pages
+  - Podman-Man-Pages
   - RHCSA9-Mock-Container-Tasks
   - Podman-Course-2022
 ---
 
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">31</div>
+  <h1>Podman 镜像、容器与<br>Rootless 运行</h1>
+  <p class="cover-subtitle">从镜像引用到当前实例：把用户上下文、端口、挂载、数据与运行证据放进同一条验证链。</p>
+  <div class="cover-tags"><span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span></div>
+  <div class="cover-note">大字号阅读版</div>
+</div>
 
-# 第 31 章　Podman 镜像、容器与 Rootless 运行
+<div class="nav-page">
 
-把一个应用“放进容器”以后，系统中并没有只出现一个新对象。Registry 中有镜像引用，本地用户存储中有镜像，`podman create` 会建立容器配置对象，`podman start` 才产生运行进程；端口发布把宿主 socket 与容器网络连接起来，挂载把宿主数据或 Podman volume 暴露给容器；rootless 运行又把这些状态限定在某个普通用户的命名空间、存储和权限范围内。
+# 本章阅读导航
 
-考试和日常排错中最常见的误判，通常都来自把这些对象混为一谈：镜像已经拉取，不代表容器已经创建；容器显示 `running`，不代表应用监听正确；`podman port` 有映射，不代表宿主真的能访问；容器内的 `root` 不等于宿主 root；删掉容器后，bind mount 中的数据可能仍在，而只写入可写层的数据会随容器对象消失。
+先抓住一条主线：Podman 命令不是在修改一个笼统的“容器”，而是在不同用户上下文中依次处理镜像引用、本地镜像、容器配置对象、运行进程、宿主端口和外部数据。
 
-本章先建立镜像、容器、rootless、端口和存储的对象模型，再训练查询、创建、启停、删除和分层诊断。用户级 systemd、linger 与 Quadlet 只在章末建立接口，完整内容归下一章《容器持久化、用户 systemd 与 Quadlet》。
+<div class="model-grid">
+<div class="model-card"><b>01</b><strong>确认用户上下文</strong><span>rootless 状态属于目标宿主用户</span></div>
+<div class="model-card"><b>02</b><strong>证明镜像身份</strong><span>完整引用、tag、digest 与本地 image ID</span></div>
+<div class="model-card"><b>03</b><strong>建立容器配置</strong><span>名称、命令、环境、端口和挂载</span></div>
+<div class="model-card"><b>04</b><strong>判断运行状态</strong><span>主进程、退出码、日志与 exec</span></div>
+<div class="model-card"><b>05</b><strong>验收宿主链路</strong><span>port、ss、curl 与应用结果</span></div>
+<div class="model-card"><b>06</b><strong>证明数据边界</strong><span>可写层、bind mount、volume 与删除结果</span></div>
+</div>
 
-**[概念]** Registry 是提供镜像内容和元数据的服务；repository 组织同一镜像系列；tag 是可移动的人类可读引用；digest 是按内容计算的不可变标识。完整镜像引用通常写成 `registry/namespace/name:tag`，也可以使用 `registry/namespace/name@sha256:...`。
+<div class="nav-columns">
+<div>
+<h2>专题地图</h2>
+<table class="nav-topic-table">
+<tr><td>知识专题</td><td>Registry、镜像引用、Tag 与 Digest</td></tr>
+<tr><td>操作专题</td><td>拉取、列出、标记并检查镜像</td></tr>
+<tr><td>知识专题</td><td>镜像、容器配置、可写层与运行进程</td></tr>
+<tr><td>操作专题</td><td>创建、运行、启停与删除容器</td></tr>
+<tr><td>知识专题</td><td>Rootless、用户命名空间与权限边界</td></tr>
+<tr><td>操作专题</td><td>环境、端口、命令与用户身份</td></tr>
+<tr><td>知识专题</td><td>可写层、Bind Mount 与 Named Volume</td></tr>
+<tr><td>操作专题</td><td>SELinux <code>:Z/:z</code> 与挂载验证</td></tr>
+<tr><td>操作专题</td><td><code>ps</code>、<code>inspect</code>、<code>logs</code>、<code>exec</code> 与 <code>port</code></td></tr>
+<tr><td>诊断专题</td><td>按对象层定位退出、不可访问和权限拒绝</td></tr>
+<tr><td>经典任务</td><td>部署并重建 Rootless Web 容器</td></tr>
+<tr><td>经典任务</td><td>修复端口与 SELinux 挂载双故障</td></tr>
+</table>
+</div>
+<div>
+<h2>阅读时持续回答</h2>
+<ol>
+<li>当前命令以哪个宿主用户执行？</li>
+<li>操作对象是镜像、容器配置还是运行进程？</li>
+<li><code>running</code> 只证明了哪一层？</li>
+<li>宿主端口和容器端口的方向是什么？</li>
+<li>数据位于可写层、宿主目录还是 named volume？</li>
+<li>DAC、UID/GID 映射和 SELinux 哪一层拒绝了访问？</li>
+<li>删除容器时哪些数据会保留？</li>
+<li>当前证据是否越界声称了注销或重启后的持久运行？</li>
+</ol>
+</div>
+</div>
+</div>
 
-**[概念]** Image 是本地存储中的只读模板和层集合；container 是从镜像创建的实例，拥有独立配置、可写层、名称和生命周期。运行中的容器还对应一个或多个宿主进程。
+<div class="chapter-body">
 
-**[概念]** Rootless Podman 由普通用户运行。Podman 为该用户建立用户命名空间；容器内 UID 0 默认映射到调用 Podman 的宿主用户，而不是宿主 UID 0。不同宿主用户看到的是不同的镜像、容器、卷和认证状态。
+<div class="body-kicker">第 31 章 · 正文</div>
 
-**[概念]** 端口发布、环境变量和挂载属于容器创建时的配置。容器停止后，这些配置仍随容器对象存在；容器被删除后，需要根据原始参数或声明重新创建，不能靠 `start` 恢复已经删除的对象。
+把一个应用“放进容器”以后，系统中并没有只出现一个新对象。Registry 中有镜像引用，目标用户的本地存储中有镜像；`podman create` 建立容器配置对象，`podman start` 才产生运行进程。端口发布把宿主 socket 与容器网络连接起来，挂载把宿主目录或 Podman volume 暴露给容器，而 rootless 运行又把这些状态限定在某个普通用户的命名空间、存储和权限范围内。
 
-**[操作语义]** `podman pull/images/image inspect` 查询和建立镜像证据；`podman create/run/start/stop/rm` 改变容器生命周期；`podman ps/logs/container inspect/exec/port` 提供运行和诊断证据；`id`、`ss`、`curl` 与宿主文件检查负责证明用户、监听、协议和数据终态。
+最常见的误判都来自把这些对象合并成一句“容器已经好了”：镜像已拉取不等于实例已创建；容器 `running` 不等于应用监听正确；`podman port` 有映射不等于宿主请求成功；容器内 UID 0 不等于宿主 root；删除容器后，bind mount 中的数据通常仍在，而只写入可写层的数据会失去唯一入口。
 
----
+本章沿着“用户上下文 → 镜像 → 容器配置 → 运行进程 → 端口与挂载 → 功能与数据”推进。用户级 systemd、linger 与 Quadlet 只在章末建立交接，完整内容归下一章《容器持久化、用户 systemd 与 Quadlet》；firewalld 和 SELinux 通用规则也不在本章重复展开。
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>镜像引用（image reference）</strong> 是定位 Registry 内容的名称体系，通常由 Registry、namespace/repository 和 tag 组成，也可用 digest 固定到具体内容。Tag 便于发布和阅读，但可以被重新指向；digest 更适合作为内容身份。操作时应按题目保留完整引用，并用 image ID、RepoDigests 和 inspect 字段证明实际拉取内容。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>镜像（image）</strong> 是当前 Podman 存储中的只读模板和层集合，它可以拥有多个 tag，也能被多个容器共同引用。镜像存在只证明创建实例所需的模板已在当前用户存储中，并不能证明容器已经创建、进程正在运行或应用能够访问。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>容器实例（container instance）</strong> 是从镜像创建的独立对象，保存名称、命令、环境、端口、挂载和可写层；启动后才出现容器主进程。停止只改变运行状态，删除则移除配置对象和可写层。理解这一层次，是区分 `create`、`run`、`start`、`stop` 和 `rm` 的基础。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Rootless 与 Rootful</strong> 描述 Podman 由普通宿主用户还是宿主 root 运行。两者拥有不同的存储、容器、卷和认证状态；root 查询不到普通用户的容器，并不能证明对象不存在。考试要求某用户运行 rootless 容器时，login、pull、run、inspect 和删除都必须保持在该用户上下文。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>用户命名空间（user namespace）</strong> 把容器内 UID/GID 映射到宿主身份范围。Rootless 容器内 UID 0 可以在命名空间内拥有管理语义，但不会因此变成宿主 UID 0，也不能绕过宿主目录的 DAC 权限或 SELinux。遇到挂载拒绝时，要同时调查调用用户、映射后的进程身份和文件标签。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>端口发布（port publishing）</strong> 是创建配置中的宿主端口到容器端口映射，例如 `-p 8088:8080`。它只建立转发入口，不保证容器进程正在监听，也不保证 HTTP 请求成功。可靠验收必须继续检查容器状态、`podman port`、宿主 socket 和协议响应。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Bind mount 与 Named volume</strong> 都能把数据放到容器可写层之外，但所有权不同。Bind mount 明确引用管理员选择的宿主路径；named volume 由 Podman 管理名称和实际目录。删除容器通常不会删除这两类外部数据，而容器可写层会随容器对象消失，因此删除前必须先用 inspect 证明数据来源。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>SELinux `:Z` 与 `:z`</strong> 是 Podman 挂载语法中的重标记请求。`:Z` 适合当前容器私有使用，`:z` 适合多个容器共享同一内容；两者都会修改宿主对象的标签，所以不能机械附加到系统共享目录。它们也不能替代正确的宿主路径、所有权、模式和 UID/GID 映射。</p></div>
+
+<div class="quickref">
+
+# 操作语义速查
+
+在进入详细专题前，先把本章最关键的接口分成六组。速查区只建立命令的作用对象和参数方向；正文再解释证据边界、诊断分支和安全限制。
+
+<div class="command-entry">
+
+## `podman pull` / `podman images` / `podman image inspect`
+
+**SYNOPSIS**
+
+```bash
+podman pull [OPTIONS] IMAGE
+podman images [OPTIONS]
+podman image inspect [OPTIONS] IMAGE [IMAGE...]
+```
+
+在当前用户的 Podman 存储中获取、列出并检查镜像。三条命令分别回答“拉取什么”“当前有哪些引用”“实际内容和默认配置是什么”。
+
+**重要参数 / 形式**
+
+`podman pull REGISTRY/NS/IMAGE:TAG`
+: 优先使用题目给定的完整引用，避免短名称歧义。
+
+`podman images --format FORMAT`
+: 选择 repository、tag、ID 等稳定字段建立清单。
+
+`podman image inspect IMAGE --format FORMAT`
+: 精确提取 ID、架构、默认用户、命令或 digest；字段需按目标版本核对。
+
+</div>
+
+<div class="command-entry">
+
+## `podman run` / `create` / `start` / `stop` / `rm`
+
+**SYNOPSIS**
+
+```bash
+podman run [OPTIONS] IMAGE [COMMAND [ARG...]]
+podman create [OPTIONS] IMAGE [COMMAND [ARG...]]
+podman start [OPTIONS] CONTAINER
+podman stop [OPTIONS] CONTAINER
+podman rm [OPTIONS] CONTAINER
+```
+
+创建参数位于镜像名前，容器内命令位于镜像名后。`run` 是创建并启动；`start` 只能启动已有对象，不能补改创建时的端口、环境和挂载。
+
+**重要参数 / 形式**
+
+`--name NAME`
+: 为实例建立稳定管理名称；名称冲突时先检查旧对象是否可复用。
+
+`-d`
+: 后台运行，不保证主进程不会立即退出。
+
+`--rm`
+: 容器退出后自动删除对象；会减少排错现场，不适合需要保留退出证据的任务。
+
+`--user UID[:GID]`
+: 指定容器内进程身份；不等于切换宿主用户，也不能绕过 DAC 或 SELinux。
+
+</div>
+
+<div class="command-entry">
+
+## `podman ps` / `inspect` / `logs` / `exec` / `port`
+
+**SYNOPSIS**
+
+```bash
+podman ps [OPTIONS]
+podman container inspect [OPTIONS] CONTAINER
+podman logs [OPTIONS] CONTAINER
+podman exec [OPTIONS] CONTAINER COMMAND [ARG...]
+podman port CONTAINER [PRIVATE_PORT[/PROTO]]
+```
+
+这一组负责保存运行证据。`ps -a` 选择对象，inspect 读取创建配置和状态，logs 读取 stdout/stderr，exec 做定向容器内取证，port 显示发布映射。
+
+**重要参数 / 形式**
+
+`podman ps -a`
+: 同时显示 created、running、exited 等对象。
+
+`--format FORMAT`
+: 提取明确字段；不要把整段 JSON 当作唯一可读证据。
+
+`podman logs --tail N NAME`
+: 查看最近日志；日志为空不自动等于应用无错误。
+
+`podman exec NAME COMMAND`
+: 只适用于 running 容器，并要求镜像中存在目标命令。
+
+</div>
+
+<div class="command-entry">
+
+## `podman volume`
+
+**SYNOPSIS**
+
+```bash
+podman volume create [OPTIONS] [NAME]
+podman volume ls [OPTIONS]
+podman volume inspect [OPTIONS] VOLUME [VOLUME...]
+podman volume rm [OPTIONS] VOLUME [VOLUME...]
+```
+
+管理由 Podman 命名和定位的外部数据对象。Named volume 与容器对象生命周期分离，删除容器通常不会删除它。
+
+**重要参数 / 形式**
+
+`podman volume create NAME`
+: 创建稳定命名卷，便于重建容器时复用。
+
+`podman volume inspect NAME`
+: 读取实际 Mountpoint 和元数据，证明容器配置引用的对象。
+
+`podman rm --volumes NAME`
+: 可能同时处理关联的匿名卷；不要把它当作普通删除默认形式。
+
+</div>
+
+<div class="command-entry">
+
+## Rootless 身份与用户状态
+
+**SYNOPSIS**
+
+```bash
+id
+podman info
+podman unshare COMMAND [ARG...]
+loginctl show-user USER [OPTIONS]
+```
+
+确认当前宿主用户、rootless 存储上下文和 UID/GID 映射。`loginctl` 在本章只用于观察用户状态，不执行 linger 配置。
+
+**重要参数 / 形式**
+
+`id`
+: 证明当前宿主 UID、主组和附加组。
+
+`podman info`
+: 确认 rootless、存储和运行时信息；输出字段随版本变化。
+
+`podman unshare cat /proc/self/uid_map`
+: 在 rootless 用户命名空间中观察映射，不编造固定数值。
+
+`loginctl show-user USER -p State -p Linger`
+: 只读取用户 manager 状态；持久运行配置归下一章。
+
+</div>
+
+<div class="command-entry">
+
+## 端口与挂载验收
+
+**SYNOPSIS**
+
+```bash
+ss -lnt
+curl -fsS URL
+ls -ldZ HOST_PATH
+podman exec CONTAINER COMMAND [ARG...]
+```
+
+把 Podman 内部配置继续推进到宿主监听、协议功能和宿主数据。最终验收不能停在容器状态或命令返回码。
+
+**重要参数 / 形式**
+
+`-p HOST_PORT:CONTAINER_PORT`
+: 宿主端口在前，容器端口在后。
+
+`-e KEY=VALUE`
+: 把环境变量固化到容器创建配置。
+
+`-v HOST:CONTAINER:Z`
+: 私有 bind mount 重标记；使用前确认路径和共享关系。
+
+`-v VOLUME:CONTAINER`
+: 使用 named volume；通过 volume inspect 和容器 inspect 联合验证。
+
+</div>
+
+</div>
+
+</div>
 
 <section class="topic knowledge" id="RHCSA-31-K01" data-kind="knowledge-topic">
 
@@ -484,6 +738,8 @@ podman exec rh31-web /usr/bin/env
 
 `exec` 只适用于 running 容器，而且容器中必须存在指定命令。inspect 是创建配置证据，`exec env` 是容器内部运行时证据，两者回答的问题不同。
 
+`--user UID[:GID]` 改变容器内主进程使用的身份，不是把当前操作切换为另一个宿主用户。它必须结合镜像内账号、rootless UID/GID 映射和挂载目录权限判断。题目要求容器进程以特定身份运行时，应同时检查创建配置与容器内 `id`；不要把 `--user` 当作绕过宿主 DAC 或 SELinux 的办法。
+
 ### ③ [操作] 正确理解端口发布方向
 
 ```bash
@@ -896,6 +1152,8 @@ podman container inspect OLD_CONTAINER
 
 </section>
 
+<div class="page-break"></div>
+
 <section class="topic task" id="RHCSA-31-T01" data-kind="classic-task">
 
 ## [经典任务] 部署带端口、环境变量和持久目录的 Rootless Web 容器
@@ -1157,6 +1415,8 @@ loginctl show-user websvc -p State -p Linger
 
 </section>
 
+<div class="page-break"></div>
+
 <section class="topic answer" id="RHCSA-31-A02" data-kind="reference-answer">
 
 ## [参考解答] 任务二：把两个故障拆成端口层与挂载层
@@ -1243,32 +1503,68 @@ cat /home/websvc/site/index.html
 
 <section class="topic summary" id="RHCSA-31-S01" data-kind="chapter-summary">
 
-## [本章收束] 当前容器正确，仍不等于持久服务正确
+## [本章收束] 把“容器能跑”还原成一条可证明的状态链
 
-本章建立了五条必须分开的状态链：
+本章最重要的工作方法，是始终先问“当前证据属于哪一个对象层”。镜像、容器对象、容器主进程、宿主监听、协议功能和外部数据不是同一个状态；rootless 又要求所有操作和查询保持在同一宿主用户上下文。只有把这些层次分开，才不会把局部成功扩大为最终完成。
 
-```text
-镜像引用 → 本地镜像身份
-容器配置 → 主进程生命周期
-端口发布 → 宿主监听 → 协议功能
-挂载配置 → DAC/UID 映射/SELinux → 宿主数据
-宿主用户 → rootless 命名空间与每用户存储
-```
-
-执行容器任务时，推荐使用统一顺序：
+### 工作方法：从身份到功能逐层推进
 
 ```text
-确认目标用户
-→ 使用完整镜像引用
-→ inspect 镜像
-→ 准备端口、环境和数据源
-→ run/create
-→ ps -a / inspect / logs
-→ port / ss / curl
-→ 宿主数据验证
-→ 必要时保存证据后重建
+确认目标宿主用户
+→ 证明镜像引用与本地镜像身份
+→ 记录容器创建配置
+→ 判断主进程状态与退出码
+→ 检查端口发布、挂载和环境
+→ 证明宿主监听与协议功能
+→ 证明数据位于可持久来源
+→ 必要时保存证据后最小重建
 ```
 
-`podman ps` 显示 running 只是当前实例层证据。用户退出后是否继续、系统重启后如何自动创建或启动、怎样用 Quadlet 表达持久声明，全部留给下一章《容器持久化、用户 systemd 与 Quadlet》。
+每次验证都要同时写清“能证明什么”和“不能证明什么”。`podman ps` 中的 `running` 只证明主进程仍存在；`podman port` 只证明 Podman 记录了映射；`ss` 只证明宿主 socket；`curl` 才能继续证明 HTTP 请求；宿主源目录中的文件则证明数据真正进入外部存储。
+
+### 主要判断表
+
+| 看到的证据 | 可以证明 | 仍不能证明 |
+|---|---|---|
+| `podman images` 中存在目标引用 | 当前用户本地存储存在该引用 | 容器已经创建或正在使用它 |
+| `podman ps` 显示 `running` | 容器主进程当前仍运行 | 应用已就绪、端口可达、数据正确 |
+| `podman port NAME` 有映射 | 创建配置中存在端口发布 | 宿主 socket 和协议功能成功 |
+| `ss -lnt` 出现宿主端口 | 本机存在对应 TCP 监听 | HTTP 内容或远端访问正确 |
+| `podman inspect` 显示挂载 | 容器配置引用了某个 source | 进程拥有 DAC/映射/SELinux 访问权 |
+| `curl` 返回目标内容 | 当前请求链在本机成功 | 注销或重启后仍会自动运行 |
+| 删除容器后宿主文件仍在 | 数据不只位于旧容器可写层 | 下一次创建参数一定正确 |
+
+### 向下一章交接
+
+本章的终点是“当前 rootless 容器实例、端口、环境、挂载和数据可验证”。用户退出后容器是否继续、主机启动后如何自动创建或启动、如何把 `podman run` 参数转化为可维护的 Quadlet 声明，以及怎样验证冷启动，全部进入下一章《容器持久化、用户 systemd 与 Quadlet》。本章不执行 `loginctl enable-linger`，也不把当前 `running` 当作持久运行证据。
+
+### 章末速查
+
+```bash
+# 用户与存储上下文
+id
+podman info
+podman images
+
+# 容器对象与运行证据
+podman ps -a
+podman container inspect NAME
+podman logs --tail 50 NAME
+podman port NAME
+
+# 宿主功能与数据
+ss -lnt
+curl -fsS http://127.0.0.1:HOST_PORT/
+ls -ldZ HOST_PATH
+podman exec NAME id
+podman exec NAME test -r CONTAINER_PATH
+
+# 删除前的数据边界
+podman inspect NAME --format '{{json .Mounts}}'
+podman volume ls
+podman volume inspect VOLUME
+```
+
+**静态验证声明：** 本章依据 RHEL 9 课程、Red Hat 容器文档、Podman 手册、细分课件和模拟题进行静态核对。当前未执行命令级 live test；涉及版本默认值、用户映射、网络后端和 SELinux 标签变化的结论，应在目标 RHEL 9 环境中再次验证。
 
 </section>

@@ -1,0 +1,77 @@
+package_version: 1
+chapter:
+  id: RHCSA-18
+  exam: RHCSA
+  part: 5
+  number: 18
+  slug: networkmanager-ipv4-routing
+  title: NetworkManager、IPv4 地址与路由
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+  verified_at: '2026-07-12'
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/networkmanager-ipv4-routing/lecture.md
+  anki: content/rhcsa/chapters/networkmanager-ipv4-routing/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:22:22+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 54851c3cce1a5ca7100e7d3a49d813bf2e717580c332406c56c319ff404db3cf
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 3e0d622e82e43f9150a721813463c66be40758f9ed63d11afd325510825c1fe2
+  anki:
+    path: anki.yml
+    sha256: 03467def4d41ffce8ff73215d26bd2a22da0ac4cd5ab0719cdbe18a5f5391e9d
+  preview:
+    path: anki-preview.html
+    sha256: 8dd05268f712abcc5cb1bfd8e83c387c79a54610b18b78d6849ca54e2028b751
+  summary:
+    path: anki-summary.md
+    sha256: c19a165e0fca801cd948490d49e45e4458dbba637acab9134ca68644fc9f0bc7
+  anki_impact:
+    path: anki-impact.md
+    sha256: 47e6a789d56eee0e8d522044cf3be0186a40b5e8b59d79967bb344183e0eeea1
+  source_map:
+    path: source-map.md
+    sha256: c18244cbd8cff34d771e9cee9bb856dbca11235f42a7bef990c76b9af220b98e
+  structure_report:
+    path: structure-report.md
+    sha256: 8030e226aa4023ffb756def741dbae93c9a87e0fb0346c145554ddee238cb0fd
+  visual_qa:
+    path: visual-qa.md
+    sha256: 769062efda9cdd9075ed5a6429fbc104b854696350cf6a2643c3f17b6f1b8a23
+  qa_report:
+    path: qa-report.md
+    sha256: fa887dff8a73f25277f58bb30ee6a4d21b4b1f9086640b31250865b768fa0ec9
+  revision_notes:
+    path: revision-notes.md
+    sha256: e22be845dc71d52762713a78e4a03f7731901b6123c856c3586c02b9803d77ec
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 9f454f293e01bb1093de844b682a22be792ca659e6455654e78da36d944a0c00
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled:
+  - RHCSA-NETWORK-C01-QA-001
+limitations:
+- No controllable RHEL 9 virtual machine was available; command-level and reboot persistence tests were not performed.
+- Global Section ID, Anki ID, cross-chapter duplication, unified PDF, APKG, AnkiConnect and Git release remain Codex responsibilities.

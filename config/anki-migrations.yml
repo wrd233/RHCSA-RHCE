@@ -56,7 +56,7 @@ disable_ids:
 - id: RHCSA-LVM-O03-QA-008
   reason: candidate migration record removed from active chapter YAML (lvm)
 - id: RHCSA-NETWORK-C01-QA-001
-  reason: candidate migration record removed from active chapter YAML (networkmanager-ipv4-routing, firewalld-service-access-chain)
+  reason: candidate migration record removed from active chapter YAML (firewalld-service-access-chain, networkmanager-ipv4-routing)
 - id: RHCSA-NFS-QA-007
   reason: candidate migration record removed from active chapter YAML (nfs-client)
 - id: RHCSA-NFS-QA-008

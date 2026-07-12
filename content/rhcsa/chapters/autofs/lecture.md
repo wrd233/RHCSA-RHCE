@@ -5,8 +5,10 @@ exam: RHCSA
 part: "第六篇 块存储与网络存储"
 slug: autofs
 validation: static
-status: integrated
-base_commit: "39e873dab15347a0f1a7611a6f212c3d26bd3562"
+status: content_frozen_for_integration
+frozen_version: "5.1"
+base_repository_commit: "961a29b3af4c07a828078a5de90c221a036546df"
+canonical_path: "content/rhcsa/chapters/autofs/lecture.md"
 sources:
   - RH134-RHEL9
   - RHCSA-Course-24
@@ -18,25 +20,150 @@ sources:
   - autofs(8)
 ---
 
-<!-- 维护元数据、来源和稳定 ID 不进入正式章节正文。 -->
+<!-- 维护元数据、来源、冻结状态与 Section ID 只属于内容工程层；阅读版不得显示。 -->
 
-# 第 27 章　autofs 自动挂载
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">27</div>
+  <h1>autofs 自动挂载</h1>
+  <p class="cover-subtitle">从 map 到触发载荷：把路径模型、按需挂载、空闲卸载和证据链放进同一套判断框架。</p>
+  <div class="cover-tags">
+    <span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+  </div>
+  <div class="cover-mark">大字号阅读版</div>
+</div>
 
-远端文件系统并不一定需要从开机到关机始终保持挂载。对于大量用户家目录、偶尔访问的项目共享或只在特定任务中使用的路径，长期维持所有网络挂载会增加资源占用，也会把远端服务器不可达的影响扩散到本机。`autofs` 提供了另一种生命周期：先建立一个受管理的触发路径，真正访问某个 key 时再挂载远端文件系统；一段时间无人使用后，载荷挂载可以自动卸载，而触发能力仍然保留。
+<div class="nav-page">
 
-本章不重复第 26 章的 NFS 导出、协议和身份映射，也不把 `/etc/fstab` 的固定挂载重新讲一遍。主线是把 master map、direct/indirect map、key、挂载选项、远端位置、触发、超时和证据串成一个闭环。读完后，你应能回答的不只是“配置文件怎么写”，还包括：当前看到的是 autofs 触发层还是远端 NFS 载荷；路径存在但没有 NFS 挂载是否一定错误；修改 map 后应 reload 还是 restart；以及 map 已能展开但 key 仍不触发时，下一条最有区分度的证据是什么。
+# 本章阅读导航
 
-**[概念]** master map 是 autofs 的入口索引。它把一个 indirect map 的父挂载点，或 direct map 标记 `/-`，关联到具体子 map；子 map 再把 key 映射为挂载选项和远端位置。
+先抓住一条主线：**autofs 先建立可触发的路径入口，真正访问 key 时才建立远端载荷；载荷空闲卸载后，入口仍然可以再次触发。** 因此，“配置文件存在”“服务 active”“路径存在”“当前 NFS 已挂载”和“目标身份可读写”必须分别证明。
 
-**[概念]** indirect map 的 key 是父挂载点下的相对目录名，最终路径是“master mount point + key”；direct map 的 key 本身就是完整绝对路径，master map 使用 `/-` 表示这一关系。
+<div class="model-grid">
+  <div><b>01</b><strong>识别路径模型</strong><span>判断 direct 还是 indirect</span></div>
+  <div><b>02</b><strong>建立 map 关系</strong><span>master → key → location</span></div>
+  <div><b>03</b><strong>静态展开</strong><span>确认有效配置视图</span></div>
+  <div><b>04</b><strong>加载触发层</strong><span>启动或 reload autofs</span></div>
+  <div><b>05</b><strong>访问 key</strong><span>触发远端载荷</span></div>
+  <div><b>06</b><strong>分层验收</strong><span>源、功能、超时与再触发</span></div>
+</div>
 
-**[概念]** autofs 触发文件系统与远端载荷文件系统是两层对象。服务运行后可能已经存在 `autofs` 类型的触发层，但在访问 key 前还没有对应的 `nfs` 或 `nfs4` 载荷；载荷超时卸载后，触发层仍可再次建立挂载。
+<div class="nav-columns">
+<div>
 
-**[概念]** “配置存在”“map 可解析”“服务 active”“路径可触发”“远端源正确”“目标身份可读写”是不同状态。任何一层成功都不能扩大为完整任务已经完成。
+## 专题地图
 
-**[操作语义]** `automount -m` 展开当前可读取的 master map 与子 map，是配置证据；`systemctl` 读取和改变 autofs 服务的当前与持久状态；`stat` 或对精确 key 的 `ls -ld` 用于有意识地触发；`findmnt` 用于区分 autofs 触发层与当前远端载荷。
+- **知识专题**　从 map 到载荷：autofs 管理的对象链
+- **知识专题**　indirect 与 direct 的路径模型
+- **操作专题**　配置可验证的 indirect NFS 自动挂载
+- **知识专题**　wildcard `*` 与替换 `&`
+- **操作专题**　用 direct map 管理任意绝对路径
+- **操作专题**　reload、restart、timeout 与 busy
+- **操作专题**　配置、触发、载荷与功能证据矩阵
+- **诊断专题**　路径存在却没有挂载时如何定位
+- **经典任务**　用户家目录自动挂载与错误 key 修复
 
-**[操作语义]** 修改配置后采用“静态展开 → reload → 精确触发 → 当前挂载 → 目标身份功能”的确定性流程。不要把反复 restart、普通手工挂载、`chmod 777` 或关闭安全机制当作默认修复。
+</div>
+<div>
+
+## 阅读时持续回答
+
+1. master map 与子 map 各自决定什么？
+2. 当前 key 是相对目录名还是完整绝对路径？
+3. `automount -m` 证明了哪一层，尚未证明哪一层？
+4. 当前看到的是 `autofs` 触发层还是 NFS 载荷？
+5. 哪一次精确路径访问会触发挂载？
+6. 超时后载荷消失是故障还是预期生命周期？
+7. 当前挂载源正确后，是否已用目标身份验证功能？
+8. 失败属于 entry、key、trigger、remote、permission 还是 busy？
+
+<div class="nav-note"><b>章节边界：</b>NFS 远端导出与身份语义留给第 26 章；固定挂载与 <code>/etc/fstab</code> 留给第 24 章；systemd automount 不作为本章主线替代。</div>
+
+</div>
+</div>
+</div>
+
+<div class="chapter-opening">
+
+# 第 27 章 · 正文
+
+网络文件系统并不一定要从开机到关机始终保持挂载。大量用户家目录、偶尔访问的项目共享和低频归档路径，都更适合在真正访问时才连接远端；无人使用一段时间后，载荷可以自然卸载。`autofs` 正是把这种生命周期表达为配置：master map 建立入口，子 map 描述 key 与远端位置，路径访问触发真实挂载，timeout 管理空闲后的卸载。
+
+本章最常见的误判，是把不同状态压成一句“挂载好了”。服务 `active` 只说明 daemon 在运行；`automount -m` 只说明 map 能被读取；父目录或触发路径存在，不代表远端 NFS 载荷此刻已经出现；当前载荷正确，也还没有证明题目指定的用户能够读写。后续所有操作都沿着“配置 → 加载 → 触发 → 当前载荷 → 功能 → 超时 → 再触发”推进，并明确每条证据能证明什么、不能证明什么。
+
+<div class="concept-stack">
+  <div class="concept-block"><span class="concept-pill">概念</span><p><strong>Master Map</strong> 是 autofs 的入口索引。它把一个 indirect map 的父挂载点，或者 direct map 使用的 <code>/-</code> 标记，关联到具体子 map；它决定“哪些本地路径交给 automounter 管理”，却不直接描述每个远端载荷。看到 master entry 时应继续追踪子 map，而不能把入口配置误认成完整挂载定义。</p></div>
+  <div class="concept-block"><span class="concept-pill">概念</span><p><strong>Indirect Map</strong> 在一个共同父目录下按相对 key 形成最终路径。若 master mount point 是 <code>/rhome</code>，key 是 <code>remoteuser0</code>，触发路径就是 <code>/rhome/remoteuser0</code>。子 map 中若误写完整路径，请求 key 将无法匹配；因此 indirect 的核心边界是“父路径由 master 提供，子 map 只写相对 key”。</p></div>
+  <div class="concept-block"><span class="concept-pill">概念</span><p><strong>Direct Map</strong> 让子 map 的 key 自身成为完整绝对路径。master map 使用 <code>/-</code> 表示 direct 模式，实际路径写在子 map，例如 <code>/srv/docs</code>。<code>/-</code> 不是要创建或访问的目录；它只是告诉 automounter：不要再把父挂载点与 key 拼接。</p></div>
+  <div class="concept-block"><span class="concept-pill">概念</span><p><strong>Key</strong> 是路径访问与 map 条目之间的匹配对象。它在 indirect map 中通常是一个目录组件，在 direct map 中则是完整绝对路径；wildcard <code>*</code> 可以接住没有显式条目的请求，而 <code>&amp;</code> 把实际请求 key 代入远端位置。判断 key 的含义，是定位“不触发”问题时最有区分度的一步。</p></div>
+  <div class="concept-block"><span class="concept-pill">概念</span><p><strong>触发式挂载</strong> 包含两层文件系统：<code>autofs</code> 类型的触发层负责拦截路径访问，<code>nfs</code>/<code>nfs4</code> 载荷层才是真正的远端文件系统。服务启动后可以已经存在触发层，而在访问 key 前没有任何对应 NFS 载荷；所以“配置存在但尚未挂载”往往是正常初态，而不是错误。</p></div>
+  <div class="concept-block"><span class="concept-pill">概念</span><p><strong>空闲超时</strong> 管理的是已触发载荷的生命周期，而不是配置文件的生命周期。载荷在无活动引用并超过 timeout 后可以卸载；若 Shell 的当前目录仍位于其中、文件仍被打开或其他进程仍在使用，载荷可能保持 busy。超时卸载后再次访问能够恢复，才说明按需生命周期完整。</p></div>
+</div>
+
+</div>
+
+<div class="quickref-section">
+
+# 操作语义速查
+
+这一页先建立最关键的接口地图。详细操作仍在后续专题中展开；这里不把所有参数塞进横向表格，而是强调每个入口改变或观察哪一层状态。
+
+<div class="quickref-card">
+<h3><code>/etc/auto.master</code> 与 <code>/etc/auto.master.d/*.autofs</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>mount-point  map-name  [master-options]
+/-           map-name  [master-options]</code></pre>
+<p>建立 master entry：indirect 模式写父挂载点，direct 模式写 <code>/-</code>。它只建立入口和子 map 的关联。</p>
+<dl><dt><code>/rhome /etc/auto.rhome --timeout=60</code></dt><dd>让 <code>/rhome</code> 下的请求交给 indirect map 解析。</dd><dt><code>/- /etc/auto.direct --timeout=60</code></dt><dd>声明 direct map，实际绝对路径写在子 map。</dd><dt><code>*.autofs</code></dt><dd>RHEL 课程环境中用于 <code>/etc/auto.master.d/</code> 的本地 master 片段后缀。</dd></dl>
+</div>
+
+<div class="quickref-card">
+<h3>direct / indirect 子 map</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>key  -mount-options  location</code></pre>
+<p>把请求 key 映射为挂载选项和远端位置。map 类型决定 key 是相对名称还是完整路径。</p>
+<dl><dt><code>alpha -fstype=nfs,rw host:/exports/alpha</code></dt><dd>indirect 条目；最终路径由 master point 与 <code>alpha</code> 拼接。</dd><dt><code>/srv/docs -fstype=nfs,ro host:/exports/docs</code></dt><dd>direct 条目；key 本身就是本地绝对路径。</dd><dt><code>* ... /rhome/&amp;</code></dt><dd><code>*</code> 匹配请求 key，<code>&amp;</code> 将该 key 代入 location。</dd></dl>
+</div>
+
+<div class="quickref-card">
+<h3><code>automount -m</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>automount -m</code></pre>
+<p>展开当前可读取的 master map 与子 map，用于确认 entry、map 来源和 key 是否进入有效配置视图。</p>
+<dl><dt><code>-m</code></dt><dd>打印 maps 后退出；属于静态配置证据。</dd><dt>证明边界</dt><dd>不证明服务已应用新配置，不证明远端可访问，也不证明 key 已经触发。</dd></dl>
+</div>
+
+<div class="quickref-card">
+<h3><code>systemctl reload/restart autofs</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>systemctl enable --now autofs
+systemctl reload autofs
+systemctl restart autofs</code></pre>
+<p>控制 daemon 当前状态、启动持久性和配置重新读取。修改 map 后优先走“静态展开 → reload → 重新触发”。</p>
+<dl><dt><code>enable --now</code></dt><dd>首次部署时同时建立当前运行和开机启用状态。</dd><dt><code>reload</code></dt><dd>重新读取配置，尽量保留现有 daemon 生命周期。</dd><dt><code>restart</code></dt><dd>完整重启服务，影响更强；不能修复错误 key 或远端路径。</dd></dl>
+</div>
+
+<div class="quickref-card">
+<h3><code>stat</code> / <code>ls -ld</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>stat /base/key
+ls -ld /base/key</code></pre>
+<p>对精确 key 发起路径解析，从而有意识地触发按需挂载。只列父目录不一定枚举所有尚未触发的 key。</p>
+<dl><dt><code>stat /rhome/remoteuser0</code></dt><dd>直接访问目标 key，适合触发与错误复现。</dd><dt><code>ls -ld PATH</code></dt><dd>查询目标路径本身，避免普通 <code>ls PATH</code> 继续遍历大量内容。</dd></dl>
+</div>
+
+<div class="quickref-card">
+<h3><code>findmnt</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>findmnt -t autofs
+findmnt -t nfs,nfs4
+findmnt -T /base/key</code></pre>
+<p>读取当前挂载关系，用于区分触发层与远端载荷，并核对某个路径当前实际落在哪个文件系统上。</p>
+<dl><dt><code>-t autofs</code></dt><dd>观察受管理的触发层。</dd><dt><code>-t nfs,nfs4</code></dt><dd>观察当前已经触发的 NFS 载荷。</dd><dt><code>-T PATH</code></dt><dd>从具体路径反查覆盖它的挂载源、目标与类型。</dd></dl>
+</div>
+
+</div>
+
 
 <section class="topic knowledge" id="RHCSA-27-K01" data-kind="knowledge-topic">
 
@@ -116,7 +243,6 @@ findmnt -t nfs,nfs4   # 看不到目标远端载荷
 **[Cheatsheet]** master map 定义入口，子 map 定义 key 与载荷；`autofs` 触发层不等于 `nfs` 载荷；active、可解析、已触发和可读写要分层验证；超时前先确保没有活动引用。
 
 </section>
-
 <section class="topic knowledge" id="RHCSA-27-K02" data-kind="knowledge-topic">
 
 ## [知识专题] indirect 与 direct：路径是怎样由 key 形成的
@@ -923,7 +1049,7 @@ systemctl is-enabled autofs.service
 findmnt -t autofs
 ```
 
-首次 `enable --now` 后再 reload 并非绝对必要，但在候选答案中用于明确“配置已经按最终内容重新读取”。实际环境可在确认首次启动发生于配置写入之后时省略重复 reload。
+首次 `enable --now` 后再 reload 并非绝对必要，但在参考解答中用于明确“配置已经按最终内容重新读取”。实际环境可在确认首次启动发生于配置写入之后时省略重复 reload。
 
 ### ⑥ [触发与当前源] 精确访问 key
 
@@ -958,12 +1084,15 @@ findmnt -T /rhome/remoteuser0
 journalctl -u autofs.service -b --no-pager
 ```
 
-静态候选无法承诺真实环境一定在精确第 60 秒完成卸载；若仍存在，先使用 `fuser -vm` 查活动引用。
+静态核对环境无法承诺真实环境一定在精确第 60 秒完成卸载；若仍存在，先使用 `fuser -vm` 查活动引用。
 
 ### 典型错误
 
 - master 写成 `/rhome/remoteuser0 /etc/auto.rhome`，导致路径模型错误；
 - indirect 子 map key 写成完整 `/rhome/remoteuser0`；
+
+#### 典型错误（续）
+
 - `.autofs` 文件扩展名或子 map 路径拼错；
 - 只执行 `ls /rhome`，没有精确访问 key；
 - `automount -m` 成功后直接宣布任务完成；
@@ -1051,27 +1180,45 @@ journalctl -u autofs.service -b --no-pager
 
 </section>
 
+
 <section class="topic conclusion" id="RHCSA-27-S01" data-kind="conclusion">
 
 ## [本章收束] 自动挂载的终态是一条可重复触发的证据链
 
-完成 autofs 任务时，真正需要记住的不是某个固定文件名，而是三组关系：master map 与子 map 的入口关系，direct/indirect map 与 key 的路径关系，以及触发层、NFS 载荷与功能状态的生命周期关系。
+完成 autofs 任务时，不要把目标写成“目录存在”或“服务已经启动”。真正的终态是：路径模型正确，master 与子 map 能进入有效配置视图，daemon 当前运行且按题意持久启用，精确 key 能建立正确载荷，目标身份能够完成所需访问，载荷空闲后可以卸载，并能在下一次访问时重新出现。
 
-看到配置文件时，先问它是否进入 `automount -m` 的有效视图；看到服务 active 时，继续确认触发层；看到目录存在时，精确访问 key 并用 `findmnt` 核对远端源；看到当前挂载时，再以题目身份验证读写；看到超时卸载时，还要确认再次访问能够恢复。这样既能处理 RHCSA 的用户家目录任务，也能迁移到真实系统中的大量按需共享。
-
-最终调用路径可以压缩为：
+### 工作方法
 
 ```text
-识别路径模型
+识别 direct / indirect
 → 建立 master 与子 map
-→ automount -m
-→ enable/reload
+→ automount -m 静态展开
+→ enable 或 reload
 → stat 精确 key
-→ findmnt 核对源
-→ 目标身份功能
-→ 空闲卸载与再触发
+→ findmnt 核对触发层与载荷源
+→ 目标身份功能验证
+→ 空闲卸载与再次触发
 ```
 
-遇到失败时，不随机试命令，而是判断它属于 entry、key、trigger、remote、permission 还是 busy 层，选择下一条最有区分度的证据，完成最小修复后从配置层重新验收。
+任何一步失败，都先给它定位到 entry、key、trigger、remote、permission 或 busy 层，再选择一条最有区分度的证据。反复 restart、永久手工挂载、全局放宽权限和关闭安全机制，都不能替代对象判断。
+
+### 主要判断表
+
+| 看到的证据 | 可以证明 | 仍然不能证明 |
+|---|---|---|
+| 配置文件存在 | 管理员写入了目标配置 | 文件已被 master 加载、字段正确 |
+| `automount -m` 能展开 entry | master 与子 map 当前可解析 | daemon 已 reload、远端能挂载 |
+| `autofs.service` 为 active | automount daemon 当前运行 | 指定 key 存在、载荷源正确 |
+| `findmnt -t autofs` 有结果 | 触发层已经建立 | 对应 NFS 载荷当前存在 |
+| 精确 `stat /base/key` 成功 | 路径解析与触发至少可继续 | 当前源一定符合题目、目标用户可写 |
+| `findmnt -T PATH` 源正确 | 当前路径落在目标载荷上 | timeout 正常、重启后仍可用 |
+| 空闲后 NFS 载荷消失 | 自动卸载可能正常发生 | 触发能力仍然有效 |
+| 再次访问重新出现 | 按需生命周期可以恢复 | 所有远端权限与业务语义均正确 |
+
+### 向下一章交接
+
+本章只负责 autofs 的路径、map、触发和生命周期。如果当前源已经正确，但访问仍因权限或安全策略失败，应保留 `findmnt`、目标身份和错误日志证据：NFS 导出、UID/GID 与远端身份问题回到第 26 章；出现 SELinux AVC 时进入第 28 章，用上下文与 AVC 证据继续定位，而不是关闭 SELinux。
+
+> **静态验证边界：** 本章依据 RHEL 9 课程、细分课件和手册页完成静态核对；当前会话没有可控制的 RHEL 9 VM，未执行真实 map reload、NFS 触发、busy 引用、timeout 与冷启动测试。
 
 </section>

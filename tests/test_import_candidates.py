@@ -67,3 +67,18 @@ def test_hash_mismatch_is_rejected(tmp_path: Path):
     result = run(rewritten, root=tmp_path / "repo")
     assert result["summary"]["rejected"] == 1
     assert "hash mismatch" in " ".join(result["packages"][0]["errors"])
+
+
+def test_manifest_self_hash_is_excluded(tmp_path: Path):
+    archive = candidate_zip(tmp_path)
+    rewritten = tmp_path / "self-hash.zip"
+    with zipfile.ZipFile(archive) as source, zipfile.ZipFile(rewritten, "w") as target:
+        for info in source.infolist():
+            if info.filename != "candidate/manifest.yml":
+                target.writestr(info, source.read(info))
+                continue
+            manifest = yaml.safe_load(source.read(info))
+            manifest["files"]["manifest"] = {"path": "manifest.yml", "sha256": "0" * 64}
+            target.writestr(info, yaml.safe_dump(manifest))
+    result = run(rewritten, root=tmp_path / "repo")
+    assert result["summary"]["accepted"] == 1

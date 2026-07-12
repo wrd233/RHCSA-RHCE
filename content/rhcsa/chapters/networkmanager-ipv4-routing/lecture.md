@@ -4,7 +4,9 @@ chapter_id: RHCSA-18
 chapter_slug: networkmanager-ipv4-routing
 exam: RHCSA
 validation: static
-status: integrated
+status: content_frozen_for_integration
+content_version: "5.1"
+base_commit: "961a29b3af4c07a828078a5de90c221a036546df"
 sources:
   - RH124-RHEL9-Ch12
   - nmcli(1)
@@ -14,31 +16,264 @@ sources:
   - NetworkManager.conf(5)
 ---
 
-<!-- 维护元数据、Section ID 与来源仅属于内容真源；正式渲染不显示内部 ID。 -->
+<!-- 维护元数据、Section ID 与来源仅属于内容真源；阅读版不显示内部 ID。 -->
 
-# 第 18 章　NetworkManager、IPv4 地址与路由
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">18</div>
+  <h1>NetworkManager、<br>IPv4 地址与路由</h1>
+  <p class="cover-subtitle">从持久连接配置到内核选路：把 device、profile、地址、路由和验证放进同一条证据链。</p>
+  <div class="cover-tags">对象模型　操作语义　验证　诊断　经典任务</div>
+  <div class="cover-edition">大字号阅读版</div>
+</div>
 
-一台主机“有网卡”并不等于“已经有可用网络”。真正参与一次 IPv4 通信的对象至少包括：被内核识别的网络设备、NetworkManager 保存的连接配置、当前激活到设备上的连接实例、内核中的地址和路由，以及针对某个目的地址实际选出的出口、源地址和下一跳。把这些对象混在一起，会产生几类高频误判：配置文件已经改对，却忘了重新激活；接口上有地址，却因为前缀或下一跳错误而选路失败；`ping` 网关成功，就误以为 DNS、TCP 监听和业务访问都已正确；当前网络能用，却没有检查重连或重启后的持久状态。
+<section class="reading-nav">
 
-本章从对象关系出发，先区分 device、connection profile、active connection 和当前内核状态，再训练静态 IPv4、默认网关、静态路由、DNS 属性、多 profile 与 autoconnect。操作统一遵循以下闭环：
+# 本章阅读导航
+
+先抓住一条主线：**NetworkManager 保存的是连接配置意图，内核承担的是当前地址与选路。** 配置、激活和当前状态必须分别取证，不能看到一条成功输出就把整个网络终态判为正确。
+
+<div class="model-grid">
+  <div><b>01</b><strong>识别设备</strong><span>确认 device、接口名、链路与管理状态</span></div>
+  <div><b>02</b><strong>定位 profile</strong><span>区分 NAME、UUID、绑定设备和活动实例</span></div>
+  <div><b>03</b><strong>读取持久属性</strong><span>地址、网关、路由、DNS 与 autoconnect</span></div>
+  <div><b>04</b><strong>激活配置</strong><span>明确何时只是保存，何时真正应用到 device</span></div>
+  <div><b>05</b><strong>核对内核状态</strong><span>使用 `ip address` 与 `ip route` 读取当前事实</span></div>
+  <div><b>06</b><strong>验证具体目的</strong><span>用 `ip route get` 证明 via、dev 与 src</span></div>
+</div>
+
+<div class="nav-columns">
+<div>
+
+## 专题地图
+
+- **知识专题**　从设备到内核：NetworkManager 管理的对象
+- **知识专题**　从地址前缀到目的路径：IPv4 与路由
+- **操作专题**　修改前建立 device/profile/当前状态基线
+- **操作专题**　修改现有 profile 为静态 IPv4
+- **操作专题**　创建新 profile 与管理 autoconnect
+- **操作专题**　默认网关、静态路由与 DNS 属性
+- **操作专题**　keyfile、reload 与重新激活边界
+- **操作专题**　从配置到功能的分层验证
+- **诊断专题**　链路、地址、路由、DNS 与监听分层定位
+- **经典任务**　DHCP profile 改静态；修复目的选路
+
+</div>
+<div>
+
+## 阅读时持续回答
+
+1. 我现在操作的是 device，还是 connection profile？
+2. profile 名称、UUID 与接口名分别是什么？
+3. 看到的是持久配置，还是活动连接的当前状态？
+4. 修改后是否已经激活到目标 device？
+5. 地址的前缀是否产生了正确直连网络？
+6. 默认路由和静态路由的下一跳是否可直连？
+7. 对具体目的，`via`、`dev` 与 `src` 是什么？
+8. 当前证据能证明什么，又不能证明什么？
+
+<div class="boundary-note"><strong>章节边界</strong><br>主机名、NSS 与完整 DNS 解析留给第 19 章；SSH 留给第 20 章；firewalld 与完整服务访问链留给第 21 章。</div>
+
+</div>
+</div>
+
+</section>
+
+<div class="page-break"></div>
+
+<section class="chapter-opening">
+
+# 第 18 章 · 正文
+
+一台主机“有网卡”并不等于“已经有可用网络”。一次 IPv4 通信至少经过四个状态层：系统先识别网络设备，NetworkManager 再选择并激活一个 connection profile，随后把地址和路由写入内核，最后内核针对具体目的决定出口、源地址和下一跳。任何一层错位，都可能让“配置看起来正确”与“实际路径正确”同时出现矛盾。
+
+最常见的误判有三类。第一，修改 profile 后没有重新激活，却把保存成功当成当前状态已经变化；第二，接口确实有地址，但前缀、默认网关或静态路由让目标走错出口；第三，`ping` 一次成功就宣布 DNS、TCP 监听、firewalld 和应用全部正确。解决这些问题的关键不是背更多命令，而是知道每条命令观察或改变哪个对象。
+
+本章沿着下面的主线推进：
 
 ```text
-识别对象
-→ 保存基线
-→ 修改持久 profile
-→ 激活或重新应用
-→ 核对当前地址与路由
+识别 device 与活动 profile
+→ 读取持久配置并保存基线
+→ 修改地址、网关、路由或 DNS 属性
+→ 激活目标 profile
+→ 读取内核地址和路由
 → 对具体目的执行选路验证
-→ 进行必要的功能验证
+→ 进行受限的功能验证
 ```
 
-**[概念]** NetworkManager 的 device 是物理或虚拟网络接口；connection profile 是一组可持久保存、可激活到设备上的配置。profile 名称、profile UUID 和接口名是不同身份维度，即使它们可以被取成相同字符串，也不能在判断时互相替代。
+## 核心概念
 
-**[概念]** active connection 是某个 profile 当前激活后的运行实例。profile 中写着什么，回答“准备怎样配置”；`ip address` 和 `ip route` 回答“内核现在怎样工作”。两组证据可能在重新激活前暂时不一致。
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>网络设备（device）</strong> 是内核能够发送或接收网络流量的物理或虚拟接口，例如 `enp1s0`。它具有接口名、类型、MAC、链路和管理状态，但它本身不等于一套持久 IP 配置。观察 device 时，重点回答“系统是否看见它、NetworkManager 是否管理它、链路是否可用、当前哪个连接使用它”。</p></div>
 
-**[概念]** IPv4 地址必须和前缀长度一起理解。地址确定主机标识，前缀确定本机认为哪些目的属于直连网络。默认网关并不是一个孤立字段，它最终表现为一条默认路由；静态路由则为特定目的前缀指定更合适的下一跳或出口。
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>连接配置（connection profile）</strong> 是 NetworkManager 保存的一组配置意图，包含绑定设备、IPv4 方法、地址、网关、路由、DNS 和自动连接等属性。一个 device 可以保存多个 profile；profile 存在只证明配置对象存在，不证明它正在活动。名称、UUID 和接口名即使文字相同，也仍是不同身份维度。</p></div>
 
-**[操作语义]** `nmcli connection` 主要查询和修改 connection profile，`nmcli device` 主要查询和控制设备；`ip address`、`ip route` 和 `ip route get` 读取当前内核网络状态。`ping` 与 `ss` 是功能或局部证据入口，但不能替代 profile、地址和路由验证。
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>活动连接与当前内核状态</strong> 分属两个相关但不同的证据层。profile 激活后形成 active connection，NetworkManager 再把设置应用到 device；`ip address` 和 `ip route` 显示内核此刻真正采用的地址和路由。修改 profile 后，持久配置与当前状态可以暂时不一致，所以保存成功后仍要激活并复核。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>IPv4 地址与前缀</strong> 必须作为一个整体读取。地址标识本机，前缀决定本机认为什么是直连网络，并自然产生直连路由。接口上出现正确地址不代表前缀正确；前缀错误可能让网关看似存在，却无法作为正常下一跳被交付。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>默认路由</strong> 是当没有更具体路由时使用的兜底路径，通常由 `ipv4.gateway` 形成 `default via ...`。默认网关不是“能访问互联网”的保证；它首先必须能够通过当前连接直接到达，并且只在没有更长前缀匹配时才被选择。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>静态路由</strong> 为某个目的前缀指定下一跳、出口或 metric。它比默认路由更具体时会优先匹配。路由表中存在一条静态路由，只能证明条目被安装；对评分目标仍应使用 `ip route get`，确认该目的实际选中的 `via`、`dev` 和 `src`。</p></div>
+
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>DNS 属性</strong> 是 connection profile 向名称解析链提供的服务器和搜索域输入。本章负责设置 `ipv4.dns`、`ipv4.dns-search` 并观察当前连接是否采用；数字 IP 可达而名称失败时，完整的主机名、NSS、解析器和 DNS 记录调查交给第 19 章。</p></div>
+
+</section>
+
+<section class="quick-reference">
+
+# 操作语义速查区
+
+下面的命令组只建立接口地图。正文专题会继续解释对象选择、参数组合、验证层次和风险边界，不要求每个小操作重复整份手册页。
+
+### `nmcli device`
+
+**SYNOPSIS**
+
+```bash
+nmcli device { status | show [IFACE] | connect IFACE | disconnect IFACE }
+```
+
+以 device 为中心查看 NetworkManager 状态，或控制设备是否允许连接。
+
+**重要参数 / 形式**
+
+`nmcli device status`
+: 列出 device、类型、状态和当前 connection，适合作为第一条基线证据。
+
+`nmcli device show enp1s0`
+: 显示设备的活动连接信息，包括当前 IP、网关和 DNS 输入。
+
+`nmcli device disconnect enp1s0`
+: 断开设备并阻止它立即自动重新连接；远程执行前必须有恢复通道。
+
+### `nmcli connection show`
+
+**SYNOPSIS**
+
+```bash
+nmcli connection show [--active] [ID]
+```
+
+以 connection profile 为中心读取全部配置、活动映射或某个 profile 的详细属性。
+
+**重要参数 / 形式**
+
+`nmcli connection show`
+: 列出所有 profile 的 NAME、UUID、TYPE 和 DEVICE。
+
+`--active`
+: 只显示当前活动连接；它不列出所有持久 profile。
+
+`-f <FIELDS>`
+: 只显示目标字段，便于把配置证据收敛到 `ipv4.*` 和 `connection.*`。
+
+### `nmcli connection add / modify`
+
+**SYNOPSIS**
+
+```bash
+nmcli connection add type ethernet ifname IFACE con-name NAME [PROPERTY VALUE ...]
+nmcli connection modify ID PROPERTY VALUE [PROPERTY VALUE ...]
+```
+
+创建新 profile，或修改现有 profile 的持久属性。
+
+**重要参数 / 形式**
+
+`ipv4.method manual`
+: 使用静态 IPv4 目标；只写地址而不改 method，连接可能仍保留动态行为。
+
+`ipv4.addresses 192.0.2.10/24`
+: 地址与前缀作为一个值设置。
+
+`+ipv4.routes` / `-ipv4.routes`
+: 在多值属性中追加或删除指定路由；不带符号通常替换整个列表。
+
+### `nmcli connection up / down`
+
+**SYNOPSIS**
+
+```bash
+nmcli connection up ID [ifname IFACE]
+nmcli connection down ID
+```
+
+激活或停用一个 profile。`up` 是把持久配置应用到 device 的关键动作。
+
+**重要参数 / 形式**
+
+`nmcli connection up office-lan`
+: 激活目标 profile；远程修改当前管理接口时可能立即中断会话。
+
+`nmcli connection down office-lan`
+: 停用活动连接，但 autoconnect 候选可能再次被自动激活。
+
+`connection.autoconnect yes|no`
+: 控制后续自动激活资格，不代表当前连接已经 up 或 down。
+
+### `ip address`
+
+**SYNOPSIS**
+
+```bash
+ip [-br] address [show [dev IFACE]]
+```
+
+从内核角度读取当前接口地址、前缀、scope 和生命周期。
+
+**重要参数 / 形式**
+
+`-br`
+: 使用紧凑输出建立全局基线。
+
+`show dev enp1s0`
+: 只查看一个 device，避免把其他接口地址混入判断。
+
+`ip address` 的边界
+: 它证明当前地址，不证明 profile 持久属性或重启后的结果。
+
+### `ip route` / `ip route get`
+
+**SYNOPSIS**
+
+```bash
+ip route [show]
+ip route get DESTINATION
+```
+
+读取当前路由表，并计算一个具体目的将使用的出口、下一跳和源地址。
+
+**重要参数 / 形式**
+
+`ip route`
+: 查看默认路由、直连路由、静态路由与 metric。
+
+`ip route get 198.51.100.44`
+: 验证该目的实际选择的 `via`、`dev` 和 `src`，是本章最关键的选路证据。
+
+`ip route add ...`
+: 只改变当前内核状态，不能作为持久 NetworkManager 任务的最终答案。
+
+### `ping` / `ss`
+
+**SYNOPSIS**
+
+```bash
+ping [-c COUNT] DESTINATION
+ss [-lntup]
+```
+
+执行有限的 ICMP 连通测试，或查看本机 socket 监听状态。
+
+**重要参数 / 形式**
+
+`ping -c 3 192.0.2.1`
+: 若对端回应，可证明这次 ICMP 往返；失败可能来自对端禁用 ICMP。
+
+`ss -lntup`
+: 证明本机是否存在 TCP/UDP 监听，不证明远端流量能穿过 firewalld 到达。
+
+</section>
 
 <section class="topic knowledge" id="RHCSA-18-K01" data-kind="knowledge-topic">
 
@@ -431,7 +666,18 @@ nmcli connection modify office-dhcp connection.autoconnect-priority 0
 
 数值更高的 profile 优先。该属性只在同一设备有多个可用候选时有意义；它不改变路由 metric，也不等于“当前强制切换到该 profile”。
 
-### ⑤ [操作] 区分停用 profile 与断开 device
+### ⑤ [知识点] `connection.autoconnect-priority` 只在多个候选都可自动连接时参与选择
+
+同一 device 上若存在多个 `connection.autoconnect yes` 的 profile，NetworkManager 需要从候选中选择一个。`connection.autoconnect-priority` 的数值越高，通常越优先；它不是链路带宽、路由 metric，也不会强制一个当前不可用的 profile 成功激活。
+
+```bash
+nmcli -f connection.id,connection.autoconnect,connection.autoconnect-priority \
+  connection show office-static
+```
+
+考试环境通常不必主动制造多个自动连接候选。已有多 profile 时，先确认题目要求的目标 profile，再决定是否需要调整优先级；不要用删除其他 profile 代替对象判断。
+
+### ⑥ [操作] 区分停用 profile 与断开 device
 
 ```bash
 nmcli connection down office-static
@@ -446,7 +692,7 @@ nmcli device disconnect enp1s0
 nmcli device connect enp1s0
 ```
 
-### ⑥ [操作] 删除 profile 前先证明它不再需要
+### ⑦ [操作] 删除 profile 前先证明它不再需要
 
 ```bash
 nmcli connection delete office-dhcp
@@ -726,6 +972,17 @@ ss -lnt sport = :22
 
 ## [诊断专题] 按链路定位：链路、地址、路由、DNS 还是监听
 
+网络故障最容易被“从头重配一遍”掩盖。更稳定的方法是先把症状放到正确层次，再选择一条最能区分假设的证据。每一步只解决当前已经证明的问题，不用后续章节的工具替代本章调查。
+
+<div class="diagnostic-chain">
+  <div><strong>症状</strong><span>先写清楚失败的是链路、地址、目的路径、名称还是端口</span></div>
+  <div><strong>当前证据</strong><span>读取 device、active profile、address、route 和 route get</span></div>
+  <div><strong>假设</strong><span>一次只保留少量可被下一条命令区分的原因</span></div>
+  <div><strong>下一条证据</strong><span>优先选择能直接排除一半假设的命令</span></div>
+  <div><strong>最小修复</strong><span>只改已证明错误的 profile 属性或活动状态</span></div>
+  <div><strong>再验证</strong><span>重新检查持久配置、当前状态、目的路径和必要功能</span></div>
+</div>
+
 网络故障最容易出现“反复改同一层”的无效操作。稳定的诊断顺序是：先判断设备和链路，再判断活动 profile 与地址，然后判断具体目的路由，最后进入 DNS、监听、防火墙或应用层。每一步选择最能区分假设的证据。
 
 ### ① [诊断] device 不存在或没有 carrier
@@ -884,7 +1141,7 @@ nmcli connection show
 
 </section>
 
-<section class="topic task" id="RHCSA-18-T01" data-kind="classic-task">
+<section class="topic task force-new-page" id="RHCSA-18-T01" data-kind="classic-task">
 
 ## [经典任务] 把现有 DHCP profile 改为静态地址并验证重连状态
 
@@ -938,9 +1195,7 @@ autoconnect：yes
 
 </section>
 
-<div class="page-break"></div>
-
-<section class="topic answer" id="RHCSA-18-A01" data-kind="reference-answer">
+<section class="topic answer force-new-page" id="RHCSA-18-A01" data-kind="reference-answer">
 
 ## [参考解答] 经典任务一
 
@@ -1051,7 +1306,7 @@ maintenance 未被意外激活
 
 </section>
 
-<section class="topic task" id="RHCSA-18-T02" data-kind="classic-task">
+<section class="topic task force-new-page" id="RHCSA-18-T02" data-kind="classic-task">
 
 ## [经典任务] 本机有地址，但到目标网络的选路错误
 
@@ -1079,15 +1334,30 @@ ip route get 198.51.100.44 显示 via 192.0.2.1
 
 - `198.51.100.0/24` 经 `192.0.2.254`；
 - 路由持久写入 `office-lan`；
-- 不改变地址、默认网关、DNS 或防火墙；
+- 激活后 `ip route get 198.51.100.44` 选择正确下一跳、device 和源地址。
+
+### 限制条件
+
+- 不改变 `192.0.2.20/24`、默认网关和 DNS；
+- 不修改 firewalld 或 SSH 配置；
+- 不删除或重建 `office-lan`；
 - 不把临时 `ip route add` 作为最终答案；
-- 激活后 `ip route get 198.51.100.44` 必须选择正确下一跳、device 和源地址。
+- 添加路由前必须确认 `192.0.2.254` 从本机选路角度属于直连下一跳；
+- 已有其他静态路由时不得无调查地替换整个 `ipv4.routes` 列表。
+
+### 验收证据
+
+| 层次 | 验收命令 | 目标判断 |
+|---|---|---|
+| 对象 | `nmcli connection show --active` | `office-lan` 活动在 `enp1s0` |
+| 持久配置 | `nmcli -f ipv4.routes connection show office-lan` | 包含目标前缀和下一跳 |
+| 当前路由 | `ip route` | 内核已安装更具体的 `/24` 路由 |
+| 目的选路 | `ip route get 198.51.100.44` | `via 192.0.2.254 dev enp1s0 src 192.0.2.20` |
+| 边界 | `ping`（可选） | 只作为对端允许 ICMP 时的附加证据 |
 
 </section>
 
-<div class="page-break"></div>
-
-<section class="topic answer" id="RHCSA-18-A02" data-kind="reference-answer">
+<section class="topic answer force-new-page" id="RHCSA-18-A02" data-kind="reference-answer">
 
 ## [参考解答] 经典任务二
 
@@ -1168,23 +1438,37 @@ ping -c 3 198.51.100.44
 
 <section class="topic summary" id="RHCSA-18-S01" data-kind="summary">
 
-## [本章收束] 把“网络正确”拆成可验证的多个结论
+## [本章收束] 把“网络正确”拆成可以逐项证明的结论
 
-完成 NetworkManager 和 IPv4 任务时，应能明确回答：
+NetworkManager 题目的难点通常不在命令长度，而在对象和证据错位。一个稳定的完成顺序是：先识别 device 和活动 profile，再读取持久属性；修改后明确触发激活；随后从内核角度检查地址、路由和具体目的路径；最后才做受限的连通或监听验证。
+
+### 工作方法：每次网络变更都保留四份证据
 
 ```text
-device 是谁
-→ profile 是谁
-→ 当前活动的是谁
-→ 持久属性是否正确
-→ 内核地址是否正确
-→ 路由表是否正确
-→ 具体目的选择是否正确
-→ DNS 输入是否正确
-→ 必要功能是否正确
-→ 重连或重启后是否保持
+对象证据：device、profile NAME、UUID、活动映射
+配置证据：ipv4.method、addresses、gateway、routes、dns、autoconnect
+当前证据：ip address、ip route、ip route get
+功能证据：ping 或 ss 所能证明的局部结果
 ```
 
-考试中最关键的能力不是记住最长的 `nmcli` 命令，而是知道每个命令改变哪个对象、每条证据证明什么、失败后下一条最有区分度的证据是什么。只要始终区分 profile、active connection 与内核状态，就能避免大多数“配置看起来正确但网络仍不工作”的误判。
+这四份证据不能互相替代。profile 写对但未激活，当前状态仍可能是旧值；当前路径正确但远端不回应 ICMP，也不能直接反推本机配置错误；本机存在监听，同样不能证明 firewalld 和远端访问链已经正确。
+
+### 主要判断表
+
+| 看到的证据 | 可以得出的结论 | 不能据此断言 | 下一步 |
+|---|---|---|---|
+| `nmcli connection show <CON>` 属性正确 | 持久 profile 已保存目标值 | 内核已经采用这些值 | 核对 active connection，再看 `ip` |
+| `nmcli connection show --active` 显示目标 profile | 目标 profile 当前处于活动状态 | 地址、路由和业务一定正确 | 查看 address、route 和 route get |
+| `ip -br address` 地址正确 | 内核当前已配置该地址和前缀 | 默认路由、DNS 或远端可达 | 查看 `ip route` |
+| `ip route` 中存在目标路由 | 路由表包含该条目 | 具体目的实际选中它 | 执行 `ip route get <DEST>` |
+| `ip route get` 的 `via/dev/src` 正确 | 本地内核对该目的的选路正确 | 下一跳或远端一定在线 | 按要求做受限功能验证 |
+| `ping` 成功 | 该次 ICMP 往返成功 | TCP、DNS、应用和所有路径都正确 | 根据评分对象继续验证 |
+| `ss -lntup` 显示监听 | 本机存在对应 socket | 远端流量可穿过防火墙到达 | 转第 21 章检查完整访问链 |
+
+### 向下一章交接
+
+本章只把 DNS server 和 search domain 当作 connection profile 的属性，并观察它们是否进入当前连接。若数字 IP 路径正确而名称仍失败，下一步不应继续重写地址和路由，而应进入第 19 章《主机名、NSS 与 DNS 名称解析》，检查主机名、`/etc/hosts`、NSS 顺序、解析器状态和 DNS 记录。
+
+SSH 的客户端、服务端和密钥认证属于第 20 章；端口放行、zone、runtime/permanent 与完整服务访问链属于第 21 章。本章到此只负责把数据包送到正确的本地出口，并提供清楚的网络层证据。
 
 </section>

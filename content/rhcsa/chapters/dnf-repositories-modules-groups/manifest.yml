@@ -1,0 +1,76 @@
+package_version: 1
+chapter:
+  id: RHCSA-17
+  exam: RHCSA
+  part: 4
+  number: 17
+  slug: dnf-repositories-modules-groups
+  title: DNF 仓库、模块流与包组
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/dnf-repositories-modules-groups/lecture.md
+  anki: content/rhcsa/chapters/dnf-repositories-modules-groups/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T14:54:00+08:00'
+files:
+  anki_impact:
+    path: anki-impact.md
+    sha256: bd9d9a8ecc989c23d1f7239f04e74788d41c94a8cf9753232d80cf84563fbc95
+  preview:
+    path: anki-preview.html
+    sha256: 4fd910a04eed6f1625f1fde846b3d5ad601959ecfcd9bb19b6c8c4cc5c19a4e8
+  summary:
+    path: anki-summary.md
+    sha256: afbe31c095a1fe64b8e6c2b6ecfdaea67309c2c62c06f45b7157eddfbf6370f7
+  anki:
+    path: anki.yml
+    sha256: efc88e9031bbd1007e343cb2ed89f00e3d06b969ff66a7f3fd629c9c28cc14ac
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 442542c4c8d71be2e75ac09b53b93b9efe7ead8739da4c8041e05f4ec156a78b
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: fd81ad130114eeeb1127459f4f82747b9211f646d0ad8ea448f069d250461b74
+  lecture:
+    path: lecture.md
+    sha256: 51c861213ac516df763bd044f2adca4bf45be299240b0739d2b3edb9852d0d58
+  qa_report:
+    path: qa-report.md
+    sha256: b82df453fb6341560a6e871e94a0cdee8ce909c49d53673e671b45483cd69b55
+  revision_notes:
+    path: revision-notes.md
+    sha256: 8b7972cbdffe61f226ddeb68a9dcbf27abbddc02ad7d0fe1b7204fad44db8d80
+  source_map:
+    path: source-map.md
+    sha256: b91df8c209c5c00d5c97bb96bd24267665b5bd6862b6180e9934fbafc41bd403
+  structure_report:
+    path: structure-report.md
+    sha256: e7085e09c5be4f5ccc39af6e1b7112e8adf753825b5372982a3a70e5ac909cad
+  visual_qa:
+    path: visual-qa.md
+    sha256: 257a16262aae172e4e89009d11d6b51db9da30e7175b5bcc80c8211bb0f402d8
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 virtual machine was available.
+- Full-book Section ID and Anki ID uniqueness remain Codex integration responsibilities.
+- Manifest does not hash itself because a self-referential SHA-256 value is not stable.

@@ -4,38 +4,187 @@ chapter_id: RHCSA-16
 exam: RHCSA
 part: "第四篇 软件与系统内容管理"
 slug: rpm-packages-transactions
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
 sources:
   - RH124-RHEL9-Ch14
+  - RHCSA-formal-book-current
   - rpm(8)
   - rpmkeys(8)
   - dnf(8)
-  - RHEL9-Managing-software-with-DNF
+  - canonical-anki-at-961a29b3af4c07a828078a5de90c221a036546df
 ---
 
-<!-- 稳定 ID、来源、候选状态和静态核对信息只属于维护层，正式渲染不显示。 -->
+<!-- 稳定 Section ID、来源与静态核对信息属于维护层，阅读版不显示。 -->
+
+<!-- PDF_COVER
+chapter_number: 16
+title: RPM 包、文件归属与软件事务
+subtitle: 从包身份到文件差异与事务终态：把元数据、数据库、磁盘现实和功能验证放进同一条证据链。
+tags: 对象模型|操作语义|验证|诊断|经典任务
+-->
+
 
 # 第 16 章　RPM 包、文件归属与软件事务
 
-在 Linux 系统中，“软件已经装上”不是一个可以只靠一条命令证明的结论。一个 RPM 包文件可能只是保存在磁盘上，尚未进入系统；RPM 数据库可能记录某个包已经安装，但包管理的文件可能被删除、改写或改变权限；DNF 事务可能已经成功结束，但新配置尚未合并、服务尚未启动，或者应用仍无法提供功能。
+<div class="reading-nav">
+<h1>本章阅读导航</h1>
+<p class="lead">先抓住一条主线：软件包问题不是“装没装”一个判断，而是包文件、RPM 数据库、磁盘文件、配置迁移和最终功能五个层次连续推进。</p>
+<div class="model-grid">
+  <div class="model-card"><span>01</span><b>识别包身份</b><small>用 NEVRA 区分名称、版本、发行与架构</small></div>
+  <div class="model-card"><span>02</span><b>选择查询对象</b><small>区分已安装记录、本地 RPM 与磁盘路径</small></div>
+  <div class="model-card"><span>03</span><b>建立文件归属</b><small>从包查文件，从路径反查已安装包</small></div>
+  <div class="model-card"><span>04</span><b>解释验证差异</b><small>逐字符读取 rpm -V，不把差异直接判恶</small></div>
+  <div class="model-card"><span>05</span><b>审阅软件事务</b><small>由 DNF 解析依赖并确认完整事务摘要</small></div>
+  <div class="model-card"><span>06</span><b>推进到真实终态</b><small>检查配置迁移、unit、应用语法与功能</small></div>
+</div>
+<div class="nav-columns">
+<div>
+<h2>专题地图</h2>
+<table class="topic-map">
+<tr><th>知识专题</th><td>从包名到 NEVRA：先确认正在谈论哪个包</td></tr>
+<tr><th>知识专题</th><td>RPM 数据库、磁盘文件与应用状态是三个层次</td></tr>
+<tr><th>操作专题</th><td>查询已安装包并建立文件归属证据</td></tr>
+<tr><th>操作专题</th><td>在安装前检查本地 RPM 包文件</td></tr>
+<tr><th>操作专题</th><td>使用 rpm -V 解释文件差异，而不是机械修复</td></tr>
+<tr><th>知识专题</th><td>.rpmnew 与 .rpmsave：升级时如何保护本地配置</td></tr>
+<tr><th>操作专题</th><td>安装、升级、重装与删除：先读事务计划</td></tr>
+<tr><th>操作专题</th><td>事务完成后，从包状态推进到真实功能</td></tr>
+<tr><th>诊断专题</th><td>包事务和文件状态异常的证据链</td></tr>
+<tr><th>经典任务</th><td>解释文件归属与验证差异；预检本地 RPM 并安装验收</td></tr>
+</table>
+</div>
+<div>
+<h2>阅读时持续回答</h2>
+<ol class="questions">
+<li>当前查询对象是包名、本地 RPM 文件还是磁盘路径？</li>
+<li>这条证据来自 RPM 数据库，还是来自当前磁盘状态？</li>
+<li>NEVRA 的哪个字段决定当前对象的精确身份？</li>
+<li>rpm -V 的字符表示什么差异，文件类别是什么？</li>
+<li>该差异是合法配置、意外漂移，还是尚不能判断？</li>
+<li>事务摘要是否包含超出题目目标的安装、升级或删除？</li>
+<li>.rpmnew/.rpmsave 是否需要比较、合并和语法验证？</li>
+<li>包事务成功后，应用或服务功能是否真正成立？</li>
+</ol>
+<div class="reading-note"><b>学习提示：</b>先确定查询对象与证据层，再选择命令；看到差异时先解释字段和文件类别，最后才决定是否修改。完成事务后继续验证配置、unit 与真实功能。</div>
+</div>
+</div>
+</div>
 
-本章围绕一条完整证据链展开：先识别包的身份，再区分本地包文件与已安装记录；随后从包查询文件、从路径反查包，使用验证接口比较磁盘现状与 RPM 数据库基线；最后讨论安装、升级、重装、删除、配置文件保护和事务后验收。目标不是背诵一串选项，而是能够回答：**现在调查的是哪个对象、它处于什么状态、哪条证据能证明什么、下一步最有区分度的检查是什么。**
+<div class="pagebreak"></div>
 
-**[概念]** RPM 包是一个带有元数据的归档。它不仅包含要安装的文件，还包含名称、版本、发行号、架构、依赖、文件属性、脚本和签名信息。
 
-**[概念]** NEVRA 由 Name、Epoch、Version、Release、Architecture 组成。它描述包的精确身份；包名、RPM 文件名、命令名和磁盘路径都不是 NEVRA 的同义词。
 
-**[概念]** RPM 数据库记录已安装包及其文件清单、属性基线和包头信息。它能回答“系统认为安装了什么”，但不能单独证明磁盘文件仍然存在、应用配置正确或服务功能正常。
+## 第 16 章 · 正文
 
-**[概念]** 软件事务不是单个文件复制动作。安装、升级或删除可能同时改变多个包、执行脚本、更新 RPM 数据库，并影响配置文件、systemd unit 和应用运行状态。
+在 Linux 系统中，“软件已经装上”不是一个可以只靠一条命令证明的结论。一个 `.rpm` 文件可能只是保存在磁盘上，尚未写入系统；RPM 数据库可能记录某个包已经安装，但它声明拥有的文件可能被删除、改写或改变权限；DNF 事务可能已经成功结束，但新配置尚未合并、相关 unit 没有进入题目要求的状态，应用也可能仍无法提供真实功能。
 
-**[操作语义]** `rpm -q` 查询已安装包；`rpm -qp` 查询尚未安装的本地 RPM 文件；`rpm -qf` 从路径反查已安装包；`rpm -V` 将当前文件属性与 RPM 数据库中的基线比较。
+本章围绕“包身份 → 查询对象 → 文件归属 → 差异验证 → 软件事务 → 功能终态”推进。最常见的误判有三类：把本地 RPM 文件存在当成已经安装；把 `rpm -V` 的差异直接判定为恶意或故障；把 DNF 的 `Complete!` 当成配置、服务和业务功能都已经正确。仓库、模块流与包组留给第 17 章《DNF 仓库、模块流与包组》；服务启动和持久状态留给第 12 章《systemd Unit、服务与依赖关系》。本章只建立完成当前软件事务所必需的接口，并明确不把 `--nodeps`、`--force` 或跳过签名校验当作正常解决方案。
 
-**[操作语义]** `rpmkeys --checksig` 检查包文件中包含的摘要和签名；它与 `rpm -V` 对已安装文件的验证属于不同层次。
+<div class="concept-stack">
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>NEVRA</strong> 是 RPM 包的精确身份，由 Name、Epoch、Version、Release 和 Architecture 组成。包名只描述逻辑对象，本地文件名还可能被任意重命名，命令名和服务名也不等同于包名；因此遇到版本、架构或并行安装问题时，应让 RPM 从包头或数据库读取真实字段，而不是靠文件名或字符串外观猜测。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>RPM 数据库</strong> 保存系统已经登记的包头、文件清单和文件属性基线，它回答“系统记录安装了什么”。数据库记录不等于磁盘实时镜像：文件可能被删除或修改，挂载也可能遮蔽路径；更不能由此直接推出应用配置、进程和业务功能正确。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>包文件归属</strong> 是已安装包与路径之间的声明关系。`rpm -ql` 从包走向文件，`rpm -qf` 从当前路径反查拥有者；归属只能说明哪个已安装包声明提供该路径，不说明谁最后修改了文件，也不能查询尚未安装的仓库候选。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>配置文件标记</strong> 是包作者赋予文件的升级保护语义。被标记为配置文件的路径可能包含合法本地修改；升级时 RPM 会根据包内标记、当前内容和新旧版本关系保留正式文件或旁置另一份，因此 `.rpmnew` 与 `.rpmsave` 是需要比较和迁移的证据，不是可以机械删除的垃圾文件。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>验证差异</strong> 是当前磁盘文件与 RPM 数据库基线之间的可检测变化。`rpm -V` 可以指出大小、模式、摘要、所有者、组、时间戳或 capability 等差异，但它不判断变化是否合理；配置变更可能是预期状态，关键文件无差异也不等于服务或业务功能健康。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>软件事务</strong> 是一组需要整体审阅和提交的包变更。安装、升级、重装或删除可能牵动多个依赖、运行脚本并改变配置和 unit；DNF 负责选择候选和解析依赖，RPM 执行底层包操作并维护数据库。事务成功只是包层终态，仍需继续验证文件、配置、服务和功能。</p></div>
+</div>
 
-**[操作语义]** RHEL 9 中通常使用 DNF 处理安装、升级、重装和删除，因为 DNF 能选择候选包、解析依赖并形成事务计划；RPM 命令仍是查询和低层事务语义的重要入口。
+<div class="semantic-zone">
+<div class="semantic-intro"><span>操作语义</span>以下命令分别回答“已安装什么、包里有什么、路径归谁、文件哪里不同、包是否可信、事务会改变什么”。先理解作用对象，再记参数。</div>
+
+<div class="command-entry">
+<h3><code>rpm -q</code> 查询已安装包</h3>
+<div class="syn-label">SYNOPSIS</div><pre><code>rpm -q [QUERY-OPTIONS] PACKAGE...
+</code></pre>
+<p>以本机 RPM 数据库为查询对象，确认安装记录、包头信息和包声明的文件。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl class="param-list">
+<dt><code>-q</code></dt><dd>进入查询模式；后续选项决定查询哪个对象和显示哪些信息。</dd>
+<dt><code>-i</code></dt><dd>显示包头的详细信息，例如版本、架构、许可证、安装日期和描述。</dd>
+<dt><code>-l</code></dt><dd>列出包记录的全部路径。</dd>
+<dt><code>-c</code></dt><dd>只列出被包标记为配置文件的路径。</dd>
+<dt><code>-d</code></dt><dd>只列出被包标记为文档的路径。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3><code>rpm -qp</code> 查询本地 RPM 文件</h3>
+<div class="syn-label">SYNOPSIS</div><pre><code>rpm -qp [QUERY-OPTIONS] ./PACKAGE_FILE.rpm
+</code></pre>
+<p><code>-p</code> 把查询对象从已安装数据库切换为一个尚未安装的包文件；它适合安装前读取真实包头和内容。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl class="param-list">
+<dt><code>-qpi</code></dt><dd>查看本地 RPM 的详细元数据，不执行安装。</dd>
+<dt><code>-qpl</code></dt><dd>预览包将声明安装的路径。</dd>
+<dt><code>-qpc</code></dt><dd>预览被标记为配置文件的路径。</dd>
+<dt><code>--requires</code></dt><dd>读取包头中的依赖要求；查询本身不解析或安装依赖。</dd>
+<dt><code>--scripts</code></dt><dd>查看包脚本内容；查询不会运行这些脚本。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3><code>rpm -qf</code> 从路径反查已安装包</h3>
+<div class="syn-label">SYNOPSIS</div><pre><code>rpm -qf /ABSOLUTE/PATH
+</code></pre>
+<p>查询哪个已安装包声明拥有当前路径。它只查本机 RPM 数据库，不能发现尚未安装的仓库候选。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl class="param-list">
+<dt><code>-f PATH</code></dt><dd>把文件路径作为查询键；优先使用已确认的真实绝对路径。</dd>
+<dt><code>command -v NAME</code></dt><dd>先确定外部命令路径；若结果是 alias、函数或 builtin，应回到第 03 章继续解析。</dd>
+<dt><code>rpm -qf "$(command -v NAME)"</code></dt><dd>仅在 <code>command -v</code> 返回真实外部文件路径时组合使用。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3><code>rpm -V</code> 验证已安装文件差异</h3>
+<div class="syn-label">SYNOPSIS</div><pre><code>rpm -V PACKAGE
+rpm -Vf /ABSOLUTE/PATH
+</code></pre>
+<p>比较当前文件与 RPM 数据库中的属性基线。默认无输出表示本次可检查属性未发现差异；有输出时必须逐字符解释，并结合文件类别判断下一条证据。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl class="param-list">
+<dt><code>-V PACKAGE</code></dt><dd>验证指定已安装包的文件。</dd>
+<dt><code>-Vf PATH</code></dt><dd>先按路径找到拥有包，再验证该文件范围。</dd>
+<dt><code>S M 5 D L U G T P</code></dt><dd>依次表示大小、模式、文件摘要、设备、符号链接、所有者、组、修改时间和 capability 等差异位置。</dd>
+<dt><code>missing</code></dt><dd>包清单记录路径，但当前视图中路径缺失；继续调查版本、挂载、误删或替换。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3><code>rpmkeys --checksig</code> / <code>rpm -K</code> 检查包文件</h3>
+<div class="syn-label">SYNOPSIS</div><pre><code>rpmkeys --checksig ./PACKAGE_FILE.rpm
+rpm -K ./PACKAGE_FILE.rpm
+</code></pre>
+<p>检查包文件的摘要和签名状态。缺少公钥、包未签名和签名或摘要失败是不同结果；该检查也不能替代已安装文件的 <code>rpm -V</code>。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl class="param-list">
+<dt><code>--checksig FILE</code></dt><dd>读取包文件中的摘要和签名并尝试验证。</dd>
+<dt><code>-K FILE</code></dt><dd>RPM 命令提供的兼容入口；正文以 <code>rpmkeys</code> 作为语义更明确的首选写法。</dd>
+<dt><code>真实输出</code></dt><dd>按环境记录实际状态，不把“缺少公钥”自动写成“签名失败”。</dd>
+</dl>
+</div>
+
+<div class="command-entry">
+<h3><code>dnf</code> 形成依赖事务</h3>
+<div class="syn-label">SYNOPSIS</div><pre><code>dnf install ./PACKAGE_FILE.rpm
+dnf upgrade PACKAGE
+dnf reinstall PACKAGE
+dnf remove PACKAGE
+</code></pre>
+<p>DNF 选择候选、解析依赖并显示完整事务计划；确认前应检查将安装、升级和删除哪些包。RPM 的 <code>-U</code>、<code>-F</code> 和 <code>-e</code> 用于理解低层语义，不作为绕开依赖处理的默认路径。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl class="param-list">
+<dt><code>install ./FILE.rpm</code></dt><dd>以本地包文件为目标，同时使用已配置仓库满足依赖。</dd>
+<dt><code>upgrade PACKAGE</code></dt><dd>推进到当前可用的更新候选；应记录最终 NEVRA。</dd>
+<dt><code>reinstall PACKAGE</code></dt><dd>重装相同包内容，适合确认文件意外缺失或损坏后的受控恢复，不用于覆盖未知配置。</dd>
+<dt><code>remove PACKAGE</code></dt><dd>删除目标并展示相关依赖变更；摘要范围异常时应取消。</dd>
+<dt><code>rpm -U / -F / -e</code></dt><dd>分别表示低层升级或安装、仅 freshen 已安装包、删除；不得用 <code>--nodeps</code> 解决依赖。</dd>
+</dl>
+</div>
+</div>
+
 
 <section class="topic knowledge" id="RHCSA-16-K01" data-kind="knowledge-topic">
 
@@ -59,7 +208,7 @@ sources:
 name-version-release.arch.rpm
 ```
 
-但不要靠从右向左切连字符手工解析所有包名。Name、Version 和 Release 本身可能包含复杂字符；可靠做法是让 RPM 读取包头。
+但不要靠从右向左切连字符手工解析所有包名。Name、Version 和 Release 可能包含复杂字符；可靠做法是让 RPM 读取包头。
 
 ### ② [知识点] 包名、NEVRA、RPM 文件和路径是四种不同查询键
 
@@ -88,10 +237,10 @@ rpm -q --qf 'Name: %{NAME}\nEpoch: %{EPOCH}\nVersion: %{VERSION}\nRelease: %{REL
 
 ```bash
 rpm -q <PACKAGE>
-rpm -qa | grep '^<PACKAGE>-'
+rpm -q --qf '%{NAME}\t%{EPOCH}\t%{VERSION}\t%{RELEASE}\t%{ARCH}\n' <PACKAGE>
 ```
 
-第二条只适合人工观察，不能作为通用脚本的精确解析接口。自动化时优先使用 RPM 的查询格式和明确包规格。
+第一条快速查看所有匹配记录；第二条逐字段保留每个匹配实例的真实身份。脚本不要通过拆分默认输出或模糊 `grep` 来猜测 NEVRA。
 
 ### ⑤ [知识点] RPM 文件名不是可信来源声明
 
@@ -249,7 +398,7 @@ rpm -q --provides <PACKAGE>
 
 ## [操作专题] 在安装前检查本地 RPM 包文件
 
-本地 RPM 是一个尚未进入系统事务的候选对象。最安全的切入路径是：先确认文件和包头，再检查架构、内容、依赖、脚本和签名，最后让 DNF形成事务计划。不要因为扩展名是 `.rpm` 就直接以 root 身份执行安装。
+本地 RPM 是一个尚未进入系统事务的候选对象。最安全的切入路径是：先确认文件和包头，再检查架构、内容、依赖、脚本和签名，最后让 DNF 形成事务计划。不要因为扩展名是 `.rpm` 就直接以 root 身份执行安装。
 
 ### ① [操作] 使用 `-p` 将查询对象切换到包文件
 
@@ -833,7 +982,22 @@ rpm -q 确认包
 
 **[Cheatsheet]** 先保存错误和摘要；按包文件、签名、架构、依赖、数据库、文件、配置、服务分层；选择最小修复，再回到同一层复查。
 
+### ⑨ [诊断] 用最有区分度的证据切开故障层次
+
+| 症状 | 优先取得的下一条证据 | 此时不要直接做什么 |
+|---|---|---|
+| 本地 RPM 无法进入事务 | `rpm -qpi`、`rpmkeys --checksig`、`rpm -qp --requires` 与完整 DNF 摘要 | 不使用 `--nodeps` 或 `--nogpgcheck` |
+| 包已安装但关键路径缺失 | `rpm -ql`、父目录与挂载、`rpm -Vf` | 不在未解释缺失原因时反复重装 |
+| `rpm -V` 出现配置差异 | 文件类别、`stat`、`diff`、变更记录与应用语法检查 | 不把所有配置差异当成损坏 |
+| 升级后应用不可用 | `.rpmnew/.rpmsave`、应用静态检查、unit 状态与日志 | 不把 `Complete!` 当成功能终态 |
+| remove 或 undo 计划异常扩大 | 完整事务摘要、`--whatrequires`、history 与缺失版本 | 不用放宽冲突保护强行提交 |
+
+这张表只负责选择下一条证据；实际修复仍应回到对应对象层，完成最小变更并重新验证。
+
 </section>
+
+
+<div class="pagebreak"></div>
 
 <section class="topic task" id="RHCSA-16-T01" data-kind="classic-task">
 
@@ -889,7 +1053,18 @@ rpm -q 确认包
 | 内容 | `diff` 或受控基线 |
 | 应用 | 配置语法和功能验证 |
 
+### 作答记录模板
+
+| 对象 | 已取得的基线 | 差异解释与下一条证据 | 再验证结果 |
+|---|---|---|---|
+| `<CONFIG_PATH>` | 归属、文件类别、当前属性 | 记录预期配置或意外漂移，并选择 `diff`/语法检查 | 保留真实结果 |
+| `<CRITICAL_PATH>` | 归属、包清单、当前存在性 | 按 `rpm -Vf` 字段选择 `stat`/`readlink`/`getcap` | 保留真实结果 |
+| `<PACKAGE>` | NEVRA、`rpm -V` 与配置清单 | 汇总是否需要最小修复，不扩大事务范围 | 包层与功能层均复查 |
+
+这个模板用于把“看到差异”转成可审计的判断链；答案不能只贴命令而不解释证据。
+
 </section>
+
 
 <div class="pagebreak"></div>
 
@@ -1007,7 +1182,21 @@ rpm -V "$pkg"
 - 对 `missing` 不检查挂载、符号链接和版本变化；
 - 修复后不再次运行同一验证命令。
 
+### 提交前自检
+
+- 两个路径的归属是否分别核实，而不是先假设同包；
+- 是否记录真实 NEVRA，而不是从文件名或默认文本中猜字段；
+- 每条 `rpm -V` 输出是否同时解释属性位置、文件类别和路径；
+- 配置差异是否先与基线或变更记录比较；
+- 最小修复后是否回到同一命令复查，并继续做应用功能验证；
+- 报告中是否明确区分“未发现属性差异”和“服务功能健康”。
+
+满足这些条件后，任务一才形成从调查、判断、修复到再验证的闭环。
+
 </section>
+
+
+<div class="pagebreak"></div>
 
 <section class="topic task" id="RHCSA-16-T02" data-kind="classic-task">
 
@@ -1051,6 +1240,7 @@ rpm -V "$pkg"
 - 不编造服务名、端口或测试输出。
 
 </section>
+
 
 <div class="pagebreak"></div>
 
@@ -1152,7 +1342,7 @@ find <RELEVANT_DIR> -type f \( -name '*.rpmnew' -o -name '*.rpmsave' \) -print
 先确认包是否提供 unit：
 
 ```bash
-rpm -ql "$name" | grep '/systemd/system/'
+rpm -ql "$name" | grep -E '/systemd/(system|user)/'
 ```
 
 只有得到真实 unit 名后才查询：
@@ -1198,32 +1388,36 @@ dnf history info <ID>
 
 </section>
 
+
 <section class="topic close" id="RHCSA-16-C01" data-kind="chapter-close">
 
 ## [本章收束] 包管理的终点不是 `Complete!`
 
-本章建立的核心链路是：
+本章建立的主线不是一串 RPM 选项，而是从 **包身份与 NEVRA** 出发，依次区分本地包文件和已安装数据库、建立文件归属、解释签名与 `rpm -V` 差异、审阅 DNF 事务，并最终推进到配置、unit 和真实功能。
 
-```text
-识别包身份和 NEVRA
-→ 区分本地包文件与已安装数据库
-→ 从包查文件、从路径查包
-→ 用签名验证包文件
-→ 用 rpm -V 调查安装后文件差异
-→ 读取 DNF 事务计划并安全操作
-→ 处理 .rpmnew/.rpmsave
-→ 从包层推进到配置、unit 和真实功能
-```
+### 工作方法：每次软件变更都保留六类证据
 
-面对软件问题时，先问自己正在调查哪一层：
+1. **变更前身份：** 当前已安装 NEVRA、本地 RPM 包头、架构和信任状态；
+2. **事务范围：** DNF 摘要中将安装、升级和删除的完整集合；
+3. **数据库终态：** 事务后的真实 NEVRA 和 history 记录；
+4. **文件终态：** 关键路径、归属、属性差异和缺失状态；
+5. **配置终态：** `.rpmnew/.rpmsave` 的比较、合并与应用语法检查；
+6. **功能终态：** unit、进程、监听或应用真实接口的分层验收。
 
-- 包文件是否可信、是否适合当前架构；
-- RPM 数据库记录了什么；
-- 磁盘文件是否仍与基线一致；
-- 配置是否完成迁移；
-- 服务当前和持久状态是否满足目标；
-- 业务功能是否真正成立。
+### 主要判断表
 
-第 17 章《DNF 仓库、模块流与包组》将在此基础上继续处理“候选包从哪里来、仓库如何配置、模块流和包组如何改变选择范围”。
+| 看到的证据 | 能证明什么 | 不能证明什么 | 下一条高区分度证据 |
+|---|---|---|---|
+| `rpm -q PACKAGE` 成功 | RPM 数据库存在匹配安装记录 | 文件未被修改、配置正确、服务可用 | `rpm -ql/-qc`、关键路径和 `rpm -V` |
+| `rpm -qf /path` 成功 | 某已安装包声明拥有该路径 | 谁最后修改、内容是否正确 | `stat`、`rpm -Vf`、变更记录 |
+| `rpm -V` 无输出 | 本次可检查属性未发现差异 | 业务配置符合要求、服务健康 | 应用语法、unit 和功能检查 |
+| `rpm -V` 有输出 | 当前文件与数据库基线存在指定差异 | 差异是否恶意或需要恢复 | 文件类别、`stat`、`diff`、配置记录 |
+| `rpmkeys --checksig` 可验证 | 包文件摘要和签名可按当前信任库验证 | 包适合当前系统、事务依赖可满足 | NEVRA、架构、Requires 和 DNF 摘要 |
+| DNF `Complete!` | 包事务已经提交完成 | 配置迁移、unit 状态和业务功能正确 | 最终 NEVRA、旁置配置、应用与服务验收 |
+| 存在 `.rpmnew/.rpmsave` | 升级保留了两份需要处理的配置证据 | 哪一份应直接替换另一份 | `diff`、发行说明、应用语法检查 |
+
+### 向下一章交接
+
+本章假定 DNF 已经能够访问合适的软件源，重点处理包文件、已安装数据库、文件差异和事务终态。第 17 章《DNF 仓库、模块流与包组》将继续回答：候选包从哪里来、仓库元数据如何加载、GPG key 如何配置、模块流和包组如何改变可选范围，以及 DNS、TLS、元数据和签名错误应从哪一层调查。
 
 </section>

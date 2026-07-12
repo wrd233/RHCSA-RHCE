@@ -5,7 +5,6 @@ exam: RHCSA
 part: "第六篇 块存储与网络存储"
 slug: block-devices-partitions-signatures
 validation: static
-status: integrated
 sources:
   - RH124-RHEL9
   - RH134-RHEL9
@@ -15,25 +14,102 @@ sources:
   - GNU-Parted-manual
 ---
 
-<!-- 稳定 ID、来源、迁移状态和静态验证信息只属于维护层，正式渲染不可见。 -->
+<!-- 稳定 Section ID、来源与静态验证信息只属于维护层，正式渲染不可见。 -->
 
-# 第 22 章　块设备、分区表与设备签名
+<section class="cover">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">22</div>
+  <h1>块设备、分区表与设备签名</h1>
+  <p class="cover-subtitle">从“这是不是目标盘”到“磁盘、内核与 udev 是否一致”：把高风险存储操作放进一条可证明的证据链。</p>
+  <div class="cover-tags"><span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span></div>
+  <div class="cover-mark">大字号阅读版</div>
+</section>
 
-存储操作最危险的地方，不是命令难记，而是“看起来很像正确设备”的对象太多。`/dev/vdb` 可能是练习盘，也可能已经承载了文件系统、LVM、RAID 或业务数据；新分区已经写入磁盘，不代表内核立刻生成了 `/dev/vdb1`；`FSTYPE` 为空，也不代表设备可以安全覆盖。一次错误的 `mklabel`、`rm` 或签名清除，可能让原有数据失去正常访问入口。
+<section class="nav-page">
+  <h1>本章阅读导航</h1>
+  <p class="lead"><strong>先抓住一条主线：</strong>任何分区写操作都必须先证明设备身份、已有布局、内容签名和当前使用状态；写入后再证明磁盘表、内核设备树与 udev 已经收敛。</p>
+  <div class="model-grid">
+    <div class="model-card"><b>01</b><strong>识别设备</strong><span>从路径、父子关系和身份字段确认目标对象</span></div>
+    <div class="model-card"><b>02</b><strong>识别布局</strong><span>区分 GPT/MBR、分区条目和真实扇区边界</span></div>
+    <div class="model-card"><b>03</b><strong>识别内容</strong><span>读取文件系统、Swap、LVM、RAID 等签名</span></div>
+    <div class="model-card"><b>04</b><strong>决定操作</strong><span>只在证据门通过后选择 parted 或 fdisk</span></div>
+    <div class="model-card"><b>05</b><strong>同步视图</strong><span>让磁盘表、内核视图和 udev 节点重新一致</span></div>
+    <div class="model-card"><b>06</b><strong>分层验收</strong><span>分别证明布局、节点、持久标识和内容边界</span></div>
+  </div>
+  <div class="nav-columns">
+    <div>
+      <h2>专题地图</h2>
+      <ul class="topic-map">
+        <li><span>知识专题</span> 从磁盘到分区：块设备对象怎样关联</li>
+        <li><span>知识专题</span> GPT、MBR 与分区条目分别记录什么</li>
+        <li><span>知识专题</span> 起点、终点、大小、对齐与分区类型</li>
+        <li><span>知识专题</span> 设备签名与持久标识</li>
+        <li><span>操作专题</span> 写入前基线、parted、fdisk 与状态同步</li>
+        <li><span>诊断专题</span> 新分区未出现、遗留签名与身份冲突</li>
+        <li><span>经典任务</span> 创建 GPT 分区并完成四层验收</li>
+        <li><span>经典任务</span> 诊断内核节点缺失和旧签名</li>
+      </ul>
+    </div>
+    <div>
+      <h2>阅读时持续回答</h2>
+      <ol class="questions">
+        <li>当前路径到底对应哪一个块设备？</li>
+        <li>分区表、分区类型和内容签名分别属于哪一层？</li>
+        <li>设备是否正在被挂载、Swap、LVM、RAID 或映射层使用？</li>
+        <li>命令修改的是磁盘表、内核视图还是 udev 状态？</li>
+        <li>当前证据能证明什么，又不能证明什么？</li>
+        <li>出现冲突时，下一条最有区分度的证据是什么？</li>
+      </ol>
+      <div class="nav-note"><b>章节边界：</b>本章只把设备、分区表、分区条目、内核视图、持久标识和签名讲清。文件系统进入第 23 章；挂载与 Swap 持久性进入第 24 章；LVM 生命周期进入第 25 章。</div>
+    </div>
+  </div>
+</section>
 
-本章围绕一条稳定的证据链组织内容：先确认块设备身份，再区分磁盘上的分区表、内核当前读取的布局、udev 生成的设备节点与持久链接，最后调查文件系统、Swap、LVM 和 RAID 等内容签名。所有写操作都遵循同一原则：**写入前建立基线，只改变一个层次，写入后立即验证该层和相邻层。**
+# 第 22 章 · 正文
 
-**[概念]** 磁盘和分区都属于块设备。磁盘可以承载分区表，分区表中的条目把磁盘地址范围描述为分区；内核读取这些条目后，才建立相应的分区设备节点。
+存储操作最危险的地方，不是命令难记，而是“看起来很像正确设备”的对象太多。`/dev/vdb` 可能是练习盘，也可能已经承载文件系统、Swap、LVM、RAID 或业务数据；`parted` 已经显示新分区，不代表内核立即生成了 `/dev/vdb1`；`FSTYPE` 为空，也不代表设备可以覆盖。一次错误的 `mklabel`、`rm` 或签名清除，可能让原有数据失去正常访问入口。
 
-**[概念]** `/dev/sdb`、`/dev/vdb`、`/dev/nvme0n1` 等名称是当前系统中的访问入口，不是永久业务身份。破坏性操作前，应将路径与容量、父子关系、型号、序列号、WWN 和持久链接等证据交叉核对。
+本章解释块设备、磁盘、分区、分区表、内容签名、内核设备视图和持久标识之间的关系，并沿“身份 → 布局 → 内容 → 占用 → 修改 → 同步 → 验收”推进。最常见的误判，是用一个局部字段替代完整证据：只凭设备名选盘、只凭 `FSTYPE` 判空、只凭分区类型判断内容、只凭命令成功宣布完成。
 
-**[概念]** 分区表类型、分区类型和设备内容签名是三个独立维度。将一个分区标记为 LVM 类型，不会自动执行 `pvcreate`；`parted mkpart` 中出现文件系统类型提示，也不会创建文件系统。
+本章的写操作只改变分区表及分区条目；它不会提前创建文件系统、配置挂载、启用 Swap 或建立 LVM。所有需要真实输出才能确认的版本与设备行为都保留为推荐验证步骤，不声称已经在 RHEL 9 虚拟机实测。
 
-**[概念]** 磁盘上的布局、内核当前设备视图和 udev 设备节点可能短时间不一致。`partprobe` 请求内核重读分区表，`udevadm settle` 等待已有设备事件处理完成；两者不能互相替代。
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>块设备</strong> 是内核以固定大小数据块提供随机访问的设备对象，磁盘、分区以及某些映射设备都可能表现为块设备。块设备节点只是访问入口，不自动说明设备的业务用途、是否空闲或是否安全覆盖；观察它应先从 `lsblk` 的父子关系、类型和身份字段开始。</p></div>
 
-**[操作语义]** `lsblk` 建立设备拓扑和属性视图；`blkid` 与 `wipefs` 读取可识别签名；`parted` 和 `fdisk` 查看或修改分区表；`partprobe` 与 `udevadm` 用于同步和确认内核设备视图。
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>分区</strong> 是分区表把整块磁盘的一段地址范围描述成的子对象。分区本身仍是块设备，但它和文件系统、Swap、LVM PV 不是同一对象：分区条目只定义边界和用途元数据，上层内容需要另外创建和验证。</p></div>
 
----
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>分区表</strong> 是写在整块磁盘上的布局元数据，GPT 或 MBR 记录分区条目的起止、类型和标识。重建分区表不是无害初始化，而是替换原布局入口；即使数据区没有全部覆盖，原分区也可能立刻失去正常访问路径。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>设备签名</strong> 是文件系统、Swap、LVM、RAID 或分区表留在特定偏移的识别元数据。签名只是一段识别入口，却足以影响自动探测和上层工具；删除少量签名字节也可能让完整数据失去正常识别，因此 `wipefs -a` 绝不能成为默认清理步骤。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>内核设备视图</strong> 是内核当前已经读取并注册的块设备树。磁盘上的分区表已经改变时，内核仍可能暂时保留旧布局；`partprobe` 请求重读分区表，`udevadm settle` 只等待设备事件处理完成，两者解决的是不同层次。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>持久标识</strong> 把设备名称稳定在某个对象维度，例如硬件或后端身份、控制器路径、分区条目或文件系统内容。`/dev/disk/by-id/`、`by-path/`、`by-partuuid/` 和 `by-uuid/` 的稳定依据不同；它们不是“永不变化”，而是比短设备名更明确地说明自己在跟踪什么。</p></div>
+
+<div class="concept-block"><span class="concept-badge">概念</span><p><strong>对齐</strong> 是让分区边界与设备逻辑扇区、物理扇区和最优 I/O 单元合理匹配。1 MiB 起点适合许多常见设备，但不是脱离设备拓扑的绝对规则；考试和工作中应优先接受工具的合理默认值，并用扇区、大小和 I/O 字段验证结果。</p></div>
+
+<section class="ops-quick">
+  <h2>操作语义速查</h2>
+  <p class="ops-lead">以下七个入口分别观察拓扑、签名、分区表、内核重读和 udev 状态。先明确命令作用对象，再记关键形式。</p>
+
+  <div class="op-entry"><h3><code>lsblk</code></h3><div class="syn-label">SYNOPSIS</div><pre><code>lsblk [options] [device ...]</code></pre><p>从 sysfs 与 udev 数据建立当前块设备树，适合确认父子关系、类型、身份字段、分区标识和挂载摘要。</p><h4>重要参数 / 形式</h4><dl><dt><code>-o LIST</code></dt><dd>显式选择输出列；讲义、脚本和验收记录不要依赖默认列。</dd><dt><code>-f</code></dt><dd>显示文件系统和 Swap 的常见属性摘要，但不能代替完整签名与占用调查。</dd><dt><code>-p</code></dt><dd>使用完整设备路径显示名称。</dd><dt><code>-J</code></dt><dd>输出 JSON，便于结构化处理；仍应显式指定列，并在需要父子树时保留 <code>NAME</code> 或使用 <code>--tree</code>。</dd></dl></div>
+
+  <div class="op-entry"><h3><code>blkid</code></h3><div class="syn-label">SYNOPSIS</div><pre><code>blkid [options] [device ...]
+blkid -p [options] device</code></pre><p>读取 libblkid 可识别的内容标签、类型、UUID 和分区属性；低层探测更适合调查单个可疑设备。</p><h4>重要参数 / 形式</h4><dl><dt><code>blkid device</code></dt><dd>读取常见属性；无普通输出不能直接证明设备为空。</dd><dt><code>-p</code></dt><dd>对指定设备进行低层探测，适合冲突或不确定签名。</dd><dt><code>-o export</code></dt><dd>以键值形式输出，便于逐项判断。</dd></dl></div>
+
+  <div class="op-entry danger-entry"><h3><code>wipefs</code></h3><div class="syn-label">SYNOPSIS</div><pre><code>wipefs [options] device</code></pre><p>默认列出可识别签名和偏移；带删除选项时会破坏这些识别入口。</p><h4>重要参数 / 形式</h4><dl><dt><code>wipefs device</code></dt><dd>只读列出签名，是调查流程的默认形式。</dd><dt><code>-n</code></dt><dd>与 <code>-a</code> 或 <code>-o</code> 组合时，以 no-act 方式预览将处理的签名，不执行写入。</dd><dt><code>-a</code></dt><dd>删除指定设备上所有可见签名；作用于整盘时通常只清除整盘可见的分区表签名，不会递归清除各分区内容。高风险，禁止作为空盘检查或默认清理步骤。</dd><dt><code>-o OFFSET</code></dt><dd>只处理已确认偏移的签名，仍需先完成身份和占用调查。</dd></dl></div>
+
+  <div class="op-entry"><h3><code>parted</code></h3><div class="syn-label">SYNOPSIS</div><pre><code>parted [options] [device [command [parameters ...]]]</code></pre><p>查看或直接修改 GPT/MBR 分区表；许多修改会立即写盘，没有统一的最终提交阶段。</p><h4>重要参数 / 形式</h4><dl><dt><code>print</code></dt><dd>显示当前分区表、分区条目和设备信息。</dd><dt><code>unit MiB|s</code></dt><dd>指定输入与显示单位，避免把大小误当终点。</dd><dt><code>mklabel gpt|msdos</code></dt><dd>重建整盘分区表，属于极高风险写操作。</dd><dt><code>mkpart NAME [FS-TYPE] START END</code></dt><dd>GPT 场景：<code>NAME</code> 是分区名称；<code>FS-TYPE</code> 只用于设置合适的分区类型提示，不会创建文件系统。</dd><dt><code>mkpart PART-TYPE [FS-TYPE] START END</code></dt><dd>MBR 场景：<code>PART-TYPE</code> 通常为 <code>primary</code>、<code>extended</code> 或 <code>logical</code>；起止必须使用明确单位。</dd><dt><code>rm NUMBER</code></dt><dd>删除分区条目，不迁移数据，也不安全擦除数据区。</dd></dl></div>
+
+  <div class="op-entry"><h3><code>fdisk</code></h3><div class="syn-label">SYNOPSIS</div><pre><code>fdisk [options] device
+fdisk -l [device ...]</code></pre><p>查看或交互式编辑分区表；交互修改先保留在内存中的未提交布局里，直到写入命令提交。</p><h4>重要参数 / 形式</h4><dl><dt><code>-l</code></dt><dd>只读列出磁盘、扇区、I/O 大小、分区边界和类型。</dd><dt><code>p</code></dt><dd>打印当前未提交布局。</dd><dt><code>n / t / d</code></dt><dd>分别创建分区、修改类型和删除条目。</dd><dt><code>w</code></dt><dd>把未提交布局写入磁盘并退出。</dd><dt><code>q</code></dt><dd>放弃尚未写入的交互修改并退出。</dd></dl></div>
+
+  <div class="op-entry"><h3><code>partprobe</code></h3><div class="syn-label">SYNOPSIS</div><pre><code>partprobe [options] [device ...]</code></pre><p>向内核报告分区表变化，请求重新读取指定磁盘的布局。</p><h4>重要参数 / 形式</h4><dl><dt><code>partprobe device</code></dt><dd>请求重读单个目标磁盘，错误信息是后续占用调查的重要证据。</dd><dt><code>-s</code></dt><dd>显示设备及其分区摘要；它仍不能替代 <code>parted</code>、<code>lsblk</code> 的分层验证。</dd><dt><code>-d</code></dt><dd>只测试而不通知内核；用于区分探测与实际重读。</dd></dl></div>
+
+  <div class="op-entry"><h3><code>udevadm info / settle</code></h3><div class="syn-label">SYNOPSIS</div><pre><code>udevadm info [options] device
+udevadm settle [options]</code></pre><p><code>info</code> 查询设备属性和 udev 数据库；<code>settle</code> 等待当前设备事件队列处理完成。</p><h4>重要参数 / 形式</h4><dl><dt><code>info --query=property --name=device</code></dt><dd>读取指定设备的属性，适合验证 PARTUUID、分区名称和路径信息。</dd><dt><code>settle</code></dt><dd>等待事件收敛；它不修改分区表，也不保证内核重读成功。</dd><dt><code>monitor</code></dt><dd>观察后续内核与 udev 事件，适合诊断设备节点没有按预期生成。</dd></dl></div>
+</section>
+
+<div class="danger-callout"><strong>安全边界：</strong>任何写操作前必须证明设备身份、挂载与 Swap 状态、LVM/RAID/device-mapper 归属以及已有签名。`wipefs -a`、`mklabel` 和删除分区都不能用来“试试看能否清干净”。证据不足时，正确动作是停止写入并继续调查。</div>
 
 <!-- topic: RHCSA-22-S01 -->
 ## [知识专题] 从磁盘到分区：块设备对象怎样关联
@@ -284,7 +360,7 @@ wipefs <DEVICE>
 
 ### ⑤ [知识点] `wipefs -a` 不是空盘检查命令
 
-`wipefs -a <DEVICE>` 会删除设备上可识别的签名。它不等于安全擦除整盘数据，却可能同时破坏分区表、文件系统或其他元数据的识别入口。默认答案中禁止无调查使用。
+`wipefs -a <DEVICE>` 会删除指定设备上 libblkid 可见的签名。对整盘设备执行时，通常只清除整盘上的分区表签名，不会递归清除各分区内部的文件系统或 LVM 签名；对分区设备执行时，则可能清除该分区上的文件系统、Swap、LVM 或 RAID 签名。它不等于安全擦除数据，但足以破坏正常识别入口，因此默认答案中禁止无调查使用。
 
 若题目明确授权丢弃设备内容，仍应先：
 
@@ -327,7 +403,7 @@ wipefs <DEVICE>
 
 稳定的存储操作从调查开始，而不是从 `fdisk` 或 `parted` 开始。最顺的顺序是：先确认目标身份，再确认布局和签名，随后确认当前占用和上层归属，最后决定是否允许写入。
 
-### ① [操作] 先建立拓扑和身份视图
+### ① [查询] 先建立拓扑和身份视图
 
 ```bash
 lsblk -o NAME,PATH,MAJ:MIN,SIZE,TYPE,PKNAME,MOUNTPOINTS,MODEL,SERIAL,WWN
@@ -337,7 +413,7 @@ lsblk -o NAME,PATH,MAJ:MIN,SIZE,TYPE,PKNAME,MOUNTPOINTS,MODEL,SERIAL,WWN
 **验证重点：** 目标路径、父子关系、容量和身份字段是否与题意一致。
 **边界：** 该命令不读取所有历史签名，也不能证明设备没有被其他上层对象使用。
 
-### ② [操作] 查看分区表和分区边界
+### ② [查询] 查看分区表和分区边界
 
 ```bash
 parted <DISK> unit MiB print
@@ -346,7 +422,7 @@ fdisk -l <DISK>
 
 `parted` 适合明确显示分区表类型、起止和名称；`fdisk -l` 提供扇区、I/O 大小和分区类型的独立视角。两条输出应指向同一设备，并与 `lsblk` 的父子关系一致。
 
-### ③ [操作] 探测内容签名
+### ③ [查询] 探测内容签名
 
 ```bash
 blkid -p <DISK>
@@ -359,7 +435,7 @@ wipefs <PARTITION>
 
 对整盘和分区分别检查，因为分区表签名位于整盘，而文件系统、LVM 或 RAID 签名可能位于分区中。
 
-### ④ [操作] 检查挂载、Swap 和上层归属
+### ④ [查询] 检查挂载、Swap 和上层归属
 
 ```bash
 lsblk -o NAME,PATH,TYPE,FSTYPE,MOUNTPOINTS
@@ -414,7 +490,7 @@ wipefs <DISK> > "wipefs-before-${stamp}.txt"
 
 `parted` 同时支持 GPT 和 MBR，并适合使用明确单位进行非交互操作。它的危险点是许多修改会立即写入磁盘，不存在统一的“最后按 w 才提交”阶段。因此每条命令前都应重新确认设备路径。
 
-### ① [操作] 查看当前布局和帮助
+### ① [查询] 查看当前布局和帮助
 
 ```bash
 parted <DISK> print
@@ -486,9 +562,9 @@ man parted
 <!-- topic: RHCSA-22-S07 -->
 ## [操作专题] 使用 `fdisk` 交互式管理分区
 
-`fdisk` 的优势是交互式候选布局：多数修改先保存在内存中，执行 `w` 才写入磁盘，执行 `q` 可放弃未写入变化。这并不降低设备选错的风险，但提供了提交前再次打印检查的机会。
+`fdisk` 的特点是交互式未提交布局：多数修改先保存在内存中，执行 `w` 才写入磁盘，执行 `q` 可放弃未写入变化。这并不降低设备选错的风险，但提供了提交前再次打印检查的机会。
 
-### ① [操作] 只读列出布局
+### ① [查询] 只读列出布局
 
 ```bash
 fdisk -l <DISK>
@@ -505,11 +581,11 @@ fdisk <DISK>
 进入后首先使用：
 
 ```text
-p    打印当前候选布局
+p    打印当前未提交布局
 m    查看帮助
 ```
 
-候选布局可能已包含本轮尚未写入的变化，因此 `p` 显示的是当前交互会话状态，不一定等于磁盘原始状态。
+当前未提交布局可能已包含本轮尚未写入的变化，因此 `p` 显示的是当前交互会话状态，不一定等于磁盘原始状态。
 
 ### ③ [操作] 创建分区
 
@@ -532,7 +608,7 @@ L    列出类型（提示中支持时）
 
 先确认当前是 GPT 还是 MBR，再选择类型名称、别名或代码。写入前用 `p` 检查最终类型。
 
-### ⑤ [操作] 删除候选分区
+### ⑤ [操作] 删除未提交的分区条目
 
 ```text
 d    删除分区条目
@@ -561,7 +637,7 @@ lsblk -o NAME,PATH,START,SIZE,TYPE,PARTTYPE,PARTUUID <DISK>
 
 不要只相信交互会话最后一次 `p` 的屏幕内容。
 
-**[Cheatsheet]** `p` 看候选，`n` 新建，`t` 改类型，`d` 删除，`w` 写盘，`q` 放弃未提交；写盘后必须从外部重新查询。
+**[Cheatsheet]** `p` 看未提交布局，`n` 新建，`t` 改类型，`d` 删除，`w` 写盘，`q` 放弃未提交；写盘后必须从外部重新查询。
 
 ---
 
@@ -596,7 +672,7 @@ udevadm settle
 
 该命令等待当前设备事件队列处理完成。它不会主动重读分区表，也不会修复错误的分区条目。
 
-### ④ [操作] 查询具体设备的 udev 属性
+### ④ [查询] 查询具体设备的 udev 属性
 
 ```bash
 udevadm info --query=property --name=<PARTITION>
@@ -819,6 +895,8 @@ Swap 类型 + 旧 XFS 签名：可能是复用不完整，需要调查
 
 ---
 
+<div class="page-break"></div>
+
 <!-- topic: RHCSA-22-S12 -->
 ## [经典任务] 在确认空闲的练习盘上创建 GPT 分区
 
@@ -928,6 +1006,8 @@ wipefs /dev/vdb2
 
 ---
 
+<div class="page-break"></div>
+
 <!-- topic: RHCSA-22-S14 -->
 ## [经典任务] 诊断新分区未出现和遗留签名
 
@@ -1010,7 +1090,7 @@ wipefs /dev/vdc1
 <!-- topic: RHCSA-22-S16 -->
 ## [本章收束] 每次写入只改变一个存储层
 
-块设备名称、分区表、内核设备树、udev 链接和内容签名各自回答不同问题。稳定的操作路径是：
+块设备名称、分区表、内核设备树、udev 链接和内容签名各自回答不同问题。稳定的工作方法不是“先清空再重做”，而是始终沿同一条证据链推进：
 
 ```text
 确认设备身份
@@ -1020,6 +1100,43 @@ wipefs /dev/vdc1
 → 用磁盘表、内核、持久标识和签名分层验收
 ```
 
-不要把 `FSTYPE` 为空当作空盘证明，不要把分区类型当作文件系统或 LVM 内容，不要把命令成功扩大为最终状态正确。文件系统创建进入第 23 章《文件系统、标签、UUID 与容量管理》，挂载与 Swap 持久性进入第 24 章《挂载、fstab、Swap 与启动持久性》，LVM 对象生命周期进入第 25 章《LVM 逻辑存储》。
+### ① [操作决策] 写操作前先通过五道证据门
 
-本章的最终安全边界只有一句：**设备身份和已有内容没有被证据证明之前，不执行破坏性写入。**
+- 目标设备的路径、容量、父子关系和可用身份字段相互一致；
+- 现有分区表、分区边界和签名已经记录；
+- 挂载、Swap、LVM、RAID、device-mapper 与 holders 已经调查；
+- 题目或变更单明确允许改变该设备；
+- 失败时的停止条件、维护窗口和恢复限制已经清楚。
+
+任何一道证据门未通过，都不进入 `mklabel`、删除分区或签名清除。
+
+### ② [检查清单] 完成分区操作后逐层收束
+
+- `parted` 或 `fdisk` 看到预期分区表和边界；
+- `lsblk` 看到正确父子关系和内核分区节点；
+- `PARTUUID`、`PARTLABEL` 或所需持久链接已经生成；
+- `blkid -p` 与 `wipefs` 没有暴露非预期内容；
+- 没有越过题目要求创建文件系统、启用 Swap、创建 PV 或挂载；
+- 所有结论都说明“能证明什么”和“不能证明什么”。
+
+### ③ [主要判断表] 证据入口与证明边界
+
+| 证据入口 | 能证明什么 | 不能单独证明什么 |
+|---|---|---|
+| `lsblk` | 当前内核块设备树、父子关系、常见属性和部分签名摘要 | 设备绝对空闲、所有历史签名都不存在 |
+| `parted ... print` | 磁盘上的分区表类型、条目、起止和名称 | 内核已经采用最新布局 |
+| `fdisk -l` | 扇区、I/O 大小、分区边界和类型的独立视角 | udev 节点已经生成 |
+| `blkid -p` | 指定设备当前可探测的低层内容签名 | 该内容是否仍被上层活动对象使用 |
+| `wipefs` | 可识别签名及其偏移 | 所有数据都已清除，或所有签名都可以删除 |
+| `partprobe` | 已向内核请求重读分区表 | 重读一定成功、udev 一定已经处理完成 |
+| `udevadm settle` | 已等待当前 udev 事件队列收敛 | 磁盘分区表正确，或设备未被占用 |
+
+### ④ [安全边界] 三个最常见的错误扩大
+
+不要把 `FSTYPE` 为空扩大为“设备是空盘”；不要把分区类型扩大为“文件系统、Swap 或 LVM 已经创建”；不要把命令返回成功扩大为“磁盘表、内核、udev 与内容层已经全部正确”。存储章节的可靠结论必须来自多层证据收敛。
+
+### ⑤ [向下一章交接] 从分区设备进入文件系统对象
+
+本章停在“块设备和分区条目已经正确存在，并且身份与签名状态清楚”。第 23 章《文件系统、标签、UUID 与容量管理》将在这个可靠块设备之上创建和识别文件系统，讨论文件系统标签、UUID、容量证据和增长边界；挂载与 Swap 持久性留给第 24 章，LVM 对象生命周期留给第 25 章。
+
+本章最终安全边界只有一句：**设备身份和已有内容没有被证据证明之前，不执行破坏性写入。**

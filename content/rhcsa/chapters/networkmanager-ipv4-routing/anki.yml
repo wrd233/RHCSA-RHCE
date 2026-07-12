@@ -1,10 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-18
 chapter_slug: networkmanager-ipv4-routing
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-note_types:
-- RedHat-QA
-- RedHat-Cloze
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-NETWORK-K01-QA-001
   type: qa
@@ -19,7 +18,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::object-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NETWORK-K01-QA-002
   type: qa
   question: 查看设备及其活动 connection 映射的命令是什么？
@@ -34,6 +35,8 @@ notes:
   - topic::query-baseline
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-K01-QA-003
   type: qa
   question: 只查看已激活的 NetworkManager profile，使用什么命令？
@@ -48,6 +51,8 @@ notes:
   - topic::active-connection
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-K01-QA-004
   type: qa
   question: 持久 profile 与当前内核地址分别用什么查询？
@@ -63,6 +68,8 @@ notes:
   - topic::state-model
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-K01-QA-005
   type: qa
   question: 查看内核为特定目的选择的出口、源地址和下一跳，使用什么？
@@ -77,6 +84,8 @@ notes:
   - topic::route-decision
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-K01-QA-006
   type: qa
   question: '`ping` 网关成功能否证明 DNS 和 TCP 服务正确？'
@@ -91,7 +100,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::evidence-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-NETWORK-O01-QA-001
   type: qa
   question: 静态 IPv4 profile 的关键 method 值是什么？
@@ -106,6 +117,8 @@ notes:
   - topic::static-ipv4
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O01-QA-002
   type: qa
   question: 创建绑定 `enp1s0`、名为 `exam-static` 的以太网 profile 骨架是什么？
@@ -124,6 +137,8 @@ notes:
   - topic::profile-create
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O01-QA-003
   type: qa
   question: 激活 `exam-static` profile 的命令是什么？
@@ -138,6 +153,8 @@ notes:
   - topic::activation
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O01-QA-004
   type: qa
   question: '`nmcli connection modify` 修改多值属性时，前缀 `+` 与 `-` 分别表示什么？'
@@ -152,6 +169,8 @@ notes:
   - topic::list-properties
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NETWORK-O01-QA-005
   type: qa
   question: profile 中静态地址正确，但 `ip -br address` 仍显示旧地址。优先判断什么？
@@ -165,7 +184,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::state-mismatch
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NETWORK-O01-QA-006
   type: qa
   question: 静态网络配置的最小验收层次是什么？
@@ -178,7 +199,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::validation-chain
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NETWORK-K01-CLOZE-001
   type: cloze
   text: NetworkManager 的 {{c1::device}} 是设备，{{c2::connection profile}} 是可持久激活的配置对象。
@@ -190,7 +213,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::object-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-18-K01-QA-001
   type: qa
   question: '`nmcli connection show` 输出中的 `NAME`、`UUID`、`DEVICE` 分别表示什么？'
@@ -205,6 +230,8 @@ notes:
   - topic::object-model
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K01-QA-002
   type: qa
   question: 一个以太网 device 可以保存多个 connection profile 吗？同一时刻可以全部活动吗？
@@ -217,7 +244,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::object-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-K01-QA-003
   type: qa
   question: profile 已存在，能否据此判断当前 device 已采用该配置？
@@ -230,7 +259,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::state-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-K01-QA-004
   type: qa
   question: '`nmcli device status` 显示 `connected` 能证明哪些事实，不能证明哪些事实？'
@@ -244,7 +275,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::state-model
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K01-QA-005
   type: qa
   question: '`ip -br link` 中接口有 `UP`，但没有 `LOWER_UP`，通常先怀疑哪一层？'
@@ -258,6 +291,8 @@ notes:
   - topic::link-state
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-K01-QA-006
   type: qa
   question: 为什么修改 profile 后仍要查询 `ip address` 和 `ip route`？
@@ -273,6 +308,8 @@ notes:
   - topic::state-model
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K01-QA-007
   type: qa
   question: 脚本中遇到同名 connection profile 时，应优先使用什么标识避免歧义？
@@ -286,6 +323,8 @@ notes:
   - topic::identity
   - card::boundary
   - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-K01-QA-008
   type: qa
   question: NetworkManager 与内核网络栈分别承担什么角色？
@@ -299,6 +338,8 @@ notes:
   - topic::object-model
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-K01-CLOZE-001
   type: cloze
   text: profile 中写着什么回答{{c1::持久配置意图}}；`ip address` 与 `ip route` 回答{{c2::当前内核状态}}。
@@ -310,7 +351,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::state-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-18-K02-QA-001
   type: qa
   question: '`192.0.2.10/24` 中，地址和 `/24` 分别决定什么？'
@@ -324,7 +367,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::ipv4-prefix
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-K02-QA-002
   type: qa
   question: 接口配置 `192.0.2.10/24` 后，通常会产生怎样的直连路由？
@@ -339,6 +384,8 @@ notes:
   - topic::connected-route
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K02-QA-003
   type: qa
   question: 默认路由 `default via 192.0.2.1 dev enp1s0` 表示什么？
@@ -353,6 +400,8 @@ notes:
   - topic::default-route
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K02-QA-004
   type: qa
   question: 普通静态配置中，默认网关为什么通常必须位于接口的直连网络？
@@ -366,7 +415,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::gateway
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-K02-QA-005
   type: qa
   question: 同时存在默认路由和 `198.51.100.0/24` 静态路由时，访问 `198.51.100.44` 选择哪一条？
@@ -379,7 +430,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::route-selection
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-K02-QA-006
   type: qa
   question: route metric 数值较低通常表示什么？
@@ -393,7 +446,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::route-metric
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K02-QA-007
   type: qa
   question: '`ip route get 198.51.100.44` 输出中的 `via`、`dev`、`src` 分别表示什么？'
@@ -408,6 +463,8 @@ notes:
   - topic::route-decision
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K02-QA-008
   type: qa
   question: '`ip route` 中存在正确静态路由，是否还需要 `ip route get <DEST>`？'
@@ -421,6 +478,8 @@ notes:
   - topic::route-decision
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K02-QA-009
   type: qa
   question: 只为单个 IPv4 主机添加静态路由时，目的前缀通常使用什么？
@@ -433,7 +492,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::static-route
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-K02-QA-010
   type: qa
   question: '`ip route get <DEST>` 不发送数据包，因此不能证明什么？'
@@ -446,7 +507,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::evidence-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-K02-CLOZE-001
   type: cloze
   text: 路由选择首先采用{{c1::最长前缀匹配}}；相同前缀的候选再比较{{c2::metric 等属性}}。
@@ -458,7 +521,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::route-selection
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-18-O01-QA-001
   type: qa
   question: 网络变更前，最小 device/profile 基线应包含哪两条 `nmcli` 命令？
@@ -471,7 +536,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::query-baseline
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O01-QA-002
   type: qa
   question: 快速查看所有接口当前地址的命令是什么？
@@ -485,6 +552,8 @@ notes:
   - topic::query-baseline
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O01-QA-003
   type: qa
   question: 快速查看接口链路状态的命令是什么？
@@ -497,7 +566,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::query-baseline
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O01-QA-004
   type: qa
   question: 查看某 profile 的接口绑定、autoconnect 与 IPv4 属性，应使用什么命令骨架？
@@ -514,7 +585,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::profile-query
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O01-QA-005
   type: qa
   question: 查看当前 device 获得的 DNS server 和搜索域，使用什么命令骨架？
@@ -528,6 +601,8 @@ notes:
   - topic::dns-input
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O01-QA-006
   type: qa
   question: 为什么网络变更基线要同时记录 `ip route` 和 `ip route get <DEST>`？
@@ -540,7 +615,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::query-baseline
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O02-QA-001
   type: qa
   question: 把 DHCP profile 转为静态 IPv4 时，只设置 `ipv4.addresses` 是否足够？
@@ -554,7 +631,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::static-ipv4
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O02-QA-002
   type: qa
   question: 把 `office-lan` 设置为 `192.0.2.10/24` 的命令骨架是什么？
@@ -572,6 +651,8 @@ notes:
   - topic::static-ipv4
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O02-QA-003
   type: qa
   question: 设置 `office-lan` 默认网关为 `192.0.2.1` 的命令是什么？
@@ -585,6 +666,8 @@ notes:
   - topic::gateway
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O02-QA-004
   type: qa
   question: 将两个 DNS server 设置为 profile 的最终列表，命令骨架是什么？
@@ -599,6 +682,8 @@ notes:
   - topic::dns-properties
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O02-QA-005
   type: qa
   question: 设置 DNS search domain 的 profile 属性是什么？
@@ -612,6 +697,8 @@ notes:
   - topic::dns-properties
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O02-QA-006
   type: qa
   question: '`connection.autoconnect yes` 能否证明 profile 当前已经活动？'
@@ -624,7 +711,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::autoconnect
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O02-QA-007
   type: qa
   question: 修改活动 profile 后，使其重新应用的常用命令是什么？
@@ -639,6 +728,8 @@ notes:
   - topic::activation
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O02-QA-008
   type: qa
   question: 题目只要求修改现有活动 profile，为什么不应默认先删除再重建？
@@ -651,7 +742,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::change-safety
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O02-QA-009
   type: qa
   question: 静态 IPv4 任务没有要求改变 IPv6 时，应怎样处理？
@@ -664,7 +757,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::change-safety
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O02-QA-010
   type: qa
   question: 执行 `nmcli connection modify` 成功后，下一步最有价值的静态证据是什么？
@@ -678,6 +773,8 @@ notes:
   - topic::verification
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O02-CLOZE-001
   type: cloze
   text: 从 DHCP 转为静态 IPv4 时，设置地址之外还必须将 `ipv4.method` 改为 {{c1::manual}}；修改后常用 {{c2::nmcli connection up <CON>}} 重新激活。
@@ -689,7 +786,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::static-ipv4
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-18-O03-QA-001
   type: qa
   question: '`nmcli connection add` 中 `type`、`ifname`、`con-name` 分别指定什么？'
@@ -704,6 +803,8 @@ notes:
   - topic::profile-create
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O03-QA-002
   type: qa
   question: 创建 profile 成功后，如何证明它已激活到目标 device？
@@ -717,6 +818,8 @@ notes:
   - topic::activation
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O03-QA-003
   type: qa
   question: 同一 device 有多个 autoconnect profile 时，哪个属性控制候选优先级？
@@ -730,6 +833,8 @@ notes:
   - topic::autoconnect
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O03-QA-004
   type: qa
   question: '`connection.autoconnect-priority` 与 `ipv4.route-metric` 的区别是什么？'
@@ -743,7 +848,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::autoconnect
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O03-QA-005
   type: qa
   question: '`nmcli connection down <CON>` 与 `nmcli device disconnect <IFACE>` 的关键区别是什么？'
@@ -757,7 +864,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::deactivation
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O03-QA-006
   type: qa
   question: 重新允许已断开的 device 自动连接，使用什么命令？
@@ -770,7 +879,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::deactivation
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O03-QA-007
   type: qa
   question: 删除 profile 的命令是什么？删除前必须确认什么？
@@ -784,7 +895,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::profile-delete
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O03-QA-008
   type: qa
   question: 多个 profile 同时 `autoconnect yes`，只检查目标 profile 的值是否足够？
@@ -798,6 +911,8 @@ notes:
   - topic::autoconnect
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O03-CLOZE-001
   type: cloze
   text: '`connection.autoconnect-priority` 数值越{{c1::高}}，候选 profile 越优先；`ipv4.route-metric` 数值越{{c2::低}}，同类候选路由通常越优先。'
@@ -810,7 +925,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::autoconnect
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-18-O04-QA-001
   type: qa
   question: 向 `office-lan` 追加 `198.51.100.0/24` 经 `192.0.2.254` 的静态路由，命令是什么？
@@ -829,6 +946,8 @@ notes:
   - topic::static-route
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O04-QA-002
   type: qa
   question: '`ipv4.routes` 不带 `+` 修改时，主要风险是什么？'
@@ -841,7 +960,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::static-route
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O04-QA-003
   type: qa
   question: 删除指定静态路由时，属性名前使用什么前缀？
@@ -854,7 +975,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::static-route
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O04-QA-004
   type: qa
   question: 设置连接路由 metric 的属性是什么？
@@ -869,6 +992,8 @@ notes:
   - topic::route-metric
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O04-QA-005
   type: qa
   question: '`ipv4.never-default yes` 表示什么？'
@@ -882,6 +1007,8 @@ notes:
   - topic::default-route
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O04-QA-006
   type: qa
   question: 备用连接只访问专用网络、不应成为默认出口，通常检查哪两个属性？
@@ -895,6 +1022,8 @@ notes:
   - topic::default-route
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O04-QA-007
   type: qa
   question: 保留 DHCP 地址但忽略 DHCP DNS 时，使用什么属性组合？
@@ -907,7 +1036,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::dns-properties
   - card::configuration
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O04-QA-008
   type: qa
   question: 纯 `ipv4.method manual` 的静态任务中，`ignore-auto-dns` 是必需项吗？
@@ -920,7 +1051,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::dns-properties
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O04-QA-009
   type: qa
   question: 静态路由下一跳写入 profile 前，最有区分度的本地证据是什么？
@@ -934,6 +1067,8 @@ notes:
   - topic::static-route
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O04-QA-010
   type: qa
   question: DNS server 已出现在 `nmcli device show`，能否证明主机名一定解析成功？
@@ -946,7 +1081,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::dns-properties
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O04-CLOZE-001
   type: cloze
   text: '`ipv4.never-default yes` 阻止 profile 提供{{c1::默认路由}}，但不妨碍它保存{{c2::特定静态路由}}。'
@@ -959,6 +1096,8 @@ notes:
   - topic::default-route
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-18-O05-QA-001
   type: qa
   question: RHEL 9 新 NetworkManager profile 默认保存在哪个目录、使用什么格式？
@@ -972,7 +1111,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::keyfile
   - card::path
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O05-QA-002
   type: qa
   question: keyfile 常见的所有者和权限要求是什么？
@@ -986,6 +1127,8 @@ notes:
   - topic::keyfile
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O05-QA-003
   type: qa
   question: 手工修改 `.nmconnection` 文件后，让 NetworkManager 重新读取全部 profile 的命令是什么？
@@ -1000,6 +1143,8 @@ notes:
   - topic::profile-reload
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O05-QA-004
   type: qa
   question: 只加载一个指定 keyfile，命令骨架是什么？
@@ -1013,7 +1158,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::profile-reload
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O05-QA-005
   type: qa
   question: '`nmcli connection reload` 是否会把新地址立即应用到当前活动 device？'
@@ -1027,7 +1174,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::profile-reload
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O05-QA-006
   type: qa
   question: 修改 `.nmconnection` 后 profile 未出现，优先检查什么？
@@ -1041,6 +1190,8 @@ notes:
   - topic::keyfile
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O05-QA-007
   type: qa
   question: '`nmcli general reload` 与 `nmcli connection reload` 的主要区别是什么？'
@@ -1055,6 +1206,8 @@ notes:
   - topic::profile-reload
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O06-QA-001
   type: qa
   question: 验证静态 profile 时，为什么要显式查询 `connection.autoconnect`？
@@ -1068,6 +1221,8 @@ notes:
   - topic::persistence
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O06-QA-002
   type: qa
   question: profile 正确、活动映射正确后，下一层应验证什么？
@@ -1080,7 +1235,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::validation-chain
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O06-QA-003
   type: qa
   question: '`ip route get <DEST>` 结果正确后，为什么 `ping` 仍可能失败？'
@@ -1094,7 +1251,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::evidence-boundary
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O06-QA-004
   type: qa
   question: 检查本机是否监听 TCP 22 的命令骨架是什么？
@@ -1107,7 +1266,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::socket-evidence
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-O06-QA-005
   type: qa
   question: '`ss -lntup` 能证明什么，不能证明什么？'
@@ -1120,7 +1281,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::socket-evidence
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O06-QA-006
   type: qa
   question: 静态配置后的重启持久性为什么不能由 `connection.autoconnect yes` 单独证明？
@@ -1133,7 +1296,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::persistence
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O06-QA-007
   type: qa
   question: 一条 `nmcli connection up` 成功消息能否替代 `ip route get`？
@@ -1147,7 +1312,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::validation-chain
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-O06-QA-008
   type: qa
   question: 验证当前 DNS 输入和验证实际名称解析，分别属于哪两个章节层次？
@@ -1160,7 +1327,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::chapter-boundary
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-O06-CLOZE-001
   type: cloze
   text: 网络验收链：profile → active mapping → {{c1::address}} → {{c2::route / route get}} → DNS input → limited function → persistence。
@@ -1172,7 +1341,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::validation-chain
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-18-D01-QA-001
   type: qa
   question: 目标 device 在 `nmcli device status` 中不存在，第一步应改 IP profile 吗？
@@ -1186,7 +1357,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::link-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-QA-002
   type: qa
   question: 接口有 `UP` 但无 `LOWER_UP`，下一条最有区分度的证据是什么？
@@ -1200,6 +1373,8 @@ notes:
   - topic::link-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-QA-003
   type: qa
   question: profile 已改为新地址，但当前 device 仍使用旧地址，诊断链是什么？
@@ -1212,7 +1387,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::state-mismatch
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-QA-004
   type: qa
   question: 有目标地址但网关不可达，为什么应先检查前缀？
@@ -1226,7 +1403,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::gateway-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-QA-005
   type: qa
   question: '`ip route get 198.51.100.44` 走默认网关，但设计要求专用下一跳。最可能缺少什么？'
@@ -1239,7 +1418,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::route-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-QA-006
   type: qa
   question: 多条默认路由导致出口错误，下一条最有区分度的证据是什么？
@@ -1252,7 +1433,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::route-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-QA-007
   type: qa
   question: 数字 IP 可达但主机名失败时，本章的最小处理是什么？
@@ -1265,7 +1448,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::chapter-boundary
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-QA-008
   type: qa
   question: 路由正确但 TCP 连接被拒绝，下一条最有区分度的服务端证据是什么？
@@ -1278,7 +1463,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::socket-evidence
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-QA-009
   type: qa
   question: 路由正确但 TCP 连接超时，能直接断定是 firewalld 吗？
@@ -1292,7 +1479,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::evidence-boundary
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-D01-QA-010
   type: qa
   question: '`nmcli connection down` 后 device 又连接，优先查看什么？'
@@ -1307,6 +1496,8 @@ notes:
   - topic::autoconnect-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-D01-CLOZE-001
   type: cloze
   text: 数字 IP 可达但名称失败时，停止修改{{c1::地址和路由}}，转而检查{{c2::DNS 输入、NSS 与名称解析}}。
@@ -1318,7 +1509,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::chapter-boundary
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-18-W01-QA-001
   type: qa
   question: 通过 SSH 修改当前管理接口前，首要安全条件是什么？
@@ -1332,6 +1525,8 @@ notes:
   - topic::remote-change
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-W01-QA-002
   type: qa
   question: 为什么“重启 NetworkManager”不应成为普通 profile 变更的默认答案？
@@ -1344,7 +1539,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::change-safety
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-W01-QA-003
   type: qa
   question: 工作变更基线至少应记录哪四类对象？
@@ -1358,6 +1555,8 @@ notes:
   - topic::change-safety
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-18-W01-QA-004
   type: qa
   question: 为什么不应把命令退出码 0 扩大为网络终态正确？
@@ -1370,7 +1569,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::evidence-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-T01-QA-001
   type: qa
   question: 现有活动 DHCP profile 必须改为静态且不得重建时，操作主线是什么？
@@ -1384,6 +1585,8 @@ notes:
   - topic::classic-task-1
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-T01-QA-002
   type: qa
   question: 经典任务一中，为什么设置两个目标 DNS 时选择替换而不是 `+ipv4.dns`？
@@ -1397,6 +1600,8 @@ notes:
   - topic::classic-task-1
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-T02-QA-001
   type: qa
   question: 到目标网络走错默认网关时，为什么不应修改本机地址？
@@ -1410,6 +1615,8 @@ notes:
   - topic::classic-task-2
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-18-T02-QA-002
   type: qa
   question: 经典任务二为什么不能用 `ip route add` 作为最终答案？
@@ -1423,7 +1630,9 @@ notes:
   - chapter::networkmanager-ipv4-routing
   - topic::classic-task-2
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-18-T02-QA-003
   type: qa
   question: 添加持久静态路由后，最关键的两层验证是什么？
@@ -1437,4 +1646,5 @@ notes:
   - topic::classic-task-2
   - card::verification
   - priority::P0
-status: integrated
+  model: RedHat-QA
+  priority: P0

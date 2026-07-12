@@ -1,0 +1,82 @@
+package_version: 1
+chapter:
+  id: RHCSA-23
+  exam: RHCSA
+  part: 6
+  number: 23
+  slug: filesystems-labels-uuid-capacity
+  title: 文件系统、标签、UUID 与容量管理
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/filesystems-labels-uuid-capacity/lecture.md
+  anki: content/rhcsa/chapters/filesystems-labels-uuid-capacity/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:14:55+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: d9833ea1cfd65181dde1ad45971dcde2b37d73c99de9515da892660832fa3699
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 224a1c96d363ca7e1affd31b2a6d922b83bd2a4b50a89b7b079eea47b3fbd733
+  anki:
+    path: anki.yml
+    sha256: 84c26e838068dbb1ac50716e8bd287e2946aea68c5368bb1f881adaa1798ff26
+  preview:
+    path: anki-preview.html
+    sha256: 4a2fe1d82105c80cc6051b08098df17d98c6e39b8e92027de0754ee462e46f50
+  summary:
+    path: anki-summary.md
+    sha256: a4b2fca9a60c379d7d686035d0ff1215587606bd903a0a269bd2c7787cb28557
+  anki_impact:
+    path: anki-impact.md
+    sha256: c677bea42fc4f92e27c5f5169e73915bee095e641f2d852cd4712dc7c552684f
+  source_map:
+    path: source-map.md
+    sha256: c2874fea562b7213485f3301ffdc1d55f140c93675f06c2fb32309ed495a5d12
+  structure_report:
+    path: structure-report.md
+    sha256: 4acc997748c26d71f6abb6cae5d59fadabd4fc2d323bf4fa02a1ced7eab82118
+  visual_qa:
+    path: visual-qa.md
+    sha256: b890a0a4f1bb80a1d8284ec1bbadb42810f271c78398fdb5950be3dcc644800c
+  qa_report:
+    path: qa-report.md
+    sha256: 54e14d04492658230031157738b9666cbb3b98b1295fe3e7140f142d0c375dbd
+  revision_notes:
+    path: revision-notes.md
+    sha256: 4d68f8e6ed1d6b2b3ae96d6a620f6bf46070e246bec055804120a78352a18e35
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 50e6917f8fde8db9309f170736efc51556a2dfa0069972ed84a0c01b44124557
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- 未连接可控 RHEL 9 虚拟机，未执行命令级 live test。
+- 全书级 Section ID、Anki ID、跨章重复、统一 PDF、APKG 与 AnkiConnect 由 Codex 完成。
+extensions:
+  canonical_inputs:
+    lecture_sha256: f14aead70d1758c3c5dbd04a876c91cd5bceccd5c70037ed31232bd2f11708e9
+    anki_sha256: 7ed592964e6d6dedaeee713e059e5db0f1d7d9d3aa330f945044ca96b0c834e7
+  integrity:
+    algorithm: sha256
+    manifest_self_hash: not_applicable_self_referential

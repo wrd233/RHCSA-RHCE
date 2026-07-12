@@ -5,7 +5,7 @@ exam: RHCSA
 part: "第六篇 块存储与网络存储"
 slug: filesystems-labels-uuid-capacity
 validation: static
-status: integrated
+status: content_frozen_for_integration
 sources:
   - RH124-RHEL9
   - RH134-RHEL9
@@ -19,30 +19,149 @@ sources:
   - RHCSA9-Mock
 ---
 
-<!--
-维护信息：本章为 RHCSA-23 候选内容真源。
-验证模式：静态核对；未连接可控 RHEL 9 虚拟机。
-章节状态：integrated。
-正式渲染不得显示本注释、来源映射、内部 Topic ID 或迁移记录。
--->
 
-# 第 23 章　文件系统、标签、UUID 与容量管理
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">23</div>
+  <h1>文件系统、标签、UUID<br>与容量管理</h1>
+  <p class="cover-subtitle">从块设备签名到文件系统几何：把创建、身份、容量、增长与检查放进同一条证据链。</p>
+  <div class="cover-tags">
+    <span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+  </div>
+  <div class="cover-edition">大字号阅读版</div>
+</div>
 
-磁盘、分区或逻辑卷只提供一段可以寻址的块空间。真正让系统能够在其中创建目录、记录文件名、分配数据块并追踪空闲空间的，是建立在块设备之上的文件系统。一个设备“容量已经变大”，并不自动表示文件系统已经接管新增空间；一个目录“看起来很大”，也不等于包含它的整个文件系统已经用满。存储排错中最常见的错误，正是把底层块设备、文件系统实例、挂载关系和目录内容混成同一个对象。
+<div class="page-break"></div>
 
-本章围绕块设备上的文件系统实例，建立一套稳定的调查和变更路径：先确认对象身份和已有签名，再识别 XFS 或 ext4，读取标签、UUID、几何和容量，随后才决定创建、检查、增长或缩小。每次操作都要回答四个问题：命令作用在哪一层、前置条件是否满足、操作会不会破坏现有数据、怎样用独立证据证明终态。
+<div class="navigation-page">
+  <h1>本章阅读导航</h1>
+  <p class="nav-lead"><strong>先抓住一条主线：</strong>块设备提供可寻址空间，文件系统管理其中的结构和身份；设备已经变大，不代表文件系统已经增长，已有签名也绝不代表可以直接格式化。</p>
 
-**[概念]** 块设备是文件系统的容器。它可以是整块磁盘、分区、LVM 逻辑卷、RAID 设备或其他块设备。本章假设目标块设备已经由前置章节建立，不展开分区表或 LVM 的创建过程。
+  <div class="model-grid">
+    <div class="model-step"><b>01</b><strong>识别真实对象</strong><span>确认设备路径、父子层级与当前用途</span></div>
+    <div class="model-step"><b>02</b><strong>读取签名与身份</strong><span>取得 TYPE、LABEL、UUID 和挂载证据</span></div>
+    <div class="model-step"><b>03</b><strong>建立类型模型</strong><span>区分 XFS 与 ext4 的工具和能力边界</span></div>
+    <div class="model-step"><b>04</b><strong>比较容量层次</strong><span>分别观察设备、文件系统、数据块和 inode</span></div>
+    <div class="model-step"><b>05</b><strong>选择最小操作</strong><span>创建、增长、缩小或检查只改变目标层</span></div>
+    <div class="model-step"><b>06</b><strong>完成分层验收</strong><span>分别验证容量、身份、结构和已有数据</span></div>
+  </div>
 
-**[概念]** 文件系统实例由类型、内部几何、元数据、数据区、标签和 UUID 等共同描述。重新运行 `mkfs` 不是“刷新”原文件系统，而是在目标块设备上创建一个新的文件系统实例，原有数据结构通常会被覆盖。
+  <div class="nav-columns">
+    <div>
+      <h2>专题地图</h2>
+      <table class="nav-map">
+        <tr><th>知识专题</th><td>从块空间到文件系统实例</td></tr>
+        <tr><th>知识专题</th><td>XFS 与 ext4 的工具和能力矩阵</td></tr>
+        <tr><th>操作专题</th><td>建立文件系统证据基线</td></tr>
+        <tr><th>操作专题</th><td>在确认空设备上创建文件系统</td></tr>
+        <tr><th>知识专题</th><td>LABEL、UUID 与身份生命周期</td></tr>
+        <tr><th>知识专题</th><td>块设备、文件系统、数据块与 inode 容量</td></tr>
+        <tr><th>操作专题</th><td>用 df 与 du 解释空间差异</td></tr>
+        <tr><th>操作专题</th><td>扩大 XFS 或 ext4</td></tr>
+        <tr><th>诊断专题</th><td>检查、修复与典型容量故障</td></tr>
+        <tr><th>经典任务</th><td>创建带标签 XFS；保留数据在线增长</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>阅读时持续回答</h2>
+      <ol class="nav-questions">
+        <li>当前命令作用于块设备、文件系统还是目录树？</li>
+        <li>目标上是否已有需要保留的签名和数据？</li>
+        <li>TYPE、LABEL、UUID 分别证明什么？</li>
+        <li>底层容量和文件系统容量是否已经同步？</li>
+        <li>XFS 与 ext4 的增长、缩小和检查工具怎样不同？</li>
+        <li>操作后怎样独立证明身份、容量和数据都正确？</li>
+      </ol>
+      <div class="boundary-note"><strong>章节边界：</strong>分区表与设备签名归第 22 章；挂载、fstab 与 Swap 归第 24 章；LVM 容量池和 LV 生命周期归第 25 章。本章只在理解文件系统动作所必需时轻量引用它们。</div>
+    </div>
+  </div>
+</div>
 
-**[概念]** LABEL 是便于人阅读的文件系统属性，但不保证全局唯一；UUID 用于标识当前文件系统实例。UUID 属于文件系统，不是设备路径或物理磁盘永恒不变的属性。重新格式化通常会产生新的 UUID。
+<div class="page-break"></div>
 
-**[概念]** 容量至少有三个层次：底层块设备能够提供多少块、文件系统当前管理多少块、目录树中的文件实际分配了多少块。`lsblk`、`df` 和 `du` 分别观察这些不同层次，不能互相替代。
+<div class="chapter-opening">
+  <div class="chapter-label">第 23 章 · 正文</div>
+  <h1>先判断命令改变哪一层，再讨论怎样执行</h1>
+  <p>磁盘、分区或逻辑卷只提供一段可以寻址的块空间。真正让系统能够创建目录、记录文件名、分配数据块并追踪空闲空间的，是建立在块设备之上的文件系统。存储操作中最常见的误判，是把底层设备、文件系统实例、挂载关系和目录内容当成同一个对象：看到设备变大就以为文件系统已经扩容，看到 `blkid` 有签名就以为文件系统健康，或者看到容量异常就重新执行 `mkfs`。</p>
+  <p>本章沿着“对象身份 → 类型与元数据 → 容量层次 → 类型专用操作 → 分层验证”推进。每次创建、增长、缩小或检查都必须回答：目标是谁，前置条件是否满足，操作会改变什么，哪些已有状态必须保留，以及哪一条证据才能证明最终结果。</p>
+  <div class="question-chain">目标块设备是谁？<br>上面是否已有签名？<br>文件系统是什么类型？<br>底层和文件系统各有多大？<br>操作后身份、容量和数据分别怎样验收？</div>
+</div>
 
-**[操作语义]** `lsblk -f` 与 `blkid` 用于识别文件系统类型、LABEL 和 UUID；`xfs_info` 与 `tune2fs -l` 用于读取类型专用的文件系统信息；`df` 从已挂载文件系统角度报告容量，`du` 对可遍历的目录树进行汇总。
+<div class="concept-stack">
+  <div class="concept-card"><span class="concept-badge">概念</span><p><strong>文件系统对象</strong> 是建立在一个块设备上的独立数据组织实例，它拥有自己的类型、元数据、分配结构、标签和 UUID。块设备只是容器，挂载只是把这个实例接入目录树；因此 `mkfs` 创建的是新文件系统，而不是创建分区、扩大容量或修复挂载配置。</p></div>
+  <div class="concept-card"><span class="concept-badge">概念</span><p><strong>标签（LABEL）</strong> 是便于人阅读的文件系统属性，可表达用途，但不保证唯一。标签属于文件系统实例而不是挂载点；多个文件系统可以同名，所以写操作和持久引用不能只凭一个看起来正确的 LABEL 就忽略设备容量、父子层级和 UUID。</p></div>
+  <div class="concept-card"><span class="concept-badge">概念</span><p><strong>UUID</strong> 用来区分当前文件系统实例，通常在创建时生成。它比 `/dev/vdX` 这类枚举路径更适合被外部配置引用，但并非物理磁盘永恒身份：重新格式化会产生新 UUID，块级克隆又可能复制 UUID，因此必须从当前目标读取真实值。</p></div>
+  <div class="concept-card"><span class="concept-badge">概念</span><p><strong>块设备容量</strong> 是分区、LV 或其他块设备当前向上提供的地址范围，是文件系统能够增长到哪里的外部上限。`lsblk` 看到设备已经变大，只证明容器层发生了变化；文件系统是否接管新增空间，还要继续查看类型专用几何和 `df`。</p></div>
+  <div class="concept-card"><span class="concept-badge">概念</span><p><strong>文件系统容量</strong> 是文件系统元数据当前能够管理的块和 inode 范围。`df` 观察已挂载文件系统的总体分配状态，`du` 遍历目录树并汇总可见文件占用；二者差异不是谁“不准”，而是观察对象不同。</p></div>
+  <div class="concept-card"><span class="concept-badge">概念</span><p><strong>XFS 与 ext4 的调整边界</strong> 决定了工具选择和风险。XFS 在 RHEL 9 的稳定路径中支持在线增长但不能原地缩小；ext4 可以增长，并可在卸载、检查和正确顺序下缩小。增长不是重新格式化，缩小也绝不是增长命令的反向调用。</p></div>
+</div>
 
-**[操作语义]** `mkfs.xfs`、`mkfs.ext4` 创建文件系统；`xfs_growfs` 扩大已挂载 XFS；`resize2fs` 调整 ext4；`xfs_repair` 与 `e2fsck` 分别承担 XFS 和 ext4 的检查与修复。工具名称相似并不表示前置条件和风险相同。
+<div class="quick-reference">
+  <div class="quickref-title"><span>操作语义</span><strong>先建立关键命令的接口地图</strong><p>这里集中列出本章最重要的入口。正式专题会继续解释操作前提、输出、验证和安全边界。</p></div>
+
+  <div class="command-entry">
+    <h3><code>lsblk -f</code> / <code>blkid</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>lsblk -o NAME,PATH,SIZE,TYPE,FSTYPE,LABEL,UUID,MOUNTPOINTS
+blkid [-s TAG ...] DEVICE</code></pre>
+    <p>先从全局层级识别候选设备，再对目标设备精确读取内容签名。二者能证明类型和身份线索，不能单独证明文件系统健康或设备可以安全格式化。</p>
+    <dl><dt><code>lsblk -f</code></dt><dd>快速查看 FSTYPE、LABEL、UUID 与挂载点。</dd><dt><code>-o ...</code></dt><dd>显式选择字段，避免把设备容量与文件系统身份混为一列。</dd><dt><code>blkid -s TYPE -s LABEL -s UUID DEVICE</code></dt><dd>只读取本章最关心的签名属性。</dd></dl>
+  </div>
+
+  <div class="command-entry">
+    <h3><code>mkfs.xfs</code> / <code>mkfs.ext4</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>mkfs.xfs  [-L LABEL] DEVICE
+mkfs.ext4 [-L LABEL] DEVICE</code></pre>
+    <p>在命令最后指定的块设备上创建一个新的文件系统实例。该动作会写入新的元数据，必须建立在“无需保留原有内容”的明确判断上。</p>
+    <dl><dt><code>-L LABEL</code></dt><dd>在创建时设置文件系统标签。</dd><dt><code>DEVICE</code></dt><dd>真正被写入的块设备；路径必须在执行前重新核对。</dd><dt>已有签名</dt><dd>不是自动使用强制参数的理由，应先查清数据和归属。</dd></dl>
+  </div>
+
+  <div class="command-entry">
+    <h3><code>xfs_info</code> / <code>tune2fs -l</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>xfs_info MOUNT_POINT_OR_DEVICE
+tune2fs -l DEVICE</code></pre>
+    <p>读取文件系统类型专用的几何和元数据。它们回答文件系统当前怎样组织空间，不替代底层设备容量、挂载关系或业务数据检查。</p>
+    <dl><dt><code>xfs_info</code></dt><dd>查看 XFS 的数据区、块大小、allocation group 和格式特性。</dd><dt><code>tune2fs -l</code></dt><dd>只列出 ext 文件系统 superblock 信息，不执行修复。</dd></dl>
+  </div>
+
+  <div class="command-entry">
+    <h3><code>xfs_growfs</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>xfs_growfs [OPTIONS] MOUNT_POINT</code></pre>
+    <p>让一个已经挂载的 XFS 接管底层设备新增的空间。默认不指定目标块数时，增长到当前底层可提供的最大范围。</p>
+    <dl><dt><code>MOUNT_POINT</code></dt><dd>作用对象的访问入口，不是任意父目录，也不是重新格式化用的设备路径。</dd><dt><code>-D SIZE</code></dt><dd>按文件系统块数设置目标数据区大小；普通扩容通常无需手工指定。</dd><dt>前提</dt><dd>底层设备已经变大，并且目标确实是已挂载 XFS。</dd></dl>
+  </div>
+
+  <div class="command-entry">
+    <h3><code>resize2fs</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>resize2fs DEVICE [NEW_SIZE]</code></pre>
+    <p>调整 ext2/ext3/ext4 文件系统大小。省略目标大小时通常增长到容器可用边界；缩小与增长具有完全不同的前提和风险。</p>
+    <dl><dt>省略 <code>NEW_SIZE</code></dt><dd>在底层已扩大后增长到可用最大范围。</dd><dt><code>NEW_SIZE</code></dt><dd>显式目标大小，必须确认单位和底层边界。</dd><dt>缩小</dt><dd>必须卸载并先执行 <code>e2fsck -f</code>，且文件系统必须先于底层容器缩小。</dd></dl>
+  </div>
+
+  <div class="command-entry">
+    <h3><code>fsck</code> / <code>xfs_repair</code> / <code>e2fsck</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>fsck -N DEVICE
+xfs_repair -n DEVICE
+e2fsck -n DEVICE
+e2fsck -f DEVICE</code></pre>
+    <p>检查和修复必须按文件系统类型选择工具，并以未挂载状态作为实际修复的基本边界。`fsck.xfs` 的成功退出不代表 XFS 已经完成检查。</p>
+    <dl><dt><code>fsck -N</code></dt><dd>只显示将调用的类型助手，不修改文件系统。</dd><dt><code>-n</code></dt><dd>只读收集结构问题证据。</dd><dt><code>e2fsck -f</code></dt><dd>强制完整检查；ext4 缩小前必须执行。</dd><dt><code>xfs_repair -L</code></dt><dd>可能清除日志并造成数据丢失，不是普通答案。</dd></dl>
+  </div>
+
+  <div class="command-entry">
+    <h3><code>df</code> / <code>du</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>df [-hT|-i|-B1] PATH
+du [-shx|--apparent-size] PATH</code></pre>
+    <p>`df` 读取包含目标路径的已挂载文件系统整体状态；`du` 遍历目录树并汇总它能看到的文件。两者只能回答各自层次的问题。</p>
+    <dl><dt><code>df -hT</code></dt><dd>用可读单位显示类型、总量、已用和可用。</dd><dt><code>df -i</code></dt><dd>查看 inode 容量，解释“还有字节却不能新建文件”。</dd><dt><code>du -shx</code></dt><dd>汇总目录并限制在同一文件系统。</dd><dt><code>--apparent-size</code></dt><dd>观察逻辑长度，而不是实际分配块。</dd></dl>
+  </div>
+</div>
 
 <section class="topic knowledge" id="RHCSA-23-K01" data-kind="knowledge-topic">
 
@@ -859,6 +978,8 @@ lsblk -f <DEVICE>
 
 </section>
 
+<div class="page-break"></div>
+
 <section class="topic classic-task" id="RHCSA-23-T01" data-kind="classic-task">
 
 ## [经典任务] 在确认空设备上创建带标签的 XFS
@@ -885,7 +1006,6 @@ lsblk -f <DEVICE>
 > 请先独立完成。参考解答从下一页开始。
 
 </section>
-
 <div class="page-break"></div>
 
 <section class="topic reference-answer" id="RHCSA-23-A01" data-kind="reference-answer">
@@ -954,6 +1074,8 @@ xfs_info /dev/vdb1
 
 </section>
 
+<div class="page-break"></div>
+
 <section class="topic classic-task" id="RHCSA-23-T02" data-kind="classic-task">
 
 ## [经典任务] 扩展已有 XFS，并证明数据与身份未被重建
@@ -979,7 +1101,6 @@ xfs_info /dev/vdb1
 > 请先独立完成。参考解答从下一页开始。
 
 </section>
-
 <div class="page-break"></div>
 
 <section class="topic reference-answer" id="RHCSA-23-A02" data-kind="reference-answer">
@@ -1101,21 +1222,46 @@ df -i <PATH>
 
 <section class="topic summary" id="RHCSA-23-S01" data-kind="summary">
 
-## [本章收束] 文件系统操作的稳定主线
+## [本章收束] 把每次文件系统变更还原成对象、条件和证据
 
-文件系统是建立在块设备上的独立对象。块设备容量、文件系统几何、已挂载文件系统使用量和目录树占用分别由不同证据观察。稳定的调查顺序是：
+文件系统管理最危险的误判，是只看见一个设备路径或一条成功退出的命令，就把它扩大成“存储已经正确”。稳定方法始终从对象层次开始：先确认真正的块设备，再读取文件系统类型和身份，然后比较底层容量与文件系统容量，最后才选择创建、增长、缩小或检查工具。
+
+### 一条可执行的工作方法
 
 ```text
-确认设备身份
-→ 读取 TYPE、LABEL、UUID
-→ 读取文件系统几何
-→ 比较块设备与文件系统容量
-→ 按类型选择操作
-→ 验证身份、容量和数据
+识别真实对象
+→ 保存 TYPE、LABEL、UUID 与容量基线
+→ 判断已有签名是否需要保留
+→ 按 XFS/ext4 选择专用工具
+→ 一次只改变一个存储层
+→ 分别验证容量、身份与数据
 ```
 
-XFS 和 ext4 的核心差异必须形成条件反射：XFS 使用 `xfs_growfs` 在线增长，在 RHEL 9 支持路径中不能原地缩小；ext4 使用 `resize2fs` 调整，增长可在线，缩小必须卸载并先 `e2fsck -f`。检查时，XFS 使用 `xfs_repair`，`fsck.xfs` 的成功退出不能当作健康证据；ext4 使用 `e2fsck`。
+任何写操作前都应能回答：命令最后作用于哪个设备；该设备是否已有需要保留的文件系统；文件系统当前是否挂载；底层容量是否已经满足前提；失败时是否有恢复路径。答不清这些问题，就不进入 `mkfs`、修复或缩小操作。
 
-`mkfs` 只属于确认无需保留数据的创建阶段。容量未增长、UUID 引用错误或文件系统需要检查，都有各自的最小修复入口，不需要重新格式化。只要始终让命令作用层、前置条件和验证证据保持一致，文件系统题就不会退化为高风险的命令猜测。
+### 章末检查清单
+
+- 能把块设备容量、文件系统容量、`df` 使用量和 `du` 汇总量分开解释；
+- 能用 `lsblk -f` 与 `blkid` 交叉识别 TYPE、LABEL 和 UUID；
+- 知道 `mkfs` 创建新实例，不能用于扩容或修复引用；
+- 能按类型选择 `xfs_info`、`tune2fs -l`、`xfs_growfs`、`resize2fs`、`xfs_repair` 或 `e2fsck`；
+- 能说明 XFS 不可原地缩小，ext4 缩小必须离线并先检查；
+- 能解释每条验证命令证明什么，以及它不能证明什么；
+- 面对已有签名、挂载失败或容量不一致时，先取得下一条有区分度的证据，而不是重新格式化。
+
+### 主要判断表
+
+| 看到的现象 | 首先说明什么 | 下一条证据 | 不应直接做什么 |
+|---|---|---|---|
+| `lsblk` 容量已增大，`df` 仍是旧值 | 底层与文件系统容量不同步 | 读取 FSTYPE、挂载点和专用几何 | 重新运行 `mkfs` |
+| `blkid` 能看到 TYPE/UUID | 设备上存在可识别签名 | 查挂载状态、日志与只读检查结果 | 把签名存在等同于健康 |
+| `df` 高、`du` 低 | 整体分配与可遍历目录树不一致 | `lsof +L1`、权限和子挂载证据 | 盲目删除最大目录 |
+| `df -h` 有空间但不能新建文件 | 可能不是数据块容量问题 | `df -i` | 只扩大单个文件 |
+| 题目要求缩小 XFS | 当前类型不支持原地缩小 | 规划迁移、重建和恢复 | 缩小分区或 LV 截断 XFS |
+| 已有签名但用途不明确 | 破坏性前提未满足 | 查设备归属、挂载与数据责任人 | 使用 `-f` 或 `wipefs -a` 掩盖风险 |
+
+### 向下一章交接
+
+本章已经建立了文件系统自身的类型、身份、几何和容量状态。第 24 章《挂载、fstab、Swap 与启动持久性》将在此基础上继续回答：怎样把文件系统接入目录树；怎样用 UUID 或 LABEL 建立持久引用；怎样区分当前挂载、配置状态与重启后的真实终态。本章不提前展开完整的 `mount`、`findmnt`、`/etc/fstab` 和 Swap 配置流程。
 
 </section>

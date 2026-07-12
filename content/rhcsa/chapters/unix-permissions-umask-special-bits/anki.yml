@@ -1,10 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-08
 chapter_slug: unix-permissions-umask-special-bits
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-note_types:
-- RedHat-QA
-- RedHat-Cloze
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-USERS-K02-QA-001
   type: qa
@@ -19,7 +18,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::file-directory-semantics
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-K02-QA-002
   type: qa
   question: 删除一个文件主要取决于文件自身写权限还是父目录权限？
@@ -33,7 +34,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::parent-directory-control
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-K02-QA-003
   type: qa
   question: 用户既是文件 owner 又属于文件 group 时，权限会相加吗？
@@ -47,7 +50,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::dac-selection
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-K02-QA-004
   type: qa
   question: '`umask` 为 `0027`，程序按常见模式创建普通文件和目录时，结果是什么？'
@@ -61,7 +66,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-calculation
   - card::calculation
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-USERS-K02-QA-005
   type: qa
   question: 只在当前 shell 执行 `umask 0027` 能否证明持久策略已配置？
@@ -76,6 +83,8 @@ notes:
   - topic::umask-persistence
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-USERS-K02-QA-006
   type: qa
   question: 目录 setgid 位解决什么问题？
@@ -89,7 +98,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::setgid-directory
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-K02-QA-007
   type: qa
   question: 把 `/srv/project` 配为 owner/group 可完全访问、other 无权限，且新对象继承 group，应设置什么模式？
@@ -103,8 +114,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::command
-  - priority::P0
   - task::team-directory
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-USERS-K02-QA-008
   type: qa
   question: 目录 sticky 位的核心效果是什么？
@@ -118,7 +131,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::sticky-directory
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-O01-QA-001
   type: qa
   question: setgid 协作目录中，新文件 group 正确但组员仍不能写，优先检查什么？
@@ -132,8 +147,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::diagnosis
-  - priority::P0
   - task::team-directory
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-O01-QA-002
   type: qa
   question: 怎样用 bob 的实际身份测试其能否向项目文件追加内容？
@@ -148,6 +165,8 @@ notes:
   - topic::actual-user-test
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-USERS-D01-QA-001
   type: qa
   question: '`Permission denied` 的推荐分层调查顺序是什么？'
@@ -161,7 +180,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::permission-denied
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-C01-QA-001
   type: qa
   question: 不用 ACL 建立团队协作目录时，关键配置与验证骨架是什么？
@@ -175,8 +196,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::process
-  - priority::P0
   - task::team-directory
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-K02-CLOZE-001
   type: cloze
   text: 协作目录 setgid 模式常写 `{{c1::2770}}`；公共可写且限制互删的目录常写 `{{c2::1777}}`。
@@ -189,7 +212,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::special-bits
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-08-K01-QA-001
   type: qa
   question: 传统权限检查使用用户名字符串还是进程凭据？
@@ -204,7 +229,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::dac-selection
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K01-QA-002
   type: qa
   question: 判断某用户对文件的传统权限时，owner/group/other 的选择顺序是什么？
@@ -218,7 +245,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::dac-selection
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K01-QA-003
   type: qa
   question: 文件为 `-r--rw---- alice project data`，alice 也属于 project。alice 能写吗？
@@ -231,7 +260,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::dac-selection
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K01-QA-004
   type: qa
   question: '`id alice` 与在 alice 当前登录 shell 中执行 `id` 分别证明什么？'
@@ -245,7 +276,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::identity-state
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K01-QA-005
   type: qa
   question: 用户已被加入 project 组，但旧 shell 仍无法使用 group 权限，最可能原因是什么？
@@ -258,7 +291,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::identity-state
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K01-QA-006
   type: qa
   question: 为什么不能用 root 成功读取文件来证明普通用户权限正确？
@@ -272,7 +307,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::dac-selection
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-K01-QA-007
   type: qa
   question: “能访问文件”为什么不是合格的权限验收目标？
@@ -287,6 +324,8 @@ notes:
   - topic::dac-selection
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K02-QA-001
   type: qa
   question: 普通文件的 `r`、`w`、`x` 分别控制什么？
@@ -300,7 +339,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::file-semantics
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K02-QA-002
   type: qa
   question: 用户对目录只有 `--x`，但知道其中某文件的准确名称，可能发生什么？
@@ -315,6 +356,8 @@ notes:
   - topic::directory-semantics
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K02-QA-003
   type: qa
   question: 用户对目录只有 `r--`，执行 `ls DIR` 可能看到名称，为何仍无法读取条目元数据？
@@ -329,6 +372,8 @@ notes:
   - topic::directory-semantics
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K02-QA-004
   type: qa
   question: 修改文件内容与删除文件名分别主要检查哪个对象？
@@ -342,7 +387,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::parent-directory-control
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K02-QA-005
   type: qa
   question: 文件是只读 `0444`，用户仍能删除它，最合理的传统权限解释是什么？
@@ -355,7 +402,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::parent-directory-control
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K02-QA-006
   type: qa
   question: 读取 `/a/b/c.txt` 时，传统权限至少要满足怎样的路径条件？
@@ -368,7 +417,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::path-traversal
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K02-QA-007
   type: qa
   question: 在目录中创建新文件通常需要哪两个普通权限位？
@@ -382,6 +433,8 @@ notes:
   - topic::directory-semantics
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K02-QA-008
   type: qa
   question: 脚本没有执行位，但 `bash script.sh` 可以运行。这能否证明脚本满足“可直接执行”要求？
@@ -395,7 +448,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::file-semantics
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O01-QA-001
   type: qa
   question: 查看目录本身而不是其内容的长格式命令是什么？
@@ -410,6 +465,8 @@ notes:
   - topic::evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O01-QA-002
   type: qa
   question: 同时显示对象类型、符号 mode、八进制 mode、owner/group 的 `stat` 骨架是什么？
@@ -423,6 +480,8 @@ notes:
   - topic::evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O01-QA-003
   type: qa
   question: 逐级显示完整路径每个分量的类型、owner/group 和 mode，用什么命令？
@@ -437,6 +496,8 @@ notes:
   - topic::path-traversal
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O01-QA-004
   type: qa
   question: '`-rwsr-xr-x` 中 owner 执行位显示 `s`，表示什么？'
@@ -451,6 +512,8 @@ notes:
   - topic::special-output
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O01-QA-005
   type: qa
   question: '`-rwSr-xr-x` 中大写 `S` 表示什么？'
@@ -465,6 +528,8 @@ notes:
   - topic::special-output
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O01-QA-006
   type: qa
   question: '`drwxrwxrwt` 中最后的 `t` 表示什么？'
@@ -479,6 +544,8 @@ notes:
   - topic::special-output
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O01-QA-007
   type: qa
   question: '`ls -l` 权限串末尾出现 `+` 时，应得出什么最小结论？'
@@ -492,7 +559,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::evidence
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O01-QA-008
   type: qa
   question: 为什么 `stat` 显示 `0660 alice:project` 仍不能证明 bob 能写？
@@ -507,6 +576,8 @@ notes:
   - topic::evidence
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O02-QA-001
   type: qa
   question: '`chmod` 符号模式的核心结构是什么？'
@@ -520,6 +591,8 @@ notes:
   - topic::chmod-symbolic
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O02-QA-002
   type: qa
   question: 只给 group 增加写权限，不改变其他位，命令是什么？
@@ -533,6 +606,8 @@ notes:
   - topic::chmod-symbolic
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O02-QA-003
   type: qa
   question: 删除 other 的全部普通权限，命令是什么？
@@ -546,6 +621,8 @@ notes:
   - topic::chmod-symbolic
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O02-QA-004
   type: qa
   question: '`chmod g=rw file` 与 `chmod g+rw file` 的区别是什么？'
@@ -559,6 +636,8 @@ notes:
   - topic::chmod-symbolic
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-O02-QA-005
   type: qa
   question: '`rwxr-x---` 的八进制模式是什么？'
@@ -571,7 +650,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::chmod-octal
   - card::calculation
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O02-QA-006
   type: qa
   question: 把普通文件精确设为 owner 读写、group 只读、other 无权限，命令是什么？
@@ -585,6 +666,8 @@ notes:
   - topic::chmod-octal
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O02-QA-007
   type: qa
   question: 符号模式中的大写 `X` 何时添加执行/search 位？
@@ -599,6 +682,8 @@ notes:
   - topic::chmod-X
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O02-QA-008
   type: qa
   question: 递归给组增加读写并允许穿越目录，为何通常评估 `g+rwX` 而不是 `g+rwx`？
@@ -611,7 +696,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::chmod-X
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-O02-QA-009
   type: qa
   question: 为什么脚本中不推荐省略 `chmod` 的 who 部分，例如只写 `chmod +x file`？
@@ -625,7 +712,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::chmod-symbolic
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O02-QA-010
   type: qa
   question: 权限故障时为什么不应先执行 `chmod 777`？
@@ -639,6 +728,8 @@ notes:
   - topic::chmod-security
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O03-QA-001
   type: qa
   question: 只把文件 owner 改为 alice，命令是什么？
@@ -652,6 +743,8 @@ notes:
   - topic::ownership
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O03-QA-002
   type: qa
   question: 只把文件 group 改为 project，可用哪两种等价骨架？
@@ -666,6 +759,8 @@ notes:
   - topic::ownership
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O03-QA-003
   type: qa
   question: 同时把 owner/group 改为 alice:project，命令是什么？
@@ -679,6 +774,8 @@ notes:
   - topic::ownership
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O03-QA-004
   type: qa
   question: 普通用户能否把自己文件的 owner 任意改给另一个用户？
@@ -692,7 +789,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::ownership
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O03-QA-005
   type: qa
   question: '`chmod` 与 `chown` 分别改变什么？'
@@ -707,6 +806,8 @@ notes:
   - topic::ownership
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-O03-QA-006
   type: qa
   question: 为什么 `chown` 或写入特权可执行文件后要重新检查 setuid/setgid？
@@ -720,7 +821,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::ownership
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O03-QA-007
   type: qa
   question: 执行 `chown -R` 前至少要确认哪些范围风险？
@@ -735,6 +838,8 @@ notes:
   - topic::ownership-recursive
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O03-QA-008
   type: qa
   question: 为什么推荐 `chown owner:group` 而不是旧式 `owner.group`？
@@ -748,7 +853,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::ownership
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K03-QA-001
   type: qa
   question: '`umask` 的正确权限模型是什么？'
@@ -761,7 +868,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K03-QA-002
   type: qa
   question: 为什么 `umask 0000` 通常不会让新普通文件自动具有执行位？
@@ -775,7 +884,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K03-QA-003
   type: qa
   question: '`umask 0007` 下，按常见请求创建文件和目录，结果是什么？'
@@ -789,7 +900,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-calculation
   - card::calculation
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-K03-QA-004
   type: qa
   question: '`umask 0077` 下，按常见请求创建文件和目录，结果是什么？'
@@ -802,7 +915,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-calculation
   - card::calculation
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-K03-QA-005
   type: qa
   question: 为什么不能把 umask 计算理解成普通八进制减法？
@@ -815,7 +930,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K03-QA-006
   type: qa
   question: 程序请求 `0600`、umask 为 `0022` 时，最终模式是什么？
@@ -828,7 +945,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-model
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-K03-QA-007
   type: qa
   question: 父目录存在 default ACL 时，为什么不能只按 umask 表推断新对象权限？
@@ -842,7 +961,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-acl-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O04-QA-001
   type: qa
   question: 查看当前 shell 数值 umask 的命令是什么？
@@ -857,6 +978,8 @@ notes:
   - topic::umask-operation
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O04-QA-002
   type: qa
   question: 以符号形式查看当前 shell 创建权限允许集合的命令是什么？
@@ -869,7 +992,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-operation
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O04-QA-003
   type: qa
   question: 验证 `umask 0007` 的最小样本流程是什么？
@@ -884,6 +1009,8 @@ notes:
   - topic::umask-verification
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O04-QA-004
   type: qa
   question: 验证用户持久 umask 的完整链路是什么？
@@ -897,7 +1024,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-persistence
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-O04-QA-005
   type: qa
   question: 为什么不能宣称把 umask 写入某一个文件就会覆盖所有服务和任务？
@@ -912,7 +1041,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-persistence
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O04-QA-006
   type: qa
   question: 为什么验证 umask 时应删除旧样本并重新创建？
@@ -925,7 +1056,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-operation
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K04-QA-001
   type: qa
   question: 四位八进制 mode 的首位中，`4`、`2`、`1` 分别表示什么？
@@ -939,7 +1072,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::special-bits
   - card::calculation
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-K04-QA-002
   type: qa
   question: setuid 普通可执行文件运行时主要改变进程哪项身份？
@@ -953,7 +1088,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::setuid
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K04-QA-003
   type: qa
   question: setgid 普通可执行文件运行时主要改变什么？
@@ -968,6 +1105,8 @@ notes:
   - topic::setgid-file
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K04-QA-004
   type: qa
   question: 怎样验证 setgid 目录真正实现了组继承？
@@ -981,6 +1120,8 @@ notes:
   - topic::setgid-directory
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K04-QA-005
   type: qa
   question: setgid 目录中新建子目录通常还会继承什么特殊状态？
@@ -994,7 +1135,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::setgid-directory
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K04-QA-006
   type: qa
   question: sticky 目录限制的是文件内容写入还是目录项删除/重命名？
@@ -1008,7 +1151,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::sticky-directory
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-K04-QA-007
   type: qa
   question: 目录模式 `1777` 表达什么？
@@ -1023,6 +1168,8 @@ notes:
   - topic::sticky-directory
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K04-QA-008
   type: qa
   question: '`drwxrwxr-T` 中 `T` 表示什么？'
@@ -1037,6 +1184,8 @@ notes:
   - topic::special-output
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-K04-QA-009
   type: qa
   question: 为什么不应把 setuid shell 脚本当作普通提权方案？
@@ -1050,7 +1199,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::setuid
   - card::security
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O05-QA-001
   type: qa
   question: 传统权限协作目录中，setgid 与 `umask 0007` 分别解决什么？
@@ -1064,8 +1215,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::process
-  - priority::P0
   - task::team-directory
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-O05-QA-002
   type: qa
   question: 一次创建 `/srv/techdocs` 并设为 `root:techdocs 2770` 的命令骨架是什么？
@@ -1079,8 +1232,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::command
-  - priority::P0
   - task::team-directory
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O05-QA-003
   type: qa
   question: 协作目录中为什么要用用户 A 创建、用户 B 修改？
@@ -1093,8 +1248,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::verification
-  - priority::P0
   - task::team-directory
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O05-QA-004
   type: qa
   question: 协作目录为什么还需要非成员负向测试？
@@ -1107,8 +1264,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::verification
-  - priority::P0
   - task::team-directory
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-O05-QA-005
   type: qa
   question: 目录后来加上 setgid，已有文件会自动改成目录 group 吗？
@@ -1122,8 +1281,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::boundary
-  - priority::P0
   - task::team-directory
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-O05-QA-006
   type: qa
   question: 新文件 mode 为 `0644`、group 已继承 techdocs，导致 bob 不能写。最小调查方向是什么？
@@ -1137,8 +1298,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::diagnosis
-  - priority::P0
   - task::team-directory
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-D01-QA-001
   type: qa
   question: 最终文件 `0640 root:analysts`，dana 属于 analysts 但 `cat` 失败。下一条最有区分度的证据是什么？
@@ -1152,7 +1315,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::permission-denied
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-D01-QA-002
   type: qa
   question: '`namei -l` 显示中间目录为 `drwxr----- root analysts`，dana 属于 analysts。阻断位是什么？'
@@ -1165,7 +1330,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::permission-denied
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-D01-QA-003
   type: qa
   question: 只给 analysts 增加 `/srv/reports` 的穿越能力，最小命令是什么？
@@ -1179,6 +1346,8 @@ notes:
   - topic::permission-denied
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-D01-QA-004
   type: qa
   question: 最小修复后应怎样再验证？
@@ -1192,6 +1361,8 @@ notes:
   - topic::permission-denied
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-D01-QA-005
   type: qa
   question: '`id`、`namei` 和 `stat` 均表明传统权限允许，但操作仍被拒绝，下一步是什么？'
@@ -1205,7 +1376,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::permission-denied
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-D02-QA-001
   type: qa
   question: 为什么 `chmod -R 777 <DIR>` 是高风险修复？
@@ -1219,6 +1392,8 @@ notes:
   - topic::recursive-risk
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-D02-QA-002
   type: qa
   question: 递归修改前，用什么 `find` 骨架记录类型、mode、owner/group 和路径？
@@ -1231,7 +1406,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::recursive-risk
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-D02-QA-003
   type: qa
   question: 为什么目录树权限迁移常把目录和普通文件分开处理？
@@ -1245,7 +1422,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::recursive-risk
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-D02-QA-004
   type: qa
   question: 递归 `chmod/chown` 时为何必须明确符号链接策略？
@@ -1260,7 +1439,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::recursive-risk
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-D02-QA-005
   type: qa
   question: 递归变更后为什么不能只检查根目录？
@@ -1274,7 +1455,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::recursive-risk
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-C01-QA-001
   type: qa
   question: 任务要求 `root:techdocs 2770`、新文件 `0660`、新目录 `2770`。配置与验收顺序是什么？
@@ -1288,8 +1471,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::classic-team-directory
   - card::task
-  - priority::P0
   - task::team-directory
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-C01-QA-002
   type: qa
   question: 经典协作任务中，alice 新文件为 `alice:techdocs 0660`，但 bob 仍写失败，下一条证据是什么？
@@ -1302,8 +1487,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::classic-team-directory
   - card::diagnosis
-  - priority::P1
   - task::team-directory
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-08-C02-QA-001
   type: qa
   question: 文件本身 group 可读，但目标组员读取失败。最小完整诊断链是什么？
@@ -1317,8 +1504,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::classic-path-diagnosis
   - card::task
-  - priority::P0
   - task::path-diagnosis
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-08-C02-QA-002
   type: qa
   question: 路径诊断任务明确“不使用 ACL/SELinux”。这意味着发现 mode 正确后应怎样记录？
@@ -1331,8 +1520,10 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::classic-path-diagnosis
   - card::boundary
-  - priority::P1
   - task::path-diagnosis
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-08-K01-CLOZE-001
   type: cloze
   text: 传统 DAC 中，若有效 UID 命中对象 owner，则只使用 {{c1::owner}} 位，不会继续借用 {{c2::group 或 other}}。
@@ -1344,7 +1535,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::dac-selection
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-08-K02-CLOZE-001
   type: cloze
   text: 目录的 `r` 用于 {{c1::枚举名称}}，`w` 用于 {{c2::修改目录项}}，`x` 用于 {{c3::搜索/穿越}}。
@@ -1356,7 +1549,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::directory-semantics
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-08-O02-CLOZE-001
   type: cloze
   text: 八进制权限中，`r={{c1::4}}`、`w={{c2::2}}`、`x={{c3::1}}`。
@@ -1368,7 +1563,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::chmod-octal
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-08-K03-CLOZE-001
   type: cloze
   text: 新对象传统权限的基本公式是 `{{c1::requested mode}} & ~{{c2::umask}}`。
@@ -1380,7 +1577,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-08-K03-CLOZE-002
   type: cloze
   text: 典型请求下，`umask 0007` 得到文件 `{{c1::0660}}`、目录 `{{c2::0770}}`。
@@ -1392,7 +1591,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::umask-calculation
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-08-K04-CLOZE-001
   type: cloze
   text: 特殊位显示中，小写 `s/t` 表示相应 {{c1::执行/search 位也存在}}；大写 `S/T` 表示 {{c2::相应执行/search 位缺失}}。
@@ -1405,7 +1606,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::special-output
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-08-O05-CLOZE-001
   type: cloze
   text: setgid 目录负责新对象的 {{c1::group 继承}}；创建进程的 umask 负责限制新对象的 {{c2::普通权限位}}。
@@ -1418,7 +1621,9 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::team-directory
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-08-D01-CLOZE-001
   type: cloze
   text: 路径不可达诊断优先使用 `{{c1::namei -l}}` 找第一处缺少目录 `{{c2::x}}` 的分量。
@@ -1431,5 +1636,6 @@ notes:
   - chapter::unix-permissions-umask-special-bits
   - topic::permission-denied
   - card::cloze
-  - priority::P0
-status: integrated
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1

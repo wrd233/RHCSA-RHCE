@@ -1,0 +1,80 @@
+package_version: 1
+chapter:
+  id: RHCSA-24
+  exam: RHCSA
+  part: 6
+  number: 24
+  slug: mounts-fstab-swap
+  title: 挂载、fstab、Swap 与启动持久性
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/mounts-fstab-swap/lecture.md
+  anki: content/rhcsa/chapters/mounts-fstab-swap/anki.yml
+  lecture_sha256: 6a92151781a4b2eb33112cf9a157d43f5b9227d501f3696c5c7feeab852a6d96
+  anki_sha256: 7937a4636293f835604ef3eaf59de301c4fe397e577afe7ecde0b957bce805c9
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:19:50+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 0c079a2a77a015adb6cc8ac3f89164351b4429719501361015ff0169128b5497
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 00484bf2ed1ce9801f3c04c56c91e2080a0b2af787e9ed904fe3b832fa4e1da8
+  anki:
+    path: anki.yml
+    sha256: 2989506e371f49f32c0cb687dff5cb70abb26fb5fa476bd452f315f8d0fa3bb9
+  preview:
+    path: anki-preview.html
+    sha256: c280336f56ab772837c95f8c5d75accd50753924e93136d80d28e6ba5d5f02bf
+  summary:
+    path: anki-summary.md
+    sha256: 1c76e8a0bcc982532b75f18ec66cf80b4607a59af31bfd4d8533fb079664c5ed
+  anki_impact:
+    path: anki-impact.md
+    sha256: d4a5dc83573253eec8176cf6d9b848a8b60da361c214ddea6023ba3a64d6792c
+  source_map:
+    path: source-map.md
+    sha256: 983294763eb9c9e1e22e6ad41f9ab258b7175928f8b6516cc4c2ad5dd7e8c621
+  structure_report:
+    path: structure-report.md
+    sha256: c9314521d490eb9d390318e261dc0dbf99fe25c3cd2706eb7bffa8e67e097fb6
+  visual_qa:
+    path: visual-qa.md
+    sha256: 5fff082b0033018f1157a36ffb3c63abe144943677975b3d6d4dafea76a92eea
+  qa_report:
+    path: qa-report.md
+    sha256: ff3f00c65e3b029f0bcacb41c1abd38d9592617196ad6f6b37997a33cee45e21
+  revision_notes:
+    path: revision-notes.md
+    sha256: af2bd5bad541a041e6c075d604e2c8039a54f68982c45d5d2201f9f8b0775af0
+  integration_note:
+    path: codex-integration-note.md
+    sha256: b13d93d6de5966da37fc7e81954257ed616147def86ff4c7f538dfa6be8470a2
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 virtual machine was available; command-level, reboot, and failure-injection live tests were not performed.
+- Codex must perform full-book Section ID and Anki ID uniqueness checks, cross-chapter near-duplicate review, unified PDF
+  rebuild, APKG generation, repository integration, and release.
+- The verified base commit records the repository main HEAD observed during this chapter freeze; Codex must select and record
+  the final integration HEAD.

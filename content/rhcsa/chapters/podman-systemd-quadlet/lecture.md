@@ -5,7 +5,8 @@ exam: RHCSA
 part: 第八篇　容器
 slug: podman-systemd-quadlet
 validation: static
-status: integrated
+status: content_frozen_for_integration
+base_commit: 961a29b3af4c07a828078a5de90c221a036546df
 sources:
   - RH134-RHEL9
   - RHEL9-container-documentation
@@ -15,26 +16,198 @@ sources:
   - journalctl(1)
 ---
 
+<!--
+维护说明：
+- 本文件是 RHCSA-32 v5.1 冻结候选内容真源。
+- 保留既有 Section ID：RHCSA-32-K01 至 RHCSA-32-C01。
+- 验证模式为 static；未连接 RHEL 9 live VM。
+- 正式阅读版不显示本注释、YAML 元数据、页眉、页脚或页码。
+-->
 
-# 第 32 章　容器持久化、用户 systemd 与 Quadlet
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">32</div>
+  <h1>容器持久化、用户 systemd 与 Quadlet</h1>
+  <p class="cover-subtitle">把一次性运行实例转化为可重建声明，并证明它在用户未登录时仍能启动、保存数据和提供功能。</p>
+  <div class="cover-tags">对象模型　操作语义　验证　诊断　经典任务</div>
+  <div class="cover-edition">大字号阅读版</div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="navigation-page">
+
+# 本章阅读导航
+
+<div class="nav-lead">先抓住一条主线：<strong>容器实例只是“现在发生了什么”，Quadlet 才描述“下一次应该怎样重建”；用户 systemd manager、<code>[Install]</code> 与 linger 共同决定它何时被启动。</strong></div>
+
+<div class="model-grid">
+  <div><b>01</b><strong>识别作用域</strong><span>确认目标用户、rootless Podman 与 user manager</span></div>
+  <div><b>02</b><strong>记录当前实例</strong><span>保留镜像、名称、端口、环境、挂载和数据证据</span></div>
+  <div><b>03</b><strong>写入声明</strong><span>把期望状态翻译为 <code>.container</code> 字段</span></div>
+  <div><b>04</b><strong>生成与启动</strong><span><code>daemon-reload</code> 生成 unit，start/restart 应用配置</span></div>
+  <div><b>05</b><strong>分层验证</strong><span>unit、容器、数据和协议功能分别取证</span></div>
+  <div><b>06</b><strong>验证生命周期</strong><span>注销和冷启动后，先在目标用户未登录时测功能</span></div>
+</div>
+
+<div class="nav-columns">
+<div>
+
+## 专题地图
+
+- **知识专题**　当前实例与声明配置
+- **知识专题**　用户 systemd manager 与 linger
+- **知识专题**　Quadlet 搜索路径、名称映射与生成物
+- **操作专题**　把 `podman run` 参数翻译为 `.container`
+- **操作专题**　从声明到运行：reload、start 与证据链
+- **知识专题**　依赖、顺序与 Restart
+- **操作专题**　数据持久化、声明变更与镜像更新
+- **诊断专题**　unit 未生成、启动失败、循环重启与冷启动失败
+- **经典任务**　迁移现有 rootless 容器并完成未登录验收
+
+</div>
+<div>
+
+## 阅读时持续回答
+
+1. 当前看到的是运行实例、源声明，还是 generated unit？
+2. 命令连接的是系统 manager，还是目标用户的 manager？
+3. `Linger=yes` 证明了什么，又没有证明什么？
+4. 修改 `.container` 后，何时需要 reload，何时需要 restart？
+5. `active`、容器运行、端口映射和业务功能分别属于哪一层？
+6. 数据是否真正脱离容器可写层？
+7. 冷启动验证是否在目标用户首次登录之前完成？
+
+<div class="nav-note"><strong>章节边界：</strong>容器基本运行归第 31 章；systemd 通用模型归第 12 章；SELinux 持久规则归第 29 章。本章只讲把这些前置对象组织为可重建的用户级容器服务。</div>
+
+</div>
+</div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="chapter-opening">
+
+<div class="chapter-label">第 32 章 · 正文</div>
 
 容器能够运行，不等于它已经成为一项可维护的系统服务。手工执行一次 `podman run`，只建立了一个当前实例；用户退出、主机重启、镜像更新或配置变化以后，这个实例是否还能以相同参数恢复，取决于另一个层次的声明和生命周期管理。
 
-本章把容器从“当前正在运行的对象”提升为“可以由用户 systemd manager 重建和监督的声明对象”。主线不是把长串 `podman run` 命令塞进手写 service，也不是把旧的 `podman generate systemd` 当成唯一答案，而是使用 Quadlet `.container` 文件表达期望状态，再由 generator 生成普通 `.service`，最后通过 `systemctl --user`、`loginctl`、`journalctl` 和 Podman 证据完成分层验收。
+本章把容器从“当前正在运行的对象”提升为“可以由用户 systemd manager 重建和监督的声明对象”。最常见的误判是把 `Linger=yes`、`active` 或 `podman ps` 中的一行运行状态直接扩大解释为“重启后必然可用”。正确路径必须把源声明、生成 unit、运行实例、外部数据、功能和登录外生命周期分开取证。
 
-**[概念]** 当前容器实例是一次运行事实，拥有容器 ID、名称、镜像 ID、端口、挂载、环境变量和退出状态；Quadlet 声明是下一次生成实例时的配置输入。两者可能一致，也可能已经发生漂移。
+主线不是把长串 `podman run` 塞进手写 service，也不是把旧的 `podman generate systemd` 当成唯一答案，而是使用 Quadlet `.container` 文件表达期望状态，再由 generator 生成普通 `.service`，最后通过 `systemctl --user`、`loginctl`、`journalctl` 和 Podman 证据完成分层验收。
 
-**[概念]** 用户 systemd manager 属于特定 UID。`systemctl --user` 操作的是当前用户的 manager，不是系统 PID 1 管理的 system scope。root 执行普通 `systemctl` 不能代替目标普通用户的 `systemctl --user`。
+</div>
 
-**[概念]** linger 是登录生命周期策略。启用 linger 后，系统可以在开机时创建该用户的 manager，并在最后一次注销后保留它；linger 不会自动修复 Quadlet 路径、字段、端口冲突或数据权限。
+<div class="concept-stack">
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>声明式容器配置</strong>描述的是“下一次应当怎样创建容器”，而不是当前实例已经发生的全部历史。当前容器可以通过 <code>inspect</code> 观察，Quadlet 则是后续重建的配置真源；两者发生漂移时，必须先保存当前事实，再决定哪些参数进入长期声明。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>用户 systemd manager</strong>属于一个具体 UID，并通过 <code>systemctl --user</code> 管理该用户的 unit。它与 PID 1 的 system scope 是两个管理域，所以 root 的普通 <code>systemctl</code>、root 的 Podman 存储和目标普通用户的 rootless 容器不能互相替代。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>linger</strong>是用户登录外生命周期策略。启用后，系统可在开机时创建该用户的 manager，并在最后一次注销后保留它；linger 只回答 manager 是否能脱离登录会话存在，不能证明 Quadlet 路径、字段、数据权限或应用功能正确。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>Quadlet</strong>使用 <code>.container</code> 等声明文件描述 Podman 对象。generator 在 user manager 启动或 <code>daemon-reload</code> 时读取源文件并生成普通 service，使管理员维护简短字段，而不是长期维护一份由旧版本 Podman 展开的复杂 <code>ExecStart</code>。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>生成 unit</strong>是 Quadlet 的派生结果。<code>report.container</code> 通常生成 <code>report.service</code>；它可以被 <code>status</code>、<code>show</code> 和 journal 观察，但不应直接编辑。配置变化应回到源声明，再通过 reload 重新生成。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>容器重建</strong>意味着旧实例可以被停止、删除并按声明重新创建，因此容器 ID 变化是正常现象。真正需要保持的是题目指定的名称、端口、环境、挂载和功能终态，而不是让某个实例永远不变。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>持久数据</strong>必须位于宿主目录或 Podman volume 等独立数据层。只在容器可写层中的文件会随实例删除而失去；最有区分度的验证不是简单 restart，而是删除旧实例、由 Quadlet 重建后，新实例仍能读取同一份外部数据。</p></div>
+</div>
 
-**[概念]** Quadlet `.container` 是声明真源；generator 在系统启动或 `daemon-reload` 时读取它，生成同名 `.service`。生成结果属于派生状态，不应直接编辑。
+<div class="version-callout">
+  <div class="version-title">版本敏感：先确认 Podman，再选择主线</div>
+  <p>Quadlet 从 Podman 4.6 开始提供，而 RHEL 9 的不同小版本可能携带不同 Podman 版本。进入操作前先执行 <code>podman version</code> 并查看本机 <code>man podman-systemd.unit</code>。本章以 Quadlet 为主线；较早环境中的 <code>podman generate systemd</code> 只作为兼容背景，不作为唯一答案。</p>
+</div>
 
-**[操作语义]** `podman` 观察容器、镜像、端口、挂载和日志；`systemctl --user` 控制用户 unit；`loginctl` 查询和改变用户 manager 的登录外生命周期；`journalctl --user-unit=` 读取用户 unit 的启动失败和运行事件。
+<div class="ops-quick">
 
-**[判断边界]** `.container` 文件存在，不等于 unit 已生成；unit 已生成，不等于当前 active；unit active，不等于容器内部应用可用；应用可用，不等于数据已外置；当前成功，也不等于重启后在用户尚未登录时仍成功。
+# 操作语义速查
 
----
+<div class="op-entry">
+<h3><code>systemctl --user</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>systemctl --user COMMAND [UNIT ...]</code></pre>
+<p>连接当前用户的 systemd manager，观察或改变 user unit。对 rootless Quadlet，必须在目标用户的完整会话中执行，不能把 system scope 的结果混进来。</p>
+<dl>
+<dt><code>status NAME.service</code></dt><dd>查看当前加载和运行摘要；适合快速定位，但不能替代结构化字段与功能测试。</dd>
+<dt><code>show NAME.service -p ...</code></dt><dd>读取 <code>LoadState</code>、<code>ActiveState</code>、<code>SubState</code>、<code>Result</code>、<code>NRestarts</code> 等最小状态向量。</dd>
+<dt><code>start / stop / restart</code></dt><dd>改变当前运行状态；<code>restart</code> 才会让运行实例采用已重新生成的配置。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3><code>loginctl enable-linger</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>loginctl enable-linger USER
+loginctl show-user USER -p Linger -p State</code></pre>
+<p>让指定用户的 manager 可以在开机时创建，并在最后一次注销后继续存在。该操作通常需要管理员授权。</p>
+<dl>
+<dt><code>enable-linger USER</code></dt><dd>写入持久的 linger 状态；它不创建或修复容器声明。</dd>
+<dt><code>show-user USER -p Linger</code></dt><dd>验证策略状态；<code>Linger=yes</code> 仍不能证明 unit 或应用已经正常。</dd>
+<dt><code>user-status USER</code></dt><dd>观察用户 manager、会话和相关进程；适合冷启动后由其他管理员账号取证。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3><code>Quadlet .container</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>~/.config/containers/systemd/NAME.container
+
+[Container]
+Image=IMAGE
+ContainerName=NAME
+PublishPort=HOST:CONTAINER
+Volume=SOURCE:TARGET[:OPTIONS]
+Environment=KEY=VALUE</code></pre>
+<p>把容器的期望状态写成字段。文件名决定生成的 service 名，字段决定下一次创建的实例参数。</p>
+<dl>
+<dt><code>Image=</code></dt><dd>必需字段；优先使用完整镜像引用，并区分可变 tag 与实际 image ID。</dd>
+<dt><code>ContainerName=</code></dt><dd>覆盖默认的 <code>systemd-NAME</code> 容器名；显式命名时要先处理同名旧实例。</dd>
+<dt><code>PublishPort=</code></dt><dd>左侧宿主端口，右侧容器端口；端口映射存在不等于协议功能正确。</dd>
+<dt><code>Volume=</code></dt><dd>左侧外部数据源，右侧容器内目标；需要同时满足传统权限、UID 映射和 SELinux 边界。</dd>
+<dt><code>Environment=</code></dt><dd>可重复使用；这里遵循 unit/Quadlet 语法，不能机械套用 shell 引号规则。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3><code>daemon-reload</code> 与声明应用</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>systemctl --user daemon-reload
+systemctl --user restart NAME.service</code></pre>
+<p>reload 让 manager 重新运行 generator 并读取源声明，restart 才让当前运行实例采用新生成的 service。两步改变的对象不同。</p>
+<dl>
+<dt><code>daemon-reload</code></dt><dd>证明 manager 已重新读取配置入口；它不会自动重启业务。</dd>
+<dt><code>restart NAME.service</code></dt><dd>停止旧实例并按新配置重建；执行前应确认持久数据和可接受的停机影响。</dd>
+<dt><code>[Install] WantedBy=default.target</code></dt><dd>表达 user manager 内的启动关系；generated service 不能通过普通 `enable` 流程获得持久启用关系。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3><code>journalctl --user-unit</code></h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>journalctl --user-unit=NAME.service [-b] [-n N] [--no-pager]</code></pre>
+<p>读取 user unit 的生成、启动、退出和重启证据。查询必须处于正确用户作用域，日志是进入失败分支的入口，而不是事后装饰。</p>
+<dl>
+<dt><code>-b</code></dt><dd>限制为当前 boot，便于区分历史故障和本次冷启动。</dd>
+<dt><code>-n N</code></dt><dd>先读取最近 N 条，快速找到第一条高价值错误。</dd>
+<dt><code>--since</code></dt><dd>按变更时间缩小范围，避免在大量历史记录中猜测。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3>重启后未登录验证</h3>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code># 主机重启后，先不要登录目标用户
+curl -fsS http://SERVER:PORT/
+loginctl user-status USER
+
+# 随后进入目标用户完整会话复核
+systemctl --user status NAME.service
+journalctl --user-unit=NAME.service -b</code></pre>
+<p>冷启动验收必须避免登录动作污染证据。先从其他账号或远端验证业务功能，再进入目标用户会话查看 unit、容器和日志。</p>
+<dl>
+<dt>外部协议测试</dt><dd>证明真实入口在目标用户尚未登录时已经可用；比单看 <code>active</code> 更接近终态。</dd>
+<dt><code>loginctl user-status USER</code></dt><dd>观察 user manager 是否已经存在；它仍不能替代协议和数据验证。</dd>
+<dt>登录后回查</dt><dd>用于解释启动链和日志，不得把登录后才恢复的服务误判为开机成功。</dd>
+</dl>
+</div>
+
+</div>
+
 
 <section class="topic knowledge" id="RHCSA-32-K01">
 
@@ -42,7 +215,7 @@ sources:
 
 把现有容器迁移为 systemd 服务时，最危险的做法是直接抄一条记忆中的模板。现有实例可能包含题目要求保留的数据、端口、环境变量和用户映射，也可能包含临时试验参数。正确切入点是先建立当前事实，再决定哪些事实应进入声明，哪些应该被纠正。
 
-### ① [知识点] 容器实例只描述当前事实
+### ① [查询] 用当前实例建立迁移基线
 
 `podman ps -a` 能显示名称、状态、端口等摘要，`podman inspect` 能读取创建时的详细配置。它们回答的是：当前这个实例怎样被创建、现在处于什么状态。容器 ID 不是长期配置标识；实例被删除和重建后，ID 通常变化。
 
@@ -71,7 +244,7 @@ podman logs --tail 50 report
 
 只完成第一步时，当前业务可能仍在使用旧参数；只执行 restart 而没有 reload，也可能继续使用旧的 generated unit。
 
-### ③ [知识点] 迁移不是“复制所有旧参数”，而是建立可验证终态
+### ③ [操作决策] 从现有事实筛选可维护终态
 
 迁移时将现有事实分成三类：
 
@@ -83,7 +256,7 @@ podman logs --tail 50 report
 
 迁移前不要先删除旧实例。先确认数据在何处、是否有外部副本、端口是否被依赖，再安排最小停机切换。
 
-**[Cheatsheet]** `inspect` 建立当前事实；`.container` 表达下一次期望；编辑、reload、restart 是三个不同动作；容器 ID 变化不等于数据丢失，数据位置才是关键。
+<div class="cheatsheet"><span>Cheatsheet</span><p>`inspect` 建立当前事实；`.container` 表达下一次期望；编辑、reload、restart 是三个不同动作；容器 ID 变化不等于数据丢失，数据位置才是关键。</p></div>
 
 </section>
 
@@ -133,7 +306,7 @@ loginctl user-status appsvc
 
 `State=active` 只表示当前存在活跃会话或 manager 状态，不等同于重启后会自动创建；`Linger=yes` 才是脱离登录会话的持久策略之一。
 
-### ③ [知识点] linger 延长 manager 生命周期，不替代 unit 配置
+### ③ [边界] linger 只解决 manager 的登录外生命周期
 
 启用：
 
@@ -156,7 +329,7 @@ loginctl show-user appsvc -p Linger
 - 端口和数据目录无冲突；
 - 应用功能正确。
 
-**[Cheatsheet]** rootless 容器、Quadlet、user unit 和日志都要在同一 UID 作用域内取证；`--user` 不是装饰选项；linger 解决登录外生命周期，不解决配置正确性。
+<div class="cheatsheet"><span>Cheatsheet</span><p>rootless 容器、Quadlet、user unit 和日志都要在同一 UID 作用域内取证；`--user` 不是装饰选项；linger 解决登录外生命周期，不解决配置正确性。</p></div>
 
 </section>
 
@@ -166,7 +339,7 @@ loginctl show-user appsvc -p Linger
 
 Quadlet 的价值在于让管理员维护简短的容器声明，由 Podman generator 根据当前版本生成具体 `ExecStart=` 等实现细节。这样升级 Podman 后不需要继续维护一份历史生成脚本。
 
-### ① [知识点] rootless `.container` 的搜索路径
+### ① [查询] 先按运行身份确定 Quadlet 搜索路径
 
 本章主线使用当前用户目录：
 
@@ -205,7 +378,7 @@ systemd-report   （未显式 ContainerName 时）
 
 任务明确要求容器名时应写 `ContainerName=report`，并在迁移前处理已有同名实例，避免启动时发生 name already in use。
 
-### ③ [知识点] generated service 是派生状态
+### ③ [边界] generated service 是派生状态，不是配置真源
 
 generator 在开机和 manager reload 时读取声明。管理员应修改 `.container`，然后执行：
 
@@ -223,7 +396,7 @@ systemctl --user show report.service -p FragmentPath -p SourcePath -p LoadState
 
 实际字段显示会随 systemd/Podman 版本变化，不能把某条固定输出当成唯一评分证据。核心判断是 service 能否被正确加载，并且来源可追溯到目标 `.container`。
 
-**[Cheatsheet]** rootless 路径是 `~/.config/containers/systemd/`；后缀必须是 `.container`；`NAME.container → NAME.service`；默认容器名可能是 `systemd-NAME`；只编辑源声明，不编辑生成物。
+<div class="cheatsheet"><span>Cheatsheet</span><p>rootless 路径是 `~/.config/containers/systemd/`；后缀必须是 `.container`；`NAME.container → NAME.service`；默认容器名可能是 `systemd-NAME`；只编辑源声明，不编辑生成物。</p></div>
 
 </section>
 
@@ -302,14 +475,13 @@ WantedBy=default.target
 
 `Restart=on-failure` 属于生成 service 的 `[Service]` 配置，适合进程异常退出后重试；它不会修复不可拉取镜像、重名容器、端口占用和持续权限错误，只会让失败反复出现。
 
-Quadlet 生成的 service 属于 transient/generated unit，不能把普通 unit 的 `systemctl --user enable report.service` 当作唯一主线。自动启动关系写进源文件 `[Install]`，由 generator 应用。用户级服务通常使用 `default.target`。
+Quadlet 生成的 service 属于 transient/generated unit，不能通过 `systemctl --user enable report.service` 获得持久启用关系。自动启动关系必须写进源文件 `[Install]`，由 generator 在生成阶段应用；用户级服务通常使用 `default.target`。
 
 **完整示例：**
 
 ```ini
 [Unit]
 Description=Persistent rootless report container
-After=network-online.target
 
 [Container]
 Image=registry.example.com/rhcsa/report:9
@@ -329,7 +501,7 @@ WantedBy=default.target
 
 `TimeoutStartSec=900` 不是所有题目都需要。镜像首次拉取可能超过 systemd 默认启动超时，只有证据表明启动卡在拉取且网络正常时，才考虑预拉镜像或延长超时。
 
-**[Cheatsheet]** `Image` 必需；`ContainerName` 控制实例名；`PublishPort` 左宿主右容器；`Volume` 左源右目标；`Environment` 可重复；`Restart` 不修复根因；Quadlet 开机关系写 `[Install]`。
+<div class="cheatsheet"><span>Cheatsheet</span><p>`Image` 必需；`ContainerName` 控制实例名；`PublishPort` 左宿主右容器；`Volume` 左源右目标；`Environment` 可重复；`Restart` 不修复根因；Quadlet 开机关系写 `[Install]`。</p></div>
 
 </section>
 
@@ -370,7 +542,7 @@ systemctl --user restart report.service
 
 `daemon-reload` 让 manager 重新读取 source unit 并运行 generator，不会自行重启已运行服务。`restart` 负责让新生成的 service 进入运行实例。
 
-### ③ [操作] 查询 unit、容器和功能
+### ③ [验证] 沿 manager、实例和功能三层取证
 
 ```bash
 systemctl --user status report.service --no-pager
@@ -391,7 +563,7 @@ man systemctl
 man systemd.service
 ```
 
-**[Cheatsheet]** 创建声明后 reload；需要当前采用新配置再 restart；`status/show` 查 manager，`podman` 查实例，协议请求查功能。
+<div class="cheatsheet"><span>Cheatsheet</span><p>创建声明后 reload；需要当前采用新配置再 restart；`status/show` 查 manager，`podman` 查实例，协议请求查功能。</p></div>
 
 </section>
 
@@ -427,7 +599,7 @@ After=database.service
 
 依赖其他 Quadlet 时使用生成后的 `.service` 名称，例如 `After=database.service`，不是 `After=database.container`。
 
-### ③ [知识点] Restart 处理退出结果，不处理声明错误
+### ③ [边界] Restart 处理退出结果，不处理声明错误
 
 ```ini
 [Service]
@@ -453,7 +625,7 @@ podman ps -a --filter name=report
 
 不要把 `Restart=always` 当成“提高可靠性”的无条件答案。若应用正常完成后本应退出，always 会制造无意义循环。
 
-**[Cheatsheet]** `Requires` 解决“需要谁”，`After` 解决“谁先谁后”，`Restart` 解决“失败退出后怎么办”；三者不可互换。
+<div class="cheatsheet"><span>Cheatsheet</span><p>`Requires` 解决“需要谁”，`After` 解决“谁先谁后”，`Restart` 解决“失败退出后怎么办”；三者不可互换。</p></div>
 
 </section>
 
@@ -463,7 +635,7 @@ podman ps -a --filter name=report
 
 持久化的目标不是让容器 ID 永远不变，而是让业务数据不依赖一次实例的可写层。最强的验证不是“容器重启后文件还在”，而是删除并由声明重建实例后，外部数据仍能被新实例读取。
 
-### ① [操作] 识别数据所在层
+### ① [查询] 识别数据究竟位于哪一层
 
 调查现有挂载：
 
@@ -494,7 +666,7 @@ ls -ldZ ~/report-data
 
 禁止以 `chmod 777` 或关闭 SELinux 代替调查。
 
-### ③ [操作] 通过重建验证持久性
+### ③ [验证] 用删除和重建证明数据独立
 
 最低层：
 
@@ -522,7 +694,7 @@ podman exec report cat /var/lib/report/marker.txt
 
 该流程证明数据跨实例，而不是只跨进程 restart。实际考试中是否手工 `podman rm` 要依据题目和现有状态决定，不把破坏性步骤当成无条件模板。
 
-**[Cheatsheet]** 可写层随实例；外部目录/volume 才是持久层；先定位数据再删除；最强验证是新实例读取旧数据。
+<div class="cheatsheet"><span>Cheatsheet</span><p>可写层随实例；外部目录/volume 才是持久层；先定位数据再删除；最强验证是新实例读取旧数据。</p></div>
 
 </section>
 
@@ -532,7 +704,7 @@ podman exec report cat /var/lib/report/marker.txt
 
 容器维护常见误判是“镜像已经 pull，所以服务已经更新”。本地 tag 指向新 image ID，不会自动把已运行容器替换成新实例；Quadlet 源文件变化也不会自动让当前容器采用新值。
 
-### ① [操作] 变更前保存基线
+### ① [查询] 变更前保存实例和功能基线
 
 ```bash
 podman inspect report > ~/report-before.json
@@ -553,7 +725,7 @@ systemctl --user restart report.service
 
 若只改了宿主数据内容或应用自身可热加载配置，是否需要容器 restart 取决于应用；不要把 systemd `daemon-reload` 误认为应用 reload。
 
-### ③ [操作] 区分 tag、image ID 与当前实例
+### ③ [验证] 区分镜像引用、image ID 与当前实例
 
 ```bash
 podman image inspect registry.example.com/rhcsa/report:9 \
@@ -563,7 +735,7 @@ podman inspect report --format '{{.Image}} {{.ImageName}}'
 
 只有当前实例的 `.Image` 与期望 image ID 一致，才能证明它采用了当前本地镜像。更新后重新验证端口、环境、挂载、数据和功能。自动更新机制属于扩展，不在 RHCSA 主线完整展开。
 
-**[Cheatsheet]** pull 改变本地镜像，不直接替换容器；源变更要 reload；实例采用新配置要 restart/recreate；更新后回归数据和业务功能。
+<div class="cheatsheet"><span>Cheatsheet</span><p>pull 改变本地镜像，不直接替换容器；源变更要 reload；实例采用新配置要 restart/recreate；更新后回归数据和业务功能。</p></div>
 
 </section>
 
@@ -614,7 +786,7 @@ journalctl --user -b --since '-10 min' --no-pager
 
 **再验证：** `report.service` 可加载、来源指向 `.container`，然后才进入启动层。
 
-**[Cheatsheet]** `Linger=yes + unit not found` 优先查用户、版本、路径、后缀、必需字段和 generator 日志；不要先改成 rootful，也不要另建同名手工 service。
+<div class="cheatsheet"><span>Cheatsheet</span><p>`Linger=yes + unit not found` 优先查用户、版本、路径、后缀、必需字段和 generator 日志；不要先改成 rootful，也不要另建同名手工 service。</p></div>
 
 </section>
 
@@ -658,7 +830,7 @@ systemctl --user restart report.service
 
 再按 unit、容器、功能和数据四层验证。`reset-failed` 只清理失败计数和状态，不修复配置。
 
-**[Cheatsheet]** 先看 `Result/NRestarts` 和第一失败原因；重名查容器，端口查监听，权限查 DAC/映射/SELinux，退出查应用日志；修根因后再 restart。
+<div class="cheatsheet"><span>Cheatsheet</span><p>先看 `Result/NRestarts` 和第一失败原因；重名查容器，端口查监听，权限查 DAC/映射/SELinux，退出查应用日志；修根因后再 restart。</p></div>
 
 </section>
 
@@ -713,7 +885,7 @@ podman ps -a
 
 本会话没有 RHEL 9 VM，以上属于推荐 live-test 流程，不能声明已执行。
 
-**[Cheatsheet]** 当前 active 只证明现在；`[Install]` 解决 manager 内的启动关系，linger 解决 manager 的登录外生命周期；冷启动验收要在目标用户首次登录前先测功能。
+<div class="cheatsheet"><span>Cheatsheet</span><p>当前 active 只证明现在；`[Install]` 解决 manager 内的启动关系，linger 解决 manager 的登录外生命周期；冷启动验收要在目标用户首次登录前先测功能。</p></div>
 
 </section>
 
@@ -773,8 +945,6 @@ podman ps -a
 
 </section>
 
-<div class="page-break"></div>
-
 <section class="topic answer" id="RHCSA-32-A01">
 
 ## [参考解答] 经典任务一
@@ -810,7 +980,6 @@ install -d -m 0755 ~/.config/containers/systemd
 cat > ~/.config/containers/systemd/report.container <<'EOF'
 [Unit]
 Description=Persistent rootless report container
-After=network-online.target
 
 [Container]
 Image=registry.example.com/rhcsa/report:9
@@ -980,8 +1149,6 @@ podman exec report cat /var/lib/report/marker.txt
 
 </section>
 
-<div class="page-break"></div>
-
 <section class="topic answer" id="RHCSA-32-A02">
 
 ## [参考解答] 经典任务二
@@ -1103,68 +1270,53 @@ journalctl --user-unit=portal.service -b -n 50 --no-pager
 
 </section>
 
+
+<div class="page-break"></div>
+
 <section class="topic closing" id="RHCSA-32-C01">
 
-## [本章收束] 把容器持久性拆成可证明的链
+## [本章收束] 把容器持久性拆成一条可执行的工作方法
 
-本章的主结论不是“执行某条启动命令”，而是建立以下闭环：
+面对“让 rootless 容器重启后自动运行”这类要求，不要直接从模板或启动命令开始。先把任务翻译为七个可证明的对象：目标 UID、现有实例、源声明、generated unit、运行实例、外部数据和未登录功能。任何一层没有证据，都不能用下一层的成功代替。
 
-```text
-现有实例取证
-→ Quadlet 声明成为配置真源
-→ generator 生成 user service
-→ user manager 监督容器
-→ [Install] 建立 manager 内启动关系
-→ linger 建立登录外生命周期
-→ 外部数据独立于实例
-→ unit、容器、数据、功能、注销和冷启动逐层验收
-```
+<div class="method-chain">
+  <div><b>1</b><strong>确认身份与版本</strong><span>目标用户、rootless 存储、Podman 版本、本机 man page</span></div>
+  <div><b>2</b><strong>保存当前基线</strong><span>实例参数、端口、挂载、数据位置和当前功能</span></div>
+  <div><b>3</b><strong>建立源声明</strong><span>把题目终态翻译为 Quadlet 字段和 <code>[Install]</code></span></div>
+  <div><b>4</b><strong>重新生成与切换</strong><span>reload 生成 unit，安全处理旧实例，再 start/restart</span></div>
+  <div><b>5</b><strong>分层验收</strong><span>manager、实例、数据、协议和 journal 分别取证</span></div>
+  <div><b>6</b><strong>验证登录外生命周期</strong><span>linger、注销测试、冷启动未登录测试</span></div>
+</div>
 
-遇到故障时，不要从最后一层反复 restart。先判断失败停在哪一层：
+### 章末检查清单
 
-```text
-声明不存在或未识别
-→ generated unit 不存在
-→ unit 启动失败
-→ 容器参数错误
-→ 数据访问失败
-→ 应用功能失败
-→ 注销/重启生命周期失败
-```
+- [ ] 操作命令连接的是目标用户的 user manager，而不是 system scope。
+- [ ] `podman version` 和本机 `podman-systemd.unit(5)` 支持所用 Quadlet 语义。
+- [ ] 现有实例的镜像、端口、环境、挂载和数据位置已保存为基线。
+- [ ] `.container` 位于正确搜索路径，文件名、后缀和所有者正确。
+- [ ] `Image`、`ContainerName`、`PublishPort`、`Volume`、`Environment` 与目标终态一致。
+- [ ] `[Install] WantedBy=default.target` 与 `Linger=yes` 分别完成自己的职责。
+- [ ] reload、restart 的先后和作用对象清楚，未直接编辑 generated unit。
+- [ ] unit、容器、数据、协议功能和日志都已分别验证。
+- [ ] 持久数据经过实例删除和重建验证，而不仅是简单 restart。
+- [ ] 冷启动功能测试发生在目标用户首次登录之前。
 
-一项容器服务只有在“声明可维护、实例可重建、数据独立、功能可验证、用户未登录时仍能按要求启动”同时成立时，才具备本章所说的持久性。
+### 主要判断表
 
-### 章末速查
+| 看到的证据 | 能证明什么 | 仍不能证明什么 | 下一条高区分度证据 |
+|---|---|---|---|
+| `.container` 文件存在 | 源声明文件已放置 | generator 已识别、字段正确 | `daemon-reload` 后检查 `LoadState` 和 user journal |
+| `report.service` 可加载 | generated unit 已出现 | unit 能启动、实例参数正确 | `systemctl --user show` 与 journal |
+| `ActiveState=active` | manager 当前认为服务活动 | 应用响应、数据挂载、冷启动成功 | `podman inspect`、协议请求、数据读取 |
+| `podman ps` 显示运行 | 容器进程存在 | 对外功能正确、数据独立 | `podman port`、`curl`、宿主与容器内文件对照 |
+| `Linger=yes` | user manager 可脱离登录会话存在 | Quadlet 会启动、业务可用 | 注销后和冷启动未登录的外部功能测试 |
+| restart 后文件仍在 | 当前重启未丢失文件 | 删除和重建后仍持久 | 删除实例并由声明重建，再读取外部数据 |
+| journal 无新错误 | 当前查询范围内未见失败记录 | 业务终态完全正确 | 协议、内容和持久数据验收 |
 
-```bash
-# 身份与版本
-id
-podman version
+### 向下一章交接
 
-# Quadlet 源
-ls -l ~/.config/containers/systemd/
-sed -n '1,200p' ~/.config/containers/systemd/report.container
+本章已经把单个容器转换为可维护、可重建、可诊断的用户级服务。进入下一章“RHCSA 综合任务与证据矩阵”时，不再重复 Quadlet 字段，而是把这里的证据链与用户、网络、存储、SELinux、防火墙和重启验收组合成整机终态。
 
-# 生成与控制
-systemctl --user daemon-reload
-systemctl --user start report.service
-systemctl --user show report.service \
-  -p LoadState -p ActiveState -p SubState -p Result -p NRestarts
-
-# 实例与功能
-podman ps -a
-podman port report
-podman inspect report --format '{{json .Mounts}}'
-curl -fsS http://127.0.0.1:18080/
-
-# 登录外生命周期
-sudo loginctl enable-linger appsvc
-loginctl show-user appsvc -p Linger
-
-# 日志
-journalctl --user-unit=report.service -b --no-pager
-```
-
-**静态验证声明：** 本章依据 RHEL 9 课程、Red Hat 容器文档、Podman 4.6.1 Quadlet 手册和 systemd 手册进行静态核对。未连接 RHEL 9 虚拟机，未执行真实注销、冷启动、端口请求和容器重建测试；这些项目已写入质量报告。
+<div class="static-note"><strong>静态可信边界：</strong>本章依据 RH134、RHEL 9 容器文档、Podman 4.6.1 Quadlet 手册和 systemd 手册进行静态核对。当前会话没有可控 RHEL 9 VM，未执行真实注销、冷启动、端口请求、实例删除与重建测试；这些项目保留在 <code>revision-notes.md</code> 的 live-test 清单中。</div>
 
 </section>

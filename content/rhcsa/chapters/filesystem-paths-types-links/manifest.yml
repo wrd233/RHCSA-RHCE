@@ -1,0 +1,95 @@
+package_version: 1
+chapter:
+  id: RHCSA-04
+  exam: RHCSA
+  part: 1
+  number: 4
+  slug: filesystem-paths-types-links
+  title: 文件系统层次、路径、文件类型与链接
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+  verified_at: '2026-07-12T22:23:31+08:00'
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/filesystem-paths-types-links/lecture.md
+  anki: content/rhcsa/chapters/filesystem-paths-types-links/anki.yml
+  anki_baseline_sha256: fe6083318f071bafcf6a6a0365550237278c36ca231f34619eee59138031a61a
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:23:31+08:00'
+  directory: RHCSA-04-filesystem-paths-types-links-v5.1-final
+  archive: RHCSA-04-filesystem-paths-types-links-v5.1-final.zip
+  hash_policy: SHA-256 covers every payload file; manifest.yml is excluded from self-hashing.
+files:
+  lecture:
+    path: lecture.md
+    sha256: 2db3adb734c234f29eb5e8b0d475edd40bbe305a47b9636bde7238a3ea87c0cb
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 13e9e17fa22b87286b4ebb0f30ebcdf8fe55093588b0e5cf86e9ccb85d61abaf
+  anki:
+    path: anki.yml
+    sha256: 3ec5e3ad8371baa24ec3671058bc047b2ddb3f71ee47d4fc1caf3f9a5d3feb3b
+  preview:
+    path: anki-preview.html
+    sha256: 95e60bac0470705474e2a29ae6bed60a502a5a5ea0386df81f086e9b99b601b7
+  summary:
+    path: anki-summary.md
+    sha256: 434eff9f32ab3fe22e5577bf9d622bb410c2da8f1ca08f6e110ebeadd550abf0
+  anki_impact:
+    path: anki-impact.md
+    sha256: e421c006b7b32cb4db3481021bd4b05657976dbb95af21812f87dc2ca329ab68
+  source_map:
+    path: source-map.md
+    sha256: 6116d199adee824b66adc2477a2567f2c2b1ead34a83ee6bbd18a1925311fbac
+  structure_report:
+    path: structure-report.md
+    sha256: d89329a6e7cb8383d5396c1549a55bea13d8cf3d70eaf3750e9007cfc30daa0b
+  visual_qa:
+    path: visual-qa.md
+    sha256: 8137fef8dc39fc1b87d1639731adc9fcc8a6f7c0b1804f3d5d4d0a65d110ab8b
+  qa_report:
+    path: qa-report.md
+    sha256: d061a965fc4de73e9ea58d53dd8e43f8e95ed4205babfa3e2bb98e9d69254d7e
+  revision_notes:
+    path: revision-notes.md
+    sha256: dcacdf11fd4d30045809918922157f984db5b47d4407c06a1597951e998422d2
+  integration_note:
+    path: codex-integration-note.md
+    sha256: d510243a80f3133790c6e891dc66d84be60ff2a736c72051f6dde1125f11b8c6
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM was available; command-level live tests were not performed.
+- Global Section ID and Anki ID uniqueness, cross-chapter duplicate checks, unified PDF, APKG, AnkiConnect, Git integration
+  and release remain Codex responsibilities.
+- Version-sensitive outputs such as namei -x and coreutils error wording require target RHEL 9 verification.
+extensions:
+  anki:
+    baseline: canonical
+    notes: 103
+    qa: 95
+    cloze: 8
+    impact: SUGGESTED_CHANGES
+    stable_ids_modified: 1
+    stable_ids_added: 0
+    stable_ids_deleted: 0
+    disabled_changes: 0
+    anki_connect_used: false
+    apkg_generated: false

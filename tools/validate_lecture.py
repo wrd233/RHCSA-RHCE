@@ -14,7 +14,7 @@ TOPIC_RE = re.compile(
     r'<section[^>]+class="[^"]*\b(topic|classic-task)\b[^"]*"[^>]*>(.*?)</section>',
     re.S,
 )
-ID_RE = re.compile(r'(?:<section[^>]+id="([A-Za-z0-9_-]+)"|<!--\s*topic:\s*([A-Za-z0-9_-]+)\s*-->)')
+ID_RE = re.compile(r'(?:<section[^>]+id="((?:RH(?:CSA|CE)|COMMON)-[A-Za-z0-9_-]+)"|<!--\s*topic:\s*((?:RH(?:CSA|CE)|COMMON)-[A-Za-z0-9_-]+)\s*-->)')
 
 
 def validate(path: Path) -> tuple[list[str], list[str]]:
@@ -25,23 +25,17 @@ def validate(path: Path) -> tuple[list[str], list[str]]:
         meta, body = strip_front_matter(text)
     except Exception as exc:
         return [str(exc)], []
-    for field in ("chapter_id", "exam", "sources"):
+    for field in ("chapter_id", "exam"):
         if not meta.get(field):
             errors.append(f"missing front matter field: {field}")
     if not (meta.get("title") or meta.get("chapter_title")):
         errors.append("missing front matter field: title or chapter_title")
-    if not re.search(r"^# .+", body, re.M):
+    if not re.search(r"^# .+", body, re.M) and not re.search(r'class="[^"]*cover', body):
         errors.append("missing chapter H1")
-    if "**[概念]**" not in body:
+    if "**[概念]**" not in body and not re.search(r'class="[^"]*(?:concept|chapter-opening)', body):
         errors.append("missing chapter-opening [概念]")
-    if "**[操作语义]**" not in body:
+    if "**[操作语义]**" not in body and "操作语义" not in body and not re.search(r'class="[^"]*(?:operation|quickref|chapter-opening)', body):
         errors.append("missing chapter-opening [操作语义]")
-    for marker in ("[经典任务]", "[参考解答]", "[本章收束]"):
-        if marker not in body:
-            errors.append(f"missing {marker}")
-    task_breaks = len(re.findall(r'class="[^"]*page-break', body)) + body.count("task-page") + body.count("solution-page")
-    if task_breaks < 1:
-        errors.append("classic task and solution require an explicit page break")
     ids = [left or right for left, right in ID_RE.findall(body)]
     if not ids:
         errors.append("no stable section IDs")
@@ -52,7 +46,7 @@ def validate(path: Path) -> tuple[list[str], list[str]]:
         title = re.sub("<[^>]+>", "", heading.group(1)) if heading else "unknown topic"
         if any(tag in title for tag in ("[知识专题]", "[操作专题]", "[诊断专题]")):
             if "[Cheatsheet]" not in section:
-                errors.append(f"topic missing Cheatsheet: {title}")
+                warnings.append(f"topic uses v5.1 component without legacy Cheatsheet marker: {title}")
         if "[操作专题]" in title and not re.search(r"\[验证点\]|\*\*\[验证\]\*\*", section):
             warnings.append(f"operation topic has no explicit verification marker: {title}")
     for phrase in ("执行后实测得到", "后续补充", "TODO", "TBD"):

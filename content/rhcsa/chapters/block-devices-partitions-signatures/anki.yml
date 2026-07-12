@@ -1,7 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-22
 chapter_slug: block-devices-partitions-signatures
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-FILESYSTEMS-QA-001
   type: qa
@@ -18,6 +20,8 @@ notes:
   - topic::device-identity
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-FILESYSTEMS-QA-002
   type: qa
   question: '`wipefs /dev/vdb` 与 `wipefs -a /dev/vdb` 的区别是什么？'
@@ -31,7 +35,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::signatures
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-FILESYSTEMS-QA-003
   type: qa
   question: 为什么 `lsblk` 中 `FSTYPE` 为空不能充分证明设备可以安全覆盖？
@@ -47,7 +53,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::preflight
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-FILESYSTEMS-QA-004
   type: qa
   question: 在已经确认可丢弃的新磁盘上建立 GPT 的 `parted` 命令骨架是什么？
@@ -63,6 +71,8 @@ notes:
   - topic::parted
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-FILESYSTEMS-QA-005
   type: qa
   question: 使用 `parted` 从 1 MiB 开始创建约 2 GiB 的 GPT 分区，命令骨架是什么？
@@ -78,6 +88,8 @@ notes:
   - topic::parted
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-FILESYSTEMS-QA-006
   type: qa
   question: 分区表已经写入后，请求内核重读并等待设备事件，应使用什么？
@@ -92,7 +104,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::kernel-udev
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K01-QA-001
   type: qa
   question: '`lsblk` 的 `TYPE=disk` 与 `TYPE=part` 分别说明什么？'
@@ -106,7 +120,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::device-identity
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K01-QA-002
   type: qa
   question: 为什么 `/dev/sdb` 或 `/dev/vdb` 不能作为长期不变的业务身份？
@@ -120,7 +136,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::device-identity
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K01-QA-003
   type: qa
   question: NVMe 的整盘和第 1 分区常见名称分别是什么？
@@ -135,6 +153,8 @@ notes:
   - topic::device-identity
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K01-QA-004
   type: qa
   question: MMC 的整盘和第 2 分区常见名称分别是什么？
@@ -147,7 +167,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::device-identity
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K01-QA-005
   type: qa
   question: '`lsblk` 的 `PKNAME` 字段回答什么问题？'
@@ -162,6 +184,8 @@ notes:
   - topic::device-identity
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K01-QA-006
   type: qa
   question: '`MAJ:MIN` 能替代设备序列号作为永久身份吗？'
@@ -175,7 +199,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::device-identity
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K01-QA-007
   type: qa
   question: 破坏性写入前，`MODEL`、`SERIAL`、`WWN` 三类字段的价值是什么？
@@ -190,6 +216,8 @@ notes:
   - topic::device-identity
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K01-QA-008
   type: qa
   question: 两块磁盘容量相同，是否可以只凭大小选择目标盘？
@@ -203,7 +231,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::device-identity
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K01-QA-009
   type: qa
   question: 为什么讲义和脚本应显式指定 `lsblk -o` 列？
@@ -216,7 +246,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::device-identity
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K01-QA-010
   type: qa
   question: 目标系统不支持讲义中的某个 `lsblk` 列时，最稳妥的处理是什么？
@@ -231,6 +263,8 @@ notes:
   - topic::device-identity
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K01-QA-011
   type: qa
   question: '`MOUNTPOINTS` 与 `MOUNTPOINT` 的输出差异应怎样理解？'
@@ -244,6 +278,8 @@ notes:
   - topic::device-identity
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K01-QA-012
   type: qa
   question: '`lsblk` 能否单独证明设备没有被 LVM 或 RAID 使用？'
@@ -257,7 +293,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::device-identity
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K01-CLOZE-001
   type: cloze
   text: NVMe 整盘常写作 {{c1::/dev/nvme0n1}}，其第 1 分区常写作 {{c2::/dev/nvme0n1p1}}。
@@ -269,7 +307,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::device-identity
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-22-K02-QA-001
   type: qa
   question: 分区表属于磁盘还是某个分区？
@@ -283,7 +323,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-tables
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K02-QA-002
   type: qa
   question: MBR 为什么常被描述为最多四个主分区？
@@ -297,7 +339,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-tables
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K02-QA-003
   type: qa
   question: MBR 的约 2 TiB 限制为什么要注明 512 字节逻辑扇区背景？
@@ -311,7 +355,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-tables
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K02-QA-004
   type: qa
   question: GPT 为什么在磁盘末尾还保留备份元数据？
@@ -326,6 +372,8 @@ notes:
   - topic::partition-tables
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K02-QA-005
   type: qa
   question: GPT 的保护性 MBR 主要解决什么问题？
@@ -340,6 +388,8 @@ notes:
   - topic::partition-tables
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K02-QA-006
   type: qa
   question: '`PTTYPE=gpt` 能证明什么？'
@@ -354,6 +404,8 @@ notes:
   - topic::partition-tables
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K02-QA-007
   type: qa
   question: '`PTUUID` 与 `PARTUUID` 的区别是什么？'
@@ -367,7 +419,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-tables
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K02-QA-008
   type: qa
   question: GPT 的 `PARTLABEL` 能否保证全局唯一？
@@ -381,7 +435,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-tables
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K02-QA-009
   type: qa
   question: 在已有数据盘上执行 `mklabel gpt` 的本质是什么？
@@ -395,7 +451,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-tables
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K02-QA-010
   type: qa
   question: GPT 常见 128 个分区条目是否表示格式只能有 128 个分区？
@@ -410,6 +468,8 @@ notes:
   - topic::partition-tables
   - card::boundary
   - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K02-CLOZE-001
   type: cloze
   text: '{{c1::PTUUID}} 标识整盘分区表，{{c2::PARTUUID}} 标识其中的单个分区条目。'
@@ -422,7 +482,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-tables
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-22-K03-QA-001
   type: qa
   question: '`parted mkpart data 1MiB 2049MiB` 中的 2049 MiB 表示大小还是绝对终点？'
@@ -437,6 +499,8 @@ notes:
   - topic::geometry
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K03-QA-002
   type: qa
   question: '`fdisk` 中输入 `+512M` 通常表达什么？'
@@ -451,6 +515,8 @@ notes:
   - topic::geometry
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K03-QA-003
   type: qa
   question: MiB 与 MB 的区别是什么？
@@ -464,7 +530,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::geometry
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K03-QA-004
   type: qa
   question: 为什么常把第一个分区从 1 MiB 开始？
@@ -478,7 +546,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::geometry
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K03-QA-005
   type: qa
   question: 查看逻辑扇区、物理扇区和最优 I/O 大小，可用什么？
@@ -492,7 +562,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::geometry
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K03-QA-006
   type: qa
   question: 分区类型设置为 LVM 后，为什么 `pvs` 仍可能没有该分区？
@@ -506,7 +578,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-types
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K03-QA-007
   type: qa
   question: 分区类型设置为 Swap 后，是否已经形成可启用的 Swap？
@@ -520,7 +594,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-types
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K03-QA-008
   type: qa
   question: 为什么 MBR 的类型代码 `82` 不能作为 GPT 场景的通用答案？
@@ -534,7 +610,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-types
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K03-QA-009
   type: qa
   question: '`parted mkpart` 中给出 `xfs` 是否会创建 XFS？'
@@ -548,7 +626,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-types
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K03-QA-010
   type: qa
   question: 为什么写入后要用扇区或实际大小验证，而不是只看输入命令？
@@ -563,6 +643,8 @@ notes:
   - topic::geometry
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K03-QA-011
   type: qa
   question: 题目要求 512 MiB 分区时，看到 511 MiB 是否必然错误？
@@ -576,7 +658,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::geometry
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K03-CLOZE-001
   type: cloze
   text: 分区{{c1::类型}}只描述预期用途；文件系统、Swap 或 LVM 的{{c2::内容签名}}必须由各自工具另行创建。
@@ -589,7 +673,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::partition-types
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-22-K04-QA-001
   type: qa
   question: 设备签名在存储识别中扮演什么角色？
@@ -603,7 +689,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::signatures
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K04-QA-002
   type: qa
   question: 一个设备为什么可能同时存在多种签名？
@@ -617,7 +705,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::signatures
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K04-QA-003
   type: qa
   question: '`blkid <DEVICE>` 与 `blkid -p <DEVICE>` 的主要区别是什么？'
@@ -630,7 +720,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::signatures
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K04-QA-004
   type: qa
   question: 怎样让 `blkid -p` 以便于逐行判断的形式输出？
@@ -644,6 +736,8 @@ notes:
   - topic::signatures
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K04-QA-005
   type: qa
   question: '`wipefs <DEVICE>` 默认执行什么？'
@@ -657,6 +751,8 @@ notes:
   - topic::signatures
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K04-QA-006
   type: qa
   question: '`wipefs -a <DEVICE>` 的风险是什么？'
@@ -669,7 +765,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::signatures
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K04-QA-007
   type: qa
   question: 在已获授权前，怎样预览 `wipefs -a` 会处理哪些签名？
@@ -682,7 +780,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::signatures
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K04-QA-008
   type: qa
   question: '`LVM2_member` 说明了什么，不能说明什么？'
@@ -697,6 +797,8 @@ notes:
   - topic::signatures
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-K04-QA-009
   type: qa
   question: '`linux_raid_member` 出现时，下一步最有区分度的证据是什么？'
@@ -711,6 +813,8 @@ notes:
   - topic::signatures
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K04-QA-010
   type: qa
   question: '`/dev/disk/by-id/` 主要稳定在哪个维度？'
@@ -724,7 +828,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::persistent-ids
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K04-QA-011
   type: qa
   question: '`/dev/disk/by-path/` 主要稳定在哪个维度？'
@@ -739,6 +845,8 @@ notes:
   - topic::persistent-ids
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-K04-QA-012
   type: qa
   question: '`/dev/disk/by-partuuid/` 链接在什么情况下通常会改变？'
@@ -752,7 +860,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::persistent-ids
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K04-QA-013
   type: qa
   question: '`by-partlabel` 为什么不适合作为唯一身份依据？'
@@ -766,7 +876,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::persistent-ids
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K04-QA-014
   type: qa
   question: 清除签名是否等同于安全擦除原数据？
@@ -780,7 +892,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::signatures
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-K04-CLOZE-001
   type: cloze
   text: '`wipefs` 默认用于{{c1::列出签名}}；加入 `-a` 才会{{c2::删除可识别签名}}。'
@@ -792,7 +906,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::signatures
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-22-O01-QA-001
   type: qa
   question: 破坏性存储操作前的五步调查顺序是什么？
@@ -806,7 +922,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::preflight
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O01-QA-002
   type: qa
   question: 为什么要分别对整盘和现有分区执行 `wipefs`/`blkid -p`？
@@ -821,6 +939,8 @@ notes:
   - topic::preflight
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O01-QA-003
   type: qa
   question: 检查目标设备是否被当前挂载，优先用什么证据？
@@ -835,6 +955,8 @@ notes:
   - topic::preflight
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O01-QA-004
   type: qa
   question: 检查目标设备是否作为 Swap 使用，使用什么？
@@ -849,6 +971,8 @@ notes:
   - topic::preflight
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O01-QA-005
   type: qa
   question: 检查目标设备是否为 LVM PV，使用什么？
@@ -863,6 +987,8 @@ notes:
   - topic::preflight
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O01-QA-006
   type: qa
   question: '`/sys/class/block/<DEV>/holders/` 有条目通常说明什么？'
@@ -876,7 +1002,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::preflight
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O01-QA-007
   type: qa
   question: 什么条件下可以进入 `mklabel` 或删除分区？
@@ -890,7 +1018,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::preflight
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-O01-QA-008
   type: qa
   question: 为什么保存变更前 `parted`、`fdisk` 和 `wipefs` 输出有价值？
@@ -905,6 +1035,8 @@ notes:
   - topic::preflight
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O02-QA-001
   type: qa
   question: '`parted <DISK> unit MiB print` 同时做了什么？'
@@ -919,6 +1051,8 @@ notes:
   - topic::parted
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O02-QA-002
   type: qa
   question: '`parted -s` 的 `-s` 表示什么？'
@@ -933,6 +1067,8 @@ notes:
   - topic::parted
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O02-QA-003
   type: qa
   question: 在 GPT 磁盘上创建名为 `data`、范围 1MiB 到 2049MiB 的分区，命令是什么？
@@ -947,6 +1083,8 @@ notes:
   - topic::parted
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O02-QA-004
   type: qa
   question: '`parted -s <DISK> set 2 lvm on` 改变什么？'
@@ -961,6 +1099,8 @@ notes:
   - topic::parted
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O02-QA-005
   type: qa
   question: 删除第 3 个分区条目的 `parted` 骨架是什么？
@@ -975,6 +1115,8 @@ notes:
   - topic::parted
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O02-QA-006
   type: qa
   question: 为什么说 `parted` 与 `fdisk` 的提交模型不同？
@@ -988,7 +1130,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::parted
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O02-QA-007
   type: qa
   question: '`parted` 创建分区后，最小验证链是什么？'
@@ -1002,7 +1146,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::parted
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O02-QA-008
   type: qa
   question: 不确定 `mkpart` 参数时，应先查看什么？
@@ -1017,6 +1163,8 @@ notes:
   - topic::parted
   - card::help
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O03-QA-001
   type: qa
   question: '`fdisk -l <DISK>` 与 `fdisk <DISK>` 的区别是什么？'
@@ -1030,7 +1178,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::fdisk
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O03-QA-002
   type: qa
   question: '`fdisk` 交互中的 `p`、`n`、`t`、`d` 分别做什么？'
@@ -1045,6 +1195,8 @@ notes:
   - topic::fdisk
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O03-QA-003
   type: qa
   question: '`fdisk` 中 `w` 与 `q` 的区别是什么？'
@@ -1058,7 +1210,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::fdisk
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O03-QA-004
   type: qa
   question: '`fdisk` 创建固定大小分区时，为什么常接受默认起始扇区？'
@@ -1073,6 +1227,8 @@ notes:
   - topic::fdisk
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O03-QA-005
   type: qa
   question: 修改分区类型前，怎样避免把 MBR 代码套到 GPT？
@@ -1086,7 +1242,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::fdisk
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O03-QA-006
   type: qa
   question: 在 `fdisk` 会话中发现选错磁盘，最安全的动作是什么？
@@ -1100,7 +1258,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::fdisk
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-O03-QA-007
   type: qa
   question: 为什么 `fdisk` 最后一次 `p` 不能替代写盘后的验证？
@@ -1115,6 +1275,8 @@ notes:
   - topic::fdisk
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O03-QA-008
   type: qa
   question: 为什么不建议脚本依赖 `fdisk -l` 的固定空格和列位置？
@@ -1127,7 +1289,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::fdisk
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-O04-QA-001
   type: qa
   question: '`parted print` 已看到新分区，但 `lsblk` 未出现节点，最合理的初始假设是什么？'
@@ -1141,7 +1305,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::kernel-udev
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O04-QA-002
   type: qa
   question: '`partprobe <DISK>` 会修改磁盘分区表吗？'
@@ -1154,7 +1320,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::kernel-udev
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-O04-QA-003
   type: qa
   question: '`udevadm settle` 会主动创建分区表或请求内核重读吗？'
@@ -1167,7 +1335,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::kernel-udev
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-O04-QA-004
   type: qa
   question: 查看 `/dev/vdb1` 的 udev 属性，命令是什么？
@@ -1182,6 +1352,8 @@ notes:
   - topic::kernel-udev
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O04-QA-005
   type: qa
   question: 怎样验证 udev 已为分区生成 `PARTUUID` 链接？
@@ -1196,6 +1368,8 @@ notes:
   - topic::kernel-udev
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-O04-QA-006
   type: qa
   question: '`partprobe` 报设备忙时，下一步是什么？'
@@ -1209,7 +1383,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::kernel-udev
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-O04-QA-007
   type: qa
   question: 重启能否作为新分区节点未出现的默认修复？
@@ -1223,7 +1399,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::kernel-udev
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-O04-CLOZE-001
   type: cloze
   text: '{{c1::partprobe}} 请求内核重读分区表；{{c2::udevadm settle}} 等待设备事件处理完成。'
@@ -1236,7 +1414,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::kernel-udev
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-22-D01-QA-001
   type: qa
   question: '`parted` 和 `fdisk -l` 都没有显示刚创建的分区，首先检查什么？'
@@ -1250,7 +1430,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-sync
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-D01-QA-002
   type: qa
   question: 磁盘表有新分区、内核树没有时，下一条最有区分度的证据是什么？
@@ -1264,7 +1446,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-sync
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-D01-QA-003
   type: qa
   question: 观察内核和 udev 设备事件，可使用什么？
@@ -1278,7 +1462,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-sync
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-D01-QA-004
   type: qa
   question: 查看最近块设备相关内核信息，可从哪里开始？
@@ -1292,7 +1478,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-sync
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-D01-QA-005
   type: qa
   question: 分区同步问题的四层再验证是什么？
@@ -1307,6 +1495,8 @@ notes:
   - topic::diagnosis-sync
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-D02-QA-001
   type: qa
   question: 普通 `blkid` 无输出时，下一步最有区分度的两条命令是什么？
@@ -1320,7 +1510,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-signatures
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-D02-QA-002
   type: qa
   question: 发现 XFS 与 LVM 历史签名同时存在时，能否直接 `wipefs -a`？
@@ -1334,7 +1526,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-signatures
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-D02-QA-003
   type: qa
   question: 签名清除前为什么要记录偏移？
@@ -1349,6 +1543,8 @@ notes:
   - topic::diagnosis-signatures
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-D02-QA-004
   type: qa
   question: 清除一个历史签名后，为什么还要重新检查分区表？
@@ -1363,6 +1559,8 @@ notes:
   - topic::diagnosis-signatures
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-D02-QA-005
   type: qa
   question: 未获得丢弃数据授权时，签名调查的正确终点是什么？
@@ -1376,7 +1574,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-signatures
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-D03-QA-001
   type: qa
   question: '`PARTTYPE` 为 LVM，但 `FSTYPE` 为空，是否矛盾？'
@@ -1391,6 +1591,8 @@ notes:
   - topic::diagnosis-conflicts
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-D03-QA-002
   type: qa
   question: '`PARTTYPE` 为 Swap，但探测到 XFS 签名，最合理的处理是什么？'
@@ -1404,7 +1606,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-conflicts
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-D03-QA-003
   type: qa
   question: '`parted` 与 `lsblk` 输出不一致时，为什么不能简单认定一个工具错误？'
@@ -1418,7 +1622,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-conflicts
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-D03-QA-004
   type: qa
   question: 存储命令返回 0 能证明哪些内容？
@@ -1432,7 +1638,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-conflicts
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-D03-QA-005
   type: qa
   question: 什么是本章最重要的停止条件？
@@ -1446,7 +1654,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::diagnosis-conflicts
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-T01-QA-001
   type: qa
   question: 经典任务要求在 `/dev/vdb` 创建 GPT 前，第一组命令应完成什么？
@@ -1461,6 +1671,8 @@ notes:
   - topic::classic-task
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-T01-QA-002
   type: qa
   question: 在 GPT 盘上创建 `data` 约 2 GiB 和 `future-lvm` 约 1 GiB 的 `parted` 骨架是什么？
@@ -1475,6 +1687,8 @@ notes:
   - topic::classic-task
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-T01-QA-003
   type: qa
   question: 经典任务为何要求 `PARTUUID` 验收，而不要求文件系统 UUID？
@@ -1488,7 +1702,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::classic-task
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-T01-QA-004
   type: qa
   question: 创建分区后，如何证明没有越界创建文件系统或 PV？
@@ -1503,6 +1719,8 @@ notes:
   - topic::classic-task
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-22-T02-QA-001
   type: qa
   question: 诊断任务中 `parted print` 有分区而 `lsblk` 无节点，最小修复链是什么？
@@ -1516,7 +1734,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::classic-task
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-22-T02-QA-002
   type: qa
   question: 诊断任务禁止重新 `mklabel` 的原因是什么？
@@ -1530,7 +1750,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::classic-task
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-T02-QA-003
   type: qa
   question: 诊断任务禁止格式化的原因是什么？
@@ -1544,7 +1766,9 @@ notes:
   - chapter::block-devices-partitions-signatures
   - topic::classic-task
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-22-T02-QA-004
   type: qa
   question: 完成诊断后，报告应区分哪些状态？
@@ -1559,4 +1783,5 @@ notes:
   - topic::classic-task
   - card::verification
   - priority::P0
-status: integrated
+  model: RedHat-QA
+  priority: P0

@@ -5,37 +5,296 @@ exam: RHCSA
 part: "第一篇 命令行与本地信息处理"
 slug: copy-archive-compression-transfer
 validation: static
-status: integrated
+status: content_frozen_for_integration
+version: 5.1
 sources:
   - RH124-RHEL9-Ch03-Ch13
-  - RH134-RHEL9
-  - coreutils-man-pages
-  - tar-gzip-bzip2-xz-man-pages
-  - openssh-man-pages
-  - rsync-man-page
+  - RHCSA-current-full-book
+  - coreutils-tar-openssh-rsync-man-pages
 ---
 
-<!-- 稳定 ID、来源、版本边界和静态核对状态只属于维护层，正式渲染不可见。 -->
+<!-- 维护元数据、来源、状态和 Section ID 不在阅读版 PDF 中显示。 -->
 
-# 第六章　复制、归档、压缩与远程传输
+::: {.cover}
+<div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+<div class="cover-number">06</div>
+<h1>复制、归档、压缩与远程传输</h1>
+<p class="cover-subtitle">从源集合到目标集合：把层级、成员、属性、远端路径和完整性证据放进同一条操作链。</p>
+<div class="cover-tags">
+<span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+</div>
+<div class="cover-edition">大字号阅读版</div>
+:::
 
-系统管理员面对的并不是孤立的“文件”，而是一个由路径名称、目录层级、普通文件字节、链接以及元数据组成的数据集合。把这个集合复制到同一台主机的另一个位置、封装为归档、压缩后交付，或者同步到远端，看似都叫“搬文件”，实际改变的对象和验收方式并不相同。
+::: {.reading-nav}
+# 本章阅读导航
 
-最常见的错误并不是命令拼错，而是源和目标的边界理解错了：复制了目录本身而不是目录内容；归档里多出或少了一层目录；远端相对路径被解释到意外位置；`rsync` 因一个末尾斜杠改变了同步根；摘要一致却误以为权限、所有者和时间戳也一定一致；命令退出为零却没有检查目标端实际状态。
+**先抓住一条主线：** 文件操作不是“把一个名字搬过去”，而是把源对象或成员集合，按照明确的层级、属性和删除边界，变换为可验收的目标集合。
 
-本章以“源集合 → 变换或传输 → 目标集合 → 分层证据”为主线，训练 `cp`、`mv`、`install`、`tar`、`gzip`、`bzip2`、`xz`、`scp`、`sftp`、`rsync` 和 `sha256sum`。重点不是记住所有选项，而是能够先判断作用对象，再选择参数，并用成员、路径、字节和元数据证据证明终态。
+<div class="model-steps">
+<div><b>01</b><strong>确认源集合</strong><span>对象、成员、隐藏项、链接</span></div>
+<div><b>02</b><strong>定义目标层级</strong><span>目录本身还是目录内容</span></div>
+<div><b>03</b><strong>选择变换方式</strong><span>复制、部署、归档、传输、同步</span></div>
+<div><b>04</b><strong>控制风险边界</strong><span>覆盖、属性、删除、远端路径</span></div>
+<div><b>05</b><strong>执行最小操作</strong><span>先基线或 dry-run，再改变状态</span></div>
+<div><b>06</b><strong>分层验收</strong><span>成员、路径、字节、元数据</span></div>
+</div>
 
-**[概念]** 数据对象至少包含三个相互独立的维度：字节内容、名称与层级、元数据。两个文件摘要相同，只能证明被比较的字节相同；它们仍可能具有不同路径、类型、模式、所有者、时间戳、ACL 或安全上下文。
+<div class="nav-grid">
+<div>
+<h2>专题地图</h2>
+<ul>
+<li><b>知识专题</b> 数据集合、路径层级与元数据</li>
+<li><b>操作专题</b> `cp` / `mv` 与覆盖边界</li>
+<li><b>操作专题</b> `install` 部署文件</li>
+<li><b>知识专题</b> `tar` 成员、路径与元数据</li>
+<li><b>操作专题</b> 压缩、查看和安全提取</li>
+<li><b>操作专题</b> `scp` / `sftp` 远端路径</li>
+<li><b>操作专题</b> `rsync` 增量同步</li>
+<li><b>操作专题</b> `sha256sum` 与分层验收</li>
+<li><b>诊断专题</b> 从症状推进到下一条证据</li>
+<li><b>经典任务</b> 归档试提取与远端同步</li>
+</ul>
+</div>
+<div>
+<h2>阅读时持续回答</h2>
+<ol>
+<li>源是一个对象，还是一个成员集合？</li>
+<li>目标存在时，层级会怎样改变？</li>
+<li>归档、压缩、传输、同步分别改变哪一层？</li>
+<li>远端相对路径由谁解释？</li>
+<li>`rsync` 源末尾斜杠改变了什么？</li>
+<li>哪些属性必须保留，执行身份是否允许？</li>
+<li>命令成功后，还缺哪一层证据？</li>
+</ol>
+<div class="nav-note"><b>章节边界：</b>SSH 密钥与 `sshd` 留给第 20 章；NFS 留给第 26 章；本章不把 `rsync` 扩展为完整备份体系。</div>
+</div>
+</div>
+:::
 
-**[概念]** 目录既可以作为一个目录对象被复制，也可以作为一个成员集合的边界。`/srv/source`、`/srv/source/` 和 `/srv/source/.` 在不同工具中可能表达不同的同步根或层级意图，不能只凭视觉相似判断结果。
+# 第 06 章 · 正文
 
-**[概念]** 归档和压缩是两个步骤。`tar` 负责把多个成员及其元数据组织成一个归档流；gzip、bzip2 和 xz 负责压缩一个文件或字节流。压缩工具本身不会把目录树自动组织成多个可独立恢复的成员。
+系统管理员面对的并不是孤立的“文件”，而是一个由路径名称、目录层级、普通文件字节、链接和元数据共同组成的数据集合。把这个集合复制到同一台主机的另一个位置、封装为归档、压缩后交付，或者同步到远端，看似都叫“搬文件”，实际改变的对象、风险和验收方式并不相同。
 
-**[概念]** 远端路径由远端登录身份和远端文件系统解释。`host:relative/path` 不是本地当前目录的延伸；在执行前应明确远端用户、远端工作目录和目标是否已存在。
+最常见的误判并不是命令拼错，而是对象边界理解错了：复制了目录本身而不是目录内容；归档里多出或少了一层目录；远端相对路径被解释到意外位置；`rsync` 因一个末尾斜杠改变了同步根；摘要一致却误以为权限、所有者和时间戳也一定一致；命令退出为零，却没有检查目标端实际状态。
 
-**[操作语义]** `cp` 创建副本，`mv` 改变名称或位置，`install` 将内容部署到具有明确目标属性的位置；`tar` 创建、查看和提取成员集合；`scp` 和 `sftp` 通过 SSH 通道传输；`rsync` 比较源集合与目标集合并同步差异；`sha256sum` 对字节内容建立摘要证据。
+本章以“源集合 → 变换或传输 → 目标集合 → 分层证据”为主线。前一章已经建立查找和筛选源对象的方法，本章从已经确定的源集合开始；下一章将进入用户、组和账号生命周期，本章只把现有执行身份作为属性和远端路径的一项约束。
 
-**[操作语义]** 本章的验证链固定为：对象存在 → 层级正确 → 成员和类型正确 → 字节正确 → 必要元数据正确 → 远端或交付终态正确。任何单条命令都不能自动替代全部层次。
+::: {.concept-box}
+<span class="concept-label">概念</span> **源对象与目标对象** 是一次文件操作的两端。源对象回答“读取什么”，目标对象回答“最终应出现在哪里以及以什么层级出现”。目标是否已存在、目标是文件还是目录，会改变同一条命令的结果，所以在覆盖、移动或同步前，应先用 `stat`、`test` 或目录树证据确认两端，而不是只凭命令外形推测。
+:::
+
+::: {.concept-box}
+<span class="concept-label">概念</span> **归档成员（archive member）** 是 `tar` 归档内部可列出、可提取的名称和对象。创建归档时，本地路径会被转换为成员名称；提取时，成员名称决定恢复出的顶层和目录结构。归档文件能够打开，只证明容器可读，不证明成员前缀、隐藏项和恢复位置符合任务要求。
+:::
+
+::: {.concept-box}
+<span class="concept-label">概念</span> **压缩流（compressed stream）** 是对一个文件或字节流进行编码后的表示。gzip、bzip2 和 xz 可以压缩 `tar` 产生的归档流，但它们本身不负责把多个目录项组织成成员集合。因而“归档”和“压缩”必须分开理解：先决定成员和层级，再决定是否以及如何压缩。
+:::
+
+::: {.concept-box}
+<span class="concept-label">概念</span> **远端路径（remote path）** 由远端登录身份和远端文件系统解释。`host:relative/path` 不是本地当前目录的延伸；它通常从远端用户的起始目录解释。可靠做法是显式写出用户和绝对目标路径，或在 `sftp` 中先用 `pwd` 与 `lpwd` 分清两端。
+:::
+
+::: {.concept-box}
+<span class="concept-label">概念</span> **增量同步（incremental synchronization）** 是比较源集合与目标集合后，只传输或调整被判定为不同的对象。`rsync` 的源末尾斜杠决定同步根，`--delete` 决定是否清理目标额外成员；它们改变的不是显示格式，而是目标树本身，因此必须在执行前通过 dry-run 审查。
+:::
+
+::: {.concept-box}
+<span class="concept-label">概念</span> **完整性校验（integrity verification）** 用摘要判断被比较字节是否一致。`sha256sum` 相同可以证明指定文件的字节相同，却不能证明路径、类型、模式、所有者、时间戳、ACL 或安全上下文相同。一个完整验收必须把成员、层级、字节和元数据证据组合起来。
+:::
+
+::: {.semantic-map}
+# 操作语义速查
+
+<div class="semantic-intro">先建立关键接口地图，再进入正文细节。以下命令组覆盖本章最常用的查询、修改和验证入口；参数采用纵向定义，避免把语义压成一长行。</div>
+
+## `cp` / `mv`
+
+**SYNOPSIS**
+
+```bash
+cp [OPTION]... SOURCE DEST
+cp [OPTION]... SOURCE... DIRECTORY
+mv [OPTION]... SOURCE DEST
+mv [OPTION]... SOURCE... DIRECTORY
+```
+
+`cp` 创建副本并保留源；`mv` 改变名称或位置。两者都受目标是否存在、目标类型和覆盖策略影响。
+
+**重要参数 / 形式**
+
+`cp -r` / `cp -R`
+: 递归复制目录树。
+
+`cp -p`
+: 请求保留模式、所有权和时间戳；实际结果仍受权限和文件系统限制。
+
+`cp -a`
+: 归档式递归复制，适合保留链接和常用属性；不等于已证明所有属性落地。
+
+`SOURCE/.`
+: 明确复制已有源目录的全部成员，包括隐藏成员，进入既定目标目录。
+
+## `install`
+
+**SYNOPSIS**
+
+```bash
+install [OPTION]... SOURCE DEST
+install -d [OPTION]... DIRECTORY...
+```
+
+把准备好的文件部署到目标位置，并在同一操作中表达目标目录、模式、所有者和组。
+
+**重要参数 / 形式**
+
+`-D`
+: 创建目标文件缺失的父目录。
+
+`-d`
+: 创建目录对象，而不是复制普通文件。
+
+`-m MODE`
+: 显式设置目标模式。
+
+`-o OWNER` / `-g GROUP`
+: 设置目标所有者或组，需要相应权限。
+
+
+## `tar`
+
+**SYNOPSIS**
+
+```bash
+tar -cf ARCHIVE MEMBERS...
+tar -tf ARCHIVE
+tar -xf ARCHIVE [-C DIRECTORY]
+```
+
+把多个成员及其元数据组织为归档，或非破坏性查看成员，再提取到受控目录。
+
+**重要参数 / 形式**
+
+`-c`
+: 创建归档。
+
+`-t`
+: 列出成员，不提取。
+
+`-x`
+: 提取成员。
+
+`-f ARCHIVE`
+: 指定归档文件；归档名紧随 `-f`。
+
+`-C DIRECTORY`
+: 改变后续路径参数的解释位置，具有顺序语义。
+
+`-z` / `-j` / `-J`
+: 分别选择 gzip、bzip2、xz 压缩。
+
+## `gzip` / `bzip2` / `xz`
+
+**SYNOPSIS**
+
+```bash
+gzip [OPTION]... FILE...
+bzip2 [OPTION]... FILE...
+xz [OPTION]... FILE...
+```
+
+压缩单个文件或字节流；目录树需要先通过 `tar` 形成成员集合。
+
+**重要参数 / 形式**
+
+`-d`
+: 解压。
+
+`-k`
+: 保留输入文件，避免默认替换原文件。
+
+`file ARCHIVE`
+: 检查实际格式；后缀只是命名约定。
+
+## `scp` / `sftp`
+
+**SYNOPSIS**
+
+```bash
+scp [OPTION]... SOURCE... TARGET
+sftp [user@]host
+```
+
+通过既有 SSH 通道复制或交互传输。本章只处理客户端路径语义，不展开密钥和 `sshd` 配置。
+
+**重要参数 / 形式**
+
+`[user@]host:path`
+: 远端操作数；相对路径由远端登录语境解释。
+
+`scp -r`
+: 递归复制目录。
+
+`scp -p`
+: 请求保留修改时间、访问时间和模式。
+
+`pwd` / `lpwd`
+: 在 `sftp` 中分别查看远端和本地工作目录。
+
+## `rsync`
+
+**SYNOPSIS**
+
+```bash
+rsync [OPTION]... SOURCE... DEST
+rsync [OPTION]... SOURCE... [user@]host:DEST
+```
+
+比较源集合与目标集合并同步差异。源末尾斜杠和删除选项直接改变目标树。
+
+**重要参数 / 形式**
+
+`-a`
+: 归档模式，常用组合为递归并保留链接、模式、时间、所有者、组和设备信息；不包含 `-HAX`。
+
+`-v`
+: 输出较详细的处理信息。
+
+`-n` / `--dry-run`
+: 只预览，不改变目标。
+
+`-i`
+: 逐项显示变化，适合审查计划。
+
+`--delete`
+: 删除接收端的额外成员，只用于题目明确要求镜像时。
+
+`SOURCE/` 与 `SOURCE`
+: 前者同步目录内容；后者通常把源目录本身放入目标。
+
+## `sha256sum`
+
+**SYNOPSIS**
+
+```bash
+sha256sum [OPTION]... FILE...
+sha256sum -c CHECKSUM_FILE
+```
+
+为普通文件字节建立摘要证据，或按清单检查；不能代替路径、成员和元数据验收。
+
+**重要参数 / 形式**
+
+`sha256sum FILE`
+: 计算文件摘要。
+
+`sha256sum -c SHA256SUMS`
+: 按清单检查文件字节。
+
+`stat PATH`
+: 与摘要配合，检查类型、模式、所有者和时间戳。
+:::
 
 <section class="topic knowledge" id="RHCSA-06-K01" data-kind="knowledge-topic">
 
@@ -208,7 +467,7 @@ stat -c '%F %N' -- PATH
 
 确认对象类型。若任务要求保留目录树结构，默认应避免无意展开符号链接，否则可能复制超出预期集合的内容。
 
-### ⑦ [操作] 复制和移动后的分层验证
+### ⑦ [验证] 复制和移动后的分层验证
 
 推荐最小链：
 
@@ -268,11 +527,11 @@ install -D -o root -g appops -m 0640 app.conf /etc/myapp/app.conf
 
 目标用户和组必须存在；账号和组的创建属于下一章。普通用户无法任意设置所有者，因此参数存在不代表操作一定能完成。
 
-### ④ [操作] 区分内容更新与时间戳语义
+### ④ [操作] 区分内容更新与目标属性语义
 
-`install` 默认面向部署终态，不是通用的“原样克隆”工具。题目若要求保留源时间戳，应明确选择对应选项并验证；若只要求内容和目标模式，则不要把源的偶然元数据带入验收标准。
+`install` 默认面向部署终态，不是通用的“原样克隆”工具。题目应先明确目标文件需要的模式、所有者和组，再通过参数显式设置；不要把源文件的偶然元数据直接当作部署终态。
 
-### ⑤ [操作] 部署后同时验证内容与属性
+### ⑤ [验证] 部署后同时验证内容与属性
 
 ```bash
 sha256sum app.conf /etc/myapp/app.conf
@@ -417,7 +676,7 @@ unxz report.txt.xz
 
 `gzip -l` 和 `xz -l` 可在解压前查看压缩和未压缩大小，辅助评估空间，但不能证明内部 tar 成员正确。
 
-### ④ [操作] 创建后列出成员和验证格式
+### ④ [验证] 创建后列出成员和验证格式
 
 ```bash
 file /root/app.tar.xz
@@ -444,19 +703,19 @@ find "$verify_dir" -printf '%y %P -> %l\n' | sort
 
 普通用户提取时通常成为提取文件的所有者；root 可以恢复归档记录的所有者。当前 umask 可能收紧提取模式，保留权限选项可以改变该行为。任务要求精确模式时，必须在目标端用 `stat` 验证，不能只看 `tar` 没报错。
 
-### ⑦ [操作] 比较源和试提取结果
+### ⑦ [验证] 比较源和试提取结果
 
 先固定比较根，再生成普通文件摘要清单：
 
 ```bash
 (
   cd /srv/app
-  find . -type f -print0 | sort -z | xargs -0 sha256sum
+  find . -type f -print0 | sort -z | xargs -0 -r sha256sum
 ) > /tmp/source.sha256
 
 (
   cd "$verify_dir/app"
-  find . -type f -print0 | sort -z | xargs -0 sha256sum
+  find . -type f -print0 | sort -z | xargs -0 -r sha256sum
 ) > /tmp/extracted.sha256
 
 cmp -s /tmp/source.sha256 /tmp/extracted.sha256
@@ -558,7 +817,7 @@ sftp> get -r /home/student/result
 
 RHEL 9 的 OpenSSH `scp` 默认使用 SFTP 协议实现传输；旧 SCP 协议可通过兼容选项强制使用。课程扫描材料中的安全警告反映了旧 SCP 协议的历史问题，但不能简单推出“RHEL 9 的 `scp` 命令一定使用旧协议”。本章保留 `scp` 命令的考试与运维语义，同时把底层协议差异标记为版本敏感点。
 
-### ⑦ [操作] 远端传输后的最小验收
+### ⑦ [验证] 远端传输后的最小验收
 
 ```bash
 ssh student@serverb '
@@ -619,7 +878,7 @@ rsync -a SOURCE/ DESTINATION/
 
 这些选项会增加成本和权限要求，只在任务需要时使用。
 
-### ③ [操作] 先用 dry-run 和逐项输出审查计划
+### ③ [查询] 先用 dry-run 和逐项输出审查计划
 
 ```bash
 rsync -ani /srv/source/ student@serverb:/home/student/stage/
@@ -672,7 +931,7 @@ rsync -ani --delete SOURCE/ DESTINATION/
 
 若任务要求保留远端额外文件，必须明确排除 `--delete`。
 
-### ⑥ [知识点] 第二次 dry-run 无变化只证明 rsync 的比较规则已收敛
+### ⑥ [验证] 第二次 dry-run 无变化只证明 rsync 的比较规则已收敛
 
 执行后再次运行相同 dry-run：
 
@@ -735,13 +994,13 @@ sha256sum -c SHA256SUMS
 ```bash
 (
   cd /srv/source
-  find . -type f -print0 | sort -z | xargs -0 sha256sum
+  find . -type f -print0 | sort -z | xargs -0 -r sha256sum
 ) > /tmp/source.sha256
 ```
 
 在目标根执行同样流程，再使用 `cmp` 或 `diff` 比较清单。该方法把相对名称纳入文本清单，但仍不检查目录、符号链接和元数据。
 
-### ⑤ [操作] 组合成员、字节和元数据证据
+### ⑤ [验证] 组合成员、字节和元数据证据
 
 完整验收示例：
 
@@ -891,6 +1150,8 @@ tar -tf archive
 
 <section class="topic task" id="RHCSA-06-T01" data-kind="classic-task">
 
+<div class="page-break"></div>
+
 ## [经典任务] 创建保留关键属性的 xz 压缩归档并完成试提取验收
 
 ### 环境与当前状态
@@ -906,7 +1167,7 @@ tar -tf archive
 └── current -> data
 ```
 
-当前要求把它交付给另一名管理员。`/root/submission/` 已存在，里面可能有旧文件，但不存在本次日期命名的目标归档。当前会话没有 RHEL 9 live VM，以下命令作为推荐操作与静态核对答案。
+现在需要把它交付给另一名管理员。`/root/submission/` 已存在，里面可能有旧文件，但不存在本次日期命名的目标归档。以下流程先明确预期成员和验收证据，再给出推荐操作；只有在目标主机实际执行并收集证据后，才能声明任务完成。
 
 ### 目标终态
 
@@ -925,7 +1186,7 @@ tar -tf archive
 - 不直接提取到 `/srv`、`/` 或已有业务目录；
 - 不使用 `*` 作为成员集合；
 - 不关闭 SELinux、不使用 `chmod 777`；
-- 不声称完成未执行的 live test。
+- 不把示例命令或单条成功信息当作已经完成的目标端验收。
 
 ### 验收证据
 
@@ -940,9 +1201,9 @@ tar -tf archive
 
 </section>
 
-<div class="page-break-before"></div>
-
 <section class="topic answer" id="RHCSA-06-A01" data-kind="reference-answer">
+
+<div class="page-break"></div>
 
 ## [参考解答] 经典任务一
 
@@ -1010,12 +1271,12 @@ find "$verify_dir" -printf '%y %P -> %l\n' | sort
 ```bash
 (
   cd /srv/app-release
-  find . -type f -print0 | sort -z | xargs -0 sha256sum
+  find . -type f -print0 | sort -z | xargs -0 -r sha256sum
 ) > /tmp/app-source.sha256
 
 (
   cd "$verify_dir/app-release"
-  find . -type f -print0 | sort -z | xargs -0 sha256sum
+  find . -type f -print0 | sort -z | xargs -0 -r sha256sum
 ) > /tmp/app-extracted.sha256
 
 diff -u /tmp/app-source.sha256 /tmp/app-extracted.sha256
@@ -1036,21 +1297,13 @@ stat -c '%a %n' /srv/app-release/bin/start.sh \
 
 ### ⑦ 结果声明边界
 
-可以写：
-
-```text
-已给出静态核对的推荐创建和分层验收流程。
-```
-
-不能写：
-
-```text
-已在 RHEL 9 主机实测通过。
-```
+只有在实际执行并取得成员、路径、字节和元数据证据后，才能声明任务完成。示例流程本身不构成运行证据；在没有目标主机输出时，应把结论限定为“已给出推荐操作与验收方法”。
 
 </section>
 
 <section class="topic task" id="RHCSA-06-T02" data-kind="classic-task">
+
+<div class="page-break"></div>
 
 ## [经典任务] 安全同步目录到远端并证明源目录末尾斜杠语义正确
 
@@ -1094,9 +1347,9 @@ student@serverb:/home/student/stage/site/
 
 </section>
 
-<div class="page-break-before"></div>
-
 <section class="topic answer" id="RHCSA-06-A02" data-kind="reference-answer">
+
+<div class="page-break"></div>
 
 ## [参考解答] 经典任务二
 
@@ -1199,7 +1452,7 @@ rsync -ani --delete /srv/site/ student@serverb:/home/student/stage/site/
 
 ## [本章收束] 从命令记忆转向数据集合的证据闭环
 
-本章的共同对象不是某个命令，而是从源集合到目标集合的可验证变换：
+本章的共同对象不是某个命令，而是从源集合到目标集合的一次可验证变换。无论使用 `cp`、`tar`、`scp` 还是 `rsync`，都应先明确源边界和目标层级，再决定是否保留元数据、是否允许覆盖或删除，最后用互不替代的证据关闭任务。
 
 ```text
 确认源集合和目标边界
@@ -1210,20 +1463,29 @@ rsync -ani --delete /srv/site/ student@serverb:/home/student/stage/site/
 → 验证成员、路径、字节和元数据
 ```
 
-遇到任务时，可使用以下选择线索：
+### 工作方法：把模糊的“搬过去”改写成四个可判定问题
 
-| 目标 | 首选入口 |
-|---|---|
-| 本地创建副本 | `cp` |
-| 本地改名或移动 | `mv` |
-| 部署文件并指定目标模式 | `install` |
-| 把多个成员封装为单个文件 | `tar` |
-| 压缩单个文件或归档流 | `gzip` / `bzip2` / `xz` |
-| 一次性远端复制 | `scp` |
-| 交互式远端浏览和传输 | `sftp` |
-| 目录差异同步 | `rsync` |
-| 证明普通文件字节 | `sha256sum` |
+1. **搬什么？** 是单个对象、目录本身、目录内容，还是归档成员集合？
+2. **搬到哪里？** 目标路径由本地还是远端解释，目标是否已存在，顶层应长什么样？
+3. **保留什么？** 只要求字节，还是还要求模式、属主、时间戳、链接、ACL 或扩展属性？
+4. **怎样证明？** 用成员表证明集合，用路径树证明层级，用摘要证明字节，用 `stat` 证明元数据。
 
-最后记住三个边界：末尾斜杠是语义，不是排版；摘要只证明字节，不证明全部元数据；命令成功只是一层证据，目标树和远端终态必须单独验收。
+### 主要判断表
+
+| 目标或现象 | 首选入口 | 关键判断 | 最少再验证 |
+|---|---|---|---|
+| 本地创建副本 | `cp` | 目录本身还是目录内容 | 层级、摘要、`stat` |
+| 本地改名或移动 | `mv` | 是否跨文件系统 | 两端存在状态、目标内容 |
+| 部署文件并指定属性 | `install` | 目标目录和模式是否明确 | 摘要、模式、属主 |
+| 把多个成员封装为单文件 | `tar` | 成员前缀和顶层是否正确 | `tar -tf`、试提取 |
+| 压缩一个文件或归档流 | `gzip` / `bzip2` / `xz` | 压缩不是归档 | `file`、可解压性 |
+| 一次性远端复制 | `scp` | 远端路径由谁解释 | 远端 `stat`、层级 |
+| 交互式远端浏览和传输 | `sftp` | 本地/远端工作目录不同 | `lpwd`、`pwd`、目标检查 |
+| 目录差异同步 | `rsync` | 源末尾斜杠和删除范围 | dry-run、第二次比较、摘要 |
+| 证明普通文件字节 | `sha256sum` | 摘要不证明元数据 | `stat`、成员和路径检查 |
+
+### 向下一章交接
+
+本章已经能够把数据集合送到正确位置并证明内容、层级和必要属性。下一章《用户、组与账号生命周期》将回答另一个问题：这些文件由谁拥有、哪些账号应存在、用户和组的生命周期如何改变访问边界。本章只在部署和传输时引用现有用户身份，不提前展开账号创建、密码策略和组成员关系。
 
 </section>

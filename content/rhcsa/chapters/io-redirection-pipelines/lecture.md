@@ -5,7 +5,7 @@ exam: RHCSA
 part: "第一篇 命令行与本地信息处理"
 slug: io-redirection-pipelines
 validation: static
-status: integrated
+status: content_frozen_for_integration
 sources:
   - RH124-RHEL9-Ch05
   - bash-manual-redirections-pipelines
@@ -13,35 +13,302 @@ sources:
   - RHCSA-archive-05-IO
 ---
 
-<!-- 本文件是候选内容真源。章节 ID、来源和静态验证信息属于维护层，正式渲染不显示。 -->
+<!-- 维护元数据、来源与状态仅供内容工程使用，正式阅读版不显示。 -->
 
-# 02　标准输入输出、重定向与管道
+::: {.cover}
+<div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+<div class="cover-number">02</div>
 
-在终端中运行一条命令时，我们很容易把“输入来自键盘、输出显示在屏幕上”当成命令本身的固定属性。实际上，命令看到的只是若干已经打开的文件描述符：它从文件描述符 `0` 读取数据，向文件描述符 `1` 写正常输出，向文件描述符 `2` 写诊断信息。交互式 Shell 通常让这三个描述符连接终端，但重定向和管道可以在命令启动前改变这些连接。
+# 标准输入输出、重定向与管道
 
-因此，本章不把 `>`、`2>`、`|` 和 `tee` 当作需要孤立背诵的符号，而是围绕一个统一问题展开：
+<div class="cover-subtitle">从 FD 路由到管道状态：把数据去向、证据边界与失败判断放进同一条推理链。</div>
+
+<div class="cover-tags"><span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span></div>
+
+<div class="cover-edition">大字号阅读版</div>
+:::
+
+<div class="page-break"></div>
+
+::: {.reading-nav}
+## 本章阅读导航
+
+**先抓住一条主线：** Shell 不是在命令结束后搬运屏幕文字，而是在命令启动前建立文件描述符连接。学习时始终把“数据路径”和“退出状态”分成两条证据链。
+
+<div class="model-grid">
+<div class="model-step"><b>01</b><strong>识别数据源</strong><span>谁写 stdout、谁写 stderr、谁读取 stdin</span></div>
+<div class="model-step"><b>02</b><strong>标出 FD</strong><span>为每个命令写出 0、1、2</span></div>
+<div class="model-step"><b>03</b><strong>建立管道</strong><span>先连接左 stdout 与右 stdin</span></div>
+<div class="model-step"><b>04</b><strong>应用重定向</strong><span>再从左到右改写各阶段端点</span></div>
+<div class="model-step"><b>05</b><strong>保留证据</strong><span>文件、终端与 tee 各证明一层</span></div>
+<div class="model-step"><b>06</b><strong>判断状态</strong><span>$?、PIPESTATUS 与 pipefail</span></div>
+</div>
+
+<div class="nav-columns">
+<div>
+
+### 专题地图
+
+- **知识专题**　从终端表象回到文件描述符模型
+- **操作专题**　构造可判定的 stdout、stderr 和退出状态
+- **操作专题**　覆盖、追加与分别保存两个输出流
+- **知识专题**　`2>&1` 的复制语义与顺序差异
+- **知识专题**　管道连接对象与 stderr 旁路
+- **操作专题**　用 `tee` 在流经位置保留证据
+- **操作专题**　用 `PIPESTATUS` 和 `pipefail` 判断失败
+- **操作专题**　here-document 的必要范围
+- **诊断专题**　从表象回溯 FD 路由和阶段状态
+- **经典任务**　分流证据；定位中间阶段失败
+
+</div>
+<div>
+
+### 阅读时持续回答
+
+1. 当前命令的 FD 0、1、2 分别指向哪里？
+2. 哪一步打开、截断、追加或复制了端点？
+3. 普通管道传递的是哪个流？
+4. stderr 是否仍沿原端点旁路？
+5. `tee` 文件证明数据到达了哪个位置？
+6. 哪个命令的退出状态被 `$?` 保存？
+7. `PIPESTATUS` 是否已被后续命令覆盖？
+8. 当前证据不能证明什么？
+
+::: {.nav-note}
+**前后章边界：** 第 01 章负责引用和展开；本章只轻量引用 here-document delimiter 的引用效果。`grep`、`sed`、`awk` 的处理语义留给第 05 章，Journal 与 rsyslog 留给第 13 章。
+:::
+
+</div>
+</div>
+:::
+
+<div class="page-break"></div>
+
+## 第 02 章 · 正文
+
+在终端里看到“文字出现在哪里”，很容易让人误以为 stdin 固定来自键盘、stdout 和 stderr 固定显示在屏幕上。实际上，命令只面对一组已经打开的文件描述符。Shell 先解析命令行；对于管道，它先建立相邻阶段的默认连接，再按每个命令从左到右应用显式重定向，最后启动各阶段。因此真正需要追踪的是“FD 编号当前指向哪个端点”，而不是屏幕上最后出现了什么。
+
+本章围绕一条统一主线推进：
 
 ```text
 数据由谁产生
-→ 通过哪个文件描述符离开或进入命令
-→ 当前文件描述符指向终端、文件还是管道
+→ 通过哪个 FD 离开或进入命令
+→ 管道先建立了哪些默认连接
+→ 显式重定向如何从左到右改写端点
 → 哪些数据被保存，哪些仍然可见
 → 每个阶段以什么状态结束
 → 现有证据能证明什么，又不能证明什么
 ```
 
-当这个模型建立后，许多常见现象会变得可解释：命令失败但文件仍被清空；错误仍显示在终端；管道最后显示了正确数据但中间阶段已经失败；`tee` 保存了内容却不能证明整条管道成功。
+最常见的误判都可以从这条主线解释：命令主体没有成功，但 `>` 已经把旧文件清空；`2>&1` 顺序写反后，错误仍出现在终端；管道末端成功退出，却掩盖中间阶段失败；`tee` 文件有数据，却不能证明上游和下游都成功。第 01 章已经建立 Shell 解析和引用前提，本章只在 here-document 处轻量引用；文本筛选和日志系统分别留给后续章节。
 
-**[概念]** 标准输入（stdin）、标准输出（stdout）和标准错误（stderr）是进程约定使用的三个数据通道，默认文件描述符分别是 `0`、`1`、`2`。编号表示访问入口，不等于某个固定设备。
+### 核心概念
 
-**[概念]** 数据流和退出状态是两个独立维度。stderr 有内容不必然表示退出状态非零；没有错误文字也不必然表示命令成功；文件中保存了数据也不代表管道的每一个阶段都成功。
+::: {.concept-block}
+<div class="concept-label">概念</div>
+**文件描述符（file descriptor）** 是进程访问已打开输入输出对象的编号。`0`、`1`、`2` 是常用入口，不是键盘、屏幕或某个文件本身；终端、普通文件、管道和 `/dev/null` 才是它们可能指向的端点。判断一条命令时，应写出“FD 编号 → 当前端点”，而不是把编号直接翻译成设备。
+:::
 
-**[操作语义]** 重定向改变一个命令的文件描述符端点；管道把相邻命令的 stdout 和 stdin 连接起来；`tee` 在数据经过的位置复制一份内容；`PIPESTATUS` 和 `pipefail` 用于观察或汇总各管道阶段的结果。
+::: {.concept-block}
+<div class="concept-label">概念</div>
+**标准输入、标准输出与标准错误** 是程序约定使用的三个数据通道，默认对应 FD 0、1、2。stdout 通常承载可继续处理的数据，stderr 通常承载诊断信息，但这只是程序接口约定；文字是否“像错误”、终端是否着色，都不能替代对通道和退出状态的独立观察。
+:::
+
+::: {.concept-block}
+<div class="concept-label">概念</div>
+**重定向目标** 是 Shell 在命令启动前为某个 FD 建立的新端点。`>`、`>>` 和 `2>` 会打开文件，`2>&1` 会复制另一个描述符在该时刻的端点。重定向按从左到右应用，所以顺序不是排版差异，而是状态变化顺序；目标无法打开时，命令主体可能根本没有开始。
+:::
+
+::: {.concept-block}
+<div class="concept-label">概念</div>
+**管道（pipeline）** 是由 Shell 建立的一组相邻进程连接。普通 `A | B` 把 A 的 stdout 连接到 B 的 stdin，stderr 默认仍沿各自原端点输出。管道传递的是数据流，不是把左侧结果变成右侧命令参数；每个阶段仍是独立执行对象，并拥有独立退出状态。
+:::
+
+::: {.concept-block}
+<div class="concept-label">概念</div>
+**`PIPESTATUS`** 是 Bash 保存最近一个前台管道各阶段退出状态的数组，元素顺序与管道从左到右一致。它回答“哪一段失败”，但会被后续简单命令更新，因此必须立即复制；数据文件存在、终端出现结果或单一 `$?` 都不能替代逐阶段状态。
+:::
+
+::: {.concept-block}
+<div class="concept-label">概念</div>
+**`pipefail`** 是当前 Bash 的管道汇总策略。默认情况下，管道状态来自最后一个阶段；启用 `pipefail` 后，汇总状态取最右侧非零阶段，全部为零时才为零。它让中间失败更容易暴露，却不会列出所有失败阶段，也不会自动保存数据或替代 `PIPESTATUS`。
+:::
+
+### 操作语义速查
+
+::: {.quickref}
+
+::: {.quickref-entry}
+#### `printf` / `cat`
+
+<div class="synopsis-label">SYNOPSIS</div>
+
+```bash
+printf FORMAT [ARGUMENT ...]
+cat [FILE ...]
+```
+
+用 `printf` 产生可预测的 stdout，用 `cat` 把文件或 stdin 原样送到 stdout，建立不受业务状态干扰的最小观察环境。
+
+**重要参数 / 形式**
+
+`printf '%s\n' 'DATA:alpha'`
+: 明确产生一行 stdout，优先于依赖实现差异的 `echo`。
+
+`printf '%s\n' 'WARN:beta' >&2`
+: 让本次 `printf` 的 FD 1 复制 FD 2 当前端点，构造确定的 stderr。
+
+`cat file` / `cat < file`
+: 前者由 `cat` 打开参数文件；后者由 Shell 先把 FD 0 指向文件。
+:::
+
+::: {.quickref-entry}
+#### `<` / `>` / `>>`
+
+<div class="synopsis-label">SYNOPSIS</div>
+
+```bash
+command < input
+command > output
+command >> output
+```
+
+分别为 stdin 选择文件、覆盖 stdout 目标、追加 stdout 目标。文件打开和截断发生在命令主体运行前。
+
+**重要参数 / 形式**
+
+`< input`
+: 让 FD 0 从文件读取。
+
+`> output` / `1> output`
+: 以覆盖方式打开 stdout 目标；既有内容可能先被截断。
+
+`>> output` / `1>> output`
+: 在文件末尾追加，不清空旧内容。
+:::
+
+::: {.quickref-entry}
+#### `2>` / `2>&1`
+
+<div class="synopsis-label">SYNOPSIS</div>
+
+```bash
+command 2> error.log
+command > all.log 2>&1
+```
+
+`2>` 打开文件并把 FD 2 指向它；`2>&1` 不打开文件，而是复制 FD 1 在该时刻的端点。
+
+**重要参数 / 形式**
+
+`2> error.log` / `2>> error.log`
+: 覆盖或追加 stderr。
+
+`> all.log 2>&1`
+: 先改变 FD 1，再让 FD 2 复制它，两个流进入同一文件。
+
+`2>&1 > out.log`
+: FD 2 先复制原 stdout，随后仅 FD 1 改向文件；两者不等价。
+:::
+
+::: {.quickref-entry}
+#### 管道 `|`
+
+<div class="synopsis-label">SYNOPSIS</div>
+
+```bash
+producer | consumer
+producer 2>&1 | consumer
+```
+
+普通管道把左侧 stdout 连接到右侧 stdin。stderr 默认旁路；需要合流时显式复制 FD 2。
+
+**重要参数 / 形式**
+
+`A | B`
+: A 的 FD 1 → 管道 → B 的 FD 0。
+
+`A 2>&1 | B`
+: A 的 stdout 与 stderr 一起进入 B。
+
+`A |& B`
+: Bash 简写；正文优先显式形式以保留 FD 推理。
+:::
+
+::: {.quickref-entry}
+#### `tee`
+
+<div class="synopsis-label">SYNOPSIS</div>
+
+```bash
+tee [OPTION]... [FILE]...
+```
+
+从 stdin 读取数据，同时写入指定文件和自身 stdout，使数据可以留存后继续进入下游。
+
+**重要参数 / 形式**
+
+`tee evidence.log`
+: 覆盖写入证据文件并继续输出。
+
+`-a`
+: 追加到文件，不覆盖既有内容。
+
+`A | tee before.log | B`
+: 文件只证明数据到达 B 之前的 `tee` 位置。
+:::
+
+::: {.quickref-entry}
+#### `set -o pipefail`
+
+<div class="synopsis-label">SYNOPSIS</div>
+
+```bash
+set -o pipefail
+set +o pipefail
+```
+
+改变当前 Bash 对整条管道的单一汇总状态计算方式。
+
+**重要参数 / 形式**
+
+`set -o pipefail`
+: 启用；汇总状态取最右侧非零阶段。
+
+`set +o pipefail`
+: 关闭并恢复默认“只看最后阶段”的规则。
+
+**作用范围**
+: 属于当前 Shell 会话状态；临时调查结束后应按原状态恢复。
+:::
+
+::: {.quickref-entry}
+#### `$?` / `PIPESTATUS`
+
+<div class="synopsis-label">SYNOPSIS</div>
+
+```bash
+pipeline_rc=$?
+stage_rc=("${PIPESTATUS[@]}")
+```
+
+`$?` 保存最近命令或管道的单一汇总状态，`PIPESTATUS` 保存最近前台管道的逐阶段状态。
+
+**重要参数 / 形式**
+
+`pipeline_rc=$? stage_rc=("${PIPESTATUS[@]}")`
+: 在同一个赋值命令中立即复制上一条管道的两类状态。
+
+`${stage_rc[*]}`
+: 后续展示已保存数组；不要直接展示原 `PIPESTATUS` 后再声称它仍代表目标管道。
+:::
+
+:::
 
 <!-- topic: RHCSA-02-K01 -->
 ## [知识专题] 从终端表象回到文件描述符模型
 
-开始学习重定向时，最容易出现的误区是把 stdout 等同于屏幕、把 stdin 等同于键盘。更准确的理解是：Shell 启动命令前建立描述符映射，命令只通过编号读写。终端、普通文件、管道和 `/dev/null` 都只是描述符可能连接的端点。
+前面的概念块已经给出对象轮廓，本专题继续把它展开成可操作的路由模型。最常见的误区是把 stdout 等同于屏幕、把 stdin 等同于键盘；更准确的判断是：Shell 在命令启动前建立描述符映射，命令只通过编号读写，终端、普通文件、管道和 `/dev/null` 只是可能的端点。
 
 ### ① [知识点] `0`、`1`、`2` 是默认文件描述符
 
@@ -119,7 +386,7 @@ stderr 中有什么
 <!-- topic: RHCSA-02-O01 -->
 ## [操作专题] 用 `printf`、`cat` 和 `bash` 构造可判定的输入输出
 
-真实命令常同时受权限、语言环境、目录内容和服务状态影响。学习重定向时应先使用可控生产者与消费者，让每一条数据属于哪个通道都能被明确判断。本章主要使用 `printf`、`cat` 和 `bash -c` 建立这种最小实验。
+真实命令常同时受权限、语言环境、目录内容和服务状态影响。为了把 FD 关系单独看清，本专题先用可控的生产者与消费者，让每条数据的通道和退出状态都可判定；这里不追求复杂业务，只建立后续所有验证的最小实验。
 
 ### ① [操作] 使用 `printf` 产生确定的 stdout
 
@@ -172,7 +439,7 @@ bash -c '
 - 合并顺序是否正确；
 - 保存的退出状态是否仍为 `7`。
 
-**验证边界：** 本会话没有 RHEL 9 live VM。讲义给出的结果关系依据 Bash 语义静态核对；实际终端演示应在后续实验环境执行。
+**验证边界：** 这些命令用于建立可判定的关系；在实际系统中仍应运行命令并保存真实输出、文件内容和退出状态。
 
 **[Cheatsheet]** 用 `printf` 生产明确数据，用 `>&2` 选择 stderr，用 `cat` 验证文件或 stdin，用 `bash -c '...; exit N'` 构造可控状态。
 
@@ -779,6 +1046,8 @@ stdout/stderr 的保存路径
 
 **[Cheatsheet]** 变更前确定证据目的；输出和错误尽量分流；复杂管道保存逐阶段状态；交付时说明证据边界。
 
+<div class="page-break"></div>
+
 <!-- topic: RHCSA-02-T01 -->
 ## [经典任务] 分别保存输出和错误，并证明重定向顺序
 
@@ -847,6 +1116,8 @@ bash -c '
 - 只看终端，未检查文件；
 - 根据“文件有数据”判断命令成功。
 
+<div class="page-break"></div>
+
 <!-- topic: RHCSA-02-T02 -->
 ## [经典任务] 构造可定位任一阶段失败的调查管道
 
@@ -860,26 +1131,16 @@ printf '%s\n' 'payload' |
   tee evidence.log
 ```
 
-三个阶段的设计意图：
-
-```text
-阶段 1：产生 payload
-阶段 2：把输入继续写出，但故意以 9 结束
-阶段 3：把数据写入 evidence.log，并继续输出
-```
+三个阶段分别承担不同职责：阶段 1 产生 `payload`；阶段 2 转发输入但故意以状态 `9` 结束；阶段 3 用 `tee` 写入 `evidence.log` 并继续输出。
 
 ### 目标终态
 
 1. 在默认 Shell 行为下执行管道。
-2. 不运行任何其他简单命令，立即在一次赋值中保存：
-   - `pipeline_rc=$?`；
-   - `stage_rc=("${PIPESTATUS[@]}")`。
-3. 显示汇总状态和各阶段状态，解释默认汇总为什么可能没有暴露阶段 2 的失败。
-4. 记录当前 `pipefail` 状态，在受控范围开启 `pipefail` 后重新执行。
-5. 再次立即保存汇总和逐阶段状态。
-6. 恢复原来的 `pipefail` 状态。
-7. 使用 `cat evidence.log` 验证数据到达 `tee`。
-8. 明确写出：文件有 `payload` 能证明什么，不能证明什么。
+2. 不运行其他简单命令，立即在一次赋值中保存 `pipeline_rc=$?` 与 `stage_rc=("${PIPESTATUS[@]}")`。
+3. 显示汇总状态和各阶段状态，解释默认汇总为何可能没有暴露阶段 2 的失败。
+4. 记录当前 `pipefail` 状态；开启后重新执行、立即保存两类状态，再恢复原状态。
+5. 使用 `cat evidence.log` 验证数据到达 `tee`。
+6. 明确写出：文件有 `payload` 能证明什么，不能证明什么。
 
 ### 验收矩阵
 
@@ -905,7 +1166,7 @@ printf '%s\n' 'payload' |
 <!-- topic: RHCSA-02-A01 -->
 ## [参考解答] 经典任务一：分流、追加和顺序验证
 
-以下命令是推荐验证序列。它依据 Bash 语义编写，本会话未在 RHEL 9 VM 上执行。
+以下命令是一组可重复的推荐验证序列。执行时应保留文件内容与退出状态作为实际证据。
 
 ### ① 建立目录并进入任务位置
 
@@ -945,7 +1206,7 @@ cat stderr.log
 printf 'command_rc=%s\n' "$command_rc"
 ```
 
-静态预期：stdout 文件只含两条 `DATA`，stderr 文件只含两条 `WARN`，保存状态对应 `exit 7`。这里的“预期”不是本会话伪造的实测终端记录。
+**预期关系：** stdout 文件只含两条 `DATA`，stderr 文件只含两条 `WARN`，保存状态对应 `exit 7`。验收时以实际运行保存的文件内容和退出状态为准。
 
 ### ④ 第二次执行，stdout 追加、stderr 覆盖
 
@@ -1127,39 +1388,39 @@ set +o pipefail
 
 仍需注意：关闭 `pipefail` 的命令必须在状态已经保存之后执行。
 
+<div class="page-break"></div>
+
 <!-- topic: RHCSA-02-S01 -->
 ## [本章收束] 用同一模型解释重定向、管道和证据
 
-本章的核心不是记住更多符号，而是建立一套稳定推理顺序：
+完成本章后，面对任何输入输出命令，不应先猜“该加哪个符号”，而应按固定顺序还原路由和证据：
 
-```text
-1. 标出命令的 FD 0、1、2
-2. 从左到右应用重定向
-3. 确认管道连接的具体流
-4. 判断数据在哪个位置仍可观察或保存
-5. 在任何新命令前保存退出状态
-6. 复杂管道同时检查汇总状态与 PIPESTATUS
-7. 把证据能证明的范围写清楚
-```
+1. 标出命令的 FD 0、1、2；
+2. 从左到右应用重定向，记录每一步端点变化；
+3. 对管道逐段确认“左 stdout → 右 stdin”，并单独追踪 stderr；
+4. 判断数据在哪个位置仍可观察、保存或被丢弃；
+5. 在任何新命令之前保存退出状态；
+6. 对复杂管道同时保留汇总状态和 `PIPESTATUS`；
+7. 写清楚每份证据能证明什么、不能证明什么。
 
-最终速查：
+::: {.method-box}
+**工作方法：先画路由，再读结果。** 只要能把每个阶段写成“FD 编号 → 当前端点”，`>`、`2>&1`、管道和 `tee` 就不再是孤立符号；只要把数据证据和退出状态分开，管道“看起来成功”的误判也会明显减少。
+:::
 
-| 目标 | 典型形式 |
-|---|---|
-| 从文件提供 stdin | `command < input` |
-| 覆盖 stdout | `command > output` |
-| 追加 stdout | `command >> output` |
-| 覆盖 stderr | `command 2> error` |
-| 追加 stderr | `command 2>> error` |
-| 合并覆盖 | `command > all 2>&1` |
-| stdout 进管道 | `A | B` |
-| stdout 与 stderr 进管道 | `A 2>&1 | B` |
-| 保存并继续传递 | `A | tee file | B` |
-| 追加并继续传递 | `A | tee -a file | B` |
-| 最近汇总状态 | `$?` |
-| 最近管道各阶段状态 | `${PIPESTATUS[@]}` |
-| 开启可靠汇总 | `set -o pipefail` |
-| 多行 stdin，可展开 | `<<EOF` |
-| 多行 stdin，保留字面量 | `<<'EOF'` |
+### 主要判断表
 
-下一章《本地帮助、命令发现与软件能力查询》将系统化说明如何定位 `bash`、`tee`、`cat` 等命令的手册与能力；第 05 章将把管道中的黑盒消费者扩展为 `grep`、`sed`、`awk` 等文本处理工具。
+| 需求或现象 | 首选形式或下一条证据 | 证明边界 |
+|---|---|---|
+| 从文件提供 stdin | `command < input` | 只证明 FD 0 来源 |
+| 覆盖或追加 stdout | `>` / `>>` | 覆盖可能先截断；追加不自动去重 |
+| 单独保存或合并 stderr | `2> error` / `> all 2>&1` | 仍需单独保存退出状态 |
+| 只把 stdout 送入下游 | `A | B` | stderr 默认旁路 |
+| 把两个流送入下游 | `A 2>&1 | B` | 合流后下游无法区分原始通道 |
+| 保存并继续传递 | `A | tee [-a] file | B` | 文件只证明数据到达 `tee` 位置 |
+| 保存汇总与逐阶段状态 | `rc=$?` + `PIPESTATUS` | 必须在任何后续简单命令前复制 |
+| 暴露中间失败 | `set -o pipefail` | 仍不能指出全部失败阶段 |
+| 多行 stdin | `<<EOF` / `<<'EOF'` | delimiter 引用决定正文是否展开 |
+
+### 向下一章交接
+
+本章已经回答数据从哪里进入命令、stdout/stderr 去哪里、重定向何时生效、管道如何连接进程，以及怎样判断中间阶段失败。下一章《本地帮助、命令发现与软件能力查询》将说明怎样定位 `printf`、`cat`、`tee` 和 `bash` 的真实入口、synopsis、手册与软件包来源。第 05 章再展开 `grep`、`sed`、`awk` 等管道消费者，第 13 章才完整处理 Journal、rsyslog 和日志轮转。

@@ -1,12 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-17
 chapter_slug: dnf-repositories-modules-groups
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-note_types:
-- RedHat-QA
-- RedHat-Cloze
+status: content_frozen_for_integration
 validation: static
-status: integrated
 notes:
 - id: RHCSA-PACKAGES-O01-QA-001
   type: qa
@@ -21,7 +18,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-definition
   - card::path
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-PACKAGES-O01-QA-002
   type: qa
   question: repo 的 `baseurl`、`enabled`、`gpgcheck`、`gpgkey` 分别表达什么？
@@ -36,6 +35,8 @@ notes:
   - topic::repo-definition
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-O01-QA-003
   type: qa
   question: '`dnf repolist --all` 能证明什么，不能证明什么？'
@@ -50,6 +51,8 @@ notes:
   - topic::repo-verification
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-O01-QA-004
   type: qa
   question: 强制重新检查并刷新启用仓库元数据的命令是什么？
@@ -64,6 +67,8 @@ notes:
   - topic::repo-verification
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-O01-QA-005
   type: qa
   question: 限定从 `exam-baseos` 查询 `bash` 候选的命令骨架是什么？
@@ -78,6 +83,8 @@ notes:
   - topic::repo-verification
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-O01-QA-006
   type: qa
   question: GPG 校验失败时，为什么不能直接设置 `gpgcheck=0`？
@@ -91,7 +98,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::gpg-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-PACKAGES-O02-QA-001
   type: qa
   question: 从命令名 `semanage` 反查仓库中哪个包提供它，使用什么命令？
@@ -106,6 +115,8 @@ notes:
   - topic::package-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-O02-QA-003
   type: qa
   question: 为什么执行 `dnf remove` 前必须阅读 Transaction Summary？
@@ -119,7 +130,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::transactions
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-PACKAGES-O02-QA-004
   type: qa
   question: 查看 DNF 事务列表和指定事务详情分别使用什么？
@@ -133,7 +146,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::history
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-O02-QA-005
   type: qa
   question: 为什么 DNF 事务成功不能证明 Web 服务题已经完成？
@@ -148,6 +163,8 @@ notes:
   - topic::transaction-boundary
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-K02-QA-001
   type: qa
   question: 查看模块流与模块详情分别使用什么命令？
@@ -162,6 +179,8 @@ notes:
   - topic::modules
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-K02-QA-002
   type: qa
   question: '`dnf module reset <module>` 会自动删除该模块已安装包吗？'
@@ -174,7 +193,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-PACKAGES-K02-QA-003
   type: qa
   question: 查询和安装软件包组的命令骨架是什么？
@@ -189,6 +210,8 @@ notes:
   - topic::groups
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PACKAGES-D01-QA-001
   type: qa
   question: 下载 `repodata/repomd.xml` 返回 404，优先检查什么？
@@ -202,7 +225,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::metadata-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-PACKAGES-D01-QA-002
   type: qa
   question: DNF 报依赖冲突或包被过滤，下一步应收集哪些证据？
@@ -217,7 +242,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::dependency-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-PACKAGES-D01-QA-003
   type: qa
   question: 为什么 `--allowerasing` 不是依赖冲突的第一尝试？
@@ -230,7 +257,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::dependency-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-PACKAGES-O01-CLOZE-001
   type: cloze
   text: repo 配置可见性用 {{c1::dnf repolist --all}}；真实刷新元数据用 {{c2::dnf makecache --refresh}}。
@@ -243,7 +272,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-verification
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-001
   type: qa
   question: 仓库定义、仓库内容和 DNF 缓存分别是什么？
@@ -257,7 +288,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-002
   type: qa
   question: 一个目录中只有 RPM 文件，为什么还不能称为可用 DNF 仓库？
@@ -271,7 +304,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-003
   type: qa
   question: '`repodata/repomd.xml` 在仓库中承担什么角色？'
@@ -286,6 +321,8 @@ notes:
   - topic::repo-model
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-004
   type: qa
   question: '`repoquery` 有结果、依赖可解、事务已提交三者有什么区别？'
@@ -299,7 +336,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-005
   type: qa
   question: 仓库中存在某 RPM，但普通 DNF 查询无结果，至少有哪些候选过滤层？
@@ -314,6 +353,8 @@ notes:
   - topic::repo-model
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-006
   type: qa
   question: 为什么“DNF 返回成功”不能直接写成“软件功能已完成”？
@@ -326,7 +367,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-CLOZE-007
   type: cloze
   text: DNF 证据链通常是：{{c1::仓库定义}} → {{c2::元数据}} → {{c3::候选与依赖求解}} → {{c4::事务}}。
@@ -340,6 +383,8 @@ notes:
   - topic::repo-model
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-008
   type: qa
   question: repo section ID、`name` 和 `.repo` 文件名分别用于什么？
@@ -352,7 +397,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-definition
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-009
   type: qa
   question: '`baseurl` 的正确目标是什么？'
@@ -367,6 +414,8 @@ notes:
   - topic::repo-definition
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-010
   type: qa
   question: '`baseurl`、`mirrorlist`、`metalink` 的核心区别是什么？'
@@ -380,6 +429,8 @@ notes:
   - topic::repo-definition
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-011
   type: qa
   question: '`enabled=0` 后，如何只在当前命令临时启用 `testrepo`？'
@@ -394,6 +445,8 @@ notes:
   - topic::repo-definition
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-012
   type: qa
   question: '`--enablerepo` 与 repo 文件中的 `enabled=1` 有什么状态边界？'
@@ -407,7 +460,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-definition
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-013
   type: qa
   question: 用 Shell here-document 写含 `$releasever` 的 repo 文件时，怎样防止 Shell 提前展开？
@@ -422,6 +477,8 @@ notes:
   - topic::repo-definition
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-014
   type: qa
   question: '`$releasever` 与 `$basearch` 在 repo URL 中分别表达什么？'
@@ -434,7 +491,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-definition
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-015
   type: qa
   question: '`gpgcheck=1` 与 `gpgkey=` 分别保证什么？'
@@ -448,7 +507,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-definition
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-016
   type: qa
   question: TLS 校验成功与 GPG 包签名成功是否等价？
@@ -461,7 +522,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-definition
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-017
   type: qa
   question: HTTPS 证书错误时，为什么不应默认设置 `sslverify=0`？
@@ -474,7 +537,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-definition
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-CLOZE-018
   type: cloze
   text: repo 中 {{c1::enabled}} 控制默认参与，{{c2::gpgcheck}} 控制包签名校验，{{c3::gpgkey}} 指向公钥入口。
@@ -486,7 +551,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-definition
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-019
   type: qa
   question: 配置一个新仓库后，推荐的最小验证顺序是什么？
@@ -500,7 +567,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-verification
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-020
   type: qa
   question: '`repolist --all` 显示仓库 enabled，但 `makecache --refresh` 失败，说明什么？'
@@ -514,6 +583,8 @@ notes:
   - topic::repo-verification
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-021
   type: qa
   question: '`dnf makecache --refresh` 中 `--refresh` 的目的是什么？'
@@ -526,7 +597,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-verification
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-022
   type: qa
   question: 什么时候 `dnf clean metadata` 有价值，什么时候无效？
@@ -539,7 +612,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-verification
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-023
   type: qa
   question: '`dnf clean metadata` 与 `dnf clean all` 有何范围差异？'
@@ -553,6 +628,8 @@ notes:
   - topic::repo-verification
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-024
   type: qa
   question: 为什么要在 BaseOS 和 AppStream 仓库各查询一个代表包？
@@ -566,6 +643,8 @@ notes:
   - topic::repo-verification
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-025
   type: qa
   question: 指定仓库查询一个代表包成功，不能证明哪些内容？
@@ -579,7 +658,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-verification
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-026
   type: qa
   question: 为什么不应为了“干净环境”先删除 `/etc/yum.repos.d/` 中所有文件？
@@ -592,7 +673,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::repo-verification
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-CLOZE-027
   type: cloze
   text: 仓库的四层验证是：{{c1::配置}}、{{c2::元数据}}、{{c3::内容候选}}、{{c4::事务}}。
@@ -605,6 +688,8 @@ notes:
   - topic::repo-verification
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-028
   type: qa
   question: 只知道软件用途描述时，优先使用什么 DNF 查询？
@@ -619,6 +704,8 @@ notes:
   - topic::package-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-029
   type: qa
   question: 只知道准确文件路径 `/usr/bin/rsync` 时，怎样查询提供包？
@@ -633,6 +720,8 @@ notes:
   - topic::package-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-030
   type: qa
   question: 为什么 `dnf provides '*/tool'` 的模式应加引号？
@@ -647,6 +736,8 @@ notes:
   - topic::package-query
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-031
   type: qa
   question: '`dnf list --installed` 与 `dnf list --available` 分别查询什么？'
@@ -659,7 +750,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::package-query
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-032
   type: qa
   question: 怎样查看仓库候选包的文件列表而无需先安装？
@@ -672,7 +765,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::package-query
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-033
   type: qa
   question: 怎样查看候选包声明的依赖？
@@ -685,7 +780,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::package-query
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-034
   type: qa
   question: 怎样查找哪些候选声明依赖某能力？
@@ -698,7 +795,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::package-query
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-035
   type: qa
   question: 查询多个同名候选时，最少应比较哪些维度？
@@ -713,6 +812,8 @@ notes:
   - topic::package-query
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-036
   type: qa
   question: '`dnf provides` 返回多个包时，为什么不能机械安装第一项？'
@@ -725,7 +826,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::package-query
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-CLOZE-037
   type: cloze
   text: 描述查包用 {{c1::dnf search}}；路径/命令反查用 {{c2::dnf provides}}；来源与依赖深入查询用 {{c3::dnf repoquery}}。
@@ -738,7 +841,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::package-query
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-038
   type: qa
   question: '`dnf install` 与 `dnf reinstall` 的核心区别是什么？'
@@ -751,7 +856,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::transactions
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-039
   type: qa
   question: 为什么未知应用故障不应先执行 `dnf reinstall`？
@@ -764,7 +871,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::transactions
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-040
   type: qa
   question: 检查可用更新但不直接升级，使用什么？
@@ -778,6 +887,8 @@ notes:
   - topic::transactions
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-041
   type: qa
   question: 考试只要求更新 `httpd` 时，为什么不应无参数执行 `dnf upgrade`？
@@ -790,7 +901,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::transactions
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-042
   type: qa
   question: 怎样让 DNF 生成安装事务摘要但默认不提交？
@@ -804,6 +917,8 @@ notes:
   - topic::transactions
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-043
   type: qa
   question: 安装事务摘要出现将删除多个已有包时，下一步是什么？
@@ -817,6 +932,8 @@ notes:
   - topic::transactions
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-044
   type: qa
   question: '`dnf history info <ID>` 主要能回答什么？'
@@ -830,6 +947,8 @@ notes:
   - topic::history
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-045
   type: qa
   question: 为什么 `dnf history undo` 可能失败？
@@ -842,7 +961,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::history
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-046
   type: qa
   question: '`history undo <ID>` 与 `history rollback <ID>` 的目标差异是什么？'
@@ -856,6 +977,8 @@ notes:
   - topic::history
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-CLOZE-047
   type: cloze
   text: 变更前预览可用 `dnf ... {{c1::--assumeno}}`；事后审计使用 `dnf {{c2::history info <ID>}}`。
@@ -868,6 +991,8 @@ notes:
   - topic::transactions
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-048
   type: qa
   question: module、stream、profile 和 RPM 分别是什么？
@@ -881,7 +1006,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-049
   type: qa
   question: 启用一个 module stream 会立即安装软件包吗？
@@ -894,7 +1021,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-050
   type: qa
   question: 安装 module profile 会改变什么？
@@ -907,7 +1036,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-051
   type: qa
   question: 只查看当前启用的模块流，使用什么命令？
@@ -921,6 +1052,8 @@ notes:
   - topic::modules
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-052
   type: qa
   question: 只查看有已安装内容的模块，使用什么命令？
@@ -933,7 +1066,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-053
   type: qa
   question: 显式安装模块流中的指定 profile，命令骨架是什么？
@@ -947,6 +1082,8 @@ notes:
   - topic::modules
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-054
   type: qa
   question: '`module reset` 与 `module disable` 的区别是什么？'
@@ -959,7 +1096,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-055
   type: qa
   question: 题目未指定模块流时，为什么不应主动 reset/enable？
@@ -972,7 +1111,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-056
   type: qa
   question: 仓库存在包但被 module filtering 隐藏时，下一条高区分度证据是什么？
@@ -985,7 +1126,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-057
   type: qa
   question: 切换 module stream 前应按什么流程？
@@ -999,6 +1142,8 @@ notes:
   - topic::modules
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-058
   type: qa
   question: 为什么不能背诵“RHEL 9 一定有某个固定 stream”？
@@ -1011,7 +1156,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-CLOZE-059
   type: cloze
   text: 模块操作中，{{c1::enable}} 选择 stream，{{c2::install}} 安装 profile，{{c3::reset}} 不等于卸载包。
@@ -1023,7 +1170,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::modules
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-060
   type: qa
   question: package group 与 environment group 有什么关系？
@@ -1037,7 +1186,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::groups
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-061
   type: qa
   question: 组成员的 mandatory、default、optional 分别表示什么？
@@ -1050,7 +1201,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::groups
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-062
   type: qa
   question: 怎样列出隐藏包组？
@@ -1064,6 +1217,8 @@ notes:
   - topic::groups
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-063
   type: qa
   question: 安装包组前，为什么先运行 `dnf group info`？
@@ -1077,6 +1232,8 @@ notes:
   - topic::groups
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-064
   type: qa
   question: 为什么组显示名称不适合作为跨语言环境的唯一稳定标识？
@@ -1089,7 +1246,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::groups
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-065
   type: qa
   question: 部分成员包已安装，是否等于整个包组已安装？
@@ -1103,6 +1262,8 @@ notes:
   - topic::groups
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-066
   type: qa
   question: 为什么 `dnf group install` 成功仍不能证明组内服务可用？
@@ -1115,7 +1276,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::groups
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-CLOZE-067
   type: cloze
   text: 包组成员常分为 {{c1::mandatory}}、{{c2::default}}、{{c3::optional}} 和 conditional。
@@ -1128,6 +1291,8 @@ notes:
   - topic::groups
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-068
   type: qa
   question: DNF 仓库 `priority` 的数值方向是什么？
@@ -1141,6 +1306,8 @@ notes:
   - topic::priority-filters
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-069
   type: qa
   question: '`cost` 主要用于什么？'
@@ -1154,6 +1321,8 @@ notes:
   - topic::priority-filters
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-070
   type: qa
   question: '`excludepkgs` 与 `includepkgs` 分别怎样影响候选？'
@@ -1166,7 +1335,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::priority-filters
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-071
   type: qa
   question: 怎样临时验证某包是否被指定仓库的 exclude 隐藏？
@@ -1179,7 +1350,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::priority-filters
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-072
   type: qa
   question: 为什么 `--disableexcludes` 不应成为持久安装默认参数？
@@ -1192,7 +1365,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::priority-filters
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-073
   type: qa
   question: 限定只启用 AppStream 后依赖失败，最可能遗漏什么？
@@ -1205,7 +1380,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::priority-filters
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-074
   type: qa
   question: 怎样区分 priority、exclude 与 module filtering？
@@ -1220,6 +1397,8 @@ notes:
   - topic::priority-filters
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-075
   type: qa
   question: 怎样快速判断目录是否已有普通 DNF 仓库元数据入口？
@@ -1233,6 +1412,8 @@ notes:
   - topic::local-repository
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-076
   type: qa
   question: 为 `/srv/repo/custom` 中的 RPM 生成元数据，使用什么？
@@ -1246,6 +1427,8 @@ notes:
   - topic::local-repository
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-077
   type: qa
   question: 目录新增 RPM 后，怎样更新已有元数据？
@@ -1258,7 +1441,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::local-repository
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-078
   type: qa
   question: 本机绝对路径 `/srv/repo/custom` 的 repo `baseurl` 怎样写？
@@ -1272,6 +1457,8 @@ notes:
   - topic::local-repository
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-079
   type: qa
   question: 为什么本地仓库不能因为“文件在本机”就关闭 GPG 校验？
@@ -1284,7 +1471,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::local-repository
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-080
   type: qa
   question: 本地 repo ID 可见但 `makecache` 报无法读取路径，先检查什么？
@@ -1297,7 +1486,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::local-repository
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-081
   type: qa
   question: 普通 `createrepo_c` 对模块仓库有什么限制？
@@ -1311,7 +1502,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::local-repository
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-082
   type: qa
   question: 普通包查询成功，为什么仍不能证明本地仓库含包组或模块元数据？
@@ -1325,6 +1518,8 @@ notes:
   - topic::local-repository
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-CLOZE-083
   type: cloze
   text: 普通 RPM 目录通过 {{c1::createrepo_c}} 生成 {{c2::repodata/repomd.xml}} 后，才具备基础 DNF 仓库入口。
@@ -1337,6 +1532,8 @@ notes:
   - topic::local-repository
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-084
   type: qa
   question: 新仓库完全不出现在 `dnf repolist --all`，优先检查什么？
@@ -1349,7 +1546,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::metadata-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-085
   type: qa
   question: 为什么 `repomd.xml` 404 时 `dnf clean all` 不是修复？
@@ -1362,7 +1561,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::metadata-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-086
   type: qa
   question: DNF 报 could not resolve host 时，本章的下一条证据是什么？
@@ -1376,7 +1577,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::network-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-087
   type: qa
   question: HTTPS 报 certificate not yet valid 时，优先核对什么？
@@ -1390,7 +1593,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::tls-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-088
   type: qa
   question: 报 public key not installed 时，最少核对哪些对象？
@@ -1403,7 +1608,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::gpg-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-089
   type: qa
   question: 导入任意找到的 GPG key 为什么不可靠？
@@ -1416,7 +1623,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::gpg-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-090
   type: qa
   question: 元数据 checksum mismatch 时，合理调查顺序是什么？
@@ -1430,6 +1639,8 @@ notes:
   - topic::metadata-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-091
   type: qa
   question: 仓库元数据成功但包无匹配项，推荐的排查顺序是什么？
@@ -1443,7 +1654,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::package-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-092
   type: qa
   question: '`nothing provides <capability>` 时，下一条高价值查询是什么？'
@@ -1456,7 +1669,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::dependency-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-093
   type: qa
   question: 事务摘要显示 `Removing dependent packages`，应怎样判断？
@@ -1470,6 +1685,8 @@ notes:
   - topic::dependency-diagnosis
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-094
   type: qa
   question: 自建仓库普通包可查询，但 `dnf group list` 没有预期组，最可能缺什么？
@@ -1482,7 +1699,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::local-repository
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-095
   type: qa
   question: 自建仓库普通包可查询，但模块流不存在，最可能缺什么？
@@ -1495,7 +1714,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::local-repository
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-096
   type: qa
   question: 仓库故障的通用证据链是什么？
@@ -1508,7 +1729,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::diagnosis-process
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-CLOZE-097
   type: cloze
   text: 404 主要查 {{c1::baseurl/仓库根}}；TLS 错查 {{c2::时间与 CA}}；GPG 错查 {{c3::key 与签名来源}}。
@@ -1521,7 +1744,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::diagnosis-process
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-17-QA-098
   type: qa
   question: 题目要求配置 BaseOS/AppStream 并安装 `httpd`，完整软件层验收顺序是什么？
@@ -1536,6 +1761,8 @@ notes:
   - topic::classic-task
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-099
   type: qa
   question: 仓库可见但 `repomd.xml` 404，最小修复流程是什么？
@@ -1549,6 +1776,8 @@ notes:
   - topic::classic-task
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-100
   type: qa
   question: 元数据成功但安装报 GPG key 不匹配，最小修复流程是什么？
@@ -1563,6 +1792,8 @@ notes:
   - topic::classic-task
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-17-QA-101
   type: qa
   question: 真实服务器修改仓库前，建议保存哪四类基线？
@@ -1576,6 +1807,8 @@ notes:
   - topic::work-migration
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-17-QA-102
   type: qa
   question: 为什么不应把带密码的仓库 URL 直接写入公开 Git 或 Anki？
@@ -1588,7 +1821,9 @@ notes:
   - chapter::dnf-repositories-modules-groups
   - topic::work-migration
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-17-QA-103
   type: qa
   question: 为后续 Ansible 自动化，手工阶段应保留哪些目标字段？
@@ -1602,3 +1837,5 @@ notes:
   - topic::work-migration
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1

@@ -1,0 +1,76 @@
+package_version: 1
+chapter:
+  id: RHCSA-05
+  exam: RHCSA
+  part: 1
+  number: 5
+  slug: file-search-text-processing
+  title: 文件查找、文本筛选与批量处理
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/file-search-text-processing/lecture.md
+  anki: content/rhcsa/chapters/file-search-text-processing/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T21:30:00+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: e8af070cf6f893f47450c50cf0027ee1163939788481db954216c2ae02b7560c
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 86b3641395c70f27fe620dabcca0da5dd8d13965ce7136a39d998ce74baa17b2
+  anki:
+    path: anki.yml
+    sha256: f697a5aeebfb0e8f2a5cc6d530b4885113779597b7dd53456b4b770e25476e74
+  preview:
+    path: anki-preview.html
+    sha256: 17889fd777294548d04a58f617791bb6ed3795fe5c13e16a8dfecbfab39946de
+  summary:
+    path: anki-summary.md
+    sha256: ba67ad37cd60794896eb4bf1eca1046aa45dfcca1583a2f415400b0455a651bd
+  anki_impact:
+    path: anki-impact.md
+    sha256: e4d0db0b05e4d4891837dd3bdc58a4b90b4d31b1d99ca46e316264cf8a303edd
+  source_map:
+    path: source-map.md
+    sha256: 6720165d1a73a343263f67b97ebac24f450fcb48aea304f03ea3facd4fc5569e
+  structure_report:
+    path: structure-report.md
+    sha256: dc486a814a0d626dfc67f7ad2470ae12360d2a131818c9f9799232bb4ff063ff
+  visual_qa:
+    path: visual-qa.md
+    sha256: 5dd7fb2e04033d2cf8cd0ce3411a070a6b6b90ac796651dce83fad25cf2312ae
+  qa_report:
+    path: qa-report.md
+    sha256: de5955692befeed77f8bd14add223ad647b803067ef413ac8f59dc8dfcd7b0b2
+  revision_notes:
+    path: revision-notes.md
+    sha256: 117a6f61d46fde27b32cd63c6bf2db16500e562ece564222deb1f235a9e50659
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 9c6ec4d2dd8fa85fbcff857b22250e4886cfba317550a2f11c81f245f8dc6ec8
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM; command-level live tests were not performed.
+- Whole-book ID uniqueness, cross-chapter duplicate checks, unified PDF/APKG build, AnkiConnect, Git integration and release
+  remain Codex responsibilities.

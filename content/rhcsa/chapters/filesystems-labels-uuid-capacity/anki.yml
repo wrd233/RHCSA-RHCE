@@ -1,8 +1,8 @@
+schema_version: 1
 chapter_id: RHCSA-23
 chapter_slug: filesystems-labels-uuid-capacity
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-status: integrated
+status: content_frozen_for_integration
 validation: static
 notes:
 - id: RHCSA-23-K01-QA-001
@@ -19,7 +19,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K01-QA-002
   type: qa
   question: 块设备与文件系统分别提供什么？
@@ -34,7 +36,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K01-QA-003
   type: qa
   question: '`mkfs.xfs /dev/vdb1` 的直接作用对象是什么？'
@@ -49,7 +53,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-K01-QA-004
   type: qa
   question: '`mkfs`、`mount` 与 `df` 分别处理哪一层？'
@@ -66,7 +72,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K01-QA-005
   type: qa
   question: '`lsblk` 能看到 `/dev/vdb1`，是否足以证明它已有可用文件系统？'
@@ -82,7 +90,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K01-QA-006
   type: qa
   question: '`lsblk -f` 中 `FSTYPE` 为空，是否足以证明设备可安全格式化？'
@@ -98,7 +108,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-K01-QA-007
   type: qa
   question: '`lsblk` 的设备 `SIZE` 已增加，而 `df` 仍显示旧容量，说明哪两层状态不同？'
@@ -116,7 +128,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K01-QA-008
   type: qa
   question: 为什么不能长期依赖 `/dev/vdX` 或 `/dev/sdX` 的枚举顺序识别文件系统？
@@ -131,7 +145,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-K01-QA-009
   type: qa
   question: 在写操作前，哪条命令可同时展示设备路径、容量、类型、文件系统和挂载点？
@@ -149,7 +165,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K01-CLOZE-001
   type: cloze
   text: 稳定的存储对象链是：{{c1::块设备}} → {{c2::文件系统实例}} → {{c3::当前挂载关系}} → {{c4::目录树}}。
@@ -163,7 +181,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::object-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-23-K02-QA-001
   type: qa
   question: RHEL 9 默认本地文件系统语境通常偏向哪一种类型？
@@ -179,6 +199,8 @@ notes:
   - topic::xfs-ext4
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K02-QA-002
   type: qa
   question: XFS 与 ext4 的专用信息查询命令分别是什么？
@@ -199,7 +221,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::xfs-ext4
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K02-QA-003
   type: qa
   question: XFS 与 ext4 的文件系统增长命令分别是什么？
@@ -214,7 +238,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::xfs-ext4
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-FILESYSTEMS-QA-008
   type: qa
   question: 在 RHEL 9 管理边界中，XFS 与 ext4 的缩小能力有什么区别？
@@ -230,7 +256,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::xfs-ext4
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K02-QA-005
   type: qa
   question: 已挂载 ext4 可以执行哪一种调整，而不能执行哪一种？
@@ -244,7 +272,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::xfs-ext4
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-K02-QA-006
   type: qa
   question: XFS 与 ext4 的检查/修复工具分别是什么？
@@ -259,7 +289,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::xfs-ext4
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K02-QA-007
   type: qa
   question: '`fsck.xfs` 返回 0 能证明 XFS 已完成元数据检查吗？'
@@ -275,6 +307,8 @@ notes:
   - topic::xfs-ext4
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K02-QA-008
   type: qa
   question: 怎样从已挂载路径快速确认文件系统类型？
@@ -293,7 +327,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::xfs-ext4
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K02-QA-009
   type: qa
   question: 已有文件系统类型未知时，为什么不能先尝试 `xfs_growfs` 再尝试 `resize2fs`？
@@ -308,7 +344,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::xfs-ext4
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K02-CLOZE-001
   type: cloze
   text: XFS 使用 {{c1::xfs_growfs}} 增长，ext4 使用 {{c2::resize2fs}}；XFS 在 RHEL 9 支持路径中 {{c3::不能原地缩小}}。
@@ -320,7 +358,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::xfs-ext4
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-23-O01-QA-001
   type: qa
   question: 查看块设备文件系统类型、LABEL、UUID 和挂载点的高频命令是什么？
@@ -339,6 +379,8 @@ notes:
   - topic::filesystem-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-FILESYSTEMS-QA-009
   type: qa
   question: 读取指定文件系统当前 TYPE、LABEL 和 UUID 的命令是什么？
@@ -359,6 +401,8 @@ notes:
   - topic::filesystem-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O01-QA-003
   type: qa
   question: '`blkid` 识别到 `TYPE="xfs"` 能证明哪些事实，不能证明哪些事实？'
@@ -373,7 +417,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-query
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-O01-QA-004
   type: qa
   question: 查询 XFS 几何信息的命令骨架是什么？
@@ -395,6 +441,8 @@ notes:
   - topic::filesystem-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O01-QA-005
   type: qa
   question: 查询 ext4 superblock 摘要的命令是什么？
@@ -415,6 +463,8 @@ notes:
   - topic::filesystem-query
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O01-QA-006
   type: qa
   question: '`xfs_info` 中 `bsize`、`blocks` 与 `agcount` 分别表示什么？'
@@ -431,7 +481,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-query
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O01-QA-007
   type: qa
   question: '`tune2fs -l` 中哪些字段可用于判断 ext4 容量与 inode 状态？'
@@ -447,7 +499,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-query
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O01-QA-008
   type: qa
   question: 创建或修改文件系统属性后，最小身份交叉验证组合是什么？
@@ -463,6 +517,8 @@ notes:
   - topic::filesystem-query
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O01-QA-009
   type: qa
   question: '`blkid -s TYPE -s LABEL -s UUID <DEVICE>` 中 `-s` 的作用是什么？'
@@ -476,7 +532,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-query
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O01-CLOZE-001
   type: cloze
   text: 全局拓扑用 {{c1::lsblk -f}}，指定设备签名用 {{c2::blkid}}，XFS 几何用 {{c3::xfs_info}}，ext4 superblock 用 {{c4::tune2fs -l}}。
@@ -498,7 +556,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-query
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-FILESYSTEMS-QA-007
   type: qa
   question: '`mkfs.xfs` 的作用与风险是什么？'
@@ -513,7 +573,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-create
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-O02-QA-002
   type: qa
   question: 在确认空闲的 `/dev/vdb1` 上创建 LABEL 为 `ARCHIVE` 的 XFS，命令是什么？
@@ -533,6 +595,8 @@ notes:
   - topic::filesystem-create
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O02-QA-003
   type: qa
   question: 在确认空闲的 `/dev/vdb1` 上创建 LABEL 为 `ARCHIVE` 的 ext4，命令是什么？
@@ -552,6 +616,8 @@ notes:
   - topic::filesystem-create
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O02-QA-004
   type: qa
   question: ext4 创建命令中 `-L` 设置的 LABEL 最大长度是多少？
@@ -565,7 +631,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-create
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O02-QA-005
   type: qa
   question: 对候选设备执行 `mkfs` 前，最小调查链是什么？
@@ -581,7 +649,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-create
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O02-QA-006
   type: qa
   question: '`mkfs` 因发现已有签名而警告时，默认应立即加 `-f` 吗？'
@@ -600,7 +670,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-create
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-O02-QA-007
   type: qa
   question: 创建文件系统后，哪些三项身份必须从当前设备验证？
@@ -617,6 +689,8 @@ notes:
   - topic::filesystem-create
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O02-QA-008
   type: qa
   question: 为什么不能用再次运行 `mkfs` 来扩大已有文件系统？
@@ -637,7 +711,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-create
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O02-QA-009
   type: qa
   question: 创建前发现目标已有文件系统和数据，下一步是什么？
@@ -652,7 +728,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-create
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O02-QA-010
   type: qa
   question: 题目只要求“创建带标签的 XFS”，完成后最小验收是什么？
@@ -668,7 +746,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-create
   - card::task
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K03-QA-001
   type: qa
   question: 文件系统 LABEL 与 UUID 的核心区别是什么？
@@ -683,7 +763,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K03-QA-002
   type: qa
   question: UUID 属于块设备路径、物理磁盘还是文件系统实例？
@@ -696,7 +778,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K03-QA-003
   type: qa
   question: 为什么重新运行 `mkfs` 后旧 UUID 引用会失效？
@@ -718,7 +802,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K03-QA-004
   type: qa
   question: 块级克隆文件系统后，UUID 一定仍然唯一吗？
@@ -731,7 +817,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-K03-QA-005
   type: qa
   question: 把未挂载 XFS 的 LABEL 改为 `ARCHIVE2`，命令是什么？
@@ -752,7 +840,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K03-QA-006
   type: qa
   question: 修改 XFS LABEL 或 UUID 时，稳定前置边界是什么？
@@ -766,7 +856,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-K03-QA-007
   type: qa
   question: 把 ext4 的 LABEL 改为 `ARCHIVE2`，命令是什么？
@@ -787,7 +879,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K03-QA-008
   type: qa
   question: 使用显式新 UUID 修改文件系统身份的安全命令骨架是什么？
@@ -803,7 +897,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K03-QA-009
   type: qa
   question: 修改 LABEL 或 UUID 后为什么运行 `udevadm settle`？
@@ -817,7 +913,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K03-QA-010
   type: qa
   question: 外部配置引用旧 UUID，但当前文件系统和数据仍存在，最小修复方向是什么？
@@ -832,7 +930,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K03-CLOZE-001
   type: cloze
   text: LABEL 便于{{c1::人阅读}}但可能重复；UUID 标识{{c2::当前文件系统实例}}；重新格式化通常会产生{{c3::新 UUID}}。
@@ -844,7 +944,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::label-uuid
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-23-K04-QA-001
   type: qa
   question: '`lsblk` 的 `SIZE` 与 `df` 的 `Size` 分别描述什么？'
@@ -861,7 +963,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::capacity-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K04-QA-003
   type: qa
   question: 查看路径所在文件系统 inode 总量和使用率，命令是什么？
@@ -881,6 +985,8 @@ notes:
   - topic::capacity-model
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O03-QA-001
   type: qa
   question: 汇总目录树实际分配空间的常用命令是什么？
@@ -900,6 +1006,8 @@ notes:
   - topic::df-du
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O03-QA-002
   type: qa
   question: '`du -x` 的作用是什么？'
@@ -914,7 +1022,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::df-du
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O03-QA-003
   type: qa
   question: '`du` 默认结果与 `du --apparent-size` 分别更接近什么？'
@@ -930,6 +1040,8 @@ notes:
   - topic::df-du
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O03-QA-004
   type: qa
   question: 一个文件 `ls -lh` 显示 100G，而 `du -h` 很小，最可能说明什么？
@@ -944,7 +1056,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::df-du
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O03-QA-005
   type: qa
   question: '`df` 显示大量已用空间，而 `du -shx` 汇总明显较小，优先检查什么？'
@@ -960,7 +1074,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::df-du
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O03-QA-006
   type: qa
   question: 列出链接数小于 1、仍被进程打开的文件，常用命令是什么？
@@ -977,7 +1093,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::df-du
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O03-QA-007
   type: qa
   question: 为什么 `df` 的已用空间可能大于所有普通文件的 `du` 汇总？
@@ -994,6 +1112,8 @@ notes:
   - topic::df-du
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K04-QA-011
   type: qa
   question: '`df -h` 仍有可用字节，但创建新文件报“空间不足”，下一条证据是什么？'
@@ -1013,6 +1133,8 @@ notes:
   - topic::capacity-model
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K04-QA-012
   type: qa
   question: 对 `df /srv/archive/subdir`，`df` 报告的是子目录自身大小还是包含它的文件系统大小？
@@ -1028,6 +1150,8 @@ notes:
   - topic::capacity-model
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K04-QA-013
   type: qa
   question: '`df` 显示可用空间是否足以证明目标用户一定能写入？'
@@ -1044,7 +1168,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::capacity-model
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-O03-CLOZE-001
   type: cloze
   text: '{{c1::df}} 读取文件系统整体分配状态；{{c2::du}} 遍历并汇总可见目录树；inode 压力使用 {{c3::df -i}}。'
@@ -1058,7 +1184,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::df-du
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-LVM-K03-QA-007
   type: qa
   question: 底层已扩大后，扩展已挂载 XFS 的命令骨架是什么？
@@ -1078,6 +1206,8 @@ notes:
   - topic::filesystem-grow
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O04-QA-002
   type: qa
   question: '`xfs_growfs` 为什么通常以挂载点为参数？'
@@ -1092,6 +1222,8 @@ notes:
   - topic::filesystem-grow
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O04-QA-003
   type: qa
   question: 文件系统扩容的正确层级顺序是什么？
@@ -1106,7 +1238,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-grow
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O04-QA-004
   type: qa
   question: 底层已扩大后，让 ext4 增长到容器最大可用范围的命令是什么？
@@ -1125,6 +1259,8 @@ notes:
   - topic::filesystem-grow
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O04-QA-005
   type: qa
   question: '`resize2fs <DEVICE>` 不指定大小时，增长通常采用什么目标？'
@@ -1137,7 +1273,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-grow
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O04-QA-006
   type: qa
   question: 扩大现有文件系统前，应保存哪些最小基线？
@@ -1157,6 +1295,8 @@ notes:
   - topic::filesystem-grow
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O04-QA-007
   type: qa
   question: '`lsblk` 已显示新容量而 `df -hT` 未变化，最可能缺少哪一步？'
@@ -1174,7 +1314,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-grow
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O04-QA-008
   type: qa
   question: 文件系统增长后的分层验证组合是什么？
@@ -1201,6 +1343,8 @@ notes:
   - topic::filesystem-grow
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-O04-QA-009
   type: qa
   question: 为什么扩容任务中保留并校验一个 marker 文件有价值？
@@ -1215,7 +1359,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-grow
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-LVM-O03-QA-010
   type: qa
   question: 为什么扩容现有 XFS 时不能再次执行 `mkfs.xfs`？
@@ -1234,7 +1380,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-grow
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-O04-QA-011
   type: qa
   question: '`xfs_growfs` 或 `resize2fs` 无报错，是否足以证明任务完成？'
@@ -1249,7 +1397,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-grow
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-O04-QA-012
   type: qa
   question: 底层设备尚未变大时反复执行文件系统增长命令会获得新增空间吗？
@@ -1263,6 +1413,8 @@ notes:
   - topic::filesystem-grow
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-O04-CLOZE-001
   type: cloze
   text: 增长主线：先扩大{{c1::底层块设备}}，XFS 执行 {{c2::xfs_growfs <MOUNT_POINT>}}，ext4 执行 {{c3::resize2fs <DEVICE>}}，最后用 {{c4::df}} 验证文件系统容量。
@@ -1277,7 +1429,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-grow
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-23-K05-QA-001
   type: qa
   question: ext4 缩小的文件系统层标准顺序是什么？
@@ -1292,7 +1446,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::shrink-boundary
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-K05-QA-002
   type: qa
   question: 为什么不能先缩小分区或 LV，再缩小 ext4？
@@ -1305,7 +1461,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::shrink-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-K05-QA-003
   type: qa
   question: 估算 ext 文件系统最小块数可使用什么命令？
@@ -1322,7 +1480,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::shrink-boundary
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-K05-QA-004
   type: qa
   question: 为什么 `du` 汇总不能直接作为 ext4 可缩小到的最小容量？
@@ -1341,7 +1501,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::shrink-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-K05-QA-005
   type: qa
   question: 文件系统缩小前必须具备什么恢复条件？
@@ -1357,6 +1519,8 @@ notes:
   - topic::shrink-boundary
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-D01-QA-001
   type: qa
   question: '`fsck` 在多文件系统环境中的角色是什么？'
@@ -1371,6 +1535,8 @@ notes:
   - topic::filesystem-check
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-D01-QA-002
   type: qa
   question: 只显示 `fsck` 计划调用的命令而不执行，使用什么选项？
@@ -1387,7 +1553,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-check
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-D01-QA-003
   type: qa
   question: '`fsck.xfs` 立即成功退出时，正确判断是什么？'
@@ -1402,6 +1570,8 @@ notes:
   - topic::filesystem-check
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-D01-QA-004
   type: qa
   question: 对未挂载 XFS 做只读元数据检查，命令是什么？
@@ -1420,6 +1590,8 @@ notes:
   - topic::filesystem-check
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-D01-QA-005
   type: qa
   question: '`xfs_repair` 报告脏日志时，正常恢复思路是什么？'
@@ -1434,6 +1606,8 @@ notes:
   - topic::filesystem-check
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-D01-QA-006
   type: qa
   question: '`xfs_repair -L` 为什么不能作为默认修复？'
@@ -1447,7 +1621,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-check
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-D01-QA-007
   type: qa
   question: 对未挂载 ext4 做只读检查，命令是什么？
@@ -1464,7 +1640,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-check
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-D01-QA-008
   type: qa
   question: ext4 缩小前强制完整检查的命令是什么？
@@ -1484,6 +1662,8 @@ notes:
   - topic::filesystem-check
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-D01-QA-009
   type: qa
   question: 为什么不应在已挂载读写文件系统上运行实际 `fsck`/`e2fsck`？
@@ -1497,7 +1677,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-check
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-D01-QA-010
   type: qa
   question: 文件系统修复工具无报错，能否证明所有业务文件内容完整？
@@ -1510,7 +1692,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-check
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-D01-CLOZE-001
   type: cloze
   text: XFS 只读检查用 {{c1::xfs_repair -n}}；ext4 只读检查用 {{c2::e2fsck -n}}；ext4 缩小前使用 {{c3::e2fsck -f}}。
@@ -1522,7 +1706,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-check
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-23-D02-QA-001
   type: qa
   question: 文件系统诊断的证据推进链是什么？
@@ -1536,7 +1722,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-diagnosis
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-D02-QA-002
   type: qa
   question: 底层块设备已扩大而文件系统容量未变，下一步最有区分度的证据是什么？
@@ -1554,7 +1742,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-D02-QA-003
   type: qa
   question: '`blkid` 能识别签名但文件系统无法使用，是否应重新 `mkfs`？'
@@ -1569,7 +1759,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-D02-QA-004
   type: qa
   question: '`df` 很高而 `du` 很低时，下一条高区分度命令是什么？'
@@ -1589,7 +1781,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-D02-QA-005
   type: qa
   question: '`df -i` 显示 `IUse%` 为 100%，而 `df -h` 仍有空间，故障层是什么？'
@@ -1605,6 +1799,8 @@ notes:
   - topic::filesystem-diagnosis
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-D02-QA-006
   type: qa
   question: 重新格式化后外部配置报旧 UUID 不存在，最小修复是什么？
@@ -1619,7 +1815,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-D02-QA-007
   type: qa
   question: 为什么“命令返回 0”不能作为文件系统任务唯一验收？
@@ -1633,7 +1831,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-D02-QA-008
   type: qa
   question: 文件系统容量、UUID 或挂载问题不明时，为什么 `mkfs` 不是通用排错命令？
@@ -1656,7 +1856,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-D02-QA-009
   type: qa
   question: '`du` 无法读取部分目录时，能否把汇总结果与 `df` 直接比较并下结论？'
@@ -1672,6 +1874,8 @@ notes:
   - topic::filesystem-diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-23-D02-QA-010
   type: qa
   question: 某 XFS 目录容量未增长，已知 `lsblk` 也没有显示更大的底层设备。应执行 `xfs_growfs` 吗？
@@ -1684,7 +1888,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::filesystem-diagnosis
   - card::task
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-T01-QA-001
   type: qa
   question: 在候选空设备上创建带标签 XFS 的完整流程是什么？
@@ -1706,6 +1912,8 @@ notes:
   - topic::classic-task-create
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-T01-QA-002
   type: qa
   question: 创建带标签文件系统任务中，哪些现象必须让你停止 `mkfs`？
@@ -1719,7 +1927,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::classic-task-create
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-T02-QA-001
   type: qa
   question: 已有 XFS 底层扩容后，保留数据完成增长的完整流程是什么？
@@ -1742,6 +1952,8 @@ notes:
   - topic::classic-task-grow
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-T02-QA-002
   type: qa
   question: XFS 增长任务为什么同时检查 `df`、`blkid` 和 marker 校验值？
@@ -1760,6 +1972,8 @@ notes:
   - topic::classic-task-grow
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-T02-QA-003
   type: qa
   question: 面对“扩大文件系统”题，怎样根据类型选择命令并判断缩小边界？
@@ -1773,6 +1987,8 @@ notes:
   - topic::classic-task-grow
   - card::comprehensive
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-H01-QA-001
   type: qa
   question: 本章核心命令的本地帮助入口有哪些？
@@ -1799,7 +2015,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::help-entry
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-23-H01-QA-002
   type: qa
   question: 为什么上游 `xfs_growfs` 手册出现缩小相关文字时，RHCSA 仍按 XFS 不可缩小处理？
@@ -1813,7 +2031,9 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::help-entry
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-23-T02-CLOZE-001
   type: cloze
   text: XFS 增长验收至少覆盖：{{c1::底层设备容量}}、{{c2::文件系统容量}}、{{c3::LABEL/UUID 身份}}、{{c4::已有数据校验}}。
@@ -1831,4 +2051,6 @@ notes:
   - chapter::filesystems-labels-uuid-capacity
   - topic::classic-task-grow
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1

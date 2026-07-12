@@ -1,10 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-31
 chapter_slug: podman-images-containers-rootless
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-note_types:
-- RedHat-QA
-- RedHat-Cloze
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-PODMAN-QA-001
   type: qa
@@ -19,7 +18,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::object-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-PODMAN-QA-002
   type: qa
   question: 创建容器时使用 `-p 8088:8080`，两个端口分别属于哪一侧？
@@ -39,6 +40,8 @@ notes:
   - topic::port-publishing
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PODMAN-QA-003
   type: qa
   question: Bind mount 的 `:Z` 与 `:z` 分别适合什么共享边界？
@@ -55,7 +58,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::selinux-volume
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-PODMAN-QA-004
   type: qa
   question: 容器执行后立即退出，怎样列出包括已退出实例在内的容器？
@@ -75,6 +80,8 @@ notes:
   - topic::container-observation
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PODMAN-QA-005
   type: qa
   question: 怎样查看某容器记录的端口发布映射？
@@ -94,6 +101,8 @@ notes:
   - topic::port-publishing
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-PODMAN-QA-006
   type: qa
   question: '`podman run -d` 返回容器 ID，但容器没有出现在 `podman ps` 中。最先应读取哪三类证据？'
@@ -112,12 +121,15 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::diagnosis-exited
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-PODMAN-QA-007
   type: qa
   question: Rootless 容器访问 bind mount 时出现 `permission denied`，应按哪三个权限层调查？
   answer: 宿主 DAC 权限、rootless UID/GID 映射、SELinux 标签与 AVC。
-  extra: 默认答案不是 `chmod 777`、关闭 SELinux 或 `--privileged`。
+  extra: 先用 `namei -l`/`ls -ld` 检查宿主路径与 DAC，再核对容器进程 UID/GID 的 rootless 映射，最后用 `ls -Z` 和 AVC 证据判断 SELinux。默认答案不是 `chmod 777`、关闭
+    SELinux 或 `--privileged`。
   source:
   - RH134-RHEL9-Running-Containers
   - RHEL9-Building-Running-Managing-Containers
@@ -136,7 +148,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::diagnosis-volume
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-PODMAN-QA-008
   type: qa
   question: 题目要求面向用户 `websvc` 运行 rootless 容器。为什么 login、pull、run、inspect 和 rm 都应保持在该用户上下文？
@@ -155,7 +169,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::rootless-context
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K01-QA-001
   type: qa
   question: 完整镜像引用 `registry.lab.example.com/training/webapp:1.0` 中，Registry 部分是什么？
@@ -174,6 +190,8 @@ notes:
   - topic::image-reference
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K01-QA-002
   type: qa
   question: 镜像引用中的 tag 主要回答什么问题？
@@ -191,7 +209,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::image-reference
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K01-QA-003
   type: qa
   question: 镜像 digest 相比 tag 的关键特性是什么？
@@ -209,7 +229,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::image-reference
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K01-QA-004
   type: qa
   question: 同一个 IMAGE ID 能否同时拥有多个 repository:tag 名称？
@@ -228,6 +250,8 @@ notes:
   - topic::image-reference
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K01-QA-005
   type: qa
   question: 题目已经提供完整镜像引用时，为什么不应随意改成短名称？
@@ -245,7 +269,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::registry-config
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K01-QA-006
   type: qa
   question: 系统级 Registry 配置文件的常见路径是什么？
@@ -264,6 +290,8 @@ notes:
   - topic::registry-config
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K01-QA-007
   type: qa
   question: 用户级 `registries.conf` 主要影响哪类操作？
@@ -281,7 +309,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::registry-config
   - card::configuration
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K01-QA-008
   type: qa
   question: '`containers.conf` 与 `storage.conf` 分别管理什么？'
@@ -296,7 +326,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::podman-configuration
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K01-QA-009
   type: qa
   question: Rootless 用户默认把镜像和容器持久数据放在哪类位置？
@@ -316,6 +348,8 @@ notes:
   - topic::rootless-storage
   - card::path
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K01-QA-010
   type: qa
   question: '`podman search` 能否可靠证明某 Registry 中一定存在某镜像？'
@@ -333,7 +367,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::registry-search
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-O01-QA-001
   type: qa
   question: 以当前用户拉取完整镜像引用的命令骨架是什么？
@@ -352,6 +388,8 @@ notes:
   - topic::image-operations
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O01-QA-002
   type: qa
   question: 私有 Registry 需要认证时，应在哪个用户上下文执行 `podman login`？
@@ -376,7 +414,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::registry-auth
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-O01-QA-003
   type: qa
   question: 列出当前用户本地镜像的命令是什么？
@@ -395,6 +435,8 @@ notes:
   - topic::image-operations
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O01-QA-004
   type: qa
   question: 为什么检查镜像时优先写 `podman image inspect IMAGE`，而不是只写 `podman inspect IMAGE`？
@@ -412,7 +454,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::image-operations
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-O01-QA-005
   type: qa
   question: 执行 `podman tag SOURCE TARGET` 后，最关键的验证是什么？
@@ -431,6 +475,8 @@ notes:
   - topic::image-operations
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O01-QA-006
   type: qa
   question: 由 `podman save` 生成的镜像归档应使用哪个导入命令？
@@ -451,6 +497,8 @@ notes:
   - topic::image-archive
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O01-QA-007
   type: qa
   question: '`podman load` 与 `podman import` 的主要区别是什么？'
@@ -468,7 +516,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::image-archive
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-O01-QA-008
   type: qa
   question: 镜像 `EXPOSE 8080` 能否证明宿主已经监听 8080？
@@ -493,7 +543,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::image-metadata
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K02-QA-001
   type: qa
   question: '`podman create` 对容器生命周期做了什么？'
@@ -512,7 +564,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-lifecycle
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K02-QA-002
   type: qa
   question: '`podman run` 与 `podman create` 的关系是什么？'
@@ -531,7 +585,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-lifecycle
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K02-QA-003
   type: qa
   question: 为什么不能用 `podman start` 修正已创建容器的端口、环境变量或挂载？
@@ -550,7 +606,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-lifecycle
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K02-QA-004
   type: qa
   question: 容器主进程退出后，容器通常进入什么状态？
@@ -570,6 +628,8 @@ notes:
   - topic::container-lifecycle
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K02-QA-005
   type: qa
   question: 容器处于 created 状态时，下一条典型操作是什么？
@@ -588,7 +648,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-lifecycle
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K02-QA-006
   type: qa
   question: 容器处于 exited 状态，且创建配置正确。是否一定要重新 `podman run`？
@@ -607,7 +669,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-lifecycle
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K02-QA-007
   type: qa
   question: 普通 `podman rm CONTAINER` 主要删除哪些内容？
@@ -631,7 +695,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-removal
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K02-QA-008
   type: qa
   question: 显式 named volume 会被 `podman rm --volumes CONTAINER` 自动删除吗？
@@ -648,7 +714,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-removal
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K02-QA-009
   type: qa
   question: 匿名 volume 在什么情况下可能随容器一起删除？
@@ -665,7 +733,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-removal
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O02-QA-001
   type: qa
   question: 后台创建并运行命名容器的基本骨架是什么？
@@ -685,6 +755,8 @@ notes:
   - topic::container-lifecycle
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O02-QA-002
   type: qa
   question: 有序停止容器的常用命令是什么？
@@ -704,6 +776,8 @@ notes:
   - topic::container-lifecycle
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O02-QA-003
   type: qa
   question: 停止后再次启动同一容器的命令是什么？
@@ -723,11 +797,13 @@ notes:
   - topic::container-lifecycle
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O02-QA-004
   type: qa
   question: 删除错误容器前，至少应保留哪两类证据？
   answer: '`podman container inspect` 的配置/状态和 `podman logs` 的运行记录。'
-  extra: 还应确认挂载来源和端口，避免误删唯一数据现场。
+  extra: inspect 还应确认 Mounts 的 source/destination/options 和端口配置，证明数据位于 bind mount、named volume 还是容器可写层，避免误删唯一数据现场。
   source:
   - RH134-RHEL9-Running-Containers
   - RHEL9-Building-Running-Managing-Containers
@@ -748,7 +824,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-removal
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-O02-QA-005
   type: qa
   question: 出现“container name is already in use”时，下一条最有区分度的证据是什么？
@@ -774,7 +852,28 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::diagnosis-name-conflict
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
+- id: RHCSA-31-O02-QA-006
+  type: qa
+  question: 为什么排错任务中不应默认给 `podman run` 加 `--rm`？
+  answer: 容器退出后会自动删除对象，可能使退出状态、inspect 配置和日志关联等现场更难保留。
+  extra: '`--rm` 还与匿名 volume 的清理边界相关。需要诊断或证明数据位置时，先保留容器对象和证据。'
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  - podman-rm(1)
+  - podman-volume(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::container-removal
+  - card::boundary
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K03-QA-001
   type: qa
   question: Rootless 容器中的 UID 0 默认对应宿主上的谁？
@@ -793,7 +892,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::rootless-userns
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K03-QA-002
   type: qa
   question: 确认当前 shell 正在以哪个宿主用户执行 Podman，最直接的命令是什么？
@@ -813,6 +914,8 @@ notes:
   - topic::rootless-context
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K03-QA-003
   type: qa
   question: 查看 rootless 用户命名空间 UID 映射的命令入口是什么？
@@ -831,7 +934,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::rootless-userns
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K03-QA-004
   type: qa
   question: '`/etc/subuid` 与 `/etc/subgid` 为 rootless Podman 提供什么？'
@@ -850,7 +955,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::rootless-userns
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K03-QA-005
   type: qa
   question: root 执行 `podman ps -a` 为空，能否证明普通用户没有 rootless 容器？
@@ -869,7 +976,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::rootless-context
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K03-QA-006
   type: qa
   question: Rootless bind mount 的宿主 DAC 检查，为什么不能只看源目录最后一级？
@@ -894,6 +1003,8 @@ notes:
   - topic::rootless-volume-permission
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K03-QA-007
   type: qa
   question: 普通用户能否绑定某低端口，应该查询什么系统状态而不是死记固定阈值？
@@ -912,7 +1023,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::rootless-port
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K03-QA-008
   type: qa
   question: 题目要求 rootless 容器时，改用 root 运行为什么不是等价修复？
@@ -931,7 +1044,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::rootless-context
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K03-QA-009
   type: qa
   question: 本章使用 `loginctl show-user USER -p State -p Linger` 能证明什么？
@@ -945,12 +1060,14 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::chapter-boundary
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K03-QA-010
   type: qa
   question: 容器当前 `running` 能否证明用户注销或系统重启后仍自动运行？
   answer: 不能。
-  extra: 持久运行需要用户 systemd/Quadlet/linger 等另一套状态，本章不展开。
+  extra: 当前 `running` 只说明主进程存在。注销/重启后的持久运行需要用户 systemd、Quadlet、linger 与冷启动验证，归 RHCSA-32。
   source:
   - RHCSA-32-boundary
   - podman-ps(1)
@@ -959,7 +1076,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::chapter-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-O03-QA-001
   type: qa
   question: '`podman run` 的通用语法中，镜像名前后分别是什么？'
@@ -979,6 +1098,8 @@ notes:
   - topic::run-syntax
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O03-QA-002
   type: qa
   question: '`-d` 参数的准确语义是什么？'
@@ -998,6 +1119,8 @@ notes:
   - topic::run-parameters
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O03-QA-003
   type: qa
   question: 为容器设置稳定名称使用哪个参数？
@@ -1017,6 +1140,8 @@ notes:
   - topic::run-parameters
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O03-QA-004
   type: qa
   question: 向容器设置单个环境变量的参数骨架是什么？
@@ -1036,6 +1161,8 @@ notes:
   - topic::run-environment
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O03-QA-005
   type: qa
   question: 为什么 `podman exec CONTAINER env` 不能替代 `podman container inspect`？
@@ -1055,6 +1182,8 @@ notes:
   - topic::run-environment
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-O03-QA-006
   type: qa
   question: 镜像名后追加 `/bin/sh -c ...` 通常会影响什么？
@@ -1073,12 +1202,14 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::run-command
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O03-QA-007
   type: qa
   question: 怎样验证 Podman 记录的端口映射、宿主监听和 HTTP 功能？
   answer: 依次用 `podman port`、`ss -lnt`、`curl`。
-  extra: 三条证据不能互相替代。
+  extra: '`podman port` 证明 Podman 记录的发布配置，`ss` 证明宿主 socket，`curl` 证明当前协议功能；三条证据不能互相替代。'
   source:
   - RH134-RHEL9-Running-Containers
   - RHEL9-Building-Running-Managing-Containers
@@ -1092,7 +1223,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::port-publishing
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-O03-QA-008
   type: qa
   question: '`podman port` 显示 8088 映射成功，能否直接判定 Web 应用健康？'
@@ -1111,7 +1244,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::port-publishing
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-O03-QA-009
   type: qa
   question: '`ss -lnt` 能证明什么，不能证明什么？'
@@ -1130,7 +1265,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::port-publishing
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O03-QA-010
   type: qa
   question: 容器端口发布方向错误时，为什么 restart 不能修复？
@@ -1156,7 +1293,26 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::diagnosis-port
   - card::diagnosis
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
+- id: RHCSA-31-O03-QA-011
+  type: qa
+  question: 在 `podman run --user UID[:GID] ...` 中，`--user` 改变的是哪一层身份？
+  answer: 它指定容器内主进程使用的 UID/GID；不会切换执行 Podman 的宿主用户。
+  extra: 宿主用户上下文仍由当前 shell/调用者决定。`--user` 也不能绕过宿主 DAC、rootless UID/GID 映射或 SELinux。
+  source:
+  - RH134-RHEL9-Running-Containers
+  - RHEL9-Building-Running-Managing-Containers
+  - podman-run(1)
+  tags:
+  - exam::rhcsa
+  - chapter::podman-images-containers-rootless
+  - topic::runtime-identity
+  - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K04-QA-001
   type: qa
   question: 容器可写层中的数据在 stop/start 同一容器后是否仍在？
@@ -1173,7 +1329,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::storage-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K04-QA-002
   type: qa
   question: Bind mount 的 source 由谁管理？
@@ -1190,7 +1348,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::storage-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K04-QA-003
   type: qa
   question: Named volume 的基本创建命令是什么？
@@ -1208,6 +1368,8 @@ notes:
   - topic::named-volume
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K04-QA-004
   type: qa
   question: 在 `-v SOURCE:/container/path` 中，怎样区分 bind mount 与 named volume？
@@ -1225,6 +1387,8 @@ notes:
   - topic::volume-syntax
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-K04-QA-005
   type: qa
   question: Bind mount 的源路径不存在时，当前 Podman 文档要求怎样处理？
@@ -1241,7 +1405,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::volume-syntax
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K04-QA-006
   type: qa
   question: '`-v webdata:/var/lib/webapp` 中，`webdata` 是什么？'
@@ -1258,7 +1424,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::named-volume
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-K04-QA-007
   type: qa
   question: 为什么不能只在容器内 `ls` 来证明数据持久化？
@@ -1275,7 +1443,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::storage-verification
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-K04-QA-008
   type: qa
   question: 检查容器挂载 source、destination 和 options 的主要入口是什么？
@@ -1300,6 +1470,8 @@ notes:
   - topic::storage-verification
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O04-QA-001
   type: qa
   question: 将宿主 `/home/websvc/site` 私有挂载到容器 `/opt/app/site` 的参数是什么？
@@ -1317,6 +1489,8 @@ notes:
   - topic::selinux-volume
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O04-QA-002
   type: qa
   question: 多个容器需要同时共享同一宿主目录时，SELinux 挂载后缀应优先考虑什么？
@@ -1334,6 +1508,8 @@ notes:
   - topic::selinux-volume
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O04-QA-003
   type: qa
   question: 为什么对大目录使用 `:Z` 或 `:z` 可能导致启动变慢？
@@ -1351,6 +1527,8 @@ notes:
   - topic::selinux-volume
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-O04-QA-004
   type: qa
   question: 为什么不应把系统目录或整个 home 目录随意用 `:Z` 重标记？
@@ -1368,6 +1546,8 @@ notes:
   - topic::selinux-volume
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O04-QA-005
   type: qa
   question: 怎样检查宿主目录的 DAC 与 SELinux 标签？
@@ -1392,6 +1572,8 @@ notes:
   - topic::selinux-volume
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O04-QA-006
   type: qa
   question: 容器内成功创建文件后，怎样证明写入进入 bind mount？
@@ -1409,6 +1591,8 @@ notes:
   - topic::storage-verification
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O04-QA-007
   type: qa
   question: 删除并重建容器后验证数据仍在，主要证明了什么？
@@ -1425,7 +1609,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::storage-verification
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-O04-QA-008
   type: qa
   question: 出现挂载访问拒绝时，为什么 `chmod 777` 不是可靠默认修复？
@@ -1450,6 +1636,8 @@ notes:
   - topic::diagnosis-volume
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O04-QA-009
   type: qa
   question: 为什么 `--privileged` 不应作为普通容器挂载失败的默认答案？
@@ -1467,6 +1655,8 @@ notes:
   - topic::diagnosis-volume
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O05-QA-001
   type: qa
   question: '`podman ps` 与 `podman ps -a` 的对象范围差异是什么？'
@@ -1485,7 +1675,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-observation
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-O05-QA-002
   type: qa
   question: 读取容器结构化状态和创建配置的主要命令是什么？
@@ -1505,6 +1697,8 @@ notes:
   - topic::container-observation
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O05-QA-003
   type: qa
   question: '`podman logs` 主要读取什么？'
@@ -1523,7 +1717,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-observation
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-O05-QA-004
   type: qa
   question: 查看容器最近 50 行日志的命令是什么？
@@ -1542,7 +1738,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-observation
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O05-QA-005
   type: qa
   question: '`podman exec` 的前提是什么？'
@@ -1561,7 +1759,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-observation
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-O05-QA-006
   type: qa
   question: 在运行容器中检查环境变量的命令骨架是什么？
@@ -1580,7 +1780,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-observation
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-O05-QA-007
   type: qa
   question: 不确定某 Podman 参数时，优先查什么？
@@ -1594,7 +1796,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::help-entry
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-D01-QA-001
   type: qa
   question: 容器立即退出时，inspect 中最关键的两个状态字段是什么？
@@ -1614,6 +1818,8 @@ notes:
   - topic::diagnosis-exited
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-D01-QA-002
   type: qa
   question: 容器日志显示“command not found”，下一步应优先核对什么？
@@ -1639,7 +1845,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::diagnosis-exited
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-D01-QA-003
   type: qa
   question: 容器 running、`podman port` 正确，但 `curl` 仍失败。下一条最有区分度的证据是什么？
@@ -1658,7 +1866,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::diagnosis-port
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-D01-QA-004
   type: qa
   question: '`ss` 看不到预期宿主监听，而 `podman port` 有映射。应如何继续？'
@@ -1678,6 +1888,8 @@ notes:
   - topic::diagnosis-port
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-D01-QA-005
   type: qa
   question: 普通用户可以读取宿主目录，但容器应用仍不能写。哪一假设需要继续检查？
@@ -1701,7 +1913,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::diagnosis-volume
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-D01-QA-006
   type: qa
   question: 容器删除后业务文件消失，最可能需要先回答什么？
@@ -1718,7 +1932,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::diagnosis-data-loss
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-D01-QA-007
   type: qa
   question: 为什么无调查执行 `podman rm -f` 会降低可诊断性？
@@ -1745,6 +1961,8 @@ notes:
   - topic::diagnosis-safety
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-D01-QA-008
   type: qa
   question: 一个完整的本地 Web 容器验收链是什么？
@@ -1775,7 +1993,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::verification-chain
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-T01-QA-001
   type: qa
   question: 目标是以 `websvc` 运行带端口、环境和 bind mount 的 rootless 容器。操作前第一组基线应包含什么？
@@ -1802,6 +2022,8 @@ notes:
   - topic::classic-task
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-T01-QA-002
   type: qa
   question: 按题目要求发布宿主 8088 到容器 8080、设置 `APP_MODE=exam`、私有挂载站点目录，`podman run` 的核心参数组合是什么？
@@ -1826,6 +2048,8 @@ notes:
   - topic::classic-task
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-T01-QA-003
   type: qa
   question: 怎样证明站点数据不是只写入旧容器可写层？
@@ -1843,6 +2067,8 @@ notes:
   - topic::classic-task
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-T01-QA-004
   type: qa
   question: 经典任务中为什么明确禁止配置 user systemd、linger 或 Quadlet？
@@ -1856,7 +2082,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::chapter-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-31-T02-QA-001
   type: qa
   question: 同时存在端口方向错误和 SELinux 挂载拒绝时，为什么应拆成两个故障层处理？
@@ -1880,7 +2108,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::classic-diagnosis
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-31-T02-QA-002
   type: qa
   question: 修复错误容器前保存 `inspect` 和 `logs` 的价值是什么？
@@ -1899,7 +2129,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::classic-diagnosis
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-31-CLOZE-001
   type: cloze
   text: 完整镜像引用中，{{c1::tag}} 是可移动的可读引用，而 {{c2::digest}} 更适合标识不可变内容。
@@ -1916,7 +2148,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::image-reference
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-31-CLOZE-002
   type: cloze
   text: '`podman run` 通常完成 {{c1::create}} 与 {{c2::start}} 两个阶段。'
@@ -1934,7 +2168,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-lifecycle
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-31-CLOZE-003
   type: cloze
   text: 端口发布 `-p 8088:8080` 的方向是宿主 {{c1::8088}} 到容器 {{c2::8080}}。
@@ -1952,7 +2188,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::port-publishing
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-31-CLOZE-004
   type: cloze
   text: Rootless 默认把调用 Podman 的宿主用户映射为用户命名空间中的 {{c1::UID 0}}，但它并不是宿主 {{c2::root}}。
@@ -1970,7 +2208,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::rootless-userns
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-31-CLOZE-005
   type: cloze
   text: 单个容器私有使用宿主目录时选择 {{c1:::Z}}；多个容器共享时选择 {{c2:::z}}。
@@ -1986,7 +2226,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::selinux-volume
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-31-CLOZE-006
   type: cloze
   text: '`podman ps` 默认只显示 {{c1::running}} 容器；查看已退出对象要加 {{c2::-a}}。'
@@ -2004,7 +2246,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::container-observation
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-31-CLOZE-007
   type: cloze
   text: 容器可写层通常随 {{c1::容器对象删除}} 而消失；bind mount 数据由 {{c2::宿主文件系统}} 管理。
@@ -2020,7 +2264,9 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::storage-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-31-CLOZE-008
   type: cloze
   text: 完整本地验证链中，`podman port` 证明 {{c1::映射配置}}，`ss` 证明 {{c2::宿主监听}}，`curl` 证明 {{c3::协议功能}}。
@@ -2038,5 +2284,6 @@ notes:
   - chapter::podman-images-containers-rootless
   - topic::verification-chain
   - card::cloze
-  - priority::P0
-status: integrated
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1

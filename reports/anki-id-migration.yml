@@ -1,0 +1,6 @@
+RHCSA-NETWORK-C01-QA-001:
+  canonical_owner: RHCSA-18
+  duplicate_owner: RHCSA-21
+  action: consolidate_disabled_tombstone
+  reason: Both records were disabled legacy network aggregate cards; central migration
+    ledger is the only tombstone.

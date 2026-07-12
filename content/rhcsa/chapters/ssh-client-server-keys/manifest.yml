@@ -1,0 +1,77 @@
+package_version: 1
+chapter:
+  id: RHCSA-20
+  exam: RHCSA
+  part: 5
+  number: 20
+  slug: ssh-client-server-keys
+  title: SSH 客户端、服务端与密钥认证
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/ssh-client-server-keys/lecture.md
+  anki: content/rhcsa/chapters/ssh-client-server-keys/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:20:38+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: ddccd7d5034078199e8f0b9a77696e9636ebd28e9432a497b185863971b1cf01
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 8e37803e62d653cda2d1cf680fb54590a1630aa3b694f99dc0dd4bd081516696
+  anki:
+    path: anki.yml
+    sha256: 867d2f72fe395c3ccac5d435c086cac24c3ce4463299694d85c2820130aea771
+  preview:
+    path: anki-preview.html
+    sha256: d8f34b1df3d4bad6c3054404b0c10f28a15cd42835e66ec93d4a986437b55f43
+  summary:
+    path: anki-summary.md
+    sha256: f4aa68ed56ba19c5f1ed86d93a51a5b9142fb2bff24e4e810f56e72e566915bf
+  anki_impact:
+    path: anki-impact.md
+    sha256: 66a4dd2707fbcad70d247b666303e89b26e8e5e24bce495c7800eac168383941
+  source_map:
+    path: source-map.md
+    sha256: 31b5bdcff1199eb9279ced93c768d9ca4606e03d5396480efd22792b329f3ab4
+  structure_report:
+    path: structure-report.md
+    sha256: d8fcbf73c6d5393d1eb651167cba053941eea0618169892e113798624c3cd29e
+  visual_qa:
+    path: visual-qa.md
+    sha256: 64ac6f9726241474027f9cf4967f4cd58bfbde3a709360baaeb23d5741383f89
+  qa_report:
+    path: qa-report.md
+    sha256: 6a396fe6f76c539c3a72b397b027f7125dee73e08eb10e10a99a4bfe7d9e539d
+  revision_notes:
+    path: revision-notes.md
+    sha256: abfa746cc74bfbd5402fb9672e21e90eb0fb5adfc76d6343eaebbd8cf931b52c
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 5aedfb2f12734df504cc844215d156fd4625bd048597c56ffda9f0b384fcdc8a
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM; command-level live testing was not performed.
+- Full-book Section ID and Anki ID uniqueness, cross-chapter duplicate checks, formal PDF/APKG builds, Git integration and
+  release remain Codex responsibilities.
+- manifest.yml is the hash index and is not self-hashed to avoid a self-referential digest.

@@ -4,34 +4,96 @@ chapter_id: RHCSA-33
 exam: RHCSA
 part: "第九篇 综合实践"
 slug: comprehensive
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
 sources:
   - RH124-RHEL9
   - RH134-RHEL9
+  - RHEL9-RHCSA-CURRENT-BOOK
   - RHCSA9-MOCK-TASKS
   - RHEL9-RHCSA-RHCE-ARCHITECTURE-SPEC
-  - REDHAT-ANKI-HIGH-DENSITY-SPEC
+  - RHCSA-LECTURE-VISUAL-SPEC-V5
 ---
 
 <!-- 维护元数据、Section ID、来源与静态核对状态不进入正式讲义视觉层。 -->
 
-# 第 33 章　RHCSA 综合任务与证据矩阵
+<div class="chapter-cover">
+<div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+<div class="cover-number">33</div>
+<h1>RHCSA 综合任务与证据矩阵</h1>
+<p class="cover-subtitle">把跨用户、网络、安全、存储、调度与容器的要求，组织成可恢复、可验证、能够通过重启门的完整终态。</p>
+<div class="cover-tags"><span>对象模型</span><span>风险排序</span><span>分层验收</span><span>诊断恢复</span><span>综合任务</span></div>
+<div class="cover-edition">大字号阅读版</div>
+</div>
 
-RHCSA 综合任务最容易制造一种错觉：题目很多、命令很多，于是只要按记忆把命令逐条敲完，整台系统就会自然到达正确终态。真实情况恰好相反。用户、网络、仓库、服务、端口、SELinux、存储、挂载、计划任务和容器分别属于不同对象层；它们又通过用户身份、路径、设备、端口、名称解析和启动生命周期互相连接。一个局部命令成功，可能只说明当前动作没有报错，并不能证明最终功能正确，更不能证明系统重启后仍然成立。
+<div class="reading-nav">
+<h1>本章阅读导航</h1>
+<p class="lead">先抓住一条主线：综合任务不是命令清单，而是把初始状态经过受控变更推进到一组互相一致、能够被证据逐项证明的终态。</p>
+<div class="nav-steps">
+<div><b>01</b><strong>拆解终态</strong><span>把题目改写为对象、参数、限制和证据</span></div>
+<div><b>02</b><strong>建立依赖</strong><span>识别硬依赖、共享对象和冲突域</span></div>
+<div><b>03</b><strong>调查基线</strong><span>确认环境事实，不猜接口、设备和已有状态</span></div>
+<div><b>04</b><strong>风险分批</strong><span>低风险先闭环，高风险操作通过证据门</span></div>
+<div><b>05</b><strong>分层验收</strong><span>分别证明静态、当前、功能和持久状态</span></div>
+<div><b>06</b><strong>重启与恢复</strong><span>共享对象回归，重启后按矩阵重新验收</span></div>
+</div>
+<div class="nav-columns">
+<div>
+<h2>专题地图</h2>
+<ul class="topic-map">
+<li><em>知识专题</em> 从题目原文提取评分对象与可验证终态</li>
+<li><em>知识专题</em> 构造依赖图、共享对象和冲突域</li>
+<li><em>知识专题</em> 风险排序、证据门、恢复点与执行批次</li>
+<li><em>操作专题</em> 建立整机调查基线和任务账本</li>
+<li><em>操作专题</em> 建立四层证据矩阵</li>
+<li><em>操作专题</em> 用局部闭环和回归集合推进任务</li>
+<li><em>诊断专题</em> 卡题、误操作和交叉影响的证据式恢复</li>
+<li><em>经典任务</em> 五类领域任务与一次模拟考试级终检</li>
+</ul>
+</div>
+<div>
+<h2>阅读时持续回答</h2>
+<ol class="questions">
+<li>题目真正评分的是哪个对象和状态？</li>
+<li>哪些参数来自题目，哪些环境事实必须查询？</li>
+<li>哪些任务存在硬依赖或共享对象？</li>
+<li>下一步操作的风险等级和停止条件是什么？</li>
+<li>当前证据能证明哪一层，又不能证明哪一层？</li>
+<li>修改后最小功能验证是什么？</li>
+<li>重启前还缺哪些静态检查与恢复入口？</li>
+<li>重启后应从哪张矩阵逐项复查？</li>
+</ol>
+<div class="nav-note"><strong>方法提醒：</strong>先从原题建立评分行，再按依赖和风险推进；每次变更都要留下能够说明证明范围的证据。</div>
+</div>
+</div>
+</div>
 
-本章不重讲前 32 章的子系统基础，而是把已经建立的对象组合成一套稳定的综合执行方法。核心不是“背一份考试顺序”，而是把每道题转换成可验证终态，识别依赖与共享对象，控制高风险操作，并用证据矩阵逐项关闭缺口。
+<div class="chapter-opening">
+<div class="body-kicker">第 33 章 · 正文</div>
+<p>RHCSA 综合任务最容易制造一种错觉：题目很多、命令很多，于是只要按记忆把命令逐条敲完，整台系统就会自然到达正确终态。真实情况恰好相反。用户、网络、仓库、服务、端口、SELinux、存储、挂载、计划任务和容器分别属于不同对象层；它们又通过用户身份、路径、设备、端口、名称解析和启动生命周期互相连接。一个局部命令成功，可能只说明当前动作没有报错，并不能证明最终功能正确，更不能证明系统重启后仍然成立。</p>
+<p>本章不重讲前 32 章的子系统基础，而是把已经建立的对象组合成一套稳定的综合执行方法。核心不是背一份固定考试顺序，而是把每道题转换成可验证终态，识别依赖与共享对象，控制高风险操作，并用证据矩阵逐项关闭缺口。各技术机制在需要时回链对应章节；RHCE 自动化实现不在本章展开。</p>
+</div>
 
-**[概念]** 综合任务的评分对象是系统终态，不是使用过的命令。命令只是查询或改变对象的接口；题目要求的用户、路径、端口、卷、挂载、服务或容器才是需要验收的对象。
+<div class="concept-stack">
+<div class="concept-box"><span class="concept-label">概念</span><p><strong>综合任务</strong> 是多个系统对象和限制条件共同构成的终态问题。它的评分对象不是使用过哪些命令，而是用户、路径、连接、服务、设备、挂载、调度或容器最终是否满足题目。命令只是查询或改变对象的接口，因此“命令执行成功”不能替代对终态的验收。</p></div>
+<div class="concept-box"><span class="concept-label">概念</span><p><strong>依赖关系与共享对象</strong> 决定执行顺序和回归范围。硬依赖不成立时，后续功能无法建立或验证；共享对象则会被多个任务共同使用，例如一个用户同时关联 ACL、cron 和 rootless 容器。修改共享对象后，只回归相关任务，但不能假设先前通过的状态仍然成立。</p></div>
+<div class="concept-box"><span class="concept-label">概念</span><p><strong>风险排序与证据门</strong> 用于控制不可逆或高影响操作。网络切换、分区、文件系统签名、fstab 和重启都可能扩大故障面；进入这些步骤前，必须确认对象身份、保持条件、停止条件和恢复入口。证据不足时应标记为 blocked，而不是用 force、删除重建或全局放宽安全策略换取短暂成功。</p></div>
+<div class="concept-box"><span class="concept-label">概念</span><p><strong>调查基线</strong> 是变更前对关键对象身份和状态的最小快照。它不是把所有查询命令运行一遍，而是只收集会改变决策的字段：实际 profile、设备签名、已有挂载、用户关系、活动 zone、配置来源和消费者身份。没有基线，就无法判断变化是否由本次操作引起，也难以进行最小恢复。</p></div>
+<div class="concept-box"><span class="concept-label">概念</span><p><strong>四层证据</strong> 分别回答不同问题：静态证据证明声明或语法可解析；当前证据证明对象此刻已经加载或生效；功能证据从真实消费者角度证明可用；持久或重启证据证明生命周期跨越后仍成立。题目要求哪一层，就必须给出能够证明那一层的证据，不能用 active、文件存在或退出码互相替代。</p></div>
+<div class="concept-box"><span class="concept-label">概念</span><p><strong>验收矩阵</strong> 把原始要求、目标对象、依赖、风险、四层证据和剩余缺口放在同一记录中。它的价值不是表格本身，而是让每个 PASS 都能追溯到具体证据，并让 pending、blocked 与 deferred 明确说明仍缺什么。</p></div>
+<div class="concept-box"><span class="concept-label">概念</span><p><strong>恢复路径</strong> 是失败前预先保留的返回入口和判断顺序。文本配置可以依靠保留属性与上下文的副本恢复；网络需要控制台或第二会话；启动故障需要明确进入救援路径；存储写入则不能靠复制配置文件撤销。诊断应从最后一条可信证据开始，选择最有区分度的下一步，而不是反复执行失败命令。</p></div>
+</div>
 
-**[概念]** 一条完整证据链通常包含四层：静态配置、当前状态、真实功能、持久或重启后状态。四层并不总是全部需要，但题目要求哪一层，就必须使用能证明那一层的证据。
-
-**[概念]** 共享对象是被多个要求共同依赖或修改的对象。例如同一个用户同时关联 ACL、计划任务和 rootless 容器；同一个路径同时关联挂载、SELinux 标签和容器卷。共享对象变化后，相关任务必须回归。
-
-**[操作语义]** 调查基线用于回答“系统现在是什么”，任务账本用于回答“还缺什么”，依赖图用于回答“先做什么”，证据矩阵用于回答“完成了吗”。它们承担不同职责，不能被一张随手写的命令清单替代。
-
-**[操作语义]** 诊断按“症状 → 当前证据 → 假设 → 下一条高区分度证据 → 最小修复 → 再验证”推进。卡题时继续随机试命令会扩大状态不确定性，保存现场并缩小假设集合更有效。
+<div class="semantic-zone">
+<div class="semantic-intro"><span>操作语义</span><p>本章不以某一个命令为中心。下面的入口把“任务拆解、对象调查、分层验收、高风险证据门、最终重启和错误恢复”组织成可重复的操作接口；详细命令仍在对应专题与经典任务中按对象展开。</p></div>
+<div class="semantic-item"><h3>任务拆解</h3><div class="syn-label">SYNOPSIS</div><pre><code>原始要求 → 对象 → 精确参数 → 限制 → 必需证据</code></pre><p>把自然语言题面转换成可逐项判定的评分行。</p><dl><dt>对象</dt><dd>用户、路径、连接、unit、端口、设备、卷、挂载、调度或容器。</dd><dt>参数</dt><dd>题目明确给出的 UID、地址、端口、容量、路径和时间。</dd><dt>限制</dt><dd>不得删除数据、不得降低 SELinux、必须保留已有对象等。</dd><dt>证据</dt><dd>写明需要静态、当前、功能、持久或重启中的哪些层。</dd></dl></div>
+<div class="semantic-item"><h3>基线查询组</h3><div class="syn-label">SYNOPSIS</div><pre><code>getent | id | stat | getfacl | nmcli | lsblk | findmnt | systemctl</code></pre><p>确认对象身份、配置来源和初始状态；只查询会改变下一步决策的字段。</p><dl><dt>身份与权限</dt><dd><code>getent</code>、<code>id</code>、<code>namei</code>、<code>getfacl</code>、<code>sudo -l</code>。</dd><dt>网络与服务</dt><dd><code>nmcli</code>、<code>ip</code>、<code>getent hosts</code>、<code>systemctl</code>、<code>ss</code>。</dd><dt>存储</dt><dd><code>lsblk</code>、<code>blkid</code>、<code>pvs/vgs/lvs</code>、<code>findmnt</code>、<code>swapon</code>。</dd><dt>容器与调度</dt><dd><code>podman</code>、<code>systemctl --user</code>、<code>loginctl</code>、<code>journalctl</code>。</dd></dl></div>
+<div class="semantic-item"><h3>执行顺序规划</h3><div class="syn-label">SYNOPSIS</div><pre><code>硬依赖 → 低风险前置 → 局部闭环 → 共享对象回归</code></pre><p>依赖决定能否继续，风险决定需要多少前置证据，共享对象决定修改后的回归集合。</p><dl><dt>硬依赖</dt><dd>网络和名称解析不成立时，仓库、NFS 与镜像访问无法可靠验收。</dd><dt>低风险前置</dt><dd>先完成只读调查和不会破坏现状的对象创建。</dd><dt>局部闭环</dt><dd>一次只推进一个状态层，修改后立即做最小验证。</dd><dt>回归集合</dt><dd>用户、路径、端口、设备或 profile 变化后复查所有消费者。</dd></dl></div>
+<div class="semantic-item"><h3>分层验收</h3><div class="syn-label">SYNOPSIS</div><pre><code>VERIFY {static | current | functional | persistent}</code></pre><p>每条证据只承担一个证明目标，并明确不能证明的相邻状态。</p><dl><dt>static</dt><dd>配置、语法、声明和稳定标识。</dd><dt>current</dt><dd>此刻加载、运行、监听、挂载或激活。</dd><dt>functional</dt><dd>目标用户、客户端或数据消费者实际完成动作。</dd><dt>persistent</dt><dd>重新登录、reload、退出会话或重启后仍成立。</dd></dl></div>
+<div class="semantic-item"><h3>高风险证据门</h3><div class="syn-label">SYNOPSIS</div><pre><code>IDENTITY + KEEP + STOP + RECOVERY → WRITE</code></pre><p>在网络切换、分区、mkfs、fstab 和重启前，先证明对象身份与保持条件，并准备停止点和恢复入口。</p><dl><dt>IDENTITY</dt><dd>确认真实接口、profile、设备、签名、挂载和使用者。</dd><dt>KEEP</dt><dd>明确不得删除、覆盖或降低保护的状态。</dd><dt>STOP</dt><dd>证据不完整或输出矛盾时停止写入。</dd><dt>RECOVERY</dt><dd>准备第二会话、控制台、配置副本或启动恢复路径。</dd></dl></div>
+<div class="semantic-item"><h3>重启与恢复决策</h3><div class="syn-label">SYNOPSIS</div><pre><code>静态检查通过 + 当前功能闭环 + 恢复入口可用 → reboot</code></pre><p>重启用于验证持久链，不用于猜故障；失败后从最后可信层开始诊断。</p><dl><dt>重启前</dt><dd>检查网络自动连接、fstab、关键服务、用户 unit 和剩余 blocked 项。</dd><dt>重启后</dt><dd>按原始题目和验收矩阵逐项复查，不凭命令历史判断。</dd><dt>失败恢复</dt><dd>症状 → 当前证据 → 假设 → 高区分度证据 → 最小修复 → 再验证。</dd></dl></div>
+</div>
 
 <section class="topic knowledge" id="RHCSA-33-K01" data-kind="knowledge-topic">
 
@@ -185,7 +247,7 @@ rootless 容器、用户 Quadlet 和 `systemctl --user` 不只依赖容器定义
 
 调查基线的目的不是收集所有可能信息，而是为当前题目提供对象身份、初始状态和冲突证据。命令应围绕题目涉及的对象选择，输出应保存到可回看的工作记录中。下面的宽基线是候选集合，不要求每场考试机械执行全部命令。
 
-### ① [操作] 建立主机、时间与启动基线
+### ① [查询] 建立主机、时间与启动基线
 
 **作用对象：** 主机身份、当前启动、时间可信度和默认 target。
 
@@ -202,7 +264,7 @@ journalctl -b -p warning..alert --no-pager
 
 `systemctl --failed` 只能提示失败 unit，不能证明所有业务正常。日志时间线若依赖错误时钟，也不能直接用于判断先后顺序。
 
-### ② [操作] 建立身份、权限和路径基线
+### ② [查询] 建立身份、权限和路径基线
 
 ```bash
 getent passwd deploy auditor svcweb
@@ -217,7 +279,7 @@ findmnt -T /srv/project
 
 `namei -om` 用于逐级观察路径权限；`findmnt -T` 用于确认路径实际位于哪个挂载对象。只看末级目录权限可能遗漏父目录不可遍历或被挂载覆盖。
 
-### ③ [操作] 建立网络、仓库、服务与安全基线
+### ③ [查询] 建立网络、仓库、服务与安全基线
 
 ```bash
 nmcli -f NAME,UUID,TYPE,DEVICE,AUTOCONNECT connection show
@@ -238,7 +300,7 @@ semanage port -l | grep -E '^http_port_t'
 
 firewalld 的 runtime 与 permanent 是两个状态面；`ss` 证明本机监听，不证明防火墙和远端路径。
 
-### ④ [操作] 建立存储与挂载基线
+### ④ [查询] 建立存储与挂载基线
 
 ```bash
 lsblk -e7 -o NAME,PATH,SIZE,TYPE,FSTYPE,FSVER,LABEL,UUID,MOUNTPOINTS
@@ -253,7 +315,7 @@ cat /etc/fstab
 
 目标设备必须同时结合 `lsblk`、`blkid`、LVM 归属和挂载关系判断。设备名存在不代表它空闲。
 
-### ⑤ [操作] 建立调度、远程文件系统和容器基线
+### ⑤ [查询] 建立调度、远程文件系统和容器基线
 
 ```bash
 systemctl status autofs crond chronyd --no-pager
@@ -275,10 +337,10 @@ root 运行的 `podman ps` 与 `svcweb` 的容器存储完全不同。调查 roo
 
 建议维护如下字段：
 
-| ID | 原始要求 | 对象 | 初始状态 | 依赖 | 风险 | 下一动作 | 缺失证据 | 状态 |
-|---|---|---|---|---|---|---|---|---|
-| U-01 | 创建 deploy | 用户 | 不存在 | 无 | R1 | `useradd` | 身份、新会话 | planned |
-| W-03 | 远端访问 8082 | 服务链 | 未知 | 网络、httpd、SELinux、firewalld | R2 | 先查监听 | 远端功能 | blocked |
+<div class="matrix-list">
+<div class="matrix-item"><strong>U-01 · 创建 deploy</strong><br>对象：用户；初始状态：不存在；依赖：无；风险：R1。<br>下一动作：创建账号；缺失证据：身份记录与新登录会话；状态：<code>planned</code>。</div>
+<div class="matrix-item"><strong>W-03 · 远端访问 8082</strong><br>对象：完整服务访问链；初始状态：未知；依赖：网络、httpd、SELinux 与 firewalld；风险：R2。<br>下一动作：先确认监听；缺失证据：远端功能；状态：<code>blocked</code>。</div>
+</div>
 
 状态可以使用 `planned`、`in_progress`、`verified`、`blocked`、`deferred`。不要把“执行过”当成 `verified`。
 
@@ -292,7 +354,7 @@ root 运行的 `podman ps` 与 `svcweb` 的容器存储完全不同。调查 roo
 
 证据矩阵把“我做过什么”改写为“系统现在能够证明什么”。每项要求不必机械填满四层，但必须覆盖题目要求的生命周期。证据命令应尽量短、可重复、结果具有唯一判断边界。
 
-### ① [操作] 静态配置证据
+### ① [验证] 静态配置证据
 
 静态证据回答“声明是否正确”。典型入口包括：
 
@@ -306,7 +368,7 @@ podman quadlet --dryrun   # 仅在当前版本提供该入口时使用
 
 还包括读取文件的精确字段，例如 `nmcli connection show exam-static`、`grep -R` 检查 repo 或 cron 配置。静态通过不表示对象已经加载。
 
-### ② [操作] 当前状态证据
+### ② [验证] 当前状态证据
 
 当前证据回答“此刻是否生效”：
 
@@ -322,7 +384,7 @@ getenforce
 
 `is-active` 与 `is-enabled` 分属当前和持久配置，不得互相替代。
 
-### ③ [操作] 功能证据
+### ③ [验证] 功能证据
 
 功能证据必须从实际消费者视角执行：
 
@@ -335,7 +397,7 @@ getenforce
 
 功能验证应避免只由 root 执行，因为 root 可能绕过题目真正要求的访问控制。
 
-### ④ [操作] 持久与重启证据
+### ④ [验证] 持久与重启证据
 
 持久证据包括配置层和生命周期层：
 
@@ -349,7 +411,7 @@ loginctl show-user svcweb -p Linger
 
 最终持久性通常仍需重启或重新登录验证。当前会话没有 live VM，因此本章只能给出推荐验证命令，不声称已执行。
 
-### ⑤ [操作] 为证据写明证明边界
+### ⑤ [边界] 为证据写明证明边界
 
 示例：
 
@@ -361,7 +423,7 @@ loginctl show-user svcweb -p Linger
 | `podman ps` | 当前用户容器运行 | 退出登录或重启后保持 |
 | `crontab -l` | 调度条目存在 | 到点后成功执行 |
 
-### ⑥ [操作] 定义完成状态
+### ⑥ [验证] 定义完成状态
 
 一项任务只有在所有必需证据层都关闭后才标记 `verified`。由于环境不可达而无法验证远端功能时，应标记 `blocked` 或 `deferred`，并记录缺失证据；不能把静态检查通过升级为完整成功。
 
@@ -481,7 +543,7 @@ cp -a /etc/httpd/conf.d/rhcsa33.conf \
 - `auditor` 用户已经存在；
 - `/srv/project` 已存在，包含不可删除的现有文件和子目录；
 - `httpd.service` 由另一任务维护；
-- 只允许静态核对，本会话不控制真实 RHEL 9 主机。
+- 本任务给出推荐操作与验收入口；实际结果需在 RHEL 9 环境填写。
 
 ### 目标终态
 
@@ -1449,14 +1511,14 @@ NetworkManager profile 持久且可达
 
 ### ⑦ 重启后最终矩阵
 
-| 要求 | 静态 | 当前 | 功能 | 重启后 | 结果 |
-|---|---|---|---|---|---|
-| deploy 组关系 | NSS 记录 | 新会话 `id` | 协作目录操作 | 新会话仍正确 | verified/pending |
-| 网络与仓库 | profile、repo | 地址、DNS、元数据 | 访问依赖资源 | 自动连接和元数据 | verified/pending |
-| HTTP | 配置、SELinux、永久防火墙 | active、监听 | 远端 curl | 开机自动且可访问 | verified/pending |
-| 存储 | fstab UUID/路径 | 挂载、Swap | 写入/读取 | 自动挂载和 Swap | verified/pending |
-| autofs/cron/时间 | map、cron、chrony | services active | 触发、产物、日志 | 重启后再次触发 | verified/pending |
-| rootless 容器 | Quadlet、linger | 用户 unit、容器 | curl、数据 | 无登录自动恢复 | verified/pending |
+<div class="evidence-cards">
+<div class="evidence-card"><strong>deploy 组关系</strong><span>静态：NSS 记录</span><span>当前：新会话 <code>id</code></span><span>功能：协作目录操作</span><span>重启/新会话：关系仍正确</span><span>结果：<code>verified</code> / <code>pending</code></span></div>
+<div class="evidence-card"><strong>网络与仓库</strong><span>静态：profile 与 repo 定义</span><span>当前：地址、DNS、元数据</span><span>功能：访问依赖资源</span><span>重启后：自动连接且元数据可用</span><span>结果：<code>verified</code> / <code>pending</code></span></div>
+<div class="evidence-card"><strong>HTTP 完整访问链</strong><span>静态：应用、SELinux 与永久防火墙</span><span>当前：服务 active 且监听</span><span>功能：远端 <code>curl</code></span><span>重启后：自动启动并可访问</span><span>结果：<code>verified</code> / <code>pending</code></span></div>
+<div class="evidence-card"><strong>存储</strong><span>静态：fstab 中稳定标识与路径</span><span>当前：文件系统挂载、Swap 激活</span><span>功能：写入与读取</span><span>重启后：自动挂载与激活</span><span>结果：<code>verified</code> / <code>pending</code></span></div>
+<div class="evidence-card"><strong>autofs、cron 与时间</strong><span>静态：map、cron 与 chrony 声明</span><span>当前：相关服务运行</span><span>功能：触发、产物与日志</span><span>重启后：能够再次触发</span><span>结果：<code>verified</code> / <code>pending</code></span></div>
+<div class="evidence-card"><strong>rootless 容器</strong><span>静态：Quadlet 与 linger</span><span>当前：用户 unit 与容器</span><span>功能：HTTP 与持久数据</span><span>重启后：无登录自动恢复</span><span>结果：<code>verified</code> / <code>pending</code></span></div>
+</div>
 
 当前材料只能提供静态设计，因此实际结果栏必须由 RHEL 9 live test 填写，不能预先写成全部 verified。
 
@@ -1492,6 +1554,25 @@ RHCSA 综合任务的稳定能力不是更快地背出命令，而是能够把�
 → 重启后按原题与证据矩阵逐项验收
 ```
 
-在真实工作中，这套方法同样适用于维护窗口和变更审计：先建立基线，限制影响面，保存恢复入口，以消费者视角验证功能，并明确仍未证实的状态。后续使用 Ansible 自动化时，稳定的对象模型和验收矩阵也会成为幂等任务与自动测试的基础，但自动化实现属于 RHCE 章节，不在本章展开。
+### 主要判断表
+
+| 看到的证据 | 可以得出的结论 | 仍不能得出的结论 |
+|---|---|---|
+| 命令退出码为 0 | 本次调用按命令自身约定成功 | 目标系统已经达到完整终态 |
+| 配置语法检查通过 | 声明可被对应程序解析 | 服务已运行、端口可达、功能正确 |
+| `active` | 当前 unit 正在运行 | 已 enabled、客户端可用、重启后保持 |
+| 当前挂载存在 | 当前路径已经挂载 | fstab 正确、重启后仍挂载 |
+| runtime 防火墙已放行 | 当前规则集允许该服务或端口 | permanent 状态已保存 |
+| 本机请求成功 | 应用、监听和本机路径大体成立 | 远端路由、zone 与外部访问成立 |
+| root 容器运行 | root 的容器实例可用 | 目标用户的 rootless 生命周期正确 |
+| 重启后仍成立 | 持久链在本次重启中生效 | 其他尚未验收的任务也正确 |
+
+### 工作方法
+
+在考试中，用任务账本限制遗漏，用依赖图减少返工，用证据矩阵避免把局部成功扩大为完成。在真实维护窗口中，同样的方法可以转化为变更前基线、风险门、回退条件、消费者验证和变更后证据。
+
+### 向后续学习与工作交接
+
+本章是 RHCSA 手工系统管理的收束章，没有下一章需要继续展开某个 RHCSA 子系统。后续进入 RHCE 或实际自动化时，应保留本章的对象模型、依赖关系和验收矩阵，再把“手工修改接口”替换为模块、变量、模板与幂等任务。自动化只改变实现方式，不降低终态证据标准。
 
 </section>

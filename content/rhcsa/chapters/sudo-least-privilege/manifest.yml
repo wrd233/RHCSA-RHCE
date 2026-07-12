@@ -1,0 +1,78 @@
+package_version: 1
+chapter:
+  id: RHCSA-10
+  exam: RHCSA
+  part: 2
+  number: 10
+  slug: sudo-least-privilege
+  title: sudo 与最小特权授权
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/sudo-least-privilege/lecture.md
+  anki: content/rhcsa/chapters/sudo-least-privilege/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:26:25+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 75ba1397cfa233da2e92b4b157e8ddf9a27eea0ae9647525d4bd2f86ad0cc4a7
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 40e4ae3f4c769df350639839461477dfb00d61df55c1e015afaf00f1f84a8c86
+  anki:
+    path: anki.yml
+    sha256: d0bca41a080eadc871ec81785a2117079edf2769bbdcee93f990d3b9876a95b6
+  preview:
+    path: anki-preview.html
+    sha256: f765d67a2bdf58f1da5a1a26110c754bfc4689df9ea5b02fb8b1ba76a0c9c868
+  summary:
+    path: anki-summary.md
+    sha256: 7168fe494441b972f3a046b79cf5e1ad47db2a729705fd2d6d45418e66e69629
+  anki_impact:
+    path: anki-impact.md
+    sha256: 513e5966f23cd52b1ba133d2d9b6f22f660abad4f660c00d0445bf142dcdaa7f
+  source_map:
+    path: source-map.md
+    sha256: 100c572b261845471e6c527ba16b793209c59e632ad01e95a8b66defa0685ef3
+  structure_report:
+    path: structure-report.md
+    sha256: 8ca0da9a21fe0ba6231443e3d7bd769cc4518d3eb6dc56c42a0383631e64b6a7
+  visual_qa:
+    path: visual-qa.md
+    sha256: 58d592bb3e4639f940f7c0252853bf144840d65cb8b410db5a2c358ddaa213d5
+  qa_report:
+    path: qa-report.md
+    sha256: 72af462c3002efb753d4457426860a1722c88a430a1a5be6636804a8ae846cd5
+  revision_notes:
+    path: revision-notes.md
+    sha256: f8b3a0eb568b8e5f8cefead64871c414702f0f8a05a568b1a635aca7fd26f9d8
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 8ca0809f5db9d4b8216fbcb14c3e947caf64ccd1d7459f242bf519dea24cb144
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM was available; command-level live tests were not performed.
+- Full-book Section ID and Anki ID uniqueness, cross-chapter near-duplicate checks, APKG, AnkiConnect, Git integration, and
+  release remain Codex responsibilities.
+- Manifest self-hash is intentionally not embedded because it would be self-referential; every other delivery file has a SHA-256
+  entry.

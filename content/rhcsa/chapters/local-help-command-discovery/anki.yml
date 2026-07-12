@@ -1,11 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-03
 chapter_slug: local-help-command-discovery
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-status: integrated
-validation:
-  mode: static
-  live_test: not_performed
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-03-K01-QA-001
   type: qa
@@ -20,7 +18,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-K01-QA-002
   type: qa
   question: Shell alias 的本质是什么？
@@ -34,6 +34,8 @@ notes:
   - topic::command-objects
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-K01-QA-003
   type: qa
   question: Shell function 与外部脚本的核心差异是什么？
@@ -47,6 +49,8 @@ notes:
   - topic::command-objects
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-K01-QA-004
   type: qa
   question: Bash builtin 为什么不一定有独立的可执行文件路径？
@@ -59,7 +63,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-K01-QA-005
   type: qa
   question: “当前 Shell 会执行什么”“文件在哪里”“文件属于哪个包”分别应优先查什么？
@@ -74,7 +80,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-K01-QA-006
   type: qa
   question: 在 man page 中找到一个参数，能否证明对应系统任务已经完成？
@@ -88,7 +96,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-K01-QA-007
   type: qa
   question: 本地 RPM 数据库与 DNF 仓库元数据分别描述什么？
@@ -103,7 +113,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-K01-QA-008
   type: qa
   question: 为什么同一命令名在不同用户或不同终端中的 `type` 结果可能不同？
@@ -116,7 +128,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-K01-QA-009
   type: qa
   question: 外部命令路径缓存会影响哪一层状态？
@@ -130,6 +144,8 @@ notes:
   - topic::command-objects
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-K01-QA-010
   type: qa
   question: 一个文件由 RPM 包拥有，能否证明当前短名称一定调用该文件？
@@ -143,7 +159,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-K01-QA-011
   type: qa
   question: “命令存在”和“命令能完成目标功能”有什么区别？
@@ -157,7 +175,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-K01-QA-012
   type: qa
   question: 面对陌生命令时，本章推荐的最小调查顺序是什么？
@@ -172,7 +192,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-objects
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SHELL-O02-QA-001
   type: qa
   question: '`type` 与 `which` 的核心边界是什么？'
@@ -186,8 +208,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::boundary
-  - priority::P0
   - migration::preserved-id
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O01-QA-001
   type: qa
   question: 查看当前 Bash 如何解释名称 `test` 的命令是什么？
@@ -205,6 +229,8 @@ notes:
   - topic::command-resolution
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-002
   type: qa
   question: '`type -a <NAME>` 中 `-a` 的作用是什么？'
@@ -218,6 +244,8 @@ notes:
   - topic::command-resolution
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-003
   type: qa
   question: '`type <NAME>` 显示 “shell builtin” 一类结果时，应得出什么结论？'
@@ -231,6 +259,8 @@ notes:
   - topic::command-resolution
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-004
   type: qa
   question: '`type <NAME>` 输出一个绝对路径时，能证明什么？'
@@ -244,6 +274,8 @@ notes:
   - topic::command-resolution
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-005
   type: qa
   question: '`type <NAME>` 显示 alias 定义时，下一步应做什么？'
@@ -256,7 +288,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-006
   type: qa
   question: '`type <NAME>` 显示函数体时，下一步应关注什么？'
@@ -269,7 +303,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-007
   type: qa
   question: 获取名称 `ls` 的详细可读解析说明，应使用什么命令？
@@ -287,6 +323,8 @@ notes:
   - topic::command-resolution
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-008
   type: qa
   question: 获取名称 `ls` 的简洁解析结果，应使用什么命令？
@@ -295,7 +333,7 @@ notes:
     command -v ls
 
     ```'
-  extra: 外部命令通常返回路径；builtin、function 或 alias 不一定返回路径。
+  extra: 结果可能是外部路径、builtin 名称、function 名称或 alias 定义；不能一律当作文件路径。
   source:
   - bash(1)
   tags:
@@ -304,6 +342,8 @@ notes:
   - topic::command-resolution
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-009
   type: qa
   question: 为什么不能把 `command -v <NAME>` 的所有成功输出都当作文件路径？
@@ -316,7 +356,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O01-QA-010
   type: qa
   question: 脚本只想判断当前环境是否能解析命令 `foo`，常用的检查骨架是什么？
@@ -334,6 +376,8 @@ notes:
   - topic::command-resolution
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-011
   type: qa
   question: 不带 `-V/-v` 的 `command <NAME>` 主要有什么语义？
@@ -346,7 +390,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::concept
-  - priority::P2
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O01-QA-012
   type: qa
   question: 只查名称 `passwd` 的二进制位置线索，可使用什么 `whereis` 命令？
@@ -363,7 +409,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-013
   type: qa
   question: 只查名称 `passwd` 的 man page 位置线索，可使用什么命令？
@@ -380,7 +428,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-014
   type: qa
   question: '`whereis` 与 `command -v` 分别从什么视角查询？'
@@ -395,6 +445,8 @@ notes:
   - topic::command-resolution
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O01-QA-015
   type: qa
   question: 程序已移动，但当前 Bash 仍尝试旧路径；确认不是 alias/function 后，最小处理是什么？
@@ -412,6 +464,8 @@ notes:
   - topic::command-resolution
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O01-QA-016
   type: qa
   question: '`hash -r` 会不会安装缺失软件或修改 `PATH`？'
@@ -424,7 +478,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O01-QA-017
   type: qa
   question: '`type -a test` 同时列出 builtin 和 `/usr/bin/test` 时，当前直接输入 `test` 通常使用哪个？'
@@ -438,6 +494,8 @@ notes:
   - topic::command-resolution
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O01-QA-018
   type: qa
   question: '`which foo` 显示 `/usr/bin/foo`，但执行 `foo` 行为不同，下一条最有区分度的证据是什么？'
@@ -457,7 +515,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O01-CLOZE-001
   type: cloze
   text: 要列出当前 Bash 可见的同名候选，使用 {{c1::type -a <NAME>}}；只取简洁解析结果可使用 {{c2::command -v <NAME>}}。
@@ -469,7 +529,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::command-resolution
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SHELL-O02-QA-002
   type: qa
   question: '`cd`、`read`、`export` 等 Bash builtin 的首选帮助入口是什么？'
@@ -486,8 +548,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::command
-  - priority::P0
   - migration::preserved-id
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O02-QA-001
   type: qa
   question: 只查看 Bash builtin 的简短语法，可使用什么形式？
@@ -504,7 +568,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O02-QA-002
   type: qa
   question: '`help -d <BUILTIN>` 的用途是什么？'
@@ -517,7 +583,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::parameter
-  - priority::P2
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O02-QA-003
   type: qa
   question: 为什么不应对所有命令机械执行 `<NAME> --help`？
@@ -531,7 +599,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O02-QA-004
   type: qa
   question: 外部命令的 `--help` 与 man page 各适合解决什么问题？
@@ -545,7 +615,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O02-QA-005
   type: qa
   question: 打开主题 `ls` 的默认 man page，命令是什么？
@@ -563,6 +635,8 @@ notes:
   - topic::help-routing
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O02-QA-006
   type: qa
   question: 打开 GNU 工具的 Info 文档，基本形式是什么？
@@ -579,7 +653,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O02-QA-007
   type: qa
   question: man page 与 Info 文档的主要组织差异是什么？
@@ -594,6 +670,8 @@ notes:
   - topic::help-routing
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O02-QA-008
   type: qa
   question: Info 浏览中 `n`、`p`、`u` 分别表示什么？
@@ -606,7 +684,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::parameter
-  - priority::P2
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O02-QA-009
   type: qa
   question: 命令可以执行，但 `man <NAME>` 查不到；第一步应检查什么？
@@ -620,7 +700,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O02-QA-010
   type: qa
   question: '`info <TOPIC>` 没有文档，能否证明命令不存在？'
@@ -634,7 +716,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O02-QA-011
   type: qa
   question: 已知命令名称时，推荐的本地帮助路由是什么？
@@ -649,7 +733,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O02-QA-012
   type: qa
   question: 为什么本地帮助应成为考试环境中的第一证据？
@@ -662,7 +748,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O02-QA-013
   type: qa
   question: 找到正确帮助页后，至少还应记录哪两类信息再执行命令？
@@ -676,7 +764,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SHELL-O02-CLOZE-001
   type: cloze
   text: Bash builtin 优先查询 {{c1::help}}；外部程序快速语法常看 {{c2::--help}}；完整本地参考进入 {{c3::man}}。
@@ -690,8 +780,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::help-routing
   - card::cloze
-  - priority::P0
   - migration::preserved-id
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SHELL-O02-QA-003
   type: qa
   question: 需要读取 `/etc/passwd` 文件格式时，应执行什么命令？
@@ -709,8 +801,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::command
-  - priority::P0
   - migration::preserved-id
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O03-QA-001
   type: qa
   question: man page 引用中的 `passwd(5)`，括号内的 5 表示什么？
@@ -724,7 +818,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-002
   type: qa
   question: man section 1 主要包含什么？
@@ -738,7 +834,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-003
   type: qa
   question: man section 5 主要包含什么？
@@ -752,7 +850,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-004
   type: qa
   question: man section 8 主要包含什么？
@@ -766,7 +866,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-005
   type: qa
   question: '`passwd(1)` 与 `passwd(5)` 分别描述什么？'
@@ -779,7 +881,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-006
   type: qa
   question: '`man passwd` 能否证明打开了任务要求的文件格式页？'
@@ -793,7 +897,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O03-QA-007
   type: qa
   question: man page 的 `SYNOPSIS` 主要回答什么？
@@ -807,7 +913,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-008
   type: qa
   question: '`SYNOPSIS` 中 `[ ... ]` 通常表示什么？'
@@ -820,7 +928,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O03-QA-009
   type: qa
   question: '`SYNOPSIS` 中 `...` 通常表示什么？'
@@ -833,7 +943,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O03-QA-010
   type: qa
   question: '`SYNOPSIS` 中的占位词应怎样处理？'
@@ -847,6 +959,8 @@ notes:
   - topic::man-pages
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O03-QA-011
   type: qa
   question: man page 的 `OPTIONS` 主要回答什么？
@@ -860,7 +974,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-012
   type: qa
   question: man page 的 `FILES` 主要回答什么？
@@ -874,7 +990,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-013
   type: qa
   question: man page 的 `SEE ALSO` 主要回答什么？
@@ -888,7 +1006,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-014
   type: qa
   question: '`EXIT STATUS` 标题为什么重要？'
@@ -902,6 +1022,8 @@ notes:
   - topic::man-pages
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-015
   type: qa
   question: 在 man page 中向下搜索 `OPTIONS`，应按什么？
@@ -920,6 +1042,8 @@ notes:
   - topic::man-pages
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O03-QA-016
   type: qa
   question: man 分页器中 `n` 与 `N` 的区别是什么？
@@ -932,7 +1056,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O03-QA-017
   type: qa
   question: man 分页器中 `g`、`G`、`q` 分别做什么？
@@ -946,6 +1072,8 @@ notes:
   - topic::man-pages
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O03-QA-018
   type: qa
   question: 查一个低频选项时，怎样避免从头逐屏阅读 man page？
@@ -959,7 +1087,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-019
   type: qa
   question: man page 的 `EXAMPLES` 能否直接替代任务状态调查？
@@ -973,7 +1103,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O03-QA-020
   type: qa
   question: 同名主题打开后内容明显不符，下一条证据是什么？
@@ -987,7 +1119,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O03-QA-021
   type: qa
   question: 查看 man 命令自身的完整本地帮助，应执行什么？
@@ -1005,7 +1139,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O03-QA-022
   type: qa
   question: 某主题没有 `FILES` 标题，能否断定程序不使用任何文件？
@@ -1018,7 +1154,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O03-CLOZE-001
   type: cloze
   text: RHCSA 最常用的 man section 中，{{c1::1}} 常是用户命令，{{c2::5}} 常是文件格式，{{c3::8}} 常是管理命令。
@@ -1031,7 +1169,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-03-O03-CLOZE-002
   type: cloze
   text: 在 man page 中，{{c1::SYNOPSIS}} 给出调用骨架，{{c2::FILES}} 给出相关路径，{{c3::SEE ALSO}} 给出下一跳主题。
@@ -1044,7 +1184,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::man-pages
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-03-O04-QA-001
   type: qa
   question: 已知主题名，想查看它在 man 索引中的一句描述，应使用什么？
@@ -1063,6 +1205,8 @@ notes:
   - topic::topic-discovery
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O04-QA-002
   type: qa
   question: '`whatis` 与 `apropos` 的核心区别是什么？'
@@ -1076,7 +1220,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::topic-discovery
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SHELL-O02-QA-004
   type: qa
   question: 不知道命令名，只知道功能关键词 `password`，应从什么命令开始？
@@ -1099,8 +1245,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::topic-discovery
   - card::command
-  - priority::P0
   - migration::preserved-id
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O04-QA-003
   type: qa
   question: '`apropos` 结果中的三类关键信息是什么？'
@@ -1114,6 +1262,8 @@ notes:
   - topic::topic-discovery
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O04-QA-004
   type: qa
   question: 从自然语言任务构造 `apropos` 关键词时，应优先选什么？
@@ -1128,6 +1278,8 @@ notes:
   - topic::topic-discovery
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O04-QA-005
   type: qa
   question: '`apropos` 无结果时，为什么不能直接断定系统没有相关命令？'
@@ -1141,7 +1293,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::topic-discovery
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O04-QA-006
   type: qa
   question: 确认是 man 索引缺失后，管理员重建索引的命令是什么？
@@ -1159,7 +1313,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::topic-discovery
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O04-QA-007
   type: qa
   question: '`mandb` 能否修复目标命令未安装？'
@@ -1172,7 +1328,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::topic-discovery
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O04-QA-008
   type: qa
   question: '`apropos` 与 `dnf search` 的对象有什么不同？'
@@ -1187,6 +1345,8 @@ notes:
   - topic::topic-discovery
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O04-QA-009
   type: qa
   question: 什么时候才考虑 `man -K <TEXT>`？
@@ -1200,6 +1360,8 @@ notes:
   - topic::topic-discovery
   - card::boundary
   - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O04-QA-010
   type: qa
   question: 执行 `mandb` 后，怎样验证问题是否位于索引层？
@@ -1214,6 +1376,8 @@ notes:
   - topic::topic-discovery
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O04-CLOZE-001
   type: cloze
   text: 已知准确主题使用 {{c1::whatis}}；只知道功能关键词使用 {{c2::apropos}}，它分别等价于 `man -f` 与 `man -k`。
@@ -1227,7 +1391,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::topic-discovery
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-03-O05-QA-001
   type: qa
   question: 查询本机 `/usr/bin/chage` 由哪个已安装包拥有，命令是什么？
@@ -1236,7 +1402,7 @@ notes:
     rpm -qf /usr/bin/chage
 
     ```'
-  extra: 结果应解释为本地 RPM 数据库中的文件所有权。
+  extra: 结果是本地 RPM 数据库的所有权记录；它本身不证明该文件当前仍存在。
   source:
   - rpm(8)
   - RH124-Ch14
@@ -1246,6 +1412,8 @@ notes:
   - topic::rpm-ownership
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O05-QA-002
   type: qa
   question: '`rpm -qf <PATH>` 中 `-q` 与 `-f` 分别表示什么？'
@@ -1258,11 +1426,13 @@ notes:
   - chapter::local-help-command-discovery
   - topic::rpm-ownership
   - card::parameter
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O05-QA-003
   type: qa
   question: '`rpm -qf <PATH>` 能证明什么，不能证明什么？'
-  answer: 能证明本机 RPM 数据库记录的已安装包所有权；不能证明仓库唯一提供者、文件未被修改或当前 Shell 一定调用它。
+  answer: 能证明本机 RPM 数据库记录的已安装包所有权；不能证明文件当前存在、内容未被修改、仓库唯一提供者或当前 Shell 一定调用它。
   extra: 需要按问题进入其他证据层。
   source:
   - rpm(8)
@@ -1271,7 +1441,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::rpm-ownership
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O05-QA-004
   type: qa
   question: 从命令名反查本地包所有权的正确顺序是什么？
@@ -1285,7 +1457,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::rpm-ownership
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O05-QA-005
   type: qa
   question: '`command -v cd` 返回 `cd`，为什么不能执行 `rpm -qf cd` 来查 builtin 的包？'
@@ -1299,7 +1473,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::rpm-ownership
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O05-QA-006
   type: qa
   question: '`rpm -qf` 报告目标不属于任何软件包时，可能有哪些合理原因？'
@@ -1312,7 +1488,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::rpm-ownership
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O05-QA-007
   type: qa
   question: 取得已安装包 `<PACKAGE>` 的完整文件清单，命令是什么？
@@ -1329,7 +1507,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::rpm-ownership
   - card::command
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O05-QA-008
   type: qa
   question: '`rpm -qf <PATH>` 与 `rpm -ql <PACKAGE>` 的查询方向有什么不同？'
@@ -1342,7 +1522,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::rpm-ownership
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O05-QA-009
   type: qa
   question: 执行 `rpm -qf` 通常需要 root 权限吗？
@@ -1356,6 +1538,8 @@ notes:
   - topic::rpm-ownership
   - card::boundary
   - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O05-QA-010
   type: qa
   question: '`rpm -qf` 与 `type` 指向的路径不一致时，应怎样解释？'
@@ -1370,6 +1554,8 @@ notes:
   - topic::rpm-ownership
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O05-CLOZE-001
   type: cloze
   text: '{{c1::rpm -qf <PATH>}} 查询本机已安装包对文件的所有权；{{c2::rpm -ql <PACKAGE>}} 反向列出该包登记的文件。'
@@ -1382,7 +1568,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::rpm-ownership
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SHELL-O02-QA-005
   type: qa
   question: 缺失命令 `semanage`，只知道 basename 时，如何查询提供它的候选包？
@@ -1400,12 +1588,14 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::command
-  - priority::P0
   - migration::preserved-id
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SHELL-O02-QA-006
   type: qa
   question: '`dnf provides` 有结果后，还必须验证什么？'
-  answer: 它只证明当前 DNF 元数据中的候选提供能力；安装后还要验证包状态、文件归属、Shell 解析和真实功能。
+  answer: 它只证明 DNF 当前可见的软件包数据中存在候选提供关系；安装后还要验证包状态、文件归属、Shell 解析和真实功能。
   extra: 不能把 provides 结果写成“已经安装”。
   source:
   - dnf(8)
@@ -1416,8 +1606,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::boundary
-  - priority::P0
   - migration::preserved-id
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O06-QA-001
   type: qa
   question: 已知准确缺失路径 `/usr/sbin/semanage` 时，首选查询是什么？
@@ -1435,6 +1627,8 @@ notes:
   - topic::dnf-provides
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O06-QA-002
   type: qa
   question: 为什么 `dnf provides '*/semanage'` 要给模式加引号？
@@ -1449,6 +1643,8 @@ notes:
   - topic::dnf-provides
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O06-QA-003
   type: qa
   question: '`dnf provides` 返回多个候选时，应比较哪些字段？'
@@ -1462,6 +1658,8 @@ notes:
   - topic::dnf-provides
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O06-QA-004
   type: qa
   question: '`dnf search <KEYWORD>` 与 `dnf provides <PATH>` 的核心区别是什么？'
@@ -1475,10 +1673,12 @@ notes:
   - topic::dnf-provides
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O06-QA-005
   type: qa
   question: '`dnf provides` 能否证明候选包已经安装？'
-  answer: 不能。它查询可见系统与仓库元数据中的提供能力。
+  answer: 不能。它查询 DNF 当前可见的软件包数据中的候选提供关系。
   extra: 已安装状态应另用 RPM/DNF 安装查询验证。
   source:
   - dnf(8)
@@ -1487,12 +1687,14 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O06-QA-006
   type: qa
   question: '`dnf provides` 能否证明命令位于当前用户的 `PATH`？'
   answer: 不能。即使包提供该文件，目录、安装状态和当前 Shell 环境仍需分别检查。
-  extra: 使用 `command -v` 验证当前解析。
+  extra: 安装后使用 `type`/`command -v` 验证当前 Shell 解析；结果仍不等于真实功能成功。
   source:
   - dnf(8)
   - bash(1)
@@ -1501,7 +1703,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O06-QA-007
   type: qa
   question: '`dnf provides ''*/foo''` 没有结果时，下一步应按什么顺序调查？'
@@ -1514,7 +1718,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O06-QA-008
   type: qa
   question: 本章为什么不在 `dnf provides` 后直接执行安装？
@@ -1527,7 +1733,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-O06-QA-009
   type: qa
   question: 未来安装候选包后，至少应怎样分层验证？
@@ -1543,6 +1751,8 @@ notes:
   - topic::dnf-provides
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-O06-QA-010
   type: qa
   question: 缺失命令的软件能力调查链是什么？
@@ -1556,7 +1766,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-O06-CLOZE-001
   type: cloze
   text: 已有文件查本地所有权使用 {{c1::rpm -qf}}；缺失文件查当前软件源提供能力使用 {{c2::dnf provides}}。
@@ -1569,7 +1781,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-03-O06-CLOZE-002
   type: cloze
   text: 只知道文件名时，`dnf provides {{c1::'*/<NAME>'}}` 中的引号用于阻止 {{c2::Shell 提前展开通配符}}。
@@ -1582,7 +1796,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::dnf-provides
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SHELL-D01-QA-003
   type: qa
   question: 出现 `command not found` 时，第一条高区分度证据是什么？
@@ -1601,8 +1817,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::diagnosis
-  - priority::P0
   - migration::preserved-id
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-D01-QA-001
   type: qa
   question: '`command not found` 的完整调查链是什么？'
@@ -1616,7 +1834,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-D01-QA-002
   type: qa
   question: 命令可以执行，但 `man` 查不到；最可能需要先区分哪两类情况？
@@ -1630,7 +1850,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-D01-QA-003
   type: qa
   question: '`apropos` 无结果但已知 man page 可以打开，下一条最有区分度的证据是什么？'
@@ -1645,6 +1867,8 @@ notes:
   - topic::diagnosis-task
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-D01-QA-004
   type: qa
   question: '`rpm -qf` 无所有者而 `dnf provides` 有候选，这两个结果是否矛盾？'
@@ -1658,7 +1882,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-D01-QA-005
   type: qa
   question: 同名 function 遮蔽了外部命令，怎样先建立证据而不删除函数？
@@ -1680,6 +1906,8 @@ notes:
   - topic::diagnosis-task
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-D01-QA-006
   type: qa
   question: 同名 alias 遮蔽外部命令时，为什么不应把删除 alias 作为默认修复？
@@ -1693,6 +1921,8 @@ notes:
   - topic::diagnosis-task
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-D01-QA-007
   type: qa
   question: 为什么互联网搜索不能作为本章第一证据？
@@ -1705,7 +1935,9 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-D01-QA-008
   type: qa
   question: 调查记录为什么要写“该证据不能证明什么”？
@@ -1719,6 +1951,8 @@ notes:
   - topic::diagnosis-task
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-D01-QA-009
   type: qa
   question: 经典任务中，调查 `test`、`cd`、`passwd(5)`、`chage`、`semanage` 的顺序反映了什么模型？
@@ -1733,8 +1967,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::process
-  - priority::P0
   - task::local-evidence
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-03-D01-QA-010
   type: qa
   question: 经典任务中，`dnf provides` 命中后怎样才算合格记录？
@@ -1747,8 +1983,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::verification
-  - priority::P0
   - task::local-evidence
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-D01-QA-011
   type: qa
   question: 经典任务中，怎样证明打开的是 `/etc/passwd` 文件格式页？
@@ -1762,8 +2000,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::verification
-  - priority::P0
   - task::local-evidence
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-03-D01-QA-012
   type: qa
   question: 只看到某命令退出状态为 0，能否宣布经典任务全部完成？
@@ -1776,8 +2016,10 @@ notes:
   - chapter::local-help-command-discovery
   - topic::diagnosis-task
   - card::boundary
-  - priority::P0
   - task::local-evidence
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-03-D01-QA-013
   type: qa
   question: 把本章方法迁移到真实工单时，至少应保留哪些证据？
@@ -1791,3 +2033,5 @@ notes:
   - topic::diagnosis-task
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1

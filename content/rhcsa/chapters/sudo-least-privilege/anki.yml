@@ -1,8 +1,8 @@
+schema_version: 1
 chapter_id: RHCSA-10
 chapter_slug: sudo-least-privilege
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-status: integrated
+status: content_frozen_for_integration
 validation: static
 notes:
 - id: RHCSA-10-K01-QA-001
@@ -18,7 +18,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::authorization-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K01-QA-002
   type: qa
   question: 调用者身份与 Runas 身份分别是什么？
@@ -32,7 +34,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::authorization-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K01-QA-003
   type: qa
   question: sudo 没有拒绝命令，能否证明目标服务或文件任务已经正确完成？
@@ -46,7 +50,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::authorization-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-10-K01-QA-004
   type: qa
   question: 为什么允许 `sudo -i` 或 `/bin/bash` 通常不属于最小特权？
@@ -61,6 +67,8 @@ notes:
   - topic::authorization-model
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K01-CLOZE-001
   type: cloze
   text: sudo 策略先判断{{c1::是否授权}}，随后才处理{{c2::认证、Runas 凭据和执行环境}}。
@@ -73,6 +81,8 @@ notes:
   - topic::authorization-model
   - card::cloze
   - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-10-K02-QA-001
   type: qa
   question: 规则 `%webops ALL=(root:root) /usr/bin/id` 中四个主要部分分别是什么？
@@ -88,6 +98,8 @@ notes:
   - topic::sudoers-syntax
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K02-QA-002
   type: qa
   question: sudoers 主体前的 `%` 表示什么？
@@ -102,6 +114,8 @@ notes:
   - topic::sudoers-syntax
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K02-QA-003
   type: qa
   question: sudoers 中括号里的 `(postgres)` 表示调用者还是目标身份？
@@ -115,7 +129,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::sudoers-syntax
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K02-QA-004
   type: qa
   question: 一条命令列表中的 `NOPASSWD:` 会影响哪里？
@@ -128,7 +144,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::sudoers-syntax
   - card::configuration
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K02-QA-005
   type: qa
   question: 主机字段中的 `ALL` 与命令位置的 `ALL` 有何区别？
@@ -141,7 +159,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::sudoers-syntax
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K02-CLOZE-001
   type: cloze
   text: '`%webops ALL=({{c1::root}}) {{c2::/usr/bin/systemctl --no-pager status httpd}}` 中，括号是 Runas，最后是命令路径与参数。'
@@ -154,7 +174,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::sudoers-syntax
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-10-K03-QA-001
   type: qa
   question: '`User_Alias`、`Host_Alias`、`Runas_Alias`、`Cmnd_Alias` 分别复用什么？'
@@ -169,6 +191,8 @@ notes:
   - topic::aliases-order
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K03-QA-002
   type: qa
   question: 同一请求匹配多条 sudoers 规则时，能否假定最具体的一条优先？
@@ -182,7 +206,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::aliases-order
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-10-K03-QA-003
   type: qa
   question: 为什么不推荐用 `ALL, !/bin/bash` 作为有限授权的主要结构？
@@ -196,6 +222,8 @@ notes:
   - topic::aliases-order
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K03-QA-004
   type: qa
   question: 只使用一次且内容很短的命令集合，是否必须定义 `Cmnd_Alias`？
@@ -209,6 +237,8 @@ notes:
   - topic::aliases-order
   - card::boundary
   - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-USERS-O03-QA-008
   type: qa
   question: 为什么 sudoers 命令通常写绝对路径？
@@ -223,7 +253,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::command-arguments
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K04-QA-001
   type: qa
   question: sudoers 只写 `/usr/bin/systemctl` 而不写参数，通常意味着什么？
@@ -236,7 +268,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::command-arguments
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-10-K04-QA-002
   type: qa
   question: 规则允许 `/usr/bin/systemctl --no-pager status httpd`，调用 `systemctl status httpd.service` 一定匹配吗？
@@ -250,6 +284,8 @@ notes:
   - topic::command-arguments
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K04-QA-003
   type: qa
   question: 为什么 sudoers 参数中的 `*` 比普通文件名 glob 更危险？
@@ -263,6 +299,8 @@ notes:
   - topic::command-arguments
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K04-QA-004
   type: qa
   question: 编写 sudoers 前确认命令真实路径的命令骨架是什么？
@@ -276,6 +314,8 @@ notes:
   - topic::command-arguments
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K04-QA-005
   type: qa
   question: 怎样在 sudoers 中表达“程序不得带任何参数”这一意图？
@@ -288,7 +328,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::command-arguments
   - card::syntax
-  - priority::P2
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K04-CLOZE-001
   type: cloze
   text: sudoers 中未指定命令行参数时，用户通常可选择{{c1::任意参数}}；参数通配符 `*` 还可能匹配{{c2::空白}}。
@@ -300,7 +342,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::command-arguments
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-10-K05-QA-001
   type: qa
   question: 为什么把 `/usr/bin/python3` 授权给 root Runas 通常等价于可编程特权入口？
@@ -314,6 +358,8 @@ notes:
   - topic::wrapper-risk
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K05-QA-002
   type: qa
   question: 规则只允许一个 root 包装脚本时，至少还要检查哪些对象？
@@ -326,7 +372,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::wrapper-risk
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K05-QA-003
   type: qa
   question: 为什么“只允许 root 编辑器”仍可能获得远超单文件编辑的能力？
@@ -341,6 +389,8 @@ notes:
   - topic::wrapper-risk
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K05-QA-004
   type: qa
   question: 检查授权脚本路径各级目录控制权的推荐命令是什么？
@@ -353,7 +403,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::wrapper-risk
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-USERS-C01-QA-002
   type: qa
   question: 只允许项目组查看和重启 httpd，sudoers 应避免什么宽泛规则？
@@ -368,7 +420,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::least-privilege-design
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-O01-QA-001
   type: qa
   question: 把“允许 webops 管理 httpd”改写为 sudoers 前，应先明确哪两张清单？
@@ -382,7 +436,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::least-privilege-design
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-O01-QA-002
   type: qa
   question: 只允许免密查看 httpd 状态的规则骨架是什么？
@@ -397,6 +453,8 @@ notes:
   - topic::least-privilege-design
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O01-QA-003
   type: qa
   question: 为什么最小授权验收必须包含拒绝矩阵？
@@ -410,6 +468,8 @@ notes:
   - topic::least-privilege-design
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O01-QA-004
   type: qa
   question: 现有系统已存在宽泛 `%webops ... ALL`，新增精确规则后能否直接宣布收紧成功？
@@ -423,7 +483,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::least-privilege-design
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-USERS-O03-QA-005
   type: qa
   question: 校验 sudoers 片段语法的命令骨架是什么？
@@ -439,6 +501,8 @@ notes:
   - topic::visudo-includes
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O02-QA-001
   type: qa
   question: 安全创建 `/etc/sudoers.d/70-webops-httpd` 的编辑命令是什么？
@@ -454,6 +518,8 @@ notes:
   - topic::visudo-includes
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O02-QA-002
   type: qa
   question: 为什么 sudoers.d 片段名不应包含 `.` 或以 `~` 结尾？
@@ -467,21 +533,26 @@ notes:
   - chapter::sudo-least-privilege
   - topic::visudo-includes
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-O02-QA-003
   type: qa
-  question: '`#includedir /etc/sudoers.d` 开头的 `#` 是否表示整行只是注释？'
-  answer: 不是；这里是 sudoers 的 include 语法。
-  extra: 不要按普通 Shell 注释规则误判。
+  question: '`@includedir /etc/sudoers.d` 与兼容写法 `#includedir /etc/sudoers.d` 应怎样理解？'
+  answer: 两者都是 sudoers 的目录导入指令；`#includedir` 中的 `#` 不是普通注释。维护时以目标机现有 sudoers 和版本为准。
+  extra: 目录按词法顺序读取合格文件；文件名含 `.` 或以 `~` 结尾时通常会被跳过。
   source:
-  - RHEL9-Configuring-Basic-System-Settings-Ch8
+  - RHEL9-Managing-sudo-access
   - sudoers(5)
+  - visudo(8)
   tags:
   - exam::rhcsa
   - chapter::sudo-least-privilege
   - topic::visudo-includes
   - card::syntax
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O02-QA-004
   type: qa
   question: 为什么 `visudo -cf <fragment>` 成功后仍要执行 `visudo -c`？
@@ -496,6 +567,8 @@ notes:
   - topic::visudo-includes
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O02-QA-005
   type: qa
   question: sudoers.d 片段推荐的所有者和模式是什么？
@@ -509,7 +582,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::visudo-includes
   - card::configuration
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O02-CLOZE-001
   type: cloze
   text: 编辑指定片段使用 `{{c1::visudo -f}}`；检查指定文件使用 `{{c2::visudo -cf}}`；检查完整策略使用 `{{c3::visudo -c}}`。
@@ -521,7 +596,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::visudo-includes
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-USERS-O03-QA-006
   type: qa
   question: 管理员查看 alice 可用 sudo 授权的命令是什么？
@@ -537,6 +614,8 @@ notes:
   - topic::list-verification
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O03-QA-001
   type: qa
   question: 当前用户查看自己 sudo 授权的命令是什么？
@@ -551,6 +630,8 @@ notes:
   - topic::list-verification
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O03-QA-002
   type: qa
   question: 测试 `NOPASSWD` 前为什么先执行 `sudo -k`？
@@ -564,7 +645,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::list-verification
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-O03-QA-003
   type: qa
   question: '`sudo -n <command>` 的作用是什么？'
@@ -578,6 +661,8 @@ notes:
   - topic::list-verification
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O03-QA-004
   type: qa
   question: 怎样证明精确 status 命令为免密授权，而不是命中了旧认证时间戳？
@@ -592,6 +677,8 @@ notes:
   - topic::list-verification
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O03-QA-005
   type: qa
   question: '`sudo -l` 中出现相关命令，为什么仍要运行真实调用？'
@@ -605,7 +692,25 @@ notes:
   - chapter::sudo-least-privilege
   - topic::list-verification
   - card::boundary
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
+- id: RHCSA-10-O03-QA-006
+  type: qa
+  question: 规则允许指定 Runas 组时，用什么命令骨架请求目标组执行命令？
+  answer: '`sudo -g <group> <command>`。若还需指定目标用户，同时使用 `-u <user>`；两者都必须匹配 sudoers 的 Runas 规格。'
+  extra: '`-g` 设置目标命令的主组；它不会把调用者加入该组，也不会扩大允许的命令集合。'
+  source:
+  - sudo(8)
+  - sudoers(5)
+  tags:
+  - exam::rhcsa
+  - chapter::sudo-least-privilege
+  - topic::list-verification
+  - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-USERS-O03-QA-007
   type: qa
   question: sudoers 中 `NOPASSWD:` 改变什么，不改变什么？
@@ -619,7 +724,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::authentication
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K06-QA-001
   type: qa
   question: sudo 默认要求调用者密码还是 root 密码？
@@ -633,7 +740,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::authentication
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K06-QA-002
   type: qa
   question: 一次 sudo 未提示密码，能否直接断言规则是 `NOPASSWD`？
@@ -647,7 +756,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::authentication
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K06-QA-003
   type: qa
   question: '`sudo -n` 返回非零是否一定表示命令未授权？'
@@ -661,6 +772,8 @@ notes:
   - topic::authentication
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K06-CLOZE-001
   type: cloze
   text: '`{{c1::sudo -k}}` 清除当前认证时间戳；`{{c2::sudo -n}}` 禁止交互式密码提示。'
@@ -672,7 +785,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::authentication
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-10-K07-QA-001
   type: qa
   question: '`env_reset` 的主要安全目的是什么？'
@@ -685,7 +800,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::environment
   - card::security
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K07-QA-002
   type: qa
   question: '`secure_path` 配置后会影响什么？'
@@ -699,6 +816,8 @@ notes:
   - topic::environment
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-K07-QA-003
   type: qa
   question: sudoers 已使用绝对脚本路径，为什么脚本内部仍可能受 PATH 影响？
@@ -711,7 +830,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::environment
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K07-QA-004
   type: qa
   question: 命令普通执行成功、经 sudo 后找不到程序，下一步最有区分度的证据是什么？
@@ -724,7 +845,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::environment
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-K07-QA-005
   type: qa
   question: 为什么不应把 `sudo -E` 当作环境问题的默认修复？
@@ -738,7 +861,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::environment
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-10-O04-QA-001
   type: qa
   question: sudoers 中允许编辑 `/etc/motd` 的 sudoedit 规则骨架是什么？
@@ -752,6 +877,8 @@ notes:
   - topic::sudoedit
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O04-QA-002
   type: qa
   question: 调用 sudoedit 编辑目标文件的两种常见形式是什么？
@@ -766,6 +893,8 @@ notes:
   - topic::sudoedit
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O04-QA-003
   type: qa
   question: 为什么 sudoers 中不应写 `/usr/bin/sudoedit /etc/motd`？
@@ -779,6 +908,8 @@ notes:
   - topic::sudoedit
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O04-QA-004
   type: qa
   question: 为什么不能把 sudoedit 授权给位于调用者可写目录中的文件？
@@ -792,6 +923,8 @@ notes:
   - topic::sudoedit
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-O04-QA-005
   type: qa
   question: 只需编辑一份配置时，sudoedit 相比 `sudo vim` 的核心优势是什么？
@@ -805,7 +938,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::sudoedit
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-D01-QA-001
   type: qa
   question: '`sudo -l` 允许 `/usr/bin/systemctl --no-pager status httpd`，实际 `status httpd.service` 被拒绝，下一条最有区分度的命令是什么？'
@@ -818,7 +953,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::mismatch-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-D01-QA-002
   type: qa
   question: 规则只允许 `(postgres)`，用户不带 `-u` 执行命令被拒绝，最可能缺少什么？
@@ -832,7 +969,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::mismatch-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-D01-QA-003
   type: qa
   question: 修复参数不匹配时，哪两种方案符合最小修改？
@@ -845,7 +984,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::mismatch-diagnosis
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-D01-QA-004
   type: qa
   question: 为什么 systemctl 的参数顺序也应进入 sudo 验收？
@@ -858,7 +999,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::mismatch-diagnosis
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-10-D02-QA-001
   type: qa
   question: sudoers.d 片段存在但 `sudo -l` 看不到，第一组证据是什么？
@@ -872,7 +1015,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::load-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-D02-QA-002
   type: qa
   question: 片段 `visudo -cf` 成功但 `visudo -c` 失败，说明什么？
@@ -887,6 +1032,8 @@ notes:
   - topic::load-diagnosis
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-D02-QA-003
   type: qa
   question: 规则看似 NOPASSWD，但测试仍要求密码，除标签外还要检查什么？
@@ -899,7 +1046,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::load-diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-D02-QA-004
   type: qa
   question: sudo 已启动程序但程序报告 `command not found`，是否应先扩大 sudoers？
@@ -912,7 +1061,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::load-diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-10-D03-QA-001
   type: qa
   question: 怎样区分 sudoers 拒绝与目标程序自身失败？
@@ -926,7 +1077,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::execution-boundary
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-D03-QA-002
   type: qa
   question: systemctl 经 sudo 执行后 unit 仍 failed，本章下一步是什么？
@@ -939,7 +1092,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::execution-boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-10-D03-QA-003
   type: qa
   question: 目标文件经 sudoedit 写回后应用仍不可用，能否据此判断 sudoedit 授权失败？
@@ -952,7 +1107,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::execution-boundary
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-10-C01-QA-001
   type: qa
   question: 为 webops 配置“status 免密、restart 需密码”的最小规则，核心命令列表是什么？
@@ -967,6 +1124,8 @@ notes:
   - topic::classic-task-webops
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-C01-QA-002
   type: qa
   question: 该 webops 任务的分层验收顺序是什么？
@@ -981,7 +1140,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::classic-task-webops
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-C01-QA-003
   type: qa
   question: 验证 restart 确实需要密码，而不是测试终端已有时间戳，应怎样做？
@@ -995,6 +1156,8 @@ notes:
   - topic::classic-task-webops
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-C01-QA-004
   type: qa
   question: webops 经典任务至少应拒绝哪些三类能力？
@@ -1008,6 +1171,8 @@ notes:
   - topic::classic-task-webops
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-C02-QA-001
   type: qa
   question: 规则允许精确 status 形式但实际命令参数不同，为什么不能直接改成 `systemctl *`？
@@ -1021,6 +1186,8 @@ notes:
   - topic::classic-task-mismatch
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-C02-QA-002
   type: qa
   question: 诊断“列表可见但调用被拒绝”的比较顺序是什么？
@@ -1033,7 +1200,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::classic-task-mismatch
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-S01-QA-001
   type: qa
   question: sudoers 规则语法、sudo 调用参数和 visudo 校验分别查哪些手册页？
@@ -1048,7 +1217,9 @@ notes:
   - chapter::sudo-least-privilege
   - topic::chapter-summary
   - card::help
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-10-S01-QA-002
   type: qa
   question: 最小 sudo 授权完成的最小证据集合是什么？
@@ -1063,6 +1234,8 @@ notes:
   - topic::chapter-summary
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-10-S01-CLOZE-001
   type: cloze
   text: sudo 验收不能停在 `{{c1::visudo -c}}` 或 `{{c2::sudo -l}}`；还必须执行允许与拒绝调用，并验证目标功能。
@@ -1075,4 +1248,6 @@ notes:
   - chapter::sudo-least-privilege
   - topic::chapter-summary
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1

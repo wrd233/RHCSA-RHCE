@@ -1,0 +1,77 @@
+package_version: 1
+chapter:
+  id: RHCSA-28
+  exam: RHCSA
+  part: 7
+  number: 28
+  slug: selinux-model-context-avc
+  title: SELinux 模型、模式、上下文与 AVC 证据
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/selinux-model-context-avc/lecture.md
+  anki: content/rhcsa/chapters/selinux-model-context-avc/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:21:21+08:00'
+  hash_policy: SHA-256 covers every payload file; manifest.yml is excluded from self-hashing.
+files:
+  lecture:
+    path: lecture.md
+    sha256: 1f40baa418adcc4c17c3fe51d5407958f304974f748a9c001c4eed1d0667f09b
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 5b9931fd69880df3e6650650f57d899340c6be8468fa9b10fdf2e862c3bef492
+  anki:
+    path: anki.yml
+    sha256: 78c71b367a76d42ad7e1a22326fb84c91d5f572f8aacdfc76300380bc1e4ff83
+  preview:
+    path: anki-preview.html
+    sha256: d3f654ecb786764a45eaebb220cb266774225e167bb3c7582b7dee3c91223d98
+  summary:
+    path: anki-summary.md
+    sha256: fcf1ecf6796a3204a145dacf4fe26bf6057c7ba39b84f9d0b2deb83bac7e6290
+  anki_impact:
+    path: anki-impact.md
+    sha256: 2dc8330d434348a89b39d39e1a5acb9a454d6428d1ac1028f35c665a3de990ef
+  source_map:
+    path: source-map.md
+    sha256: 798a5152302c166947591061140b50126525f3fd5cb2f96ab748a97e84665cc6
+  structure_report:
+    path: structure-report.md
+    sha256: ef417aa887d0d7b1975e2fcb31bb13be63087d3c404e9da4e5ff4b7bad1daf88
+  visual_qa:
+    path: visual-qa.md
+    sha256: 0fd817a02b9aae37a5492dd575f757be9e511a4cfd9be3b08ac9702c2ac739ad
+  qa_report:
+    path: qa-report.md
+    sha256: 3e10c62cf13db07c536c44f7f3cefc38dabfbbc8411418da6e3805fd20af6395
+  revision_notes:
+    path: revision-notes.md
+    sha256: 1fb48830249952af9a524fc0ebdbdff439f8f601644f06fca87833941bb3da12
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 20ea0bdca1c6dde37f87e97a9d5266343de8b1d6c1f38d29a13b98eedd0e0524
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controlled RHEL 9 virtual machine was available; command-level live tests were not performed.
+- Full-book Section ID/Anki ID uniqueness and cross-chapter near-duplicate checks remain Codex responsibilities.
+- Formal full-book PDF, APKG, AnkiConnect, Git integration, and release were not performed.

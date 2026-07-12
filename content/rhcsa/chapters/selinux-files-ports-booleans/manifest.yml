@@ -1,0 +1,75 @@
+package_version: 1
+chapter:
+  id: RHCSA-29
+  exam: RHCSA
+  part: 7
+  number: 29
+  slug: selinux-files-ports-booleans
+  title: SELinux 文件规则、端口类型与 Boolean
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/selinux-files-ports-booleans/lecture.md
+  anki: content/rhcsa/chapters/selinux-files-ports-booleans/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:27:59+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: e92df6550f5080758bd1e42dcec2a1657572308a6b5941ffd03356c9314a4d17
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: e4295e756d33c0dc47cabaae2cb38acf9bcdee4eaded666fee2197d25948ccd8
+  anki:
+    path: anki.yml
+    sha256: bdfeb7616a51f2fb5b4607bab2271a58b59ec74c50597f4535ba949bc8b75392
+  preview:
+    path: anki-preview.html
+    sha256: 7c46b6a1ce7fcc617a750c38ede35796cff18fdddb403e96fc8655ac24a948ba
+  summary:
+    path: anki-summary.md
+    sha256: 4be459ff81dbdca0fb3ad7fee0daa5091745fca7a4c539eff57b0606fa4fabab
+  anki_impact:
+    path: anki-impact.md
+    sha256: e9e2d96f657c8e5d847f35183fb363e9a8518d7477443a60915137e113315708
+  source_map:
+    path: source-map.md
+    sha256: 97bd09beba4a4a1f1b7ed85d782863e29938767af74b7da8e28b906f82620dbc
+  structure_report:
+    path: structure-report.md
+    sha256: 7838d1f27648642d5a8da356757568529ea8253ada881ec098ffdce0c9c366e8
+  visual_qa:
+    path: visual-qa.md
+    sha256: 3b0d4496c8cd965b3cfa4038dd9f385044df43f63edf06498494db304c077cc8
+  qa_report:
+    path: qa-report.md
+    sha256: 6a0635aa7f17e0ea762b64fbd906e6d12ef77f87b3b6aa49d48bab5d8b9553d4
+  revision_notes:
+    path: revision-notes.md
+    sha256: 5c32aadde797392ad514b98de13eb4b861bd7574f150810ecf7fa7976de5795f
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 04938e8790aec9fd8967e1887819c9ab9f3f3279f818fbfe404d7c416a9f7b5e
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM was connected; command workflows are statically verified only.
+- Full-book Section ID, Anki ID, cross-chapter duplicate, PDF, APKG and Git integration remain Codex responsibilities.

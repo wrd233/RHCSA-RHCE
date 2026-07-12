@@ -4,9 +4,10 @@ chapter_id: RHCSA-29
 exam: RHCSA
 part: "第七篇 安全、启动与系统恢复"
 slug: selinux-files-ports-booleans
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
+base_commit: 961a29b3af4c07a828078a5de90c221a036546df
 sources:
   - RH134-RHEL9
   - RHEL9-Using-SELinux
@@ -22,21 +23,85 @@ sources:
 
 # 第 29 章　SELinux 文件规则、端口类型与 Boolean
 
-上一章已经建立了 SELinux 的最小判断前提：系统处于何种模式、进程域和对象类型分别是什么、AVC 拒绝记录中的进程、对象与行为怎样解读。本章从那个证据节点继续向前，不再重复模式切换和 AVC 字段教学，而是解决更直接的问题：已经确认 SELinux 参与了拒绝，应该修改文件规则、端口类型还是 Boolean，怎样让修改既持久又保持最小授权。
+<div class="reading-nav">
+<h2>本章阅读导航</h2>
+<p class="nav-lead">先抓住一条主线：确认 SELinux 参与拒绝之后，不是立刻“放宽策略”，而是先判断问题属于路径对象、协议端口还是策略预留的可选行为，再建立持久声明并用分层证据验收。</p>
+<div class="model-grid">
+<div><b>01</b><strong>识别对象</strong><span>路径、协议端口或可选行为</span></div>
+<div><b>02</b><strong>建立基线</strong><span>规则、预期、当前与功能分开</span></div>
+<div><b>03</b><strong>选择入口</strong><span>fcontext、port type 或 Boolean</span></div>
+<div><b>04</b><strong>最小修改</strong><span>新增、修改或删除已有声明</span></div>
+<div><b>05</b><strong>应用当前状态</strong><span>让持久声明作用于现有对象</span></div>
+<div><b>06</b><strong>分层验收</strong><span>配置、运行、网络、SELinux 与功能</span></div>
+</div>
+<div class="nav-columns">
+<div>
+<h3>专题地图</h3>
+<ul class="topic-map">
+<li><span>知识专题</span>文件、端口和行为：先选对策略入口</li>
+<li><span>知识专题</span>当前标签、预期标签与持久规则</li>
+<li><span>操作专题</span>建立文件上下文基线并安全恢复标签</li>
+<li><span>操作专题</span>管理 fcontext 规则生命周期</li>
+<li><span>知识专题</span>文件类型与最小写能力</li>
+<li><span>操作专题</span>管理协议相关的非标准端口</li>
+<li><span>操作专题</span>查询并持久设置 Boolean</li>
+<li><span>诊断专题</span>规则覆盖、端口冲突与跨层证据</li>
+<li><span>经典任务</span>自定义目录和 TCP 82 Web 服务</li>
+<li><span>参考解答</span>调查、修改、应用和分层验收</li>
+</ul>
+</div>
+<div>
+<h3>阅读时持续回答</h3>
+<ol class="questions">
+<li>现在看到的是持久规则、预期标签还是当前标签？</li>
+<li>目标表达式是否同时覆盖目录本身和后代？</li>
+<li>已有记录应使用新增、修改还是删除？</li>
+<li>端口号对应的是 TCP 还是 UDP？</li>
+<li>Boolean 是否精确描述真实业务行为？</li>
+<li>这条验证命令能证明什么，不能证明什么？</li>
+<li>最终成功是否仍依赖临时标签或 runtime-only 状态？</li>
+</ol>
+<div class="note-box"><b>判断提示：</b>每次变更都先区分持久声明、当前状态与最终功能；阅读经典任务时先独立列出验收矩阵，再对照参考解答。</div>
+</div>
+</div>
+</div>
 
-三个入口处理的是三类不同对象。文件上下文规则回答“这个路径及其内容在策略中应被视为什么类型”；端口类型回答“某类受限服务能否绑定或使用某个协议和端口”；Boolean 回答“是否启用策略预先提供的一组可选业务行为”。它们不能互相替代，也不能由关闭 SELinux、扩大普通权限或盲目生成本地策略模块代替。
+<div class="chapter-opening">
+<p class="chapter-kicker">第 29 章 · 正文</p>
+<p>上一章已经建立 SELinux 模式、进程域、对象类型和 AVC 证据的最小判断框架。本章从“已经确认 SELinux 参与拒绝”这一节点继续：面对自定义目录、非标准端口或策略默认关闭的业务行为，怎样选择正确的标准策略入口，怎样区分当前状态与持久声明，并用最小授权完成可重复的验收。</p>
+<p>最常见的误判，是把一次可见变化当作长期正确状态：`chcon` 后 `ls -Z` 看起来正确，却没有路径规则；`semanage port` 成功，却没有进程监听；Boolean 为 `on`，却没有重新触发真实应用。为避免这些局部成功，本章始终沿着“对象 - 声明 - 当前状态 - 功能证据”推进。</p>
+<p>SELinux 模型与 AVC 解读归第 28 章；firewalld 规则归第 21 章；服务 unit 与启动状态归第 12 章。本章只在综合验收时引用这些证据入口，不重复展开相邻章节。</p>
+</div>
 
-**[概念]** 当前文件标签是对象此刻携带的安全上下文；预期标签是 SELinux 根据已加载策略和路径规则为该路径计算出的默认上下文；持久 fcontext 规则是管理员登记的“路径表达式 → 类型”映射。三者可能暂时不一致。
+<div class="concept-card"><span class="concept-pill">概念</span><p><strong>当前标签</strong> 是文件或目录此刻携带的 SELinux 安全上下文，可由 <code>ls -Z</code> 观察。它可能来自创建继承、<code>restorecon</code>、<code>chcon</code> 或文件移动等过程，因此“当前看起来正确”只证明这一刻的对象状态，不能证明系统已经建立路径级持久声明。</p></div>
 
-**[概念]** SELinux 端口映射的身份是“协议 + 端口或端口范围”。TCP 82 与 UDP 82 是两个不同对象；端口类型正确也只说明 SELinux 允许相应域使用它，不证明服务已经监听或防火墙已经放行。
+<div class="concept-card"><span class="concept-pill">概念</span><p><strong>持久 fcontext 规则</strong> 是管理员登记的“路径表达式到 SELinux 类型”的映射。它描述该路径未来应获得什么默认类型，却不会在创建或修改规则时自动遍历磁盘对象；已有文件仍需由 <code>restorecon</code> 按规则应用。规则存在、预期正确和当前标签正确必须分别验证。</p></div>
 
-**[概念]** Boolean 是策略作者预留的条件开关。它适合表达“允许 httpd 主动连接数据库”“允许服务读取 NFS 内容”这类预定义行为，不适合修复错误文件标签、错误端口类型或普通权限问题。
+<div class="concept-card"><span class="concept-pill">概念</span><p><strong>路径正则</strong> 是 fcontext 规则识别对象的表达方式。经典形式 <code>'/srv/site(/.*)?'</code> 同时覆盖目录本身和斜杠后的所有后代；外层单引号防止 Shell 把括号、星号和问号当作自己的语法。表达式过宽会扩大影响面，过窄则可能漏掉目录或内容。</p></div>
 
-**[操作语义]** `semanage fcontext` 维护持久路径规则，`matchpathcon` 查询策略预期标签，`restorecon` 将预期规则应用到现有对象，`ls -Z` 查看当前标签；`chcon` 只直接修改当前标签。
+<div class="concept-card"><span class="concept-pill">概念</span><p><strong>端口类型</strong> 把“协议 + 端口或端口范围”映射为 SELinux 策略对象，决定某类受限进程是否能使用该网络端口。TCP 82 与 UDP 82 是不同对象；端口类型正确只证明 SELinux 的一个条件，不证明应用配置、真实监听或 firewalld 已经正确。</p></div>
 
-**[操作语义]** `semanage port` 查询和维护端口类型；`getsebool` 查询当前 Boolean，`semanage boolean -l` 帮助理解开关语义，`setsebool -P` 建立持久 Boolean 终态。
+<div class="concept-card"><span class="concept-pill">概念</span><p><strong>Boolean</strong> 是策略作者预留的条件开关，用于整体启用或关闭一组已定义规则，例如允许 Web 应用主动连接数据库。它不负责修复错误文件标签、错误端口映射或 DAC 权限；选择 Boolean 时必须从真实业务行为出发，并区分当前值与使用 <code>-P</code> 保存的持久值。</p></div>
 
-**[操作语义]** 本章所有修复都遵循同一顺序：先调查现有规则和当前状态，再选择最窄的标准策略入口，修改后重新触发原始业务，并分别验证普通权限、服务、监听、防火墙、SELinux 和最终功能。
+<div class="page-break"></div>
+
+<div class="concept-card"><span class="concept-pill">概念</span><p><strong>最小授权</strong> 是只改变能够解释当前证据的最窄状态：静态内容使用只读类型，写入能力只授予必要子目录；端口映射同时限定协议和端口；Boolean 只启用语义匹配的开关。关闭 SELinux、<code>chmod 777</code>、批量可写类型或盲目生成策略模块都不是默认修复。</p></div>
+
+<div class="quickref">
+<div class="quickref-intro"><span>操作语义</span>以下命令分别维护路径规则、计算预期标签、应用当前标签、管理协议端口和切换策略 Boolean。先理解作用对象，再选择参数。</div>
+
+<div class="cmd-group"><h3><code>semanage fcontext</code></h3><div class="syn-label">SYNOPSIS</div><pre>semanage fcontext {-l|-a|-m|-d} [-t TYPE] FILE_SPEC</pre><p>查询或维护持久的路径表达式到文件类型映射；它修改规则，不直接重标记现有文件。</p><div class="param-title">重要参数 / 形式</div><dl><dt><code>-l</code> / <code>-C -l</code></dt><dd>列出全部规则，或只列出本地定制。</dd><dt><code>-a -t TYPE FILE_SPEC</code></dt><dd>在表达式不存在时新增规则。</dd><dt><code>-m -t TYPE FILE_SPEC</code></dt><dd>修改已经存在且确认需要调整的规则。</dd><dt><code>-d FILE_SPEC</code></dt><dd>删除本地规则；删除后不会自动改变磁盘上的当前标签。</dd></dl></div>
+
+<div class="cmd-group"><h3><code>matchpathcon</code> / <code>restorecon</code></h3><div class="syn-label">SYNOPSIS</div><pre>matchpathcon [-V] PATH
+restorecon [-n] [-R] [-v] PATH ...</pre><p>前者根据当前规则计算路径的预期上下文；后者把该预期应用到现有对象。</p><div class="param-title">重要参数 / 形式</div><dl><dt><code>matchpathcon PATH</code></dt><dd>显示路径按规则应获得的默认上下文。</dd><dt><code>matchpathcon -V PATH</code></dt><dd>比较预期上下文与磁盘当前上下文。</dd><dt><code>restorecon -nRv PATH</code></dt><dd>递归预览将发生的变化，不实际修改。</dd><dt><code>restorecon -Rv PATH</code></dt><dd>递归应用当前文件上下文规则。</dd></dl></div>
+
+<div class="cmd-group"><h3><code>chcon</code></h3><div class="syn-label">SYNOPSIS</div><pre>chcon -t TYPE PATH ...</pre><p>直接修改对象当前标签，适合受控实验或临时定位；它不建立路径未来应获得什么类型的持久规则。</p><div class="param-title">重要参数 / 形式</div><dl><dt><code>-t TYPE</code></dt><dd>只替换上下文中的类型字段。</dd><dt><code>chcon -t TYPE PATH</code></dt><dd>当前标签可跨普通重启保留，但可能被 <code>restorecon</code>、重标记或对象重建覆盖。</dd></dl></div>
+
+<div class="cmd-group"><h3><code>semanage port</code></h3><div class="syn-label">SYNOPSIS</div><pre>semanage port {-l|-a|-m|-d} [-t TYPE] -p {tcp|udp} PORT</pre><p>查询或维护 SELinux 的协议相关端口映射；端口号不能脱离 TCP 或 UDP 单独判断。</p><div class="param-title">重要参数 / 形式</div><dl><dt><code>-l</code> / <code>-C -l</code></dt><dd>列出全部端口映射，或只列出本地定制。</dd><dt><code>-p tcp|udp</code></dt><dd>明确协议；同一数字的 TCP 和 UDP 是不同对象。</dd><dt><code>-a/-m/-d</code></dt><dd>分别用于新增、修改和删除本地端口映射。</dd><dt><code>-t TYPE</code></dt><dd>指定目标 SELinux 端口类型。</dd></dl></div>
+
+<div class="cmd-group"><h3><code>getsebool</code> / <code>setsebool</code></h3><div class="syn-label">SYNOPSIS</div><pre>getsebool {NAME|-a}
+setsebool [-P] NAME {on|off}</pre><p>查询当前 Boolean，并切换策略预先定义的可选行为；选择开关前先阅读名称和描述是否精确匹配业务。</p><div class="param-title">重要参数 / 形式</div><dl><dt><code>getsebool NAME</code></dt><dd>查询指定 Boolean 当前值。</dd><dt><code>getsebool -a</code></dt><dd>列出全部当前值，通常配合筛选发现相关项。</dd><dt><code>setsebool NAME on|off</code></dt><dd>只改变当前加载策略中的值。</dd><dt><code>setsebool -P NAME on|off</code></dt><dd>同时建立持久值；等待命令完成后再验证。</dd></dl></div>
+</div>
 
 <!-- topic: RHCSA-29-K01 -->
 ## [知识专题] 文件、端口和行为：先选对策略入口
@@ -431,7 +496,7 @@ curl http://localhost:82/
 
 Boolean 的关键不是记住尽可能多的名称，而是从受限进程正在尝试的合法业务行为出发，找到策略已经预留的精确开关，理解它会扩大哪类能力，然后建立当前和持久终态。
 
-### ① [操作] 查询当前值并搜索候选开关
+### ① [操作] 查询当前值并搜索相关开关
 
 ```bash
 getsebool httpd_can_network_connect_db
@@ -439,7 +504,7 @@ getsebool -a | grep '^httpd_'
 semanage boolean -l | grep -i httpd
 ```
 
-`getsebool` 直接读取当前已加载策略中的值；`semanage boolean -l` 提供更完整的列表和描述，有助于区分名称相近但行为范围不同的开关。搜索只是发现候选项，最终选择要回到业务语义。
+`getsebool` 直接读取当前已加载策略中的值；`semanage boolean -l` 提供更完整的列表和描述，有助于区分名称相近但行为范围不同的开关。搜索只用于发现相关项，最终选择要回到业务语义。
 
 ### ② [操作] 不带 `-P` 只改变当前值
 
@@ -627,6 +692,8 @@ DAC 不允许
 
 **[Cheatsheet]** 新增失败先查现有记录；SELinux 状态正确后继续沿服务、监听、网络和应用层推进；每次只做能解释证据的最小修改。
 
+<div class="page-break"></div>
+
 <!-- topic: RHCSA-29-C01 -->
 ## [经典任务] 在自定义目录和 TCP 82 上发布 Web 服务
 
@@ -787,16 +854,14 @@ matchpathcon -V /srv/exam-site/index.html
 curl http://localhost:82/
 ```
 
-最终记录：fcontext 本地规则、预期与当前标签、TCP 端口类型、服务 active/enabled、真实监听、firewalld 当前/永久规则和最终页面请求。只有这些证据共同满足，才能认为候选答案形成完整闭环。
+最终记录：fcontext 本地规则、预期与当前标签、TCP 端口类型、服务 active/enabled、真实监听、firewalld 当前/永久规则和最终页面请求。只有这些证据共同满足，才能认为配置形成完整闭环。
 
 ### 典型错误
 
-- 使用 `chcon` 后只看 `ls -Z`，没有建立 fcontext；
-- TCP 82 已有类型时继续重复 `-a`；
-- 只验证 `systemctl status`，没有检查监听；
-- 只在本机 `curl`，没有检查防火墙和远端；
-- 站点是静态内容，却给整个目录可写类型；
-- 页面成功后没有再次 `restorecon` 验证持久规则。
+- 把临时标签或机械新增当作持久配置：`chcon` 后只看 `ls -Z`，或 TCP 82 已有记录时仍重复 `-a`；
+- 把局部状态或扩大授权当作完整功能：只看 `systemctl status` 或本机 `curl`，给静态站点整个目录可写类型，且页面成功后不再执行 `restorecon` 复验。
+
+<div class="page-break"></div>
 
 <!-- topic: RHCSA-29-C02 -->
 ## [经典任务] 最小放行 Web 应用连接 MariaDB
@@ -897,25 +962,39 @@ Ansible 中管理 SELinux 文件规则、端口和 Boolean 的模块字段、col
 <!-- topic: RHCSA-29-S01 -->
 ## [本章收束] 用最小持久修改完成证据闭环
 
-遇到已经确认的 SELinux 拒绝时，先把目标分到三类对象：
+本章的核心不是背三组命令，而是始终先判断正在改变哪个对象。文件路径、协议端口和策略可选行为属于三个不同的策略入口；当前标签、持久规则和最终功能也属于三个不同的状态层。把它们混在一起，就会出现“标签看起来正确但没有规则”“端口类型正确但没有监听”“Boolean 已开启但业务仍失败”这类误判。
+
+稳定的工作方法是：
 
 ```text
-路径对象 → fcontext 规则 + restorecon
-协议端口 → semanage port
-可选行为 → 精确 Boolean + setsebool -P
-```
-
-文件上下文必须区分持久规则、预期标签和当前标签；端口必须区分协议、SELinux 类型、真实监听和防火墙；Boolean 必须区分当前值、持久值和真实业务行为。任何局部状态都不能单独证明完整服务终态。
-
-最终操作路径是：
-
-```text
-建立基线
-→ 用证据选择标准策略入口
+确认失败层次
+→ 建立当前证据
+→ 选择文件规则、端口类型或 Boolean
 → 做最窄的持久修改
-→ 将规则应用到当前对象
+→ 将声明应用到当前对象
 → 重新触发原始业务
 → 分层验证当前、持久与功能状态
 ```
 
-本章内容依据 RHEL 9 课程、官方文档和对应手册页进行静态核对。当前会话没有可控 RHEL 9 虚拟机，未声称完成命令级 live test；需要重启、策略包版本和真实服务环境确认的项目已记录在 `统一验证记录`。
+### 主要判断表
+
+| 现象或目标 | 首要对象 | 下一条有区分度的证据 | 典型持久入口 | 不能单独证明 |
+|---|---|---|---|---|
+| 自定义目录无法被服务读取 | 路径与文件类型 | `matchpathcon` 对比 `ls -Z` | `semanage fcontext` + `restorecon` | 服务已可用 |
+| `restorecon` 后仍是错误类型 | fcontext 规则 | `semanage fcontext -C -l` | 修改或删除冲突规则 | 业务根因已消失 |
+| 服务不能绑定非标准端口 | 协议、端口与 port type | `semanage port -l` 并核对协议 | `semanage port -a/-m` | 进程已经监听 |
+| 业务需要策略预留的可选行为 | Boolean | `semanage boolean -l` 阅读语义 | `setsebool -P` | 网络、账号或应用配置正确 |
+| 页面当前能够访问 | 完整访问链 | 再查持久规则并重做 `restorecon` | 各层分别持久化 | 重启后仍成立 |
+| 命令返回成功 | 工具所管理的局部状态 | 查询真实状态并触发功能 | 依对象而定 | 整体终态正确 |
+
+### 工作方法
+
+- 调查只收集会改变决策的证据，不用重复执行失败命令代替分析。
+- 新增前先查询；已有记录时区分修改、保留和删除，不无条件重建。
+- 递归重标记前先预览范围；可写类型只授予真正需要写入的最小子目录。
+- 每条验证命令都注明证明边界：规则存在不等于当前已应用，监听存在不等于远端可访问，Boolean 为 `on` 不等于应用功能成功。
+- 本章没有连接 RHEL 9 虚拟机；命令和流程为课程、官方文档与手册页基础上的静态核对，重启级与端到端功能验证仍需在目标环境执行。
+
+### 向下一章交接
+
+下一章进入启动链、GRUB、Target 与系统恢复。本章只留下一个必要接口：`chcon` 之类的当前标签修改可能在恢复标签或系统重新标记时被覆盖，而持久 fcontext 规则描述路径未来应获得的类型。系统重新标记的启动与恢复流程归下一章；本章不提前展开 GRUB、救援目标或全系统 relabel 操作。

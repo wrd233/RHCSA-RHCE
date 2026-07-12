@@ -1,7 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-14
 chapter_slug: time-timezone-rtc-chrony
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-SERVICES-O03-QA-001
   type: qa
@@ -28,6 +30,8 @@ notes:
   - topic::time-baseline
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SERVICES-O03-QA-002
   type: qa
   question: '`chronyc sources -v` 与 `chronyc tracking` 分别回答什么问题？'
@@ -41,7 +45,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::chrony-evidence
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SERVICES-O03-QA-003
   type: qa
   question: '`chronyc sources -v` 中 `^*`、`^+` 与 `^?` 分别表示什么？'
@@ -56,6 +62,8 @@ notes:
   - topic::sources-markers
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-K01-QA-001
   type: qa
   question: 系统时钟、时区、RTC 与 NTP 分别解决什么问题？
@@ -69,7 +77,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::时钟层次
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-K01-QA-002
   type: qa
   question: 改变时区会改变同一时刻的 UTC 值吗？
@@ -83,7 +93,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::时钟层次
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-K01-QA-003
   type: qa
   question: 服务器 RTC 通常应按 UTC 还是本地时间维护？
@@ -98,7 +110,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::rtc
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-O01-QA-001
   type: qa
   question: 怎样同时查看系统时钟的本地显示和 UTC 显示？
@@ -120,6 +134,8 @@ notes:
   - topic::time-baseline
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O01-QA-002
   type: qa
   question: '`timedatectl` 中 `NTP service: active` 能否证明系统已经成功同步？'
@@ -134,7 +150,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::timedatectl
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-O01-QA-003
   type: qa
   question: 查询有效时区并把系统设置为 `Asia/Shanghai` 的命令骨架是什么？
@@ -158,6 +176,8 @@ notes:
   - topic::timezone
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O01-QA-004
   type: qa
   question: 修改时区后，哪两个证据分别证明持久配置和当前显示？
@@ -172,7 +192,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::timezone
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O01-QA-005
   type: qa
   question: 网络同步已启用时，为什么不应把 `timedatectl set-time` 作为常规校时方法？
@@ -187,7 +209,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::manual-time
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-O02-QA-001
   type: qa
   question: 只读查看 RTC 的常用命令是什么？
@@ -207,6 +231,8 @@ notes:
   - topic::rtc
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O02-QA-002
   type: qa
   question: '`hwclock --systohc` 的复制方向是什么？'
@@ -222,6 +248,8 @@ notes:
   - topic::rtc
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O02-QA-003
   type: qa
   question: '`hwclock --hctosys` 的复制方向和主要风险是什么？'
@@ -236,7 +264,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::rtc
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-O02-QA-004
   type: qa
   question: 哪个文件通常记录 RTC 按 UTC 还是 LOCAL 解释？
@@ -252,6 +282,8 @@ notes:
   - topic::rtc
   - card::path
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-K02-QA-001
   type: qa
   question: 为什么 `/etc/chrony.conf` 中有 `server` 行仍不能证明同步成功？
@@ -267,7 +299,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::chrony-state
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-K02-QA-002
   type: qa
   question: chrony 时间链的最低验收层次有哪些？
@@ -283,7 +317,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::chrony-state
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-K02-QA-003
   type: qa
   question: chrony 的 stratum 能否直接理解为“数值越小一定越准确”？
@@ -299,7 +335,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::tracking
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-O03-QA-001
   type: qa
   question: chrony 客户端的主配置文件路径是什么？
@@ -315,7 +353,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::configuration
   - card::path
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-O03-QA-002
   type: qa
   question: '`server` 与 `pool` 的核心区别是什么？'
@@ -331,7 +371,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::configuration
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-O03-QA-003
   type: qa
   question: '`iburst` 的作用是什么？'
@@ -348,6 +390,8 @@ notes:
   - topic::configuration
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O03-QA-004
   type: qa
   question: 为什么 `iburst` 不能修复持续 `^?`？
@@ -363,7 +407,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::configuration
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-O03-QA-005
   type: qa
   question: '`makestep 1.0 3` 应怎样理解？'
@@ -380,6 +426,8 @@ notes:
   - topic::makestep
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O03-QA-006
   type: qa
   question: 配置中的 `rtcsync` 表示什么？
@@ -394,7 +442,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::rtc
   - card::configuration
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O03-QA-007
   type: qa
   question: 让 chronyd 当前启动并配置开机启动，再分别验证，命令是什么？
@@ -419,6 +469,8 @@ notes:
   - topic::service-state
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O04-QA-001
   type: qa
   question: '`chronyc activity` 主要回答什么问题？'
@@ -434,7 +486,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::sources
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O04-QA-002
   type: qa
   question: '`sources -v` 第一列中的 `^` 表示什么来源模式？'
@@ -451,6 +505,8 @@ notes:
   - topic::sources-markers
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O04-QA-003
   type: qa
   question: '`^-` 在 `sources -v` 中表示什么？'
@@ -466,7 +522,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::sources-markers
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O04-QA-004
   type: qa
   question: '`^x` 在 `sources -v` 中表示什么？'
@@ -483,6 +541,8 @@ notes:
   - topic::sources-markers
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O04-QA-005
   type: qa
   question: '`Reach` 持续为 `0` 最值得优先调查什么？'
@@ -498,7 +558,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::sources-fields
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-O04-QA-006
   type: qa
   question: '`LastRx` 字段表示什么？'
@@ -514,7 +576,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::sources-fields
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O04-QA-007
   type: qa
   question: 为什么不能只看到目标源名称就判定任务完成？
@@ -530,7 +594,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::sources
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-O05-QA-001
   type: qa
   question: '`chronyc tracking` 中哪一字段明确表示未进入有效同步？'
@@ -547,6 +613,8 @@ notes:
   - topic::tracking
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O05-QA-002
   type: qa
   question: '`System time`、`Last offset` 与 `RMS offset` 为什么不能互相替代？'
@@ -563,6 +631,8 @@ notes:
   - topic::tracking
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-O05-QA-003
   type: qa
   question: '`Frequency` 与 `Skew` 大致回答什么问题？'
@@ -578,7 +648,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::tracking
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-O05-QA-004
   type: qa
   question: 验证 chrony 来源和本机跟踪状态的最小命令组是什么？
@@ -603,6 +675,8 @@ notes:
   - topic::chrony-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-D01-QA-001
   type: qa
   question: '`chronyd` active，但来源持续 `^?`。下一条最有区分度的证据链是什么？'
@@ -618,7 +692,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::diagnosis-chain
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-D01-QA-002
   type: qa
   question: 为什么推荐用 `getent ahosts` 检查时间源名称？
@@ -635,6 +711,8 @@ notes:
   - topic::dns
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-D01-QA-003
   type: qa
   question: 为什么 `telnet time.example.com 123` 不能验证 NTP？
@@ -650,7 +728,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::network
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-D01-QA-004
   type: qa
   question: 来源刚配置后短暂 `^?`，怎样区分样本不足与持续网络故障？
@@ -666,7 +746,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::diagnosis-chain
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-D01-QA-005
   type: qa
   question: 来源显示 `^x` 时，为什么不应删除其他来源来强迫它被选中？
@@ -682,7 +764,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::diagnosis-chain
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-D02-QA-001
   type: qa
   question: chrony 的 slew 与 step 有何区别？
@@ -698,7 +782,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::step-slew
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-D02-QA-002
   type: qa
   question: 运行 `chronyc makestep` 前至少应确认哪些事实？
@@ -714,7 +800,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::makestep
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-D02-QA-003
   type: qa
   question: 为什么 `chronyc makestep` 不能修复 `^?`？
@@ -730,7 +818,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::makestep
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-14-K03-QA-001
   type: qa
   question: chronyd 恢复同步后，会自动改写之前错误时间下写入的日志时间戳吗？
@@ -744,7 +834,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::time-trust
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-K03-QA-002
   type: qa
   question: 多台主机都显示 chronyd active，能否证明它们时间一致？
@@ -759,6 +851,8 @@ notes:
   - topic::time-trust
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-T01-QA-001
   type: qa
   question: 题目要求配置指定时间源并证明成功，最低验收矩阵是什么？
@@ -775,6 +869,8 @@ notes:
   - topic::classic-task
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-14-T01-QA-002
   type: qa
   question: 配置指定来源后，它显示 `^+` 而另一个来源显示 `^*`，能否直接判定失败？
@@ -790,7 +886,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::classic-task
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-14-C01-CLOZE-001
   type: cloze
   text: 改变时区只改变{{c1::本地显示和日历解释}}，不会改变同一时刻的{{c2::UTC 值}}。
@@ -803,7 +901,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::timezone
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-14-C01-CLOZE-002
   type: cloze
   text: '`hwclock --systohc` 是从{{c1::system clock}}写入{{c2::RTC}}；`--hctosys` 的方向相反。'
@@ -815,7 +915,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::rtc
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-14-C01-CLOZE-003
   type: cloze
   text: '`chronyc sources -v` 中 {{c1::`^*`}} 表示当前选中源，{{c2::`^?`}} 表示当前不可选择。'
@@ -827,7 +929,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::sources-markers
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-14-C01-CLOZE-004
   type: cloze
   text: chrony 通常通过 {{c1::slew}} 渐进校时；`chronyc makestep` 会造成时间 {{c2::跳变}}。
@@ -840,7 +944,9 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::step-slew
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-14-C01-CLOZE-005
   type: cloze
   text: 服务 `active` 只证明{{c1::守护进程当前运行}}；最终还要检查{{c2::来源选择与 tracking}}。
@@ -853,5 +959,6 @@ notes:
   - chapter::time-timezone-rtc-chrony
   - topic::chrony-state
   - card::cloze
-  - priority::P0
-status: integrated
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1

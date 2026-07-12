@@ -1,0 +1,79 @@
+package_version: 1
+chapter:
+  id: RHCSA-15
+  exam: RHCSA
+  part: 3
+  number: 15
+  slug: scheduling-at-cron-timers
+  title: 一次性任务、周期任务与 systemd Timer
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/scheduling-at-cron-timers/lecture.md
+  anki: content/rhcsa/chapters/scheduling-at-cron-timers/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:26:34+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 8f974ce0faae816ae99c80ea5be111655d8f62070df855cf51fc6d36463ba329
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: db83bea33f8f5dbce3c4194b4917aea761e04a14ecdba2cb389482164a9bbcf7
+  anki:
+    path: anki.yml
+    sha256: 7ef7d19639ee15a9c7ef8f741f853299259257c0ed46d0ba4735b05264c0adfe
+  preview:
+    path: anki-preview.html
+    sha256: cdeda999e1acef773a4c7797729391b4d6f960d976f17b73e2747218f6df7e37
+  summary:
+    path: anki-summary.md
+    sha256: 5301585adb7b2db7832814293f95658f2c07f24d5111e05c2e1ce911ded37a05
+  anki_impact:
+    path: anki-impact.md
+    sha256: acf9ff70d01afb022ec9b50b4df32b2443c04f16f07a2e81e9ce9665a4b7035f
+  source_map:
+    path: source-map.md
+    sha256: 423067e81571d6847d13cb66bf26218a932ff5ec6734aa97ba7cf18db14423e8
+  structure_report:
+    path: structure-report.md
+    sha256: f797f7ae7f2fc640923c5563c54337fc0259536d7bd27d3246aaf9fe073e9cf8
+  visual_qa:
+    path: visual-qa.md
+    sha256: f11cb9cd26303119313c78570c80b88ae36b226d59bbe41ec2587a412051d7a1
+  qa_report:
+    path: qa-report.md
+    sha256: b7349e7146f8a337c127bd4095a05352dbbe30e9aee72ceab5f493aa6549a750
+  revision_notes:
+    path: revision-notes.md
+    sha256: 6732aa0a9ad34324a516aef82974929761a4c5d27e67d22351b081a9b18d8125
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 7d52b6c993564c2d61524aca6570e9257a8cbbbee460797e43898a5c68f8a183
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 virtual machine; command-level live tests were not performed.
+- Codex must perform full-book Section ID, global Anki ID, cross-chapter duplication, unified PDF, APKG, AnkiConnect and Git
+  integration checks.
+extensions:
+  manifest_hash_policy: manifest.yml is excluded from its own SHA-256 list to avoid self-reference; every other delivered
+    file is hashed.

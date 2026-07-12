@@ -1,0 +1,76 @@
+package_version: 1
+chapter:
+  id: RHCSA-11
+  exam: RHCSA
+  part: 3
+  number: 11
+  slug: processes-jobs-signals
+  title: 进程、作业、信号与调度优先级
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/processes-jobs-signals/lecture.md
+  anki: content/rhcsa/chapters/processes-jobs-signals/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:19:18+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: b1bbba7b0ef6fc003b589fd384b1991ca6e376d042ebc44f4030169102b67885
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 8eab1659e7d25a9e97d10bba86c62295cf2ec56660a848e9e98c5c0570e81f18
+  anki:
+    path: anki.yml
+    sha256: 14f444ea30ec06f77429b75789809fc35f931fef4fbe2144cf4528d398614d70
+  preview:
+    path: anki-preview.html
+    sha256: a0910c30f8b449b070990bd198816e0f2d9bf0ad5caf145c43da643c40184ace
+  summary:
+    path: anki-summary.md
+    sha256: fd2dd9d22b1d2567f43daa07e675db846455047782ad1d165262c872c7065242
+  anki_impact:
+    path: anki-impact.md
+    sha256: 446db7cf720b11174f53f8791c20332544624c70c805efaba5d3a8a4ea2ced0b
+  source_map:
+    path: source-map.md
+    sha256: de2be50790dd5ad1a8b606bafdc4ec3466f3d698535465e68e797e47e568fae4
+  structure_report:
+    path: structure-report.md
+    sha256: a350b422caae8fd64fa90746b0db72beab1c3ebd150018cd74e21d8df410d217
+  visual_qa:
+    path: visual-qa.md
+    sha256: 28b2432f9698b850398f67953ce5409ca3650006fabd8a2185379e513d9cc10d
+  qa_report:
+    path: qa-report.md
+    sha256: e4c3a519d6e2e9c642ef434eaf9e0f45ac8264f95f8e43dfd4494aff44c3909f
+  revision_notes:
+    path: revision-notes.md
+    sha256: c6b994086d3d0f1ecba28da290b1326b7fa370f66e4eed5316fbb5d3bdc6ad68
+  integration_note:
+    path: codex-integration-note.md
+    sha256: c17efe105a3daba7ca1d825b01b059b4e91d34927d13125a47a662f09f29b422
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No RHEL 9 live VM was controlled by this session.
+- Full-book Section/Anki uniqueness, formal PDF/APKG build, AnkiConnect, Git import and release remain Codex responsibilities.
+- The manifest does not hash itself because that would be self-referential; every payload file is hashed.

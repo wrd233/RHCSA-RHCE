@@ -1,0 +1,95 @@
+package_version: 1
+chapter:
+  id: RHCSA-19
+  exam: RHCSA
+  part: 5
+  number: 19
+  slug: hostname-nss-dns
+  title: 主机名、NSS 与 DNS 名称解析
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+  verified_at: '2026-07-12T22:24:52+08:00'
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/hostname-nss-dns/lecture.md
+  anki: content/rhcsa/chapters/hostname-nss-dns/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:24:52+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 9d5efee7498c5d799073372d1a07c3febe36e24b947204dc67cc1b18c06b6840
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 95e862196edc1f020bce410c68df675a3172910ac6f7b7a040a3c5824a44c5c4
+  anki:
+    path: anki.yml
+    sha256: 44fdf1be5f28d3e9e1ec2bbb5f42a8084e065319442602983dc9debf56fb02d1
+  preview:
+    path: anki-preview.html
+    sha256: cf5a7552307cf9b1c3f7f0d399b06e69df0ed660a840979972649f6458d8e6d7
+  summary:
+    path: anki-summary.md
+    sha256: 9fa78c07daa8215951a8a88544a52b0bd13318b81580ebab41c563345150f8b1
+  anki_impact:
+    path: anki-impact.md
+    sha256: 4a5980b39345d385d07bd6dbf2e598e1f9f5bda34f75b4d6388a66c34f4552cb
+  source_map:
+    path: source-map.md
+    sha256: ec6b4508386d14dd92be8f4ed496053f4b87e4bc5659a9aef062646e7b8799cd
+  structure_report:
+    path: structure-report.md
+    sha256: 02da33c0380054368146b57ef4d3823111c456d0082f63491e54661505f249c8
+  visual_qa:
+    path: visual-qa.md
+    sha256: 9251efebfb161677c6b40909a79b17fcea8da4be25c19a14f8324addaeaf07b5
+  qa_report:
+    path: qa-report.md
+    sha256: 5d3372da9603a06e6783fd89526a001993046f347b71d9be340ca9d43da87ecc
+  revision_notes:
+    path: revision-notes.md
+    sha256: 999becc1a1532e018b7a5d501be73b3b3de70101919809dcb6591a3d146ebea1
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 0b546b51837907dad34ba5a17051d43db1c5f61326b7600836f395b1f0a6cb61
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 live VM was available; no command-level live test was performed.
+- Global Section ID and Anki ID uniqueness, cross-chapter duplication, integration HEAD, unified full-book PDF, APKG and AnkiConnect
+  remain Codex responsibilities.
+- The review PDF is a chapter-level review artifact; Codex must rebuild the formal PDF with repository-wide styles.
+extensions:
+  content:
+    core_concepts: 7
+    quick_command_groups: 6
+    knowledge_topics: 4
+    operation_topics: 4
+    diagnosis_topics: 2
+    classic_tasks: 2
+    reference_answers: 2
+    section_ids: 15
+    anki_notes: 118
+    anki_qa: 110
+    anki_cloze: 8
+  anki_baseline:
+    source: current canonical or last valid chapter candidate
+    sha256: 1a578b8efce6e06e23213f95aff012d25d7f58c65aa0334808d120e4e92a3831
+    final_sha256: 44fdf1be5f28d3e9e1ec2bbb5f42a8084e065319442602983dc9debf56fb02d1

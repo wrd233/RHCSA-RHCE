@@ -1,8 +1,8 @@
+schema_version: 1
 chapter_id: RHCSA-13
 chapter_slug: journald-rsyslog-logrotate
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-status: integrated
+status: content_frozen_for_integration
 validation: static
 notes:
 - id: RHCSA-SERVICES-O02-QA-001
@@ -25,6 +25,7 @@ notes:
   - topic::journal-query
   - card::command
   - priority::P0
+  priority: P0
 - id: RHCSA-SERVICES-O02-QA-002
   model: RedHat-QA
   type: qa
@@ -45,6 +46,7 @@ notes:
   - topic::journal-query
   - card::command
   - priority::P0
+  priority: P0
 - id: RHCSA-SERVICES-O02-QA-003
   model: RedHat-QA
   type: qa
@@ -60,7 +62,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-persistence
   - card::boundary
-  - priority::P0
+  - priority::P2
+  priority: P2
 - id: RHCSA-SERVICES-O02-QA-004
   model: RedHat-QA
   type: qa
@@ -81,6 +84,7 @@ notes:
   - topic::rsyslog-local
   - card::verification
   - priority::P0
+  priority: P0
 - id: RHCSA-SERVICES-O02-QA-005
   model: RedHat-QA
   type: qa
@@ -102,6 +106,7 @@ notes:
   - topic::logger-testing
   - card::command
   - priority::P0
+  priority: P0
 - id: RHCSA-SERVICES-O02-QA-006
   model: RedHat-QA
   type: qa
@@ -117,7 +122,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-K01-QA-001
   model: RedHat-QA
   type: qa
@@ -133,7 +139,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::object-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-K01-QA-002
   model: RedHat-QA
   type: qa
@@ -145,13 +152,13 @@ notes:
   - journalctl(1)
   - RH124 Ch.11
   - logrotate(8)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::object-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-K01-QA-003
   model: RedHat-QA
   type: qa
@@ -167,7 +174,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::object-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-K01-QA-004
   model: RedHat-QA
   type: qa
@@ -183,7 +191,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::state-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-K01-QA-005
   model: RedHat-QA
   type: qa
@@ -200,6 +209,7 @@ notes:
   - topic::facility-severity
   - card::concept
   - priority::P1
+  priority: P1
 - id: RHCSA-13-K01-QA-006
   model: RedHat-QA
   type: qa
@@ -215,7 +225,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::facility-severity
   - card::concept
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-K01-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -226,13 +237,13 @@ notes:
   - systemd-journald.service(8)
   - RH124 Ch.11
   - logrotate(8)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::object-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O01-QA-001
   model: RedHat-QA
   type: qa
@@ -253,6 +264,7 @@ notes:
   - topic::journal-query
   - card::command
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O01-QA-002
   model: RedHat-QA
   type: qa
@@ -269,6 +281,7 @@ notes:
   - topic::journal-query
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O01-QA-003
   model: RedHat-QA
   type: qa
@@ -288,7 +301,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-query
   - card::command
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O01-QA-004
   model: RedHat-QA
   type: qa
@@ -309,6 +323,7 @@ notes:
   - topic::journal-query
   - card::command
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O01-QA-005
   model: RedHat-QA
   type: qa
@@ -320,14 +335,13 @@ notes:
   - journalctl(1)
   - RHEL 9 Configuring basic system settings Ch.6
   - systemd.journal-fields(7)
-  - journalctl(1)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::journal-query
   - card::comparison
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O01-QA-006
   model: RedHat-QA
   type: qa
@@ -339,13 +353,13 @@ notes:
   - journalctl(1)
   - RHEL 9 Configuring basic system settings Ch.6
   - logger(1)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::journal-query
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O01-QA-007
   model: RedHat-QA
   type: qa
@@ -361,7 +375,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-query
   - card::boundary
-  - priority::P1
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-O01-QA-008
   model: RedHat-QA
   type: qa
@@ -377,7 +392,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-query
   - card::syntax
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O01-QA-009
   model: RedHat-QA
   type: qa
@@ -394,6 +410,7 @@ notes:
   - topic::journal-query
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O01-QA-010
   model: RedHat-QA
   type: qa
@@ -410,6 +427,7 @@ notes:
   - topic::journal-query
   - card::comparison
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O01-QA-011
   model: RedHat-QA
   type: qa
@@ -425,7 +443,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O01-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -440,7 +459,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-query
   - card::cloze
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O02-QA-001
   model: RedHat-QA
   type: qa
@@ -461,6 +481,7 @@ notes:
   - topic::journal-fields
   - card::command
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O02-QA-002
   model: RedHat-QA
   type: qa
@@ -476,7 +497,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-fields
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O02-QA-003
   model: RedHat-QA
   type: qa
@@ -493,6 +515,7 @@ notes:
   - topic::journal-fields
   - card::concept
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O02-QA-004
   model: RedHat-QA
   type: qa
@@ -509,6 +532,7 @@ notes:
   - topic::journal-fields
   - card::comparison
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O02-QA-005
   model: RedHat-QA
   type: qa
@@ -525,6 +549,7 @@ notes:
   - topic::journal-output
   - card::comparison
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O02-QA-006
   model: RedHat-QA
   type: qa
@@ -540,7 +565,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-output
   - card::output
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O02-QA-007
   model: RedHat-QA
   type: qa
@@ -556,7 +582,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-fields
   - card::boundary
-  - priority::P0
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-O02-QA-008
   model: RedHat-QA
   type: qa
@@ -576,7 +603,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-fields
   - card::command
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O02-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -592,6 +620,7 @@ notes:
   - topic::journal-output
   - card::cloze
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O03-QA-001
   model: RedHat-QA
   type: qa
@@ -607,7 +636,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-persistence
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O03-QA-002
   model: RedHat-QA
   type: qa
@@ -623,7 +653,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-persistence
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O03-QA-003
   model: RedHat-QA
   type: qa
@@ -640,6 +671,7 @@ notes:
   - topic::journal-persistence
   - card::configuration
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O03-QA-004
   model: RedHat-QA
   type: qa
@@ -659,7 +691,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-persistence
   - card::command
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O03-QA-005
   model: RedHat-QA
   type: qa
@@ -676,6 +709,7 @@ notes:
   - topic::journal-retention
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O03-QA-006
   model: RedHat-QA
   type: qa
@@ -691,7 +725,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-retention
   - card::parameter
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O03-QA-007
   model: RedHat-QA
   type: qa
@@ -706,7 +741,6 @@ notes:
   - journald.conf(5)
   - systemd-journald.service(8)
   - RH124 Ch.11
-  - RH124 Ch.11
   - journalctl(1)
   - RHEL 9 Configuring basic system settings Ch.6
   tags:
@@ -715,16 +749,16 @@ notes:
   - topic::journal-persistence
   - card::command
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O03-QA-008
   model: RedHat-QA
   type: qa
   question: 怎样严格证明 journal 已跨重启持久？
-  answer: 重启前写入唯一事件；安全重启后用 `journalctl --list-boots` 确认历史 boot，并用 `journalctl -b -1 -t <TAG>` 找到该事件。
-  extra: 当前 boot 中能查询到事件不等于跨重启验证完成。
+  answer: 重启前写入唯一 PRE_ID；安全重启后用 `journalctl --list-boots` 确认历史 boot，并用 `journalctl -b -1 -t <TAG>` 找到同一 PRE_ID。
+  extra: 当前 boot 中能查询到 PRE_ID 只证明事件已进入当前 journal，不等于跨 boot 持久性已经验证。
   source:
   - journald.conf(5)
   - systemd-journald.service(8)
-  - RH124 Ch.11
   - RH124 Ch.11
   - journalctl(1)
   - RHEL 9 Configuring basic system settings Ch.6
@@ -734,6 +768,7 @@ notes:
   - topic::journal-persistence
   - card::verification
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O03-QA-009
   model: RedHat-QA
   type: qa
@@ -754,6 +789,7 @@ notes:
   - topic::journal-retention
   - card::command
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O03-QA-010
   model: RedHat-QA
   type: qa
@@ -770,6 +806,7 @@ notes:
   - topic::journal-retention
   - card::comparison
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O03-QA-011
   model: RedHat-QA
   type: qa
@@ -786,6 +823,7 @@ notes:
   - topic::journal-retention
   - card::security
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O03-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -800,7 +838,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::journal-persistence
   - card::cloze
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O04-QA-001
   model: RedHat-QA
   type: qa
@@ -816,6 +855,7 @@ notes:
   - topic::logger-testing
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O04-QA-002
   model: RedHat-QA
   type: qa
@@ -827,13 +867,13 @@ notes:
   - RH124 Ch.11
   - systemd.journal-fields(7)
   - journalctl(1)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::logger-testing
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O04-QA-003
   model: RedHat-QA
   type: qa
@@ -848,7 +888,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logger-testing
   - card::parameter
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O04-QA-004
   model: RedHat-QA
   type: qa
@@ -867,7 +908,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logger-testing
   - card::command
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O04-QA-005
   model: RedHat-QA
   type: qa
@@ -883,6 +925,7 @@ notes:
   - topic::logger-testing
   - card::verification
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O04-QA-006
   model: RedHat-QA
   type: qa
@@ -894,13 +937,13 @@ notes:
   - RH124 Ch.11
   - rsyslog.conf(5)
   - rsyslog official documentation
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::logger-testing
   - card::boundary
-  - priority::P0
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-O05-QA-001
   model: RedHat-QA
   type: qa
@@ -921,6 +964,7 @@ notes:
   - topic::rsyslog-local
   - card::syntax
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O05-QA-002
   model: RedHat-QA
   type: qa
@@ -936,7 +980,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-local
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O05-QA-003
   model: RedHat-QA
   type: qa
@@ -952,7 +997,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-local
   - card::parameter
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O05-QA-004
   model: RedHat-QA
   type: qa
@@ -969,6 +1015,7 @@ notes:
   - topic::rsyslog-local
   - card::configuration
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O05-QA-005
   model: RedHat-QA
   type: qa
@@ -984,7 +1031,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-local
   - card::boundary
-  - priority::P0
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-O05-QA-006
   model: RedHat-QA
   type: qa
@@ -996,13 +1044,13 @@ notes:
   - rsyslog official documentation
   - RH124 Ch.11
   - logger(1)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-local
   - card::verification
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O05-QA-007
   model: RedHat-QA
   type: qa
@@ -1018,7 +1066,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O05-QA-008
   model: RedHat-QA
   type: qa
@@ -1034,7 +1083,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-local
   - card::boundary
-  - priority::P1
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-O05-QA-009
   model: RedHat-QA
   type: qa
@@ -1051,6 +1101,7 @@ notes:
   - topic::rsyslog-local
   - card::security
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O05-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -1061,13 +1112,13 @@ notes:
   - rsyslog official documentation
   - RH124 Ch.11
   - logger(1)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-local
   - card::cloze
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O06-QA-001
   model: RedHat-QA
   type: qa
@@ -1083,7 +1134,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-remote
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O06-QA-002
   model: RedHat-QA
   type: qa
@@ -1099,7 +1151,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-remote
   - card::boundary
-  - priority::P0
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-O06-QA-003
   model: RedHat-QA
   type: qa
@@ -1116,6 +1169,7 @@ notes:
   - topic::rsyslog-remote
   - card::concept
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O06-QA-004
   model: RedHat-QA
   type: qa
@@ -1131,7 +1185,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::process
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O06-QA-005
   model: RedHat-QA
   type: qa
@@ -1143,13 +1198,13 @@ notes:
   - rsyslog official documentation
   - RH124 Ch.11
   - logger(1)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-remote
   - card::verification
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O06-QA-006
   model: RedHat-QA
   type: qa
@@ -1165,7 +1220,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::rsyslog-remote
   - card::boundary
-  - priority::P1
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-O07-QA-001
   model: RedHat-QA
   type: qa
@@ -1180,7 +1236,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate
   - card::concept
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O07-QA-002
   model: RedHat-QA
   type: qa
@@ -1196,6 +1253,7 @@ notes:
   - topic::logrotate
   - card::configuration
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O07-QA-003
   model: RedHat-QA
   type: qa
@@ -1210,7 +1268,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate-state
   - card::concept
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O07-QA-004
   model: RedHat-QA
   type: qa
@@ -1225,7 +1284,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate-policy
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O07-QA-005
   model: RedHat-QA
   type: qa
@@ -1241,6 +1301,7 @@ notes:
   - topic::logrotate-policy
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O07-QA-006
   model: RedHat-QA
   type: qa
@@ -1256,6 +1317,7 @@ notes:
   - topic::logrotate-policy
   - card::comparison
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O07-QA-007
   model: RedHat-QA
   type: qa
@@ -1271,6 +1333,7 @@ notes:
   - topic::logrotate-policy
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O07-QA-008
   model: RedHat-QA
   type: qa
@@ -1286,6 +1349,7 @@ notes:
   - topic::logrotate-policy
   - card::parameter
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O07-QA-009
   model: RedHat-QA
   type: qa
@@ -1300,7 +1364,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate-testing
   - card::comparison
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O07-QA-010
   model: RedHat-QA
   type: qa
@@ -1319,7 +1384,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate-testing
   - card::command
-  - priority::P1
+  - priority::P0
+  priority: P0
 - id: RHCSA-13-O07-QA-011
   model: RedHat-QA
   type: qa
@@ -1334,7 +1400,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O07-QA-012
   model: RedHat-QA
   type: qa
@@ -1349,7 +1416,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate-reopen
   - card::concept
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-O07-QA-013
   model: RedHat-QA
   type: qa
@@ -1364,24 +1432,25 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate-reopen
   - card::boundary
-  - priority::P0
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-O07-QA-014
   model: RedHat-QA
   type: qa
   question: 怎样证明轮转后写入者已经切换到新活动文件？
-  answer: 轮转后生成新的唯一 TEST_ID，并确认它进入新的同名活动文件，而不是旧归档。
-  extra: 只看到 `.1` 或 `.gz` 不足以证明。
+  answer: 轮转完成后生成新的唯一 POST_ID，并确认它进入新的同名活动文件，而不是旧归档。
+  extra: 只看到 `.1` 或 `.gz` 只能证明归档对象出现，不能证明写入者已经重新打开活动文件。
   source:
   - logrotate(8)
   - RH124 Ch.11
   - logger(1)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate-reopen
   - card::verification
   - priority::P0
+  priority: P0
 - id: RHCSA-13-O07-QA-015
   model: RedHat-QA
   type: qa
@@ -1398,6 +1467,7 @@ notes:
   - topic::logrotate-state
   - card::diagnosis
   - priority::P1
+  priority: P1
 - id: RHCSA-13-O07-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -1411,7 +1481,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::logrotate-testing
   - card::cloze
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-D01-QA-001
   model: RedHat-QA
   type: qa
@@ -1427,7 +1498,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-D01-QA-002
   model: RedHat-QA
   type: qa
@@ -1438,7 +1510,6 @@ notes:
   - journald.conf(5)
   - systemd-journald.service(8)
   - RH124 Ch.11
-  - RH124 Ch.11
   - journalctl(1)
   - RHEL 9 Configuring basic system settings Ch.6
   tags:
@@ -1446,7 +1517,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-D01-QA-003
   model: RedHat-QA
   type: qa
@@ -1461,7 +1533,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-D01-QA-004
   model: RedHat-QA
   type: qa
@@ -1478,6 +1551,7 @@ notes:
   - topic::diagnosis
   - card::diagnosis
   - priority::P1
+  priority: P1
 - id: RHCSA-13-D01-QA-005
   model: RedHat-QA
   type: qa
@@ -1489,13 +1563,13 @@ notes:
   - rsyslog official documentation
   - RH124 Ch.11
   - logrotate(8)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::classic-task
   - card::process
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-D01-QA-006
   model: RedHat-QA
   type: qa
@@ -1506,7 +1580,6 @@ notes:
   - journald.conf(5)
   - systemd-journald.service(8)
   - RH124 Ch.11
-  - RH124 Ch.11
   - journalctl(1)
   - RHEL 9 Configuring basic system settings Ch.6
   tags:
@@ -1514,7 +1587,8 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::classic-task
   - card::process
-  - priority::P0
+  - priority::P1
+  priority: P1
 - id: RHCSA-13-D01-QA-007
   model: RedHat-QA
   type: qa
@@ -1527,15 +1601,14 @@ notes:
   - RHEL 9 Configuring basic system settings Ch.6
   - rsyslog.conf(5)
   - rsyslog official documentation
-  - RH124 Ch.11
   - logrotate(8)
-  - RH124 Ch.11
   tags:
   - exam::rhcsa
   - chapter::journald-rsyslog-logrotate
   - topic::boundary
   - card::boundary
-  - priority::P0
+  - priority::P2
+  priority: P2
 - id: RHCSA-13-D01-CLOZE-001
   model: RedHat-Cloze
   type: cloze
@@ -1548,4 +1621,5 @@ notes:
   - chapter::journald-rsyslog-logrotate
   - topic::diagnosis
   - card::cloze
-  - priority::P0
+  - priority::P1
+  priority: P1

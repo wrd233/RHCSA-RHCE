@@ -4,33 +4,136 @@ chapter_id: RHCSA-10
 exam: RHCSA
 slug: sudo-least-privilege
 validation: static
-status: integrated
 sources:
   - RH124-RHEL9
-  - RHEL9-Configuring-Basic-System-Settings
+  - RHEL9-Managing-sudo-access
   - sudoers(5)
   - sudo(8)
   - visudo(8)
+  - RHCSA-01-reading-sample-v2
 ---
 
+<!-- 维护元数据仅用于内容工程；阅读版不显示。 -->
 
-# 第 10 章　sudo 与最小特权授权
+<section class="cover-page">
+<div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+<div class="cover-number">10</div>
+<h1>sudo 与最小特权授权</h1>
+<p class="cover-subtitle">把“给 sudo 权限”改写成可审计的策略请求：谁、在哪台主机、以谁身份、执行哪个程序和哪组参数。</p>
+<div class="cover-tags"><span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span></div>
+<div class="cover-edition">大字号阅读版</div>
+</section>
+
+<section class="reading-nav">
+<h1>本章阅读导航</h1>
+<p class="nav-mainline"><strong>先抓住一条主线：</strong>sudo 不是“把用户变成 root”，而是读取策略后，对一次具体调用请求进行匹配、认证、身份切换和执行。</p>
+<div class="model-steps">
+<div><b>01</b><span>明确主体</span><small>谁在发起请求</small></div>
+<div><b>02</b><span>确认位置</span><small>规则在哪台主机成立</small></div>
+<div><b>03</b><span>固定 Runas</span><small>命令最终以谁运行</small></div>
+<div><b>04</b><span>收缩动作</span><small>绝对路径与参数边界</small></div>
+<div><b>05</b><span>校验策略</span><small>片段、全局与可见授权</small></div>
+<div><b>06</b><span>验证边界</span><small>允许与拒绝矩阵</small></div>
+</div>
+<div class="nav-columns">
+<div>
+<h2>专题地图</h2>
+<ul>
+<li><em>知识专题</em> sudo 的多维策略判定</li>
+<li><em>知识专题</em> 从左到右读懂 sudoers</li>
+<li><em>知识专题</em> 路径、参数、标签与加载顺序</li>
+<li><em>操作专题</em> 推导最小命令集合</li>
+<li><em>操作专题</em> 维护 `/etc/sudoers.d`</li>
+<li><em>操作专题</em> `sudo -l`、真实调用与 `sudoedit`</li>
+<li><em>诊断专题</em> 规则可见但请求不匹配</li>
+<li><em>经典任务</em> Web 运维组最小服务授权</li>
+</ul>
+</div>
+<div>
+<h2>阅读时持续回答</h2>
+<ol>
+<li>调用者与 Runas 身份分别是谁？</li>
+<li>主机字段和命令字段中的 `ALL` 各表示什么？</li>
+<li>规则是否固定了真实绝对路径？</li>
+<li>命令参数是否仍可选择其他动作？</li>
+<li>本次无密码提示来自哪里？</li>
+<li>什么证据只证明策略，什么证据才能证明功能？</li>
+<li>哪些拒绝路径必须主动测试？</li>
+</ol>
+<div class="nav-note">边界：用户与组生命周期归第 07 章；传统权限归第 08 章；Ansible 自动化授权归 RHCE 身份章节。</div>
+</div>
+</div>
+</section>
+
+<section class="chapter-opening">
+<p class="chapter-label">第 10 章 · 正文</p>
 
 管理员很少真正需要把一个普通用户“变成 root”。更常见的目标是：让值班人员只查看某个服务，让数据库管理员只执行一条备份命令，让应用维护者只编辑一份受控配置。`sudo` 的价值不在于提供另一条进入 root Shell 的捷径，而在于把一次特权调用拆成可判定的条件：**谁**在**哪台主机**上，准备以**哪个目标身份**，运行**哪个可执行文件和哪组参数**。
 
-如果规则只写成 `%ops ALL=(ALL) ALL`，系统确实容易“用起来”，但授权边界几乎消失。相反，若只盯着一行 sudoers 语法而不验证真实调用，也会出现另一类错误：`sudo -l` 看得到规则，实际命令却因 Runas、路径或参数不匹配而被拒绝；或者命令已经获准执行，但目标服务本身仍然失败。本章建立从授权请求、配置加载、匹配、认证到真实执行的完整模型，并用允许路径与拒绝路径共同验收最小特权。
+如果规则只写成 `%ops ALL=(ALL) ALL`，系统确实容易“用起来”，但授权边界几乎消失。相反，若只盯着一行 sudoers 语法而不验证真实调用，也会出现另一类错误：`sudo -l` 看得到规则，实际命令却因 Runas、路径或参数不匹配而被拒绝；或者命令已经获准执行，但目标服务本身仍然失败。
 
-**[概念]** 调用者（invoking user）是发起 `sudo` 的当前用户；Runas 身份是命令最终使用的目标用户和目标组。二者不能混为一谈。
+本章以“把业务要求收缩为可匹配请求”为主线，先建立 sudoers 对象模型，再进入配置、查询、验证和诊断。用户与组的创建留给第 07 章，文件权限留给第 08 章，服务内部状态留给第 12 章，自动化授权留给 RHCE 身份章节。
 
-**[概念]** sudoers 规则不是“用户拥有某个角色”的抽象声明，而是对一个具体调用请求进行匹配。主体、主机、Runas、命令路径和参数只要有一个关键维度不匹配，请求就不会命中预期规则。
+<div class="question-box">
+<p>每次读到一条规则，都要重新回答：</p>
+<p>谁发起请求？规则在哪台主机成立？命令以谁的身份运行？允许的是哪个程序和哪组参数？是否要求认证？哪些相似调用必须被拒绝？</p>
+</div>
 
-**[概念]** 授权与认证是两个阶段。规则先决定“可不可以执行”；`PASSWD`、`NOPASSWD` 和认证时间戳再影响“本次是否需要输入调用者自己的密码”。免密不应被理解为命令范围自动扩大。
+<div class="concept-stack">
+<div class="concept-card"><span>概念</span><p><strong>sudoers 规则</strong> 是对特权调用请求的策略描述，而不是一个模糊的“管理员角色”。规则把调用者、主机、Runas 身份和命令规格关联起来；任何关键维度不匹配，请求都不会命中预期授权。理解这条关系后，`sudo -l` 才不只是“有没有权限”的列表，而是后续逐字段核对的证据入口。</p></div>
+<div class="concept-card"><span>概念</span><p><strong>主体</strong> 是发起 sudo 请求的用户、Unix 组或 `User_Alias`。主体回答“谁可以提出请求”，不回答命令最终以谁运行。组的创建、附加组生效和账号生命周期归第 07 章；本章只使用已经成立的身份事实。</p></div>
+<div class="concept-card"><span>概念</span><p><strong>Runas</strong> 是命令执行时使用的目标用户和目标组。普通用户 `alice` 可以发起请求，而命令以 `root`、`postgres` 或指定组运行；调用者与 Runas 混淆，是“列表有规则但默认调用失败”的高频原因。</p></div>
+<div class="concept-card"><span>概念</span><p><strong>主机匹配</strong> 决定规则在哪些主机上成立。单机任务常写 `ALL`，但这个 `ALL` 位于主机字段，并不等于允许所有命令。集中分发同一策略时，主机字段可以继续收缩授权位置；本章不展开 LDAP 或 IdM 策略。</p></div>
+<div class="concept-card"><span>概念</span><p><strong>命令规格</strong> 由可执行文件路径和可选参数条件组成。绝对路径固定入口程序，参数继续固定程序允许执行的子动作；如果只写路径而不限制参数，用户通常可以自行选择参数，因此“参数也是授权边界”是本章最重要的判断。</p></div>
+<div class="concept-card"><span>概念</span><p><strong>认证状态</strong> 与授权范围是两个维度。`PASSWD`、`NOPASSWD` 和认证时间戳影响本次是否需要验证调用者密码，却不会自动改变允许的命令集合。一次没有提示密码，既可能来自免密规则，也可能只是已有时间戳尚未失效。</p></div>
+<div class="concept-card"><span>概念</span><p><strong>最小特权</strong> 不只是“成功命令很少”，还要求相似但未授权的路径、参数、对象和 root Shell 被明确拒绝。验收必须同时证明允许矩阵和拒绝矩阵；只要用户仍能通过 Shell、解释器、通配符或可修改脚本选择任意后续动作，边界就没有真正收紧。</p></div>
+</div>
 
-**[概念]** `/etc/sudoers` 与 `/etc/sudoers.d/*` 保存持久策略；`sudo` 的认证时间戳只是临时状态。一次调用不询问密码，可能来自 `NOPASSWD`，也可能只是已有时间戳尚未失效。
+<div class="ops-quick">
+<div class="ops-intro"><span>操作语义</span><p>先建立五个关键入口的接口地图。正文后续只在需要时解释具体操作，不机械重复整份手册页。</p></div>
 
-**[操作语义]** `visudo` 负责带锁编辑和语法检查；`sudo -l` 负责列出匹配到的授权；`sudo` 或 `sudoedit` 负责发起真实调用。三者分别证明不同事实，不能互相替代。
+<div class="cmd-entry"><h3>`sudo`</h3><div class="syn-label">SYNOPSIS</div>
+```bash
+sudo [-u user] [-g group] [-n] command [argument ...]
+sudo -k
+```
+<p>按当前 sudoers 策略发起一次特权调用，必要时验证调用者身份，并以匹配到的 Runas 凭据执行目标程序。</p>
+<div class="forms"><b>`-u user`</b><span>指定目标 Runas 用户；省略时通常请求默认目标用户。</span><b>`-g group`</b><span>指定目标 Runas 组；必须与规则允许的组匹配。</span><b>`-n`</b><span>非交互模式；需要密码时直接失败，适合验证免密边界。</span><b>`-k`</b><span>使后续需要认证的调用重新验证，避免旧时间戳干扰测试。</span></div></div>
 
-**[操作语义]** 一个安全验收至少包含：片段语法、完整策略树、可见授权、允许调用、拒绝调用和目标功能。只证明其中一层，不足以宣布最小特权已经成立。
+<div class="cmd-entry"><h3>`sudo -l`</h3><div class="syn-label">SYNOPSIS</div>
+```bash
+sudo -l
+sudo -l -U user
+```
+<p>列出当前策略中与调用者相关的 Defaults、Runas 和命令规格，是匹配诊断的起点，不是最终功能验收。</p>
+<div class="forms"><b>`sudo -l`</b><span>当前用户查看自己的可见授权。</span><b>`-U user`</b><span>由 root 或具有相应能力的管理员查看指定用户；不能假设普通用户可任意使用。</span></div></div>
+
+<div class="cmd-entry"><h3>`visudo`</h3><div class="syn-label">SYNOPSIS</div>
+```bash
+visudo [-c] [-f sudoers-file]
+```
+<p>以安全方式编辑 sudoers：处理并发锁、保存前解析，并在检查模式下验证配置。</p>
+<div class="forms"><b>`-f file`</b><span>编辑或检查指定 sudoers 文件，适合 `/etc/sudoers.d` 片段。</span><b>`-c`</b><span>检查配置；配合 `-f` 检查片段，单独使用时检查完整策略树。</span></div></div>
+
+<div class="cmd-entry"><h3>`sudoedit` / `sudo -e`</h3><div class="syn-label">SYNOPSIS</div>
+```bash
+sudoedit file [...]
+sudo -e file [...]
+```
+<p>让编辑器以调用者身份处理临时副本，再由 sudo 受控写回目标文件，避免直接授予通用 root 编辑器。</p>
+<div class="forms"><b>`sudoedit path`</b><span>在 sudoers 中作为内建命令书写，不需要前导可执行路径。</span><b>精确路径</b><span>只列出需要编辑的文件，并检查父目录不受调用者控制。</span></div></div>
+
+<div class="cmd-entry"><h3>`/etc/sudoers.d` 管理</h3><div class="syn-label">TYPICAL FLOW</div>
+```bash
+visudo -f /etc/sudoers.d/70-webops-httpd
+visudo -cf /etc/sudoers.d/70-webops-httpd
+visudo -c
+```
+<p>把本地规则拆成可审计片段；文件名、词法加载顺序、所有者和模式都会影响最终策略。</p>
+<div class="forms"><b>文件名</b><span>避免 `.` 和结尾 `~`；使用等宽零填充编号表达词法顺序。</span><b>控制权</b><span>由 root 管理，推荐模式 `0440`；片段通过后仍需全局检查。</span></div></div>
+</div>
+
+</section>
 
 <section class="topic knowledge" id="RHCSA-10-K01" data-kind="knowledge-topic">
 
@@ -157,7 +260,7 @@ sudo -g adm /usr/bin/id
                        PASSWD: /usr/bin/systemctl restart httpd
 ```
 
-逗号分隔两个命令规格。`NOPASSWD:` 从出现位置开始影响后续命令，直到同一列表中被 `PASSWD:` 等标签改变。为降低误读，复杂规则应换行并明确重复标签，而不是依赖读者记住远处标签的延续范围。
+逗号分隔两个命令规格。`NOPASSWD:` 从出现位置开始影响后续命令，直到同一列表中被 `PASSWD:` 等标签改变。为降低误读，复杂规则应换行并在需要切换认证要求的位置显式写出 `PASSWD:` 或 `NOPASSWD:`，不要依赖读者记住远处标签的继承范围。
 
 **[Cheatsheet]** `%` 是 Unix 组；主机 `ALL`、Runas `ALL` 和命令 `ALL` 位于不同字段，含义不同；标签从出现位置向后生效。
 
@@ -245,7 +348,7 @@ command -v systemctl
 readlink -f "$(command -v systemctl)"
 ```
 
-不要从另一台发行版或旧笔记复制路径。绝对路径只固定了入口程序；若该程序内部再次按 PATH 调用子命令，仍要评估执行环境和程序本身的安全边界。
+不要从另一台发行版或旧笔记复制路径。绝对路径只固定了入口程序；若该程序内部再次按 `PATH` 调用子命令，仍要评估执行环境和程序本身的安全边界。路径固定也不等于文件内容不可变，因此还要确认可执行文件、脚本及父目录不受调用者控制。
 
 ### ② [知识点] 未写参数通常表示允许任意参数
 
@@ -259,7 +362,7 @@ alice ALL=(root) /usr/bin/systemctl
 alice ALL=(root) /usr/bin/systemctl --no-pager status httpd
 ```
 
-若确实要表达“不允许任何参数”，sudoers 支持专门的空参数形式，但 RHCSA 常规任务更应优先写出目标命令的实际参数，而不是依赖冷门语法。
+若确实要表达“不允许任何参数”，命令规格可在路径后写空参数字符串 `""`。这是一项精确语义，但 RHCSA 常规任务更常见的是把题目要求的实际参数完整写出；无论采用哪种形式，都要在目标机执行允许与拒绝测试。
 
 ### ③ [知识点] 参数必须按规则语义匹配
 
@@ -428,13 +531,13 @@ visudo -f /etc/sudoers.d/70-webops-httpd
 
 ### ② [操作] 选择会被 include 机制读取的文件名
 
-常见 `/etc/sudoers` 包含：
+常见 `/etc/sudoers` 包含目录导入指令，例如：
 
 ```sudoers
-#includedir /etc/sudoers.d
+@includedir /etc/sudoers.d
 ```
 
-这里开头的 `#` 是 include 语法的一部分，不应简单当作注释。目录中的文件名不得包含点号，也不得以 `~` 结尾；编辑器备份文件因此通常不会被加载。
+一些 RHEL 9 系统仍可见兼容写法 `#includedir /etc/sudoers.d`。这里的 `#` 不是普通注释标记，而是旧式 include 指令的一部分。维护时以目标机现有 sudoers 为准，不要凭笔记替换语法。目录中的文件名不得包含点号，也不得以 `~` 结尾；编辑器备份文件因此通常不会被加载。
 
 推荐使用零填充编号：
 
@@ -520,7 +623,7 @@ sudo -n /usr/bin/systemctl --no-pager status httpd
 
 建议使用目标用户的新登录会话，避免旧会话的组成员关系或环境状态干扰。组刷新机制归第 07 章，本章只要求在验证前确认调用者当前身份正确。
 
-**[Cheatsheet]** `sudo -l` 看候选授权；`sudo -k` 清认证缓存；`sudo -n` 测非交互；最终必须执行允许与拒绝调用。
+**[Cheatsheet]** `sudo -l` 看可见授权；`sudo -k` 清认证缓存；`sudo -n` 测非交互；最终必须执行允许与拒绝调用。
 
 </section>
 
@@ -1077,20 +1180,33 @@ sudo -i
 
 ## [本章收束] 用证据证明最小特权，而不是只写出一行规则
 
-本章的主线可以压缩为：
+本章的工作方法可以压缩为一条可重复执行的链路：
 
 ```text
-明确允许和拒绝动作
-→ 确认调用者、Runas、路径和参数
-→ 使用 visudo 维护独立片段
-→ 校验片段与完整策略树
-→ 用 sudo -l 读取候选授权
-→ 清除认证时间戳
-→ 测试允许路径与拒绝路径
-→ 将目标程序故障转入自然章节
+把业务动词改写为允许动作和拒绝动作
+→ 确认调用者、主机、Runas、可执行路径与参数
+→ 用 visudo 维护独立片段
+→ 校验片段和完整策略树
+→ 用 sudo -l 读取可见授权
+→ 清除认证时间戳后测试认证边界
+→ 同时执行允许矩阵与拒绝矩阵
+→ 把目标程序故障转入自然归属章节
 ```
 
-最终规则应能回答：谁在什么主机上、以谁的身份、运行哪个程序和哪组参数、是否要求认证。最终验收还要回答：未授权参数、其他对象和 root Shell 是否被拒绝。只有成功路径与失败边界同时成立，才能说授权接近最小范围。
+规则设计阶段关注的是“能不能命中”；验收阶段还要关注“有没有意外命中”。因此，最小特权的证据必须同时包含成功路径和失败边界。只要仍能进入 root Shell、操作其他对象、改变未授权参数，或者通过用户可写脚本改变实际行为，就不能把规则称为最小授权。
+
+### 主要判断表
+
+| 看到的现象 | 当前最多能证明什么 | 下一条有区分度的证据 |
+|---|---|---|
+| `visudo -cf` 通过 | 当前片段可被解析 | `visudo -c` 检查完整策略树 |
+| `visudo -c` 通过 | 当前完整策略语法和引用关系可接受 | 以目标调用者执行 `sudo -l` |
+| `sudo -l` 出现命令 | 存在相关可见授权 | 按列表中的 Runas、路径和参数精确调用 |
+| 调用未被 sudoers 拒绝 | 策略层允许启动目标程序 | 读取目标程序错误、退出状态和功能证据 |
+| 本次没有提示密码 | 可能是 `NOPASSWD`，也可能有认证时间戳 | `sudo -k` 后执行 `sudo -n <精确命令>` |
+| 精确允许命令成功 | 成功路径成立 | 继续测试其他参数、其他对象和 root Shell 被拒绝 |
+| 经 sudo 后找不到子命令 | 可能是环境或 `secure_path` 差异 | 比较 `env`、`sudo env` 和脚本内部路径 |
+| `systemctl` 已运行但服务失败 | sudo 授权链已推进到目标程序 | 转入第 12 章检查 unit、日志和服务功能 |
 
 ### 章末 Cheatsheet
 
@@ -1118,6 +1234,10 @@ sudo -g adm <command>
 sudoedit /etc/httpd/conf.d/site.conf
 ```
 
-安全边界：避免命令 `ALL`、参数宽通配符、通用 Shell、解释器、可逃逸编辑器，以及由调用者可修改的脚本或父目录。环境问题先比较 `env` 与 `sudo env`，不要默认全局保留环境。
+安全边界：避免命令 `ALL`、参数宽通配符、通用 Shell、解释器、可逃逸编辑器，以及由调用者可修改的脚本或父目录。环境问题先比较普通环境与 sudo 环境，不要默认全局保留变量。
+
+### 向下一章交接
+
+本章把“是否允许启动某个特权命令”解释清楚。下一章《进程、作业、信号与调度优先级》接手命令启动后的运行实例：如何识别 PID、判断进程状态、控制前后台作业、发送信号并调整调度优先级。不要把 sudo 授权成功误当成进程生命周期已经得到正确管理。
 
 </section>

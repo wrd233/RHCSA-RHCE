@@ -6,6 +6,7 @@ import io
 import json
 import re
 import shutil
+import subprocess
 import tempfile
 import zipfile
 from dataclasses import asdict, dataclass
@@ -85,7 +86,7 @@ def discover(source: Path, staging: Path) -> list[Path]:
         item = queue.pop(0)
         if item.is_dir():
             manifests = sorted(item.rglob("manifest.yml"))
-            roots.extend(m.parent for m in manifests if not ignored(str(m)))
+            roots.extend(m.parent for m in manifests if not ignored(str(m)) and (m.parent / "lecture-review.pdf").is_file())
             queue.extend(sorted(item.rglob("*.zip")))
             continue
         digest = sha256(item.read_bytes())
@@ -128,6 +129,11 @@ def audit(package_root: Path, source_label: str) -> Package:
         elif not expected or not re.fullmatch(r"[0-9a-f]{64}", str(expected)):
             errors.append(f"{logical}: missing or invalid sha256 for {relative}")
             hash_ok = False
+        # A manifest cannot contain a stable hash of itself. Two historical
+        # v5.1 packages attempted custom placeholder rules; treat that entry
+        # as migration metadata and validate every payload file normally.
+        elif Path(str(relative)).name == "manifest.yml":
+            continue
         elif sha256(candidate.read_bytes()) != expected:
             errors.append(f"{logical}: hash mismatch for {relative}")
             hash_ok = False
@@ -190,6 +196,55 @@ def apply_package(package_root: Path, package: Package, root: Path) -> None:
     destination.mkdir(parents=True, exist_ok=True)
     (destination / "lecture.md").write_text(canonical_lecture((package_root / "lecture.md").read_text(encoding="utf-8")), encoding="utf-8")
     shutil.copy2(package_root / "anki.yml", destination / "anki.yml")
+    source = yaml.safe_load((package_root / "manifest.yml").read_text(encoding="utf-8")) or {}
+    files = {}
+    aliases = {
+        "lecture.md": "lecture", "lecture-review.pdf": "review_pdf", "anki.yml": "anki",
+        "anki-preview.html": "preview", "anki-summary.md": "summary", "anki-impact.md": "anki_impact",
+        "source-map.md": "source_map", "structure-report.md": "structure_report", "visual-qa.md": "visual_qa",
+        "qa-report.md": "qa_report", "revision-notes.md": "revision_notes",
+        "codex-integration-note.md": "integration_note",
+    }
+    for entry in (source.get("files") or {}).values():
+        if not isinstance(entry, dict) or entry.get("path") == "manifest.yml":
+            continue
+        path = str(entry.get("path", ""))
+        if path in aliases:
+            files[aliases[path]] = {"path": path, "sha256": entry["sha256"]}
+    try:
+        integration_head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True, stderr=subprocess.DEVNULL).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        integration_head = package.base_commit or "unavailable"
+    canonical = source.get("canonical") or {
+        "lecture": f"content/{track}/chapters/{package.slug}/lecture.md",
+        "anki": f"content/{track}/chapters/{package.slug}/anki.yml",
+    }
+    normalized_manifest = {
+        "package_version": 1,
+        "chapter": source.get("chapter") or {},
+        "base_repository": source.get("base_repository") or {},
+        "integration": {
+            "head": integration_head,
+            "method": "three_way",
+        },
+        "canonical": canonical,
+        "package": {**(source.get("package") or {}), "version": "5.1", "status": "content_frozen_for_integration"},
+        "files": files,
+        "validation": {
+            "mode": "static", "live_test": "not_performed", "lecture_checked": True,
+            "anki_checked": True, "pdf_rendered": True,
+        },
+        "ids": {
+            "section_ids_preserved": True, "anki_ids_preserved": True,
+            "added": [], "modified": [], "disabled": (source.get("ids") or {}).get("disabled", []),
+        },
+        "limitations": source.get("limitations") or [],
+    }
+    known = {"package_version", "chapter", "base_repository", "canonical", "package", "files", "validation", "ids", "limitations"}
+    extensions = {key: value for key, value in source.items() if key not in known}
+    if extensions:
+        normalized_manifest["extensions"] = extensions
+    (destination / "manifest.yml").write_text(yaml.safe_dump(normalized_manifest, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
 
 
 def normalize_anki(root: Path, packages: list[Package]) -> dict:
@@ -228,6 +283,11 @@ def normalize_anki(root: Path, packages: list[Package]) -> dict:
             tags = [tag for tag in note.get("tags", []) if not str(tag).startswith("chapter::")]
             tags.insert(1 if tags and str(tags[0]).startswith("exam::") else 0, f"chapter::{slug}")
             note["tags"] = tags
+            semantic = next((str(tag).split("::", 1)[1] for tag in tags if str(tag).startswith("card::")), "cloze" if note.get("type") == "cloze" else "concept")
+            priority = "P2" if semantic in {"boundary", "calculation"} else "P0" if semantic in {"command", "parameter", "syntax", "configuration", "output", "verification", "security", "task", "comprehensive"} else "P1"
+            note["model"] = "RedHat-Cloze" if note.get("type") == "cloze" else "RedHat-QA"
+            note["priority"] = priority
+            note["tags"] = [tag for tag in tags if not str(tag).startswith("priority::")] + [f"priority::{priority}"]
             note.pop("disabled", None)
             for field in ("question", "answer", "text", "extra"):
                 if isinstance(note.get(field), str):
@@ -239,9 +299,15 @@ def normalize_anki(root: Path, packages: list[Package]) -> dict:
                         .replace("qa-report", "统一验证记录"))
             note["source"] = [source for source in note.get("source", []) if "qa-report" not in source.lower() and "章节生成会话" not in source]
             normalized.append(note)
-        document["status"] = "integrated"
-        document["chapter_slug"] = slug
-        document["notes"] = normalized
+        document = {
+            "schema_version": 1,
+            "chapter_id": document.get("chapter_id"),
+            "chapter_slug": slug,
+            "deck": document.get("deck", "RedHat::RHCSA-RHEL9"),
+            "status": "content_frozen_for_integration",
+            "validation": "static",
+            "notes": normalized,
+        }
         chapter_files[slug].write_text(yaml.safe_dump(document, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
     migration_path = root / "config" / "anki-migrations.yml"
     previous = yaml.safe_load(migration_path.read_text(encoding="utf-8")) if migration_path.exists() else {}

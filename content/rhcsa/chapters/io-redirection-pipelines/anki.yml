@@ -1,10 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-02
 chapter_slug: io-redirection-pipelines
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-note_models:
-  qa: RedHat-QA
-  cloze: RedHat-Cloze
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-SHELL-O01-QA-001
   type: qa
@@ -19,7 +18,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::fd-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SHELL-O01-QA-002
   type: qa
   question: 将 stdout 写入文件时，`>` 与 `>>` 的区别是什么？
@@ -33,7 +34,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::file-redirection
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SHELL-O01-QA-003
   type: qa
   question: 只把命令的 stderr 覆盖保存到 `error.log`，而保留 stdout 原端点，命令骨架是什么？
@@ -52,6 +55,8 @@ notes:
   - topic::file-redirection
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SHELL-O01-QA-004
   type: qa
   question: 把 stdout 和 stderr 都覆盖写入 `all.log`，优先展示文件描述符关系的写法是什么？
@@ -70,11 +75,29 @@ notes:
   - topic::fd-duplication
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SHELL-O01-QA-005
   type: qa
   question: '`command >all.log 2>&1` 与 `command 2>&1 >all.log` 为什么不同？'
-  answer: 重定向从左到右应用。前者先改变 FD 1，再让 FD 2 复制它，两个流都进文件；后者先让 FD 2 指向原 stdout（通常为终端），随后只改变 FD 1。
-  extra: 判断时要逐步追踪每个描述符当前端点。
+  answer: '重定向从左到右应用。
+
+
+    `command >all.log 2>&1`：
+
+
+    1. `>all.log`：FD 1 → `all.log`；FD 2 仍指向原端点。
+
+    2. `2>&1`：FD 2 复制 FD 1 当前端点，因此 FD 1、FD 2 都指向 `all.log`。
+
+
+    `command 2>&1 >all.log`：
+
+
+    1. `2>&1`：FD 2 复制原 FD 1（交互式场景通常是终端）。
+
+    2. `>all.log`：随后只把 FD 1 改向 `all.log`，FD 2 仍保留原终端端点。'
+  extra: FD 复制捕获的是执行到该位置时的端点；之后改变 FD 1，不会让已经复制的 FD 2 自动追随。
   source:
   - RH124 Ch.5 pp.112-118
   - bash(1) Redirections
@@ -83,7 +106,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::fd-duplication
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SHELL-O01-QA-006
   type: qa
   question: 普通 `A | B` 默认连接哪两个通道？
@@ -97,7 +122,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SHELL-O01-QA-007
   type: qa
   question: 既要把上游数据保存到 `evidence.log`，又要继续传给下游命令，命令骨架是什么？
@@ -116,6 +143,8 @@ notes:
   - topic::tee
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-SHELL-O01-QA-008
   type: qa
   question: Bash 中 `$?` 与 `${PIPESTATUS[@]}` 对一条管道分别回答什么？
@@ -129,7 +158,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-status
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-SHELL-O01-CLOZE-001
   type: cloze
   text: 要把 stdout 和 stderr 都覆盖写入同一文件，先写 {{c1::`> all.log`}}，再写 {{c2::`2>&1`}}。
@@ -142,7 +173,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::fd-duplication
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-SHELL-D01-QA-002
   type: qa
   question: 执行 `cat data.txt > data.txt` 后文件变空，最直接的机制是什么？
@@ -156,7 +189,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K01-QA-001
   type: qa
   question: 为什么不能把 stdout 简单定义为“屏幕”？
@@ -170,7 +205,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::fd-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K01-QA-002
   type: qa
   question: stderr 有文字是否必然说明命令退出状态非零？
@@ -184,7 +221,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::fd-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K01-QA-003
   type: qa
   question: '`cat input.txt` 与 `cat < input.txt` 的输入对象有何不同？'
@@ -199,6 +238,8 @@ notes:
   - topic::fd-model
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K01-QA-004
   type: qa
   question: 为什么目标文件打开失败时，命令主体可能根本没有运行？
@@ -212,6 +253,8 @@ notes:
   - topic::fd-model
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K01-CLOZE-001
   type: cloze
   text: 标准输入、标准输出、标准错误的文件描述符依次是 {{c1::0}}、{{c2::1}}、{{c3::2}}。
@@ -224,7 +267,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::fd-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-02-O01-QA-001
   type: qa
   question: 用 `printf` 产生一行确定的 stdout，推荐的命令骨架是什么？
@@ -243,6 +288,8 @@ notes:
   - topic::controlled-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O01-QA-002
   type: qa
   question: 怎样让一次 `printf` 的文字沿 stderr 输出？
@@ -261,6 +308,8 @@ notes:
   - topic::controlled-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O01-QA-003
   type: qa
   question: 需要同时构造 stdout、stderr 和明确的退出状态 7，怎样写最小受控命令？
@@ -278,7 +327,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::controlled-evidence
   - card::task
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O01-QA-004
   type: qa
   question: 为什么验证原命令状态时不能先运行 `cat output.log`？
@@ -291,7 +342,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::controlled-evidence
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O02-QA-001
   type: qa
   question: 分别覆盖保存 stdout 到 `out.log`、stderr 到 `err.log` 的骨架是什么？
@@ -310,6 +363,8 @@ notes:
   - topic::file-redirection
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O02-QA-002
   type: qa
   question: 只把 stderr 追加到 `err.log` 的骨架是什么？
@@ -328,6 +383,8 @@ notes:
   - topic::file-redirection
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O02-QA-003
   type: qa
   question: 命令最终返回非零，但 `> report.txt` 使旧文件变空，这是否矛盾？
@@ -340,7 +397,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::file-redirection
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O02-QA-004
   type: qa
   question: 未知错误调查中，为什么不应默认使用 `2>/dev/null`？
@@ -354,7 +413,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::file-redirection
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-02-O02-QA-005
   type: qa
   question: 路径可写但普通 `>` 拒绝覆盖已有文件，除权限外应检查哪个 Shell 状态？
@@ -368,7 +429,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::file-redirection
   - card::diagnosis
-  - priority::P2
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O02-CLOZE-001
   type: cloze
   text: stdout 覆盖使用 {{c1::`>`}}，stdout 追加使用 {{c2::`>>`}}；stderr 覆盖使用 {{c3::`2>`}}，stderr 追加使用 {{c4::`2>>`}}。
@@ -380,7 +443,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::file-redirection
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-02-K02-QA-001
   type: qa
   question: '`2>&1` 中的 `&1` 表示什么？'
@@ -393,7 +458,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::fd-duplication
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K02-QA-002
   type: qa
   question: 运行 `command 2>&1 >out.log` 时，为什么 stderr 仍可能显示在终端？
@@ -408,6 +475,8 @@ notes:
   - topic::fd-duplication
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-K02-QA-003
   type: qa
   question: '`&>all.log` 与 `>all.log 2>&1` 在本章如何取舍？'
@@ -422,6 +491,8 @@ notes:
   - topic::fd-duplication
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K02-CLOZE-001
   type: cloze
   text: '`2>&1` 复制的是执行到该位置时 {{c1::FD 1 当前指向的端点}}。'
@@ -433,7 +504,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::fd-duplication
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-02-K03-QA-001
   type: qa
   question: 管道把左侧输出作为右侧命令的“参数”吗？
@@ -447,7 +520,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K03-QA-002
   type: qa
   question: 显式把命令的 stdout 和 stderr 都送入下一阶段，骨架是什么？
@@ -466,6 +541,8 @@ notes:
   - topic::pipeline-model
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-K03-QA-003
   type: qa
   question: '`producer >saved.txt | consumer` 中，为什么 consumer 可能没有输入？'
@@ -480,6 +557,8 @@ notes:
   - topic::pipeline-model
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-K03-QA-004
   type: qa
   question: 为什么不能把管道理解为“一行一条记录且立即到达”？
@@ -494,6 +573,8 @@ notes:
   - topic::pipeline-model
   - card::boundary
   - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-02-K03-QA-005
   type: qa
   question: 普通 `|` 与 Bash `|&` 的通道差异是什么？
@@ -507,6 +588,8 @@ notes:
   - topic::pipeline-model
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-K03-CLOZE-001
   type: cloze
   text: 普通管道把左侧的 {{c1::stdout / FD 1}} 连接到右侧的 {{c2::stdin / FD 0}}；{{c3::stderr / FD 2}} 默认旁路。
@@ -519,7 +602,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-02-O03-QA-001
   type: qa
   question: '`tee -a evidence.log` 中 `-a` 的作用是什么？'
@@ -534,6 +619,8 @@ notes:
   - topic::tee
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O03-QA-002
   type: qa
   question: '`A | tee before.log | B` 中，before.log 能证明什么？'
@@ -548,6 +635,8 @@ notes:
   - topic::tee
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O03-QA-003
   type: qa
   question: '`A | tee before.log | B | tee after.log` 中两个文件的取证位置有何不同？'
@@ -561,6 +650,8 @@ notes:
   - topic::tee
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O03-QA-004
   type: qa
   question: 管道终端有数据但 `evidence.log` 缺失，下一条最有区分度的证据是什么？
@@ -575,11 +666,13 @@ notes:
   - topic::tee
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O03-QA-005
   type: qa
   question: 为什么“文件中有 payload”不能证明整条管道成功？
-  answer: 它只证明 payload 到达 tee 且文件写入成功；上游或中间阶段仍可能返回非零。
-  extra: 必须结合 `$?`、`PIPESTATUS` 或 `pipefail`。
+  answer: 它只证明这些可见字节已经到达 `tee` 所在位置，并至少被写入该文件；不能证明 `tee` 已完整处理全部输入，也不能证明上游、中间或下游阶段成功。
+  extra: 还应立即保存各阶段状态，并按任务需要核对文件是否完整。
   source:
   - tee(1)
   - bash(1) Pipelines
@@ -588,7 +681,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::tee
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-02-O03-CLOZE-001
   type: cloze
   text: '`tee file` 默认 {{c1::覆盖}}文件；`tee -a file` {{c2::追加}}文件；两者都继续把数据写到 {{c3::stdout}}。'
@@ -600,7 +695,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::tee
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-02-O04-QA-001
   type: qa
   question: Bash 默认如何确定一条普通管道的退出状态？
@@ -613,7 +710,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-status
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O04-QA-002
   type: qa
   question: 三阶段管道结束后，`${PIPESTATUS[@]}` 的数组位置如何对应？
@@ -627,6 +726,8 @@ notes:
   - topic::pipeline-status
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O04-QA-003
   type: qa
   question: 怎样在不先运行其他验证命令的情况下，同时保存管道 `$?` 和 `PIPESTATUS`？
@@ -645,6 +746,8 @@ notes:
   - topic::pipeline-status
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O04-QA-004
   type: qa
   question: 在当前 Bash 中开启和关闭 `pipefail` 的命令分别是什么？
@@ -664,6 +767,8 @@ notes:
   - topic::pipeline-status
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O04-QA-005
   type: qa
   question: 启用 `pipefail` 后，有多个非零阶段时管道取哪个状态？
@@ -676,7 +781,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-status
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O04-QA-006
   type: qa
   question: '`pipefail` 为什么不能替代 `PIPESTATUS`？'
@@ -690,7 +797,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-status
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O04-QA-007
   type: qa
   question: 结果文件存在且 `$?` 为 0，但怀疑中间阶段失败，下一步应怎样取证？
@@ -704,7 +813,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-status
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O04-QA-008
   type: qa
   question: 为什么本章不把 `set -euo pipefail` 当作所有脚本的默认答案？
@@ -717,7 +828,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-status
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-02-O04-CLOZE-001
   type: cloze
   text: Bash 默认管道状态来自 {{c1::最后一个阶段}}；启用 pipefail 后，状态来自 {{c2::最右侧非零阶段}}。
@@ -730,7 +843,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-status
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-02-O04-CLOZE-002
   type: cloze
   text: 管道后必须在运行任何其他简单命令前复制 {{c1::`$?`}} 和 {{c2::`${PIPESTATUS[@]}`}}。
@@ -742,7 +857,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::pipeline-status
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-02-O05-QA-001
   type: qa
   question: 向 `cat` 提供两行 here-document 的基本骨架是什么？
@@ -766,6 +883,8 @@ notes:
   - topic::here-document
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O05-QA-002
   type: qa
   question: '`<<EOF` 与 `<<''EOF''` 对正文展开有何差异？'
@@ -778,7 +897,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::here-document
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O05-QA-003
   type: qa
   question: '`<<-EOF` 会删除哪些缩进？'
@@ -791,7 +912,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::here-document
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-02-O05-QA-004
   type: qa
   question: Shell 一直等待 here-document 结束，优先检查什么？
@@ -805,6 +928,8 @@ notes:
   - topic::here-document
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-O05-QA-005
   type: qa
   question: 怎样验证 quoted here-document 保留 `$HOME` 和 `$(hostname)` 字面量？
@@ -830,7 +955,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::here-document
   - card::verification
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-O05-CLOZE-001
   type: cloze
   text: 引用 here-document 的开始 delimiter，例如 {{c1::`<<'EOF'`}}，可抑制正文中的相关展开。
@@ -842,7 +969,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::here-document
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-02-D01-QA-001
   type: qa
   question: 命令运行后终端没有输出，第一步应判断哪些对象？
@@ -856,7 +985,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-D01-QA-003
   type: qa
   question: 只想保存 stdout，但错误仍显示在终端，这通常说明什么？
@@ -869,7 +1000,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-D01-QA-004
   type: qa
   question: '`tee` 后文件为空时，怎样区分上游无数据与 tee 写入失败？'
@@ -884,6 +1017,8 @@ notes:
   - topic::diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-D01-QA-005
   type: qa
   question: '`combined-b.log` 中没有 WARN，能否断言命令没有产生 stderr？'
@@ -896,7 +1031,9 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::diagnosis
   - card::output
-  - priority::P1
+  - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-W01-QA-001
   type: qa
   question: 交付一份管道调查证据时，除输出文件外至少还应记录什么？
@@ -911,6 +1048,8 @@ notes:
   - topic::work-migration
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-W01-QA-002
   type: qa
   question: 真实调查中，什么时候更适合分开保存 stdout/stderr，什么时候可合并？
@@ -925,6 +1064,8 @@ notes:
   - topic::work-migration
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-02-T01-QA-001
   type: qa
   question: 受控命令返回 7。要求分别覆盖保存 stdout/stderr，并在验证文件前保留状态，核心命令序列是什么？
@@ -949,6 +1090,8 @@ notes:
   - topic::classic-task-1
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-T01-QA-002
   type: qa
   question: 用 `>combined-a.log 2>&1` 执行同时产生 DATA/WARN 的命令，文件应包含哪些流？
@@ -962,6 +1105,8 @@ notes:
   - topic::classic-task-1
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-T02-QA-001
   type: qa
   question: 三阶段调查管道结束后，要求既保留数据又定位中间失败，最小证据组合是什么？
@@ -976,6 +1121,8 @@ notes:
   - topic::classic-task-2
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-02-T02-QA-002
   type: qa
   question: 中间阶段正常转发 payload 但返回 9，tee 文件含 payload。正确结论是什么？
@@ -989,5 +1136,6 @@ notes:
   - chapter::io-redirection-pipelines
   - topic::classic-task-2
   - card::boundary
-  - priority::P0
-status: integrated
+  - priority::P2
+  model: RedHat-QA
+  priority: P2

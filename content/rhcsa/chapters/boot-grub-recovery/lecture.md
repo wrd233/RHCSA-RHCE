@@ -4,16 +4,19 @@ chapter_id: RHCSA-30
 exam: RHCSA
 part: "第七篇 安全、启动与系统恢复"
 slug: boot-grub-recovery
-status: integrated
+version: "5.1"
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
-base_commit: "39e873dab15347a0f1a7611a6f212c3d26bd3562"
+base_commit: "961a29b3af4c07a828078a5de90c221a036546df"
 sources:
   - RH134-RHEL9
   - RH124-RHEL9
   - RHCSA-细分课件-18
   - RHCSA9.0-模拟题
+  - RHEL9-RHCSA-讲义.pdf
   - grubby(8)
+  - grub2-editenv(1)
   - systemd.special(7)
   - systemctl(1)
   - dracut(8)
@@ -22,33 +25,186 @@ sources:
   - journalctl(1)
 ---
 
-<!-- 本章为静态核对候选稿。内部 ID、来源和状态属于维护层，正式渲染不可见。 -->
+<!-- 维护元数据仅供构建与集成使用，正式阅读版不可见。 -->
 
-# 第 30 章　启动链、GRUB、Target 与系统恢复
+<section class="chapter-cover">
+  <div class="cover-series">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">30</div>
+  <h1>启动链、GRUB、Target 与系统恢复</h1>
+  <p class="cover-subtitle">从固件到 PID 1：先判断启动阶段与真实根，再完成最小修复和重启验收。</p>
+  <div class="cover-tags"><span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span></div>
+  <div class="cover-edition">大字号阅读版</div>
+</section>
 
-一台 Linux 主机从按下电源到出现登录提示符，并不是“系统启动了”这样一个不可再分的动作。控制权会在固件、引导加载程序、内核、initramfs、真实根文件系统和 systemd 之间逐层移交。每一层能读取的配置不同，能产生的证据不同，能执行的修复也不同。恢复操作最危险的误区，往往不是不会敲命令，而是没有先确认自己究竟处在哪一层、当前的 `/` 属于谁、修改只影响本次启动还是会影响以后每次启动。
+<section class="reading-navigation">
 
-本章围绕一条完整启动链组织内容：先建立 firmware、GRUB、kernel、initramfs、rootfs 与 systemd 的对象关系，再区分启动条目、内核参数、target、恢复 shell 和持久配置的状态维度。操作部分不把“重置 root 密码”写成孤立口诀，而是解释为什么要重新挂载 `/sysroot`、为什么要 `chroot`、为什么需要 SELinux 重标记。诊断部分则把 `fstab` 错误、failed unit、Journal 启动轮次和重启风险放进同一条证据链。
+# 本章阅读导航
 
-**[概念]** firmware 是 BIOS 或 UEFI 等固件环境。它完成基本硬件初始化并选择可启动设备，然后把控制权交给 boot loader。固件阶段尚未运行 Linux 内核，因此不能期待 systemd Journal 为这一层提供证据。
+先抓住一条主线：启动不是一个瞬间，而是 firmware、GRUB、kernel、initramfs、真实根和 systemd 逐层移交控制权。恢复时先判断当前阶段和路径语境，再区分一次性状态、持久配置与最终功能。
 
-**[概念]** GRUB 是 boot loader。它选择启动条目，加载 kernel 与 initramfs，并向 kernel 传递 command line。GRUB 菜单中的临时编辑只影响本次启动；`grubby` 修改的是持久启动条目。
+<div class="model-grid">
+  <div class="model-card"><span>01</span><strong>定位启动阶段</strong><small>先判断控制权已经到达哪里</small></div>
+  <div class="model-card"><span>02</span><strong>识别当前真实根</strong><small>区分 /、/sysroot 与 chroot 后的 /</small></div>
+  <div class="model-card"><span>03</span><strong>区分状态寿命</strong><small>临时参数、持久条目、default target</small></div>
+  <div class="model-card"><span>04</span><strong>选择最小操作</strong><small>只改变有证据支持的对象</small></div>
+  <div class="model-card"><span>05</span><strong>完成分层验证</strong><small>配置、当前状态与功能分别证明</small></div>
+  <div class="model-card"><span>06</span><strong>受控重启复验</strong><small>保证控制台、回退与同对象复查</small></div>
+</div>
 
-**[概念]** kernel 是操作系统内核；initramfs 是内存中的早期用户空间。initramfs 负责装载访问真实根所需的模块、发现存储、挂载真实根到 `/sysroot`，随后通过根切换进入磁盘上的系统。
+<div class="nav-columns">
+<div>
 
-**[概念]** systemd 作为正常系统中的 PID 1，根据默认 target 及其依赖启动 mount、service、socket 和其他 unit。target 是依赖集合与同步点，不是一个长期运行的“运行级别进程”。
+## 专题地图
 
-**[概念]** rescue、emergency 与 `rd.break` 都能提供维护入口，但它们不在同一阶段。rescue 和 emergency 属于 systemd 目标；`rd.break` 在 initramfs 阶段中断，真实系统通常仍挂载于 `/sysroot`。
+| 类型 | 专题 |
+|---|---|
+| 知识专题 | 从按下电源到 PID 1：启动链如何逐层交接 |
+| 操作专题 | 查询当前内核、启动条目与 GRUB environment |
+| 操作专题 | 临时启动参数与持久启动参数不能互相代替 |
+| 知识专题 | Target 的当前状态、默认状态与一次性目标 |
+| 知识专题 | rescue、emergency 与 `rd.break` 的环境边界 |
+| 操作专题 | 使用 `rd.break` 恢复 root 口令并保持 SELinux 正确 |
+| 诊断专题 | `fstab` 错误、启动证据与重启风险 |
+| 经典任务 | root 口令恢复与 `fstab` emergency 诊断 |
 
-**[操作语义]** 启动恢复的第一条规则是“先判阶段，再判根”。进入任何维护 shell 后，先用 `findmnt`、`cat /proc/cmdline`、`systemctl` 或提示符环境确认当前事实，再修改口令、挂载或配置。
+</div><div>
 
-**[操作语义]** 重启是一种高风险的最终验证，不是默认诊断手段。持久启动参数、default target 或 `/etc/fstab` 有误时，重启会把尚未暴露的错误变成无法远程登录的故障。
+## 阅读时持续回答
+
+1. 当前故障发生在 firmware、GRUB、initramfs 还是 systemd？
+2. 当前 `/` 是临时根还是真实根？
+3. 本次修改只影响一次启动，还是写入持久状态？
+4. `active target` 与 `default target` 分别回答什么？
+5. 当前证据能证明什么，又不能证明什么？
+6. 下一条最有区分度的证据是什么？
+7. 重启前是否有控制台、回退条目和明确验收项？
+
+<div class="nav-note"><strong>学习提示：</strong>遇到启动与恢复任务时，始终先确认启动阶段、真实根和状态寿命；任何修改都应由证据驱动，并为重启后的同对象复验预留控制台与回退路径。</div>
+
+</div></div>
+</section>
+
+<section class="chapter-opening">
+
+# 第 30 章 · 正文
+
+一台 Linux 主机从按下电源到出现登录提示符，并不是“系统启动了”这样一个不可再分的动作。控制权会在固件、引导加载程序、内核、initramfs、真实根文件系统和 systemd 之间逐层移交。每一层读取的配置不同，能产生的证据不同，能够安全执行的修复也不同。
+
+恢复章节最危险的误判，通常不是不会敲命令，而是没有确认自己究竟处在哪一层：在 initramfs 的 `/` 中修改口令、把 GRUB 菜单中的一次性参数误认为持久配置、把 `set-default` 误认为当前已经切换，或在 `fstab` 尚未闭环时用重启反复试错。它们都属于“操作对象或状态寿命判断错误”。
+
+本章按“启动对象 → 状态寿命 → 查询接口 → 恢复操作 → 证据链 → 重启验收”推进。systemd unit 的基础控制留给第 12 章；`fstab` 完整语法留给第 24 章；SELinux 模式和上下文模型留给第 28 章。本章只引入完成启动恢复所需的接口与边界。
+
+<div class="concept-stack">
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>Firmware</strong> 是 BIOS 或 UEFI 等固件环境，负责基本硬件初始化、识别启动设备并进入下一阶段。它不理解 `/etc/fstab`、systemd unit 或 root 口令；如果尚未进入 kernel，systemd Journal 也不能为这一层提供证据。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>Boot Loader / GRUB</strong> 负责选择启动条目，加载 kernel 与 initramfs，并把 kernel command line 传给下一阶段。菜单中按 `e` 的编辑通常只影响一次启动；`grubby` 管理的启动条目才承担持久参数，因此两者不能互相替代。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>Kernel 与 initramfs</strong> 分别承担内核初始化和早期用户空间。initramfs 包含发现真实根所需的驱动、工具与逻辑，把真实根挂载到 `/sysroot` 后再完成根切换；因此 initramfs 不是磁盘系统的普通 `/`。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>rootfs 与 `/sysroot`</strong> 是恢复操作中必须区分的路径语境。在 `rd.break` 中，当前 `/` 是临时根，真实系统通常位于 `/sysroot`；只有重挂载正确对象并进入 `chroot /sysroot`，`/etc/shadow`、`/etc/fstab` 和 `/.autorelabel` 才指向目标系统。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>systemd target</strong> 是 unit 依赖集合与同步点，不是一个持续运行的“运行级别进程”。active target 描述当前已经到达的状态，default target 描述正常启动入口，`systemd.unit=` 则可以只覆盖一次启动。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>rescue、emergency 与 `rd.break`</strong> 都能提供维护入口，但不在同一阶段。rescue 和 emergency 属于主系统的 systemd 目标；`rd.break` 在 initramfs 中暂停。环境不同，真实根位置、可用 unit、挂载状态和证据入口也不同。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>`chroot`</strong> 改变当前进程及其子进程的路径解析根，使 `/etc`、`/var` 和 `/` 指向指定目录。它不会启动新 kernel、创建完整 namespace 或自动生成新的 systemd，因此“进入 chroot”只解决作用路径，不等于启动了一个独立系统。</p></div>
+  <div class="concept-block"><span class="concept-badge">概念</span><p><strong>SELinux relabel</strong> 是在口令恢复后重新建立文件安全上下文的持久恢复步骤。`touch /.autorelabel` 只是向下一次启动发出完整重标记请求；它不能证明重标记已经完成，也不能代替启动后对模式、失败 unit 和登录功能的检查。</p></div>
+</div>
+</section>
+
+<section class="semantic-zone">
+
+# 操作语义速查
+
+<div class="semantic-intro"><span>操作语义</span>以下接口分别观察启动条目、GRUB 环境、target 状态、真实根、账号数据库、SELinux 重标记请求和启动证据。先确认作用对象，再决定参数。</div>
+
+<div class="semantic-command">
+<h2><code>grubby</code></h2>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>grubby --info=ALL
+grubby --default-kernel
+grubby --update-kernel=KERNEL --args="PARAMETERS"
+grubby --update-kernel=KERNEL --remove-args="PARAMETERS"</code></pre>
+<p>查询或修改 RHEL 管理的 kernel 启动条目。它回答未来条目状态，不直接证明本次运行参数或重启成功。</p>
+<dl><dt><code>--info=ALL</code></dt><dd>列出全部启动条目及关键字段。</dd><dt><code>--default-kernel</code></dt><dd>显示默认 kernel 路径。</dd><dt><code>--update-kernel=ALL</code></dt><dd>把后续参数操作作用于全部现有条目；使用前评估是否需要保留未修改回退条目。</dd><dt><code>--args=...</code></dt><dd>向目标条目持久添加参数。</dd><dt><code>--remove-args=...</code></dt><dd>从目标条目持久删除指定参数。</dd></dl>
+</div>
+
+<div class="semantic-command">
+<h2><code>grub2-editenv</code></h2>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>grub2-editenv - list
+grub2-editenv - unset menu_auto_hide</code></pre>
+<p>读取或修改默认 GRUB environment block。它不等同于 BLS 启动条目，也不等同于本次 kernel 的 `/proc/cmdline`。</p>
+<dl><dt><code>- list</code></dt><dd>读取默认环境块中的变量。</dd><dt><code>- unset menu_auto_hide</code></dt><dd>取消自动隐藏菜单；这属于持久显示策略，不是一次 root 口令恢复的必要步骤。</dd></dl>
+</div>
+
+<div class="semantic-command">
+<h2><code>systemctl</code> target 组</h2>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>systemctl get-default
+systemctl set-default TARGET
+systemctl isolate TARGET
+systemctl list-units --type=target --state=active</code></pre>
+<p>分开观察和修改 default target 与当前 active target。`set-default` 不立即切换，`isolate` 可能停止当前管理通道。</p>
+<dl><dt><code>get-default</code></dt><dd>查询正常启动入口。</dd><dt><code>set-default TARGET</code></dt><dd>修改持久默认目标。</dd><dt><code>isolate TARGET</code></dt><dd>把当前系统切换到目标依赖集合，可能停止不再需要的 unit。</dd><dt><code>systemd.unit=TARGET</code></dt><dd>作为 kernel 参数，只覆盖一次启动目标。</dd></dl>
+</div>
+
+<div class="semantic-command">
+<h2><code>findmnt</code> / <code>mount</code></h2>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>findmnt /
+findmnt /sysroot
+mount -o remount,rw /sysroot</code></pre>
+<p>先确认当前路径对应哪个挂载对象及其选项，再把真实根重新挂载为可写。不要凭提示符猜测 `/` 的语境。</p>
+<dl><dt><code>findmnt PATH</code></dt><dd>显示目标、源、文件系统类型和挂载选项。</dd><dt><code>-o remount,rw</code></dt><dd>在不重新建立挂载的前提下，把指定挂载改为读写。</dd><dt><code>/sysroot</code></dt><dd>只在 initramfs 恢复语境中作为真实根的可能位置，仍应先查询确认。</dd></dl>
+</div>
+
+<div class="semantic-command">
+<h2><code>chroot</code> / <code>passwd</code></h2>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>chroot /sysroot
+passwd root</code></pre>
+<p>把路径解析根切换到真实系统，再修改真实账号数据库。命令成功不等于作用对象正确，顺序不能颠倒。</p>
+<dl><dt><code>chroot /sysroot</code></dt><dd>让后续绝对路径相对于真实根解析。</dd><dt><code>passwd root</code></dt><dd>交互式修改目标系统 root 口令；不要把明文口令写入命令历史。</dd></dl>
+</div>
+
+<div class="semantic-command">
+<h2><code>touch /.autorelabel</code></h2>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>touch /.autorelabel</code></pre>
+<p>在真实根中创建重标记请求，让下一次正常启动重新建立 SELinux 文件上下文。它不是即时执行命令。</p>
+<dl><dt><code>/.autorelabel</code></dt><dd>必须在 `chroot /sysroot` 之后创建，确保落在目标系统根目录。</dd><dt>启动边界</dt><dd>重标记可能耗时，不能强制中断；完成后仍检查 SELinux 模式、failed unit 和登录功能。</dd></dl>
+</div>
+
+<div class="semantic-command">
+<h2><code>journalctl</code> boot 组</h2>
+<div class="synopsis-label">SYNOPSIS</div>
+<pre><code>journalctl -b
+journalctl -k -b
+journalctl --list-boots
+journalctl -b -1</code></pre>
+<p>按启动轮次读取 systemd Journal。它适合 kernel、initramfs 后段和 systemd 阶段，但不能还原 firmware 尚未进入 kernel 的失败。</p>
+<dl><dt><code>-b</code></dt><dd>限定当前启动。</dd><dt><code>-k -b</code></dt><dd>限定当前启动中的 kernel 消息。</dd><dt><code>--list-boots</code></dt><dd>列出当前可查询的启动轮次。</dd><dt><code>-b -1</code></dt><dd>读取上一次可用启动；无结果不等于上次没有事件。</dd></dl>
+</div>
+</section>
 
 <section class="topic knowledge" id="RHCSA-30-K01" data-kind="knowledge-topic">
 
 ## [知识专题] 从按下电源到 PID 1：启动链如何逐层交接
 
 排查启动故障时，最先要回答的不是“用哪个修复命令”，而是“控制权已经走到哪里”。如果屏幕还停留在固件界面，`journalctl` 无能为力；如果 `rd.break` 已经中断在 initramfs，`/etc/shadow` 也不在当前 `/` 下；如果 systemd 已经进入 emergency，则 failed unit 和本次启动 Journal 才是高价值证据。启动阶段决定了证据入口和修复边界。
+
+<div class="boot-chain-diagram" aria-label="启动链纵向主模型">
+  <div class="diagram-title">启动链纵向主模型</div>
+  <div class="stage"><span class="stage-no">01</span><div><strong>Firmware</strong><small>初始化硬件并选择可启动入口</small></div></div>
+  <div class="flow-arrow">↓</div>
+  <div class="stage"><span class="stage-no">02</span><div><strong>GRUB / Boot Loader</strong><small>选择条目，加载 kernel 与 initramfs，传递 command line</small></div></div>
+  <div class="flow-arrow">↓</div>
+  <div class="stage"><span class="stage-no">03</span><div><strong>Kernel</strong><small>初始化内核能力并启动早期用户空间</small></div></div>
+  <div class="flow-arrow">↓</div>
+  <div class="stage"><span class="stage-no">04</span><div><strong>initramfs</strong><small>发现存储，把真实根挂载到 /sysroot</small></div></div>
+  <div class="flow-arrow">↓</div>
+  <div class="stage"><span class="stage-no">05</span><div><strong>switch_root / rootfs</strong><small>从临时根切换到磁盘上的真实系统</small></div></div>
+  <div class="flow-arrow">↓</div>
+  <div class="stage"><span class="stage-no">06</span><div><strong>systemd PID 1</strong><small>按 default target 及依赖启动 unit</small></div></div>
+  <div class="flow-arrow">↓</div>
+  <div class="stage"><span class="stage-no">07</span><div><strong>Target 与功能终态</strong><small>到达同步点后仍需验证挂载、服务和登录功能</small></div></div>
+</div>
+
 
 ### ① [知识点] firmware 选择启动设备，但不理解 Linux 的服务状态
 
@@ -168,7 +324,7 @@ grubby --info=ALL
 **作用对象：** GRUB environment block 中的变量。
 
 ```bash
-grub2-editenv list
+grub2-editenv - list
 ```
 
 这个命令可用于查看保存的条目、菜单隐藏等环境变量。它不等同于读取全部 BLS 启动条目，也不等同于查看当前 kernel command line。三者分别回答：
@@ -194,7 +350,7 @@ uname -r
 cat /proc/cmdline
 grubby --default-kernel
 grubby --info=ALL
-grub2-editenv list
+grub2-editenv - list
 ```
 
 工作环境中还应把输出保存到变更记录。考试环境中至少要在头脑中明确：当前 kernel、默认 kernel、目标条目和需要修改的参数分别是什么。
@@ -208,7 +364,7 @@ grub2-editenv list
 当前参数：cat /proc/cmdline
 默认 kernel：grubby --default-kernel
 全部条目：grubby --info=ALL
-GRUB 环境：grub2-editenv list
+GRUB 环境：grub2-editenv - list
 ```
 
 </section>
@@ -275,6 +431,8 @@ grubby --update-kernel=ALL --remove-args="<PARAMETERS>"
 ```bash
 grubby --info=ALL
 ```
+
+在早期 RHEL 9.0 环境或完成 kernel 安装、删除之后，更应重新检查所有条目，不要假定新条目一定继承了预期参数。这里的安全原则不是记住某个版本特例，而是把“安装结果”重新还原成可查询的启动条目。
 
 重启前，这只能证明条目文本发生变化。完成受控重启后，再检查：
 
@@ -956,6 +1114,8 @@ uname -r、/proc/cmdline、active target、目标挂载、failed unit、boot Jou
 
 <section class="topic classic-task" id="RHCSA-30-T01" data-kind="classic-task">
 
+<div class="page-break"></div>
+
 ## [经典任务] 使用 `rd.break` 恢复 root 口令
 
 ### 任务环境
@@ -1005,9 +1165,11 @@ uname -r、/proc/cmdline、active target、目标挂载、failed unit、boot Jou
 
 </section>
 
-<div class="page-break"></div>
+
 
 <section class="topic reference-answer" id="RHCSA-30-A01" data-kind="reference-answer">
+
+<div class="page-break"></div>
 
 ## [参考解答] 使用 `rd.break` 恢复 root 口令
 
@@ -1109,6 +1271,8 @@ journalctl -b -p err
 
 <section class="topic classic-task" id="RHCSA-30-T02" data-kind="classic-task">
 
+<div class="page-break"></div>
+
 ## [经典任务] 诊断错误 `fstab` 导致的 emergency
 
 ### 任务环境
@@ -1159,9 +1323,11 @@ journalctl -b -p err
 
 </section>
 
-<div class="page-break"></div>
+
 
 <section class="topic reference-answer" id="RHCSA-30-A02" data-kind="reference-answer">
+
+<div class="page-break"></div>
 
 ## [参考解答] 诊断错误 `fstab` 导致的 emergency
 
@@ -1270,9 +1436,7 @@ journalctl -b -p err
 - **错误：** 看到设备不挂载就执行 `mkfs`。
   **修复：** 先通过 `lsblk -f`、`blkid` 和日志识别已有文件系统。
 - **错误：** `mount -a` 无输出后立即 reboot。
-  **修复：** 用 `findmnt <TARGET>` 和 `systemctl --failed` 分层验证。
-- **错误：** 修改多个 `fstab` 行。
-  **修复：** 保持最小变更，使故障原因和修复一一对应。
+  **修复：** 用 `findmnt <TARGET>` 和 `systemctl --failed` 分层验证，并始终保持最小变更，使故障原因和修复一一对应。
 
 </section>
 
@@ -1294,18 +1458,26 @@ journalctl -b -p err
 → 受控重启后如何用同一对象复验
 ```
 
-需要形成的核心调用路径是：
+### 工作方法：把恢复过程写成可回放的证据链
 
-- 用 `uname -r` 与 `/proc/cmdline` 查看当前 kernel 事实；
-- 用 `grubby` 查看和修改持久启动条目；
-- 用 `grub2-editenv` 查看 GRUB environment；
-- 用 `systemctl` 分开查询 active target 与 default target；
-- 用 `findmnt` 先确认根和挂载选项，再执行 remount；
-- 在 `rd.break` 中通过 `/sysroot` 和 `chroot` 操作真实系统；
-- 修改口令后通过 `/.autorelabel` 保持 SELinux 标签终态；
-- 用 failed unit、boot Journal、`lsblk -f`、`blkid` 和 `findmnt --verify` 诊断 `fstab`；
-- 把重启视为持久状态验收，而不是随机试错。
+真正稳定的操作不是背下一串命令，而是让每一步都能回答三个问题：它正在改变哪个对象，下一条证据怎样证明它改变正确，以及这条证据还不能证明什么。`grubby --info=ALL` 可以证明启动条目文本，不能证明目标 kernel 已经成功启动；`systemctl get-default` 可以证明默认 target，不能证明当前系统已切换；`mount -a` 没有报错，也不能代替对目标挂载点和数据可见性的验证。
 
-本章只完成静态核对，没有连接 RHEL 9 虚拟机。所有需要真实固件、GRUB 菜单、initramfs、重标记耗时和重启行为确认的项目，均应在后续 live VM 中按照 `统一验证记录` 的清单执行。
+### 主要判断表
+
+| 场景 | 先查什么 | 能证明什么 | 仍不能证明什么 |
+|---|---|---|---|
+| 当前 kernel 与参数 | `uname -r`、`cat /proc/cmdline` | 本次实际运行和收到的参数 | 下次默认条目是否相同 |
+| 持久 kernel 参数 | `grubby --info=ALL` | 启动条目中的未来配置 | 条目能否成功完成启动 |
+| default target | `systemctl get-default` | 正常启动入口 | 当前 active target 和业务功能 |
+| `rd.break` 环境 | `cat /proc/cmdline`、`findmnt /sysroot` | 当前阶段与真实根位置 | 口令、标签和最终登录是否正确 |
+| `fstab` emergency | `systemctl --failed`、`journalctl -b` | 失败 unit 和时间序列 | 设备身份与配置字段谁错误 |
+| SELinux 重标记 | `touch /.autorelabel` 后正常启动 | 已请求下一次完整重标记 | 重标记是否完成、模式和服务是否正常 |
+| 重启后验收 | 重查同一组对象并验证功能 | 持久状态真正进入运行状态 | 所有外部业务都必然正确 |
+
+### 向下一章交接
+
+本章结束于“系统能够安全启动、进入预期 target，并能用证据确认恢复终态”。下一章《Podman 镜像、容器与 Rootless 运行》将在这个可用主机上引入容器镜像、容器实例和普通用户运行边界。容器启动故障仍可能需要 systemd 与 Journal 证据，但不会重新展开本章的 GRUB、initramfs 和系统恢复流程。
+
+**验证范围：** 本章命令、参数和流程依据 RHEL 9 课程、官方文档与 man page 完成静态核对。固件按键时机、GRUB 菜单行为、`rd.break` 环境、SELinux 重标记耗时和重启结果仍需在目标 RHEL 9 主机上验证。
 
 </section>

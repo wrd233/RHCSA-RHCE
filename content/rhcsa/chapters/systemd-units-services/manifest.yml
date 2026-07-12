@@ -1,0 +1,81 @@
+package_version: 1
+chapter:
+  id: RHCSA-12
+  exam: RHCSA
+  part: 3
+  number: 12
+  slug: systemd-units-services
+  title: systemd Unit、服务与依赖关系
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/systemd-units-services/lecture.md
+  anki: content/rhcsa/chapters/systemd-units-services/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T14:24:58+00:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: 945d1a76f2e9e956fe2338d3203df31d6651cc68c0eac8bb279c5a248d7c3304
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: d2df35f86134675931f0f911236bafb487b45de5c9c1aa928e10d59a64663cd6
+  anki:
+    path: anki.yml
+    sha256: 7466e741baf9930ff2b0137945c8e9814ec37dd8f04c65e46fa84006165219fd
+  preview:
+    path: anki-preview.html
+    sha256: 33fea1d9f957a9734372ca99596f7df40298e579e4a4359b4cdb894ab7d795da
+  summary:
+    path: anki-summary.md
+    sha256: b3e300ca1ad66e032f87f04bda9c9b31797f8469b83ffa41492c2827b1639510
+  anki_impact:
+    path: anki-impact.md
+    sha256: ee24ebc6b59bfbb754b82846d277ca3034d7e1e5282e7b6c9c29d84953b0ebcf
+  source_map:
+    path: source-map.md
+    sha256: b47982ab7f6804c357463b4cec8f8b360510c19ccfb0085830c5041940d986cb
+  structure_report:
+    path: structure-report.md
+    sha256: 7d1e05cc32dbbbf04042aa811cc142d5669edbca8c61245750ae51ce4f13b4fa
+  visual_qa:
+    path: visual-qa.md
+    sha256: 957ee676cd7eb3f79175cfd302649ca2172d71e98a5f8f2aaf894566bd1ae9db
+  qa_report:
+    path: qa-report.md
+    sha256: 46039eb00be3fa44dc1aada9a7bda87ac63cb4c8504ba66b6206cf8aa59e9167
+  revision_notes:
+    path: revision-notes.md
+    sha256: a9e86f02c06eac5b366e6a7a969994cfe096ce45e4835c579f5b402344d46ea0
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 4e680d6df336ad8a434599e28152dc8a9972769c2978a825505514428792b774
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 VM was available; command-level and reboot-level live tests were not performed.
+- Full-book Section ID uniqueness, Anki ID uniqueness, cross-chapter near-duplicate checks, unified PDF/APKG builds, Git integration
+  and release remain Codex responsibilities.
+extensions:
+  hash_policy:
+    algorithm: SHA-256
+    scope: all payload files listed below
+    manifest_self_hash: excluded to avoid recursive self-reference

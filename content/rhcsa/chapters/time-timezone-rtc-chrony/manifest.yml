@@ -1,0 +1,88 @@
+package_version: 1
+chapter:
+  id: RHCSA-14
+  exam: RHCSA
+  part: 3
+  number: 14
+  slug: time-timezone-rtc-chrony
+  title: 系统时间、时区、RTC 与 chrony
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/time-timezone-rtc-chrony/lecture.md
+  anki: content/rhcsa/chapters/time-timezone-rtc-chrony/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:19:56+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: f7c4f0e443d9325e92537b46aafcc21f3a1c877898663e51d6db4d0c2e54f62c
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: b3219851b1a59b2938260b450e090b4eb4a3d9ecaea27bc900e44262c36b9f2b
+  anki:
+    path: anki.yml
+    sha256: 471b48c2319efc0d2b6be47e8f04c89b612b04f1861561831c11ec70bfd955e3
+  preview:
+    path: anki-preview.html
+    sha256: c68978e4ee670aa9c3f1acc0504ee13db45971a8bdf77f9564e6c8938ea5072c
+  summary:
+    path: anki-summary.md
+    sha256: 7fb6d74b1afb5131384ff88ef95ad67523ee65b88a589e4d71fac8f2e4420ba1
+  anki_impact:
+    path: anki-impact.md
+    sha256: be72f4651a3781a1e17344eab1ab0e1364795e9cdc3a4b50df81543a04b1a758
+  source_map:
+    path: source-map.md
+    sha256: 9cfc8870e20be0a00a0bfcad370141cb47700eb39ba83bdd43a1b4d2dded2960
+  structure_report:
+    path: structure-report.md
+    sha256: 32a130c0c1d2695964127b3034ad2ea151c0ceb38dcc7ee006ab12b9104bd525
+  visual_qa:
+    path: visual-qa.md
+    sha256: dcbc110c14929512aff38cc134ec5e10a5f1ae7def2ba4cc9a4c963a432f5d4b
+  qa_report:
+    path: qa-report.md
+    sha256: e7dd5a4f4c7adc96a04a022e0e82fd6e29e391dbf85cf3225f011a2b2cfb9dff
+  revision_notes:
+    path: revision-notes.md
+    sha256: f1d0b8601e30ccecc58d16c1a9a8458bedd4a8d1ae4d91964f5bfd337dab212c
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 24d3450bbcfdc97026fb48712981b311e6b88a81a22f1baef51ff154989553bf
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 virtual machine was connected; command-level, network-level, and reboot live tests were not performed.
+- Codex must complete global Section ID and Anki ID checks, cross-chapter deduplication, unified PDF/APKG builds, AnkiConnect
+  synchronization, Git integration, and release.
+- The verified base commit records the GitHub main state observed during this review; Codex must resolve the actual integration
+  HEAD.
+extensions:
+  anki:
+    notes: 53
+    qa: 48
+    cloze: 5
+    source_completeness: 100%
+    impact: NONE
+  self_integrity:
+    method: sha256 of UTF-8 YAML serialization before adding self_integrity
+    sha256: cc7ccfe8a3839fb05f3a278ede725a09ac5cd6000d853298690d68ae6cc62670

@@ -5,7 +5,8 @@ exam: RHCSA
 part: "第七篇 安全、启动与系统恢复"
 slug: selinux-model-context-avc
 validation: static
-status: integrated
+status: content_frozen_for_integration
+version: "5.1"
 sources:
   - RH134-RHEL9
   - Red-Hat-RHEL9-Using-SELinux
@@ -13,39 +14,239 @@ sources:
   - RHCSA9-Mock-SELinux-Task
 ---
 
-<!--
-维护说明：
-- 本文件是讲义内容真源；内部 Section ID、来源和迁移信息不在正式阅读界面显示。
-- 仓库基线：39e873dab15347a0f1a7611a6f212c3d26bd3562。
-- 当前没有可由本会话控制的 RHEL 9 虚拟机，命令、参数和流程为课程、官方文档与手册页的静态核对结果。
-- 文中的命令输出和 AVC 均明确标为“代表性输出”，不是本会话真实执行记录。
--->
+
+<section class="reading-nav">
+<h2>本章阅读导航</h2>
+<p class="nav-lead">先抓住一条主线：<strong>DAC 允许只表示传统权限这一层通过；SELinux 还会用进程 domain、目标 type、对象类别和请求权限重新判断。</strong>调查时先取得模式和上下文，再用 AVC 把拒绝还原成可验证的访问请求。</p>
+<div class="model-grid">
+<div class="model-card"><b>01</b><strong>区分访问控制层</strong><span>确认 DAC 与 MAC 各自回答什么</span></div>
+<div class="model-card"><b>02</b><strong>识别安全上下文</strong><span>从四段字段找到 domain 与 type</span></div>
+<div class="model-card"><b>03</b><strong>分开当前与持久模式</strong><span>Enforcing、Permissive、Disabled 不混写</span></div>
+<div class="model-card"><b>04</b><strong>建立主体与目标证据</strong><span>用 ps -Z 与 ls -Z 对应真实对象</span></div>
+<div class="model-card"><b>05</b><strong>逐字段读取 AVC</strong><span>提炼 scontext、tcontext、tclass 与权限</span></div>
+<div class="model-card"><b>06</b><strong>先分类再修复</strong><span>把证据交给文件、端口或 Boolean 入口</span></div>
+</div>
+<div class="nav-columns">
+<div class="topic-map-panel">
+<h3>专题地图</h3>
+<div class="topic-row"><em>知识专题</em><span>DAC 允许之后，SELinux 怎样判断一次访问</span></div>
+<div class="topic-row"><em>知识专题</em><span>从四段安全上下文识别 domain 与 type</span></div>
+<div class="topic-row"><em>操作专题</em><span>识别当前模式、持久模式与策略状态</span></div>
+<div class="topic-row"><em>操作专题</em><span>用 ps -Z 与 ls -Z 建立主体和目标证据</span></div>
+<div class="topic-row"><em>知识专题</em><span>把一条 AVC 还原成一次访问请求</span></div>
+<div class="topic-row"><em>操作专题</em><span>重新触发、检索并解释近期拒绝</span></div>
+<div class="topic-row"><em>诊断专题</em><span>先证据后修复，并正确使用 Permissive</span></div>
+<div class="topic-row"><em>经典任务</em><span>完成自定义 Web 目录 AVC 取证</span></div>
+<div class="topic-row"><em>参考解答</em><span>从基线、复现到 AVC 分类</span></div>
+<div class="topic-row"><em>本章收束</em><span>把拒绝写成可交接的判断句</span></div>
+</div>
+<div class="questions-panel">
+<h3>阅读时持续回答</h3>
+<ol>
+<li>普通权限允许后，SELinux 还会检查什么？</li>
+<li>进程 domain 和文件 type 从哪里观察？</li>
+<li>当前模式与持久模式是否一致？</li>
+<li>Permissive 成功到底证明了什么？</li>
+<li>AVC 中谁是主体、谁是目标、目标是什么类别？</li>
+<li>没查到 AVC 时，下一条证据是什么？</li>
+<li>audit2why 能解释什么，不能替你决定什么？</li>
+<li>哪些修复必须留给第 29 章？</li>
+</ol>
+<div class="reading-note"><strong>阅读方法：</strong>先区分访问控制层，再核对模式与上下文；只有取得 AVC 后，才把拒绝分类到下一步配置入口。</div>
+</div>
+</div>
+</section>
 
 # 第 28 章　SELinux 模型、模式、上下文与 AVC 证据
 
-一个服务报告 `Permission denied` 时，最危险的处理方式不是命令写错，而是把所有“拒绝”都看成同一件事。Linux 传统权限可能拒绝，服务自身的配置可能拒绝，网络链路可能拒绝，SELinux 也可能在普通权限允许之后继续拒绝。若不先区分证据层，管理员很容易通过放宽权限、切换到 Permissive，甚至关闭 SELinux，让症状暂时消失，却没有真正解释系统为什么拒绝访问。
+一个服务报告 `Permission denied` 时，最危险的处理方式不是命令写错，而是把所有“拒绝”都看成同一件事。Linux 传统权限可能拒绝，服务自身配置可能拒绝，网络链路可能拒绝，SELinux 也可能在普通权限允许之后继续拒绝。若不先区分证据层，管理员很容易通过放宽权限、切换到 Permissive，甚至关闭 SELinux，让症状暂时消失，却没有真正解释系统为什么拒绝访问。
 
-本章只解决 SELinux 调查中的第一组核心问题：**策略在判断谁访问谁，系统当前以什么模式执行策略，进程和对象当前带有什么上下文，以及一条 AVC 记录能证明什么。** 文件路径的持久类型规则、端口类型和 Boolean 的完整修复操作留到下一章《SELinux 文件规则、端口类型与 Boolean》。这种拆分非常重要：本章先学会看见事实，下一章才把事实转化为最小、持久的修复。
+本章解释 SELinux 调查中的第一组核心对象：策略在判断谁访问谁，系统当前以什么模式执行策略，进程和对象当前带有什么上下文，以及一条 AVC 记录能证明什么。主线是“访问模型 → 模式状态 → 上下文证据 → AVC 解读 → 诊断分类”。文件路径的持久类型规则、端口类型和 Boolean 的完整修复操作留到下一章《SELinux 文件规则、端口类型与 Boolean》；firewalld 仍属于第 21 章。
 
-**[概念]** 自主访问控制（DAC）根据 Linux 用户、组、权限位和 ACL 判断访问；SELinux 提供额外的强制访问控制（MAC）。DAC 拒绝时，SELinux 不会替它放行；DAC 允许也不能证明 SELinux 会允许。
+<section class="concept-zone" markdown="1">
 
-**[概念]** SELinux 把访问抽象为：某个主体（通常是进程域）对某个目标对象（带有类型）请求某项权限，策略再结合对象类别作出允许或拒绝决定。
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>DAC 与 MAC</strong> 自主访问控制（DAC）根据 Linux UID、GID、权限位和 ACL 判断访问；SELinux 提供额外的强制访问控制（MAC）。DAC 拒绝时，SELinux 不会替它放行；DAC 允许也只能证明传统权限这一层通过，不能证明策略会允许。`ls -l`、`namei -l` 与 `getfacl` 观察 DAC，`ps -Z`、`ls -Z` 和 AVC 才进入 SELinux 证据层。</p></div>
 
-**[概念]** 安全上下文通常显示为 `user:role:type:level`。在 RHCSA 常见服务故障中，最常用的判断字段是第三段 `type`；进程的 type 常称为 domain。
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Policy</strong> SELinux policy 是 domain、type、对象类别、权限、转换和约束的规则集合。它不是 Apache 配置，也不是 firewalld 规则；应用把目录或端口改到新位置，不会自动修改 SELinux policy。`sestatus` 能观察已加载策略名，但具体访问结论仍要由上下文与 AVC 证明。</p></div>
 
-**[概念]** `Enforcing`、`Permissive` 和 `Disabled` 是不同状态。Permissive 仍加载策略、维护标签并记录本应发生的拒绝，只是不执行拒绝；Disabled 不加载策略，也不会正常维护持久对象标签。
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Domain</strong> 进程安全上下文第三段的 type 通常称为 domain，例如 `httpd_t`。domain 是策略眼中的访问主体身份，不等同于命令名或 Linux 用户；两个都叫 `httpd` 的进程也应以 `ps -Z` 显示的当前上下文为准。</p></div>
 
-**[操作语义]** `getenforce` 与 `sestatus` 查询模式；`setenforce` 只在 SELinux 已启用时临时切换 Enforcing 与 Permissive；`/etc/selinux/config` 记录启动时计划使用的模式和策略类型。
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Type</strong> 文件、目录、端口和其他对象的安全上下文第三段描述策略用途，例如 `httpd_sys_content_t` 或 `var_t`。文件名和路径字符串不能替代 type；当前 type 可由 `ls -Z` 观察，但当前标签正确也不能自动证明持久文件规则存在。</p></div>
 
-**[操作语义]** `ps -Z` 观察进程上下文，`ls -Z` 观察对象当前上下文；它们是当前证据，不自动证明持久规则、重启终态或业务终态。
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>安全上下文</strong> 常见形式是 `user:role:type:level`。四段都属于上下文，但 RHCSA 服务故障最常从第三段开始：进程的 type 作为 source domain，目标对象的 type 作为 target type。第四段可能包含 MCS 类别，不能因为其中出现额外冒号就误拆字段。</p></div>
 
-**[操作语义]** `ausearch` 从 Audit 事件中检索 AVC，`audit2why` 辅助解释拒绝原因。两者都不是“自动修复按钮”。
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Enforcing / Permissive / Disabled</strong> Enforcing 加载策略并执行拒绝；Permissive 仍加载策略、维护标签并记录本应发生的拒绝，只是不执行拒绝；Disabled 不进入正常策略判断链。Permissive 是受控诊断变量，不是最终修复；当前模式与 `/etc/selinux/config` 中的持久计划必须分开验证。</p></div>
+
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>AVC</strong> Access Vector Cache 相关审计记录把一次拒绝还原为“主体 domain 对目标 type 的某类对象请求某项权限”。初步阅读优先找 `{ permission }`、`scontext`、`tcontext` 和 `tclass`，再用 PID、命令名、路径和事件序号关联业务动作。AVC 是证据，不是自动修复指令。</p></div>
+
+</section>
+
+<section class="quickref-zone" markdown="1">
+
+<div class="quickref-intro"><span>操作语义</span>以下六组入口分别回答模式、临时切换、上下文、Audit 检索、辅助解释和 Journal 旁证。先理解命令作用对象，再记关键形式。</div>
+
+### `getenforce` / `sestatus`
+
+**SYNOPSIS**
+
+```bash
+getenforce
+sestatus [-v] [-b]
+```
+
+读取当前 SELinux 模式和状态总览。`getenforce` 只回答当前模式；`sestatus` 还能显示启用状态、加载策略、当前模式与配置文件模式。
+
+**重要参数 / 形式**
+
+`getenforce`
+: 快速返回 `Enforcing`、`Permissive` 或 `Disabled`。
+
+`sestatus`
+: 比较 `Current mode` 与 `Mode from config file`。
+
+`-v`
+: 在系统支持的输出中附加部分文件和进程上下文信息；不是本章默认取证入口。
+
+---
+
+### `setenforce`
+
+**SYNOPSIS**
+
+```bash
+setenforce {0|1|Permissive|Enforcing}
+```
+
+临时改变已启用 SELinux 的当前执行模式，不修改持久配置。需要足够权限；Disabled 不能靠该命令直接恢复为 Enforcing。
+
+**重要参数 / 形式**
+
+`setenforce 0`
+: 当前切到 Permissive，用于受控诊断窗口。
+
+`setenforce 1`
+: 当前恢复 Enforcing；调查结束必须重新验证。
+
+---
+
+### `ps -Z` / `ls -Z`
+
+**SYNOPSIS**
+
+```bash
+ps -eZ
+ps -Z -p PID
+ls -Zd PATH
+ls -lZ PATH
+```
+
+把业务进程和文件系统对象映射到当前 SELinux 上下文。`ps -Z` 观察主体 domain，`ls -Z` 观察目标 type。
+
+**重要参数 / 形式**
+
+`ps -eZ`
+: 浏览系统进程及其上下文。
+
+`ps -Z -p PID`
+: 精确核对目标进程，不用命令名替代 domain。
+
+`ls -Zd DIR`
+: 查看目录对象本身，而不是目录内容。
+
+`ls -lZ FILE`
+: 同时显示 DAC 属性和文件当前上下文。
+
+---
+
+### `ausearch`
+
+**SYNOPSIS**
+
+```bash
+ausearch -m MESSAGE_TYPES -ts START_TIME [OPTIONS]
+```
+
+按 Audit 消息类型和时间范围检索拒绝事件。稳定顺序是记录时间、重新触发、查询近期事件，再逐步缩小。
+
+**重要参数 / 形式**
+
+`-m AVC,USER_AVC`
+: 选择最常见的 SELinux 拒绝消息类型。
+
+`-m AVC,USER_AVC,SELINUX_ERR,USER_SELINUX_ERR`
+: 扩展到 SELinux 错误类消息。
+
+`-ts recent`
+: 从近期时间窗口开始查询；复现时间明确时可使用更精确起点。
+
+`-i`
+: 解释部分数字字段，适合人工阅读。
+
+`--raw`
+: 保留原始记录，适合交给后续解析工具。
+
+---
+
+### `audit2why`
+
+**SYNOPSIS**
+
+```bash
+audit2why [OPTIONS] < audit-records
+```
+
+解释原始 AVC 可能因何被策略拒绝。它提供调查线索，不负责选择最小、安全、持久的修复。
+
+**重要参数 / 形式**
+
+`ausearch ... --raw | audit2why`
+: 保留原始 Audit 字段后再解释。
+
+`audit2why < saved-avc.log`
+: 对已保存的原始事件离线分析。
+
+---
+
+### `journalctl`
+
+**SYNOPSIS**
+
+```bash
+journalctl [OPTIONS...] [MATCHES...]
+```
+
+读取服务症状、内核消息和可选的 setroubleshoot 摘要。Journal 是旁证入口；Audit 事件仍是 AVC 的主要原始证据。
+
+**重要参数 / 形式**
+
+`journalctl -u UNIT --since "-10 min"`
+: 按服务与时间查看症状。
+
+`journalctl -t setroubleshoot`
+: 在相应组件存在时读取 SELinux 摘要。
+
+`journalctl -k --since "-10 min"`
+: 查看近期内核消息，适合 Audit 链异常时继续取证。
+
+</section>
 
 <section class="topic knowledge" id="RHCSA-28-K01" data-kind="knowledge-topic">
 
 ## [知识专题] DAC 允许之后，SELinux 怎样判断一次访问
 
-SELinux 排错不应从命令清单开始，而应先建立一个足够小、能够解释日志的决策模型。面对任何拒绝，先问四个问题：谁发起访问，目标是什么对象，请求了什么行为，策略把目标视为什么类别。只要能把日志还原成这四个对象，就可以继续判断它属于文件类型、端口类型、Boolean，还是根本不属于 SELinux。
+SELinux 排错不应从命令清单开始，而应先建立一个足够小、能够解释日志的决策模型。面对任何拒绝，先问四个问题：谁发起访问，目标当前是什么类型，请求了什么行为，目标属于哪一种对象类别。只要能把日志还原成这四个对象，就可以继续判断它属于文件类型、端口类型、Boolean，还是根本不属于 SELinux。
+
+<div class="decision-flow" aria-label="SELinux 访问决策链">
+  <div class="flow-box"><strong>主体</strong><span>进程 domain</span></div>
+  <div class="flow-plus">+</div>
+  <div class="flow-box"><strong>目标</strong><span>对象 type</span></div>
+  <div class="flow-plus">+</div>
+  <div class="flow-box"><strong>类别</strong><span>tclass</span></div>
+  <div class="flow-plus">+</div>
+  <div class="flow-box"><strong>行为</strong><span>permission</span></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box flow-result"><strong>Policy</strong><span>allow / deny</span></div>
+</div>
 
 ### ① [知识点] DAC 与 MAC 是两个独立的判断层
 
@@ -347,7 +548,7 @@ Permissive 适合有限诊断，不适合作为服务题最终状态。Disabled 
 
 也不要因此删除已有 AVC；系统可能同时存在 SELinux 偏差和另一个故障，只是后者仍然阻塞最终功能。
 
-### ⑦ [工作扩展] 单域 Permissive 不属于本章核心操作
+### ⑦ [边界] 单域 Permissive 不属于本章核心操作
 
 RHEL 支持在系统保持 Enforcing 时把个别 domain 设为 permissive。这是策略开发和精细调试工具，但会降低该 domain 的保护。本章只认识这项能力，不把它作为 RHCSA 默认诊断答案，也不制作要求直接修改单域状态的核心操作题。
 
@@ -479,7 +680,7 @@ man selinux
 
 ## [知识专题] 把一条 AVC 还原成一次访问请求
 
-AVC 是 Access Vector Cache 的缩写。SELinux 访问决定会被缓存，相关拒绝事件通常以 `AVC` 或 `USER_AVC` 类型进入 Audit 记录。日志看起来很长，但第一轮分析不需要解释每个数字；先把 source、target、class 与 permission 找出来，就能形成可验证假设。
+AVC 是 Access Vector Cache 的缩写。SELinux 访问决定会被缓存，相关拒绝事件通常以 `AVC` 或 `USER_AVC` 类型进入 Audit 记录。日志看起来很长，但初步分析不需要解释每个数字；先把 source、target、class 与 permission 找出来，就能形成可验证假设。
 
 ### ① [知识点] 代表性 AVC 的稳定骨架
 
@@ -549,7 +750,7 @@ tcontext=unconfined_u:object_r:var_t:s0
 - `exe`：完整可执行路径常位于同一 Audit 事件的其他记录中；
 - `path`/`name`：目标路径可能位于 AVC 或配套 `PATH` 记录中。
 
-因此，一条完整 Audit 事件可能由多条记录组成。它们通过相同的 `msg=audit(时间:序号)` 关联。`ausearch` 会按事件组织输出，比直接 `grep audit.log` 更适合第一轮调查。
+因此，一条完整 Audit 事件可能由多条记录组成。它们通过相同的 `msg=audit(时间:序号)` 关联。`ausearch` 会按事件组织输出，比直接 `grep audit.log` 更适合初步调查。
 
 ### ⑦ [知识点] `permissive=0` 与 `permissive=1` 说明执行边界
 
@@ -710,7 +911,7 @@ ausearch -m AVC,USER_AVC -ts recent --raw | audit2why
 
 只有确认标准策略无法表达合法需求时，才进入自定义策略模块；该能力不属于本章，也不是 RHCSA 常规服务题的默认答案。
 
-### ⑨ [高级边界] `dontaudit` 调试必须成对恢复
+### ⑨ [边界] `dontaudit` 调试必须成对恢复
 
 极少数拒绝可能被 `dontaudit` 抑制。官方排错资料提供临时禁用和恢复方式：
 
@@ -735,7 +936,7 @@ SELinux 排错的目标不是尽快让错误消失，而是找到最小、可解
 
 症状：“httpd 访问自定义目录返回 403。”
 
-第一轮假设至少包括：
+初步假设至少包括：
 
 - Apache 配置或目录授权规则拒绝；
 - 服务读取的并不是预期文件；
@@ -1091,46 +1292,45 @@ curl -sS -D - http://127.0.0.1/ -o /dev/null
 
 ## [本章收束] 从拒绝表象回到可验证的策略对象
 
-SELinux 调查可以压缩为三张状态图。
+### 工作方法：把每一次拒绝写成一条可核对的判断句
 
-第一张是访问决策图：
-
-```text
-source domain + target type + object class + permission → policy decision
-```
-
-第二张是模式图：
+本章最终训练的不是“记住几条 SELinux 命令”，而是把故障还原为三张状态图。
 
 ```text
-当前模式（getenforce / Current mode）
-≠
-持久计划（Mode from config file / /etc/selinux/config）
+访问决策：source domain + target type + object class + permission → policy decision
+模式关系：当前模式 ≠ 持久计划
+证据推进：症状 → 复现 → AVC → 上下文核对 → 分类标准入口 → 再验证
 ```
 
-第三张是证据推进图：
+真正可交接的诊断结论应包含：当前模式、复现时间、主体 domain、目标 type、对象类别、被拒绝权限、原始事件位置，以及为什么下一步应进入某个标准配置入口。只写“SELinux 拒绝了”仍然不够精确。
 
-```text
-症状
-→ 当前模式与复现时间
-→ AVC
-→ ps -Z / ls -Z
-→ 四元翻译
-→ 分类标准配置入口
-→ 最小修复
-→ 恢复 Enforcing 并重新验证
-```
+### 主要判断表
 
-本章完成到“分类标准配置入口”为止。下一章将处理三类常见修复：路径的持久文件上下文规则、服务端口类型和策略 Boolean，并继续区分当前状态、持久状态与业务终态。
+| 已取得的证据 | 可以得出的结论 | 不能扩大的结论 | 下一条有区分度的证据 |
+|---|---|---|---|
+| `getenforce` 为 `Enforcing` | 当前执行策略拒绝 | 当前故障一定由 SELinux 引起 | 重新触发并查询近期 AVC |
+| 当前为 `Permissive` 且存在 AVC | 策略本应拒绝，但当前未执行拒绝 | 当前配置已经正确 | 解读四元组并恢复 Enforcing 验证 |
+| `ps -Z` 显示 `httpd_t` | 目标进程当前处于该 domain | 它一定能访问目标对象 | `ls -Z` 与 AVC 的 `tcontext` |
+| `ls -Z` 显示 `var_t` | 对象当前 type 为 `var_t` | 持久 fcontext 规则一定错误或不存在 | 第 29 章的期望类型与持久规则查询 |
+| AVC 为 `tclass=file`、`read` | 文件读取路径被策略拒绝 | 端口或 Boolean 一定无问题 | 核对 path、当前 type 和业务目标 |
+| `audit2why` 给出建议 | 获得一个解释方向 | 建议就是最小、安全修复 | 回到原始 AVC 和标准策略入口 |
+| Permissive 后仍失败 | 取消 SELinux 拒绝不足以消除当前症状 | SELinux 完全没有任何偏差 | 服务日志、DAC、配置、网络等其他层 |
+
+### 向下一章交接
+
+本章完成到“分类标准配置入口”为止。第 29 章《SELinux 文件规则、端口类型与 Boolean》将继续回答三类问题：怎样为路径建立持久文件上下文规则，怎样让服务使用策略认可的端口类型，以及怎样判断并持久设置已有 Boolean。进入下一章前，应已经能够把一条 AVC 翻译成 `domain 对 type:class 请求 permission`，并知道当前标签、持久规则与业务终态不是同一件事。
 
 **最终安全边界：** 不通过 `chmod 777`、Permissive、Disabled 或未经分析的本地 allow 规则绕过问题；不把“有 AVC”扩大成“所有故障都由 SELinux 引起”；不把工具建议当作最终判决；每一次修改都要能回到原始事件和目标业务解释。
 
 </section>
 
+
 <!--
 隐藏来源映射：
-RHCSA-28-K01/K02: RH134 SELinux chapter; RHEL 9 Using SELinux 1.1, 1.5; selinux(8)
-RHCSA-28-O01: RHEL 9 Using SELinux Chapter 2; getenforce(8); sestatus(8); setenforce(8)
-RHCSA-28-O02: RH134; ps(1); ls(1); id(1); selinux(8)
-RHCSA-28-K03/O03/D01: RHEL 9 Using SELinux Chapter 5; ausearch(8); audit2why(1)
-RHCSA-28-T01/A01: normalized from RHCSA mock SELinux task; deliberately limited to evidence and classification
+RHCSA-28-K01/K02：RH134 SELinux 章节；RHEL 9 Using SELinux；selinux(8)
+RHCSA-28-O01：getenforce(8)、sestatus(8)、setenforce(8)、/etc/selinux/config
+RHCSA-28-O02：ps(1)、ls(1)、id(1)、selinux(8)
+RHCSA-28-K03/O03/D01：RHEL 9 SELinux troubleshooting；ausearch(8)；audit2why(1)
+RHCSA-28-T01/A01：由 RHCSA 模拟任务形态规范化；限制在证据收集与分类
+视觉与结构：RHCSA-01-reading-sample-v2；RHCSA 阅读版视觉与章节交付规范
 -->

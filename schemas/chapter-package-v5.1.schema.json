@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chapter-package-v5.1.schema.json",
+  "type": "object",
+  "required": ["package_version", "chapter", "base_repository", "integration", "canonical", "package", "files", "validation", "ids", "limitations"],
+  "properties": {
+    "package_version": {"const": 1},
+    "chapter": {"type": "object", "required": ["id", "exam", "part", "number", "slug", "title"]},
+    "base_repository": {"type": "object", "required": ["url", "branch", "commit", "verification"]},
+    "integration": {"type": "object", "required": ["head", "method"]},
+    "canonical": {"type": "object", "required": ["lecture", "anki"]},
+    "package": {"type": "object", "required": ["version", "status"], "properties": {"version": {"const": "5.1"}, "status": {"const": "content_frozen_for_integration"}}},
+    "files": {"type": "object", "required": ["lecture", "review_pdf", "anki", "preview", "summary", "anki_impact", "source_map", "structure_report", "visual_qa", "qa_report", "revision_notes", "integration_note"]},
+    "validation": {"type": "object", "required": ["mode", "live_test", "lecture_checked", "anki_checked", "pdf_rendered"]},
+    "ids": {"type": "object", "required": ["section_ids_preserved", "anki_ids_preserved", "added", "modified", "disabled"]},
+    "limitations": {"type": "array"},
+    "extensions": {"type": "object"}
+  },
+  "additionalProperties": false
+}

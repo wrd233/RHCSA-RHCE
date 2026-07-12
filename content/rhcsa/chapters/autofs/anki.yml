@@ -1,10 +1,9 @@
+schema_version: 1
 chapter_id: RHCSA-27
 chapter_slug: autofs
 deck: RedHat::RHCSA-RHEL9
-schema_version: 1
-note_types:
-- RedHat-QA
-- RedHat-Cloze
+status: content_frozen_for_integration
+validation: static
 notes:
 - id: RHCSA-NFS-QA-007
   type: qa
@@ -20,7 +19,9 @@ notes:
   - chapter::autofs
   - topic::object-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NFS-QA-008
   type: qa
   question: 展开 autofs 当前有效映射的命令是什么？
@@ -36,6 +37,8 @@ notes:
   - topic::configuration-evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NFS-QA-009
   type: qa
   question: indirect map 的父挂载点为 `/shares`，key 为 `docs`，最终本地路径是什么？
@@ -51,6 +54,8 @@ notes:
   - topic::path-model
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NFS-QA-010
   type: qa
   question: autofs 触发前，`findmnt` 中没有 `/shares/docs` 的 NFS 载荷，是否一定表示失败？
@@ -64,7 +69,9 @@ notes:
   - chapter::autofs
   - topic::trigger-state
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NFS-QA-011
   type: qa
   question: autofs wildcard map 中 `*` 与 `&` 通常怎样配合？
@@ -80,6 +87,8 @@ notes:
   - topic::wildcard
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-NFS-QA-015
   type: qa
   question: 修改 autofs map 后的推荐验证链是什么？
@@ -94,7 +103,9 @@ notes:
   - chapter::autofs
   - topic::verification-chain
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-NFS-QA-016
   type: qa
   question: 固定 NFS 挂载与 autofs 的核心生命周期区别是什么？
@@ -108,7 +119,9 @@ notes:
   - chapter::autofs
   - topic::lifecycle-choice
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K01-QA-001
   type: qa
   question: autofs 的子 map 一行主要描述哪三个对象？
@@ -123,7 +136,9 @@ notes:
   - chapter::autofs
   - topic::object-model
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K01-QA-002
   type: qa
   question: autofs 触发文件系统与远端 NFS 载荷分别承担什么作用？
@@ -137,7 +152,9 @@ notes:
   - chapter::autofs
   - topic::object-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K01-QA-003
   type: qa
   question: '`automount -m` 成功与 `autofs.service` active 分别证明什么？'
@@ -152,7 +169,9 @@ notes:
   - chapter::autofs
   - topic::state-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K01-QA-004
   type: qa
   question: 本地目录已经存在，能否据此证明 autofs 载荷已经挂载？
@@ -166,7 +185,9 @@ notes:
   - chapter::autofs
   - topic::state-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-K01-QA-005
   type: qa
   question: autofs 中 idle 与 busy 的区别是什么？
@@ -182,6 +203,8 @@ notes:
   - topic::state-model
   - card::concept
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K01-QA-006
   type: qa
   question: 怎样证明载荷超时卸载后 autofs 仍然可用？
@@ -197,6 +220,8 @@ notes:
   - topic::state-model
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K01-QA-007
   type: qa
   question: '`systemctl is-active autofs` 返回 active，能否宣布自动挂载任务完成？'
@@ -211,7 +236,9 @@ notes:
   - chapter::autofs
   - topic::state-model
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-K01-CLOZE-001
   type: cloze
   text: autofs 的完整验证链是：{{c1::map 可解析}} → {{c2::服务运行}} → {{c3::触发层存在}} → {{c4::key 触发载荷}} → {{c5::目标身份功能}}。
@@ -225,7 +252,9 @@ notes:
   - chapter::autofs
   - topic::state-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-27-K02-QA-001
   type: qa
   question: master map entry 的基本语法骨架是什么？
@@ -241,6 +270,8 @@ notes:
   - topic::master-map
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K02-QA-002
   type: qa
   question: 子 map entry 的基本语法骨架是什么？
@@ -256,6 +287,8 @@ notes:
   - topic::map-syntax
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K02-QA-003
   type: qa
   question: 子 map 中 `-fstype=nfs,rw` 表达什么？
@@ -271,6 +304,8 @@ notes:
   - topic::map-syntax
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K02-QA-004
   type: qa
   question: autofs map 中 NFS location 的常见格式是什么？
@@ -286,6 +321,8 @@ notes:
   - topic::map-syntax
   - card::syntax
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K02-QA-005
   type: qa
   question: indirect map 与 direct map 的 key 有什么区别？
@@ -300,7 +337,9 @@ notes:
   - chapter::autofs
   - topic::path-model
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K02-QA-006
   type: qa
   question: direct map 在 master map 中使用什么 mount-point 标记？
@@ -316,6 +355,8 @@ notes:
   - topic::path-model
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K02-QA-007
   type: qa
   question: 需要按需挂载 `/srv/docs` 和 `/opt/catalog` 两个分散路径，优先选择哪类 map？
@@ -331,6 +372,8 @@ notes:
   - topic::path-model
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K02-QA-008
   type: qa
   question: 需要在 `/projects` 下按 `alpha`、`beta` 管理一组共享，优先选择哪类 map？
@@ -346,6 +389,8 @@ notes:
   - topic::path-model
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K02-QA-009
   type: qa
   question: 在 `/etc/auto.master.d/` 中创建本地 master 片段时，课程常用什么文件后缀？
@@ -360,6 +405,8 @@ notes:
   - topic::master-map
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K02-QA-010
   type: qa
   question: master 为 `/projects /etc/auto.projects` 时，子 map 第一字段写成 `/projects/alpha` 有什么问题？
@@ -374,7 +421,9 @@ notes:
   - chapter::autofs
   - topic::path-model
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K02-CLOZE-001
   type: cloze
   text: indirect 路径由 {{c1::master mount point}} 与 {{c2::relative key}} 组成；direct map 的 key 是 {{c3::完整绝对路径}}。
@@ -388,7 +437,9 @@ notes:
   - chapter::autofs
   - topic::path-model
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-27-O01-QA-001
   type: qa
   question: 在 RHEL 9 客户端配置 NFS autofs，通常需要安装哪些包？
@@ -403,6 +454,8 @@ notes:
   - topic::indirect-config
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O01-QA-002
   type: qa
   question: 将 `/rhome` 关联到 `/etc/auto.rhome`，timeout 为 60 秒的 master entry 是什么？
@@ -418,6 +471,8 @@ notes:
   - topic::indirect-config
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O01-QA-003
   type: qa
   question: 将 key `remoteuser0` 映射到 `serverb:/rhome/remoteuser0` 的子 map 行是什么？
@@ -433,6 +488,8 @@ notes:
   - topic::indirect-config
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O01-QA-004
   type: qa
   question: 首次启动并设置 autofs 开机启用的命令是什么？
@@ -447,6 +504,8 @@ notes:
   - topic::indirect-config
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O01-QA-005
   type: qa
   question: 配置写入后，精确触发 `/rhome/remoteuser0` 可使用什么命令？
@@ -461,6 +520,8 @@ notes:
   - topic::indirect-config
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O01-QA-006
   type: qa
   question: 触发后怎样核对 `/rhome/remoteuser0` 当前来自哪个源？
@@ -476,6 +537,8 @@ notes:
   - topic::indirect-config
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O01-QA-007
   type: qa
   question: 为什么最终读写测试要以 `remoteuser0` 身份执行？
@@ -491,6 +554,8 @@ notes:
   - topic::indirect-config
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O01-QA-008
   type: qa
   question: 配置 autofs 家目录时，为什么不应把普通 `mount -t nfs` 留作最终状态？
@@ -505,7 +570,9 @@ notes:
   - chapter::autofs
   - topic::indirect-config
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-O01-QA-009
   type: qa
   question: '`automount -m` 已显示正确规则，但触发失败，下一步应优先检查哪类证据？'
@@ -520,7 +587,9 @@ notes:
   - chapter::autofs
   - topic::indirect-config
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-O01-CLOZE-001
   type: cloze
   text: 配置 indirect map 后，先执行 {{c1::automount -m}}，再 {{c2::reload autofs}}，随后用 {{c3::stat 精确 key}} 触发。
@@ -534,7 +603,9 @@ notes:
   - chapter::autofs
   - topic::indirect-config
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-27-K03-QA-001
   type: qa
   question: wildcard map 中 `*` 匹配的对象是什么？
@@ -549,7 +620,9 @@ notes:
   - chapter::autofs
   - topic::wildcard
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K03-QA-002
   type: qa
   question: wildcard map 中 `&` 代表什么？
@@ -564,7 +637,9 @@ notes:
   - chapter::autofs
   - topic::wildcard
   - card::concept
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K03-QA-003
   type: qa
   question: 将 `/rhome/<USER>` 映射到 `serverb:/rhome/<USER>` 的 wildcard 子 map 行是什么？
@@ -580,6 +655,8 @@ notes:
   - topic::wildcard
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K03-QA-004
   type: qa
   question: 访问 `/rhome/alice` 时，规则 `serverb:/rhome/&` 形成的远端路径是什么？
@@ -595,6 +672,8 @@ notes:
   - topic::wildcard
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-K03-QA-005
   type: qa
   question: '`automount -m` 能显示 wildcard 规则，能否证明任意用户目录都存在于远端？'
@@ -609,7 +688,9 @@ notes:
   - chapter::autofs
   - topic::wildcard
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-K03-QA-006
   type: qa
   question: 只有一个固定且异名的共享时，为什么通常不优先使用 wildcard？
@@ -625,6 +706,8 @@ notes:
   - topic::wildcard
   - card::comparison
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-K03-CLOZE-001
   type: cloze
   text: 访问 `/rhome/bob` 时，wildcard `*` 捕获 {{c1::bob}}，location 中的 `&` 也替换为 {{c2::bob}}。
@@ -638,7 +721,9 @@ notes:
   - chapter::autofs
   - topic::wildcard
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-27-O02-QA-001
   type: qa
   question: direct map 的 master entry 骨架是什么？
@@ -654,6 +739,8 @@ notes:
   - topic::direct-map
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O02-QA-002
   type: qa
   question: 将 `/srv/docs` 按需映射到 `files:/exports/docs` 的 direct map 行是什么？
@@ -669,6 +756,8 @@ notes:
   - topic::direct-map
   - card::configuration
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O02-QA-003
   type: qa
   question: '`/-` 应写在 master map 还是 direct 子 map？'
@@ -684,6 +773,8 @@ notes:
   - topic::direct-map
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O02-QA-004
   type: qa
   question: 怎样分别触发并验证 direct map 中的 `/srv/docs`？
@@ -699,6 +790,8 @@ notes:
   - topic::direct-map
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O02-QA-005
   type: qa
   question: direct map 内容修改后，为什么应显式 reload autofs？
@@ -713,7 +806,9 @@ notes:
   - chapter::autofs
   - topic::direct-map
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-O02-QA-006
   type: qa
   question: direct map 中 `/srv/docs` 与 indirect map 中 key `docs` 的本质区别是什么？
@@ -728,7 +823,9 @@ notes:
   - chapter::autofs
   - topic::direct-map
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-O02-QA-007
   type: qa
   question: 一个 direct key 触发成功，能否证明同一 map 中其他 key 也正确？
@@ -743,7 +840,9 @@ notes:
   - chapter::autofs
   - topic::direct-map
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-O02-CLOZE-001
   type: cloze
   text: direct map 的 master mount-point 是 {{c1::/-}}，而实际挂载点写在子 map 的 {{c2::完整路径 key}} 中。
@@ -757,7 +856,9 @@ notes:
   - chapter::autofs
   - topic::direct-map
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-27-O03-QA-001
   type: qa
   question: '`systemctl reload autofs` 与 `restart autofs` 的影响区别是什么？'
@@ -772,7 +873,9 @@ notes:
   - chapter::autofs
   - topic::service-lifecycle
   - card::comparison
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-O03-QA-002
   type: qa
   question: '`automount -m` 已报告语法错误时，restart 能修复吗？'
@@ -787,7 +890,9 @@ notes:
   - chapter::autofs
   - topic::service-lifecycle
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-O03-QA-003
   type: qa
   question: master entry 中 `--timeout=60` 表达什么？
@@ -803,6 +908,8 @@ notes:
   - topic::timeout
   - card::parameter
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O03-QA-004
   type: qa
   question: 将 autofs timeout 设置为 0 有什么效果？
@@ -815,7 +922,9 @@ notes:
   - chapter::autofs
   - topic::timeout
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-O03-QA-005
   type: qa
   question: 超过 timeout 后载荷仍存在，下一步优先检查什么？
@@ -830,7 +939,9 @@ notes:
   - chapter::autofs
   - topic::timeout
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-O03-QA-006
   type: qa
   question: 为什么不应在未调查时强制卸载 busy 的 autofs 载荷？
@@ -845,7 +956,9 @@ notes:
   - chapter::autofs
   - topic::timeout
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-O03-QA-007
   type: qa
   question: 执行 `enable --now` 后为什么还要分别检查 active 与 enabled？
@@ -860,6 +973,8 @@ notes:
   - topic::service-lifecycle
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-O03-QA-008
   type: qa
   question: 修改 master 或 direct map 后的确定性加载流程是什么？
@@ -874,7 +989,9 @@ notes:
   - chapter::autofs
   - topic::service-lifecycle
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-O03-CLOZE-001
   type: cloze
   text: 首次部署使用 {{c1::systemctl enable --now autofs}}；配置变更优先使用 {{c2::systemctl reload autofs}}。
@@ -888,7 +1005,9 @@ notes:
   - chapter::autofs
   - topic::service-lifecycle
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-27-V01-QA-001
   type: qa
   question: 查看当前 autofs 触发文件系统的命令是什么？
@@ -903,6 +1022,8 @@ notes:
   - topic::evidence
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-V01-QA-002
   type: qa
   question: 查看当前所有 NFS/NFSv4 载荷的命令骨架是什么？
@@ -918,6 +1039,8 @@ notes:
   - topic::evidence
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-V01-QA-003
   type: qa
   question: 查看覆盖某个目标路径的实际挂载关系，使用什么？
@@ -933,6 +1056,8 @@ notes:
   - topic::evidence
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-V01-QA-004
   type: qa
   question: 为什么不把 `findmnt -T <PATH>` 描述为绝对不会触发 autofs？
@@ -947,7 +1072,9 @@ notes:
   - chapter::autofs
   - topic::evidence
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-V01-QA-005
   type: qa
   question: 只执行 `ls /rhome` 没看到用户 key，是否能判定 wildcard map 失败？
@@ -962,7 +1089,9 @@ notes:
   - chapter::autofs
   - topic::evidence
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-V01-QA-006
   type: qa
   question: 触发前 `findmnt -t autofs` 有 `/rhome`，但 NFS 列表无目标载荷，如何判断？
@@ -977,6 +1106,8 @@ notes:
   - topic::evidence
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-V01-QA-007
   type: qa
   question: 触发后 `findmnt -T` 显示了另一台服务器的源，任务是否完成？
@@ -992,6 +1123,8 @@ notes:
   - topic::evidence
   - card::output
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-V01-QA-008
   type: qa
   question: 查看本次启动中 autofs 运行日志的命令是什么？
@@ -1007,6 +1140,8 @@ notes:
   - topic::evidence
   - card::command
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-V01-QA-009
   type: qa
   question: '`stat` 成功是否足以证明用户可写？'
@@ -1022,6 +1157,8 @@ notes:
   - topic::evidence
   - card::verification
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-V01-CLOZE-001
   type: cloze
   text: '`automount -m` 是 {{c1::配置证据}}，`findmnt -t autofs` 是 {{c2::触发层证据}}，`findmnt -T` 是 {{c3::当前载荷关系证据}}。'
@@ -1035,7 +1172,9 @@ notes:
   - chapter::autofs
   - topic::evidence
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-27-D01-QA-001
   type: qa
   question: 创建了 `/etc/auto.master.d/rhome.auto`，但 `automount -m` 没有 `/rhome`，优先检查什么？
@@ -1049,7 +1188,9 @@ notes:
   - chapter::autofs
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-D01-QA-002
   type: qa
   question: master entry 可见、触发层存在，但 indirect key 无载荷，最有区分度的下一步是什么？
@@ -1064,7 +1205,9 @@ notes:
   - chapter::autofs
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-D01-QA-003
   type: qa
   question: map 与 key 正确，但触发报 `access denied by server`，问题优先属于哪一层？
@@ -1079,7 +1222,9 @@ notes:
   - chapter::autofs
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-D01-QA-004
   type: qa
   question: autofs 挂载后普通用户不能写，是否应默认执行 `chmod 777`？
@@ -1095,6 +1240,8 @@ notes:
   - topic::diagnosis
   - card::security
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-D01-QA-005
   type: qa
   question: wildcard 中 `/rhome/alice` 成功、`/rhome/bob` 失败，优先推断什么？
@@ -1109,7 +1256,9 @@ notes:
   - chapter::autofs
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-D01-QA-006
   type: qa
   question: 新增远端目录后立即重试同一失败 key 仍失败，可能还有什么运行因素？
@@ -1124,6 +1273,8 @@ notes:
   - topic::diagnosis
   - card::diagnosis
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-D01-QA-007
   type: qa
   question: 修改 map 后仍触发旧源，推荐调查链是什么？
@@ -1138,7 +1289,9 @@ notes:
   - chapter::autofs
   - topic::diagnosis
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-D01-QA-008
   type: qa
   question: journal 出现 SELinux 访问控制证据时，本章的安全边界是什么？
@@ -1151,7 +1304,9 @@ notes:
   - chapter::autofs
   - topic::diagnosis
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-D01-QA-009
   type: qa
   question: autofs 故障的推荐分层顺序是什么？
@@ -1166,7 +1321,9 @@ notes:
   - chapter::autofs
   - topic::diagnosis
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-D01-CLOZE-001
   type: cloze
   text: 路径存在但无 NFS 载荷时，先区分 {{c1::普通目录/触发层}}，再执行 {{c2::精确 key 访问}}，最后用 {{c3::findmnt}} 核对源。
@@ -1180,7 +1337,9 @@ notes:
   - chapter::autofs
   - topic::diagnosis
   - card::cloze
-  - priority::P0
+  - priority::P1
+  model: RedHat-Cloze
+  priority: P1
 - id: RHCSA-27-T01-QA-001
   type: qa
   question: 家目录任务要求 `/rhome/<USER>` 映射到 `serverb:/rhome/<USER>`，应采用什么 map 组合？
@@ -1196,6 +1355,8 @@ notes:
   - topic::classic-task
   - card::task
   - priority::P0
+  model: RedHat-QA
+  priority: P0
 - id: RHCSA-27-T01-QA-002
   type: qa
   question: 按用户 key 自动挂载任务的最终验收顺序是什么？
@@ -1210,7 +1371,9 @@ notes:
   - chapter::autofs
   - topic::classic-task
   - card::process
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-T01-QA-003
   type: qa
   question: 考试题要求 autofs 时，把相同 NFS 写入 `/etc/fstab` 是否等价？
@@ -1225,7 +1388,9 @@ notes:
   - chapter::autofs
   - topic::classic-task
   - card::boundary
-  - priority::P0
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-T02-QA-001
   type: qa
   question: indirect master 为 `/projects`，map key 错写 `/projects/alpha`，最小修复是什么？
@@ -1240,7 +1405,9 @@ notes:
   - chapter::autofs
   - topic::diagnostic-task
   - card::diagnosis
-  - priority::P0
+  - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-W01-QA-001
   type: qa
   question: 生产环境修改 autofs 前，建议保存哪些基线证据？
@@ -1256,6 +1423,8 @@ notes:
   - topic::work-migration
   - card::process
   - priority::P1
+  model: RedHat-QA
+  priority: P1
 - id: RHCSA-27-W01-QA-002
   type: qa
   question: 为什么监控脚本不应高频访问所有 autofs key？
@@ -1270,7 +1439,9 @@ notes:
   - chapter::autofs
   - topic::work-migration
   - card::boundary
-  - priority::P1
+  - priority::P2
+  model: RedHat-QA
+  priority: P2
 - id: RHCSA-27-W01-QA-003
   type: qa
   question: 查询 master map、子 map 和 daemon 语义的主要帮助入口是什么？
@@ -1287,5 +1458,6 @@ notes:
   - chapter::autofs
   - topic::help
   - card::command
-  - priority::P1
-status: integrated
+  - priority::P0
+  model: RedHat-QA
+  priority: P0

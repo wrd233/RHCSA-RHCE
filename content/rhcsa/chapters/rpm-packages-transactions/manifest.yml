@@ -1,0 +1,81 @@
+package_version: 1
+chapter:
+  id: RHCSA-16
+  exam: RHCSA
+  part: 4
+  number: 16
+  slug: rpm-packages-transactions
+  title: RPM 包、文件归属与软件事务
+base_repository:
+  url: https://github.com/wrd233/RHCSA-RHCE
+  branch: main
+  commit: 961a29b3af4c07a828078a5de90c221a036546df
+  verification: verified
+integration:
+  head: bd4e8ddbbf00ec5aa2aa38359c9ce3bdd6278e10
+  method: three_way
+canonical:
+  lecture: content/rhcsa/chapters/rpm-packages-transactions/lecture.md
+  anki: content/rhcsa/chapters/rpm-packages-transactions/anki.yml
+package:
+  version: '5.1'
+  status: content_frozen_for_integration
+  generated_at: '2026-07-12T22:32:16+08:00'
+files:
+  lecture:
+    path: lecture.md
+    sha256: e18f6ef6df8d777cd7eb032f3e0965a42919e1ae0e34761bf101031d5c44d51e
+  review_pdf:
+    path: lecture-review.pdf
+    sha256: 472aebdb742e50d9df717f7d709800e5f70172ea4218a6b3938e6fcb294e4e3d
+  anki:
+    path: anki.yml
+    sha256: 75cc6547cf287c83aedf65317ed9b5070715db28cfe08cc5ea1c12dc608acba7
+  preview:
+    path: anki-preview.html
+    sha256: 33bccc0dc5b9bef81919e6a3adfcfaa9a5e98608ad8bdda13b6dddb5f5345ff7
+  summary:
+    path: anki-summary.md
+    sha256: 868dfe2e1b2aa2aa51e5703f6229c9981ad8c8e8fd11a2ca5474b4353c6421b9
+  anki_impact:
+    path: anki-impact.md
+    sha256: 0286815e20a37cd0bc7be53444316afac8e6d177c10e2833c794ec206afa1080
+  source_map:
+    path: source-map.md
+    sha256: 669e64b25158d7c6d47c81c7ee5080eae6e750ec06cd505623850c8cbdc89c70
+  structure_report:
+    path: structure-report.md
+    sha256: cf05c513c8be55b8b5ead10e8164806729f502b6c7eaf75c6f8bb254522f42e0
+  visual_qa:
+    path: visual-qa.md
+    sha256: 28275b91a7f32587eb10b48943ea2315e48f6c9581b603d4e43c06ff24b9dda3
+  qa_report:
+    path: qa-report.md
+    sha256: 923b2ccf6ccff2f58a3451bb721b6ef0bbb2bb55614f309f4ecc20da70165916
+  revision_notes:
+    path: revision-notes.md
+    sha256: c24a3a2ec4cbd1cf05c9e7a2c0968389a68ef57766695e66149d43d6624bc688
+  integration_note:
+    path: codex-integration-note.md
+    sha256: 55de2c1f4a0e8554e1a824f86daadf803d32359e4d5d962f1bba03d727c57542
+validation:
+  mode: static
+  live_test: not_performed
+  lecture_checked: true
+  anki_checked: true
+  pdf_rendered: true
+ids:
+  section_ids_preserved: true
+  anki_ids_preserved: true
+  added: []
+  modified: []
+  disabled: []
+limitations:
+- No controllable RHEL 9 virtual machine; command-level live tests were not performed.
+- Cross-chapter duplicate and global ID checks remain Codex responsibilities.
+- Integration must record the actual repository HEAD at import time.
+extensions:
+  hash_policy:
+    algorithm: SHA-256
+    manifest_self_hash: excluded_to_avoid_self_reference
+    package_zip_hash: reported_with_delivery

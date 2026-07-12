@@ -4,36 +4,173 @@ chapter_id: RHCSA-26
 chapter_slug: nfs-client
 exam: RHCSA
 part: "第六篇 块存储与网络存储"
-status: integrated
+status: content_frozen_for_integration
+version: "5.1"
 validation: static
 live_test: not_performed
+canonical_path: content/rhcsa/chapters/nfs-client/lecture.md
+base_commit: 961a29b3af4c07a828078a5de90c221a036546df
 sources:
-  - RH134-RHEL9-Ch7-NFS
-  - RHCSA-Course-24
-  - RHEL9-Managing-File-Systems
+  - RH134-RHEL9-NFS-client
+  - RHCSA-course-fragments-NFS
+  - RHEL9-network-file-services
   - nfs-utils-man-pages
 ---
+<!-- 维护字段仅属于内容真源，阅读版 PDF 不显示。 -->
 
-<!-- 本文件是讲义内容真源。章节 ID、来源与验证状态属于维护层，正式渲染不显示。 -->
+<div class="cover-page">
+  <div class="cover-kicker">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">26</div>
+  <h1>NFS 客户端与远程文件系统</h1>
+  <p class="cover-subtitle">从 <code>server:/path</code> 到业务用户读写：把网络、export、协议、挂载、身份和权限放进同一条证据链。</p>
+  <div class="cover-spacer"></div>
+  <div class="cover-tags">
+    <span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+  </div>
+  <div class="cover-note">大字号阅读版</div>
+</div>
 
-# 第 26 章　NFS 客户端与远程文件系统
+<div class="navigation-page">
+
+<!-- topic: RHCSA-26-S01 -->
+## 本章阅读导航
+
+先抓住一条主线：NFS 不是“把远端目录写进一条 mount 命令”，而是让一个远端 export 经过协议和授权进入本机目录树。任何一步都需要独立证据，尤其不能把“服务器可达”“已经挂载”和“业务用户能写”视为同一状态。
+
+<div class="model-grid">
+  <div class="model-card"><b>01</b><strong>识别远端源</strong><span>分清服务器、export、<code>server:/path</code> 和本地挂载点</span></div>
+  <div class="model-card"><b>02</b><strong>选择协议证据</strong><span>根据 NFSv3/v4 选择 <code>showmount</code>、<code>rpcinfo</code> 或 2049 证据</span></div>
+  <div class="model-card"><b>03</b><strong>建立当前挂载</strong><span>用 <code>mount -t nfs</code> 改变当前名称空间</span></div>
+  <div class="model-card"><b>04</b><strong>读回实际状态</strong><span>用 <code>findmnt</code> 与 <code>nfsstat -m</code> 读取源、版本和选项</span></div>
+  <div class="model-card"><b>05</b><strong>建立持久声明</strong><span>用 NFS fstab 条目和 <code>_netdev</code> 描述可重建状态</span></div>
+  <div class="model-card"><b>06</b><strong>以目标身份验收</strong><span>比较 UID/GID、远端权限、<code>root_squash</code> 与真实读写</span></div>
+</div>
+
+<div class="nav-columns">
+<div>
+
+### 专题地图
+
+- **知识专题**　从远端 export 到本地目录：先分清对象
+- **知识专题**　NFSv3 与 NFSv4：只掌握会改变调查路径的差异
+- **知识专题**　UID/GID、远端权限与 `root_squash`
+- **操作专题**　建立临时挂载、读取当前证据、写入持久声明
+- **诊断专题**　挂载失败、身份权限异常与远端失联
+- **经典任务**　持久挂载并验证业务身份；按层定位拒绝与权限问题
+
+</div>
+<div>
+
+### 阅读时持续回答
+
+1. 当前正在判断网络、export、协议、挂载还是权限？
+2. `showmount` 在这个版本场景中能证明什么？
+3. 当前内核实际挂载的源、版本和选项是什么？
+4. fstab 条目能否在当前挂载被移除后重新建立？
+5. 访问进程的数值 UID/GID 和附加组是什么？
+6. `root_squash` 是故障，还是预期的安全边界？
+7. 远端失联时，等待、报错和强制卸载各有什么风险？
+8. 现有证据能证明到哪一层，下一条最有区分度的证据是什么？
+
+</div>
+</div>
+
+<div class="reading-note"><strong>章节边界：</strong>本地挂载通用机制留给第 24 章；按需触发和空闲卸载留给第 27 章；本章不完整展开 NFS 服务端配置。</div>
+
+</div>
+
+<!-- topic: RHCSA-26-S02 -->
+## 第 26 章 · 正文
 
 一台服务器上的目录可以通过 NFS 暴露给网络中的客户端。客户端挂载以后，用户看到的仍是一棵普通目录树，但目录中的文件对象、权限判断和可用性已经跨越网络边界。正因为界面看起来与本地文件系统相似，NFS 故障也很容易被误判：服务器能解析不代表 export 允许当前客户端，目录已经挂载不代表业务用户能写，root 可以列目录不代表应用身份正确，当前挂载成功也不代表系统重新启动后仍会建立同一关系。
 
-本章只从客户端视角建立一条完整证据链：先确定服务器和 export，再确认协议版本与访问路径，建立当前挂载，写入持久声明，最后以目标用户的数值 UID/GID 和实际读写行为验收。服务端 `/etc/exports`、`exportfs`、服务启停和防火墙配置只作为诊断时需要向服务端管理员索取的证据，不在本章完整展开；按需挂载留给下一章《autofs 自动挂载》。
+本章从客户端视角建立一条完整证据链：先确定服务器和 export，再确认协议版本与访问路径，建立当前挂载，写入持久声明，最后以目标用户的数值 UID/GID 和实际读写行为验收。服务端 `/etc/exports`、`exportfs`、服务启停和防火墙配置只作为诊断时需要向服务端管理员索取的证据，不在本章完整展开；按需挂载留给下一章《autofs 自动挂载》。
 
-**[概念]** NFS export 是服务端允许客户端访问的远端目录及其策略。客户端使用 `server:/path` 表示远端源，再把它接入一个本地挂载点。挂载不会复制文件；它只是让远端文件系统出现在本机目录名称空间中。
+<div class="concept-stack">
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>NFS export</strong> 是服务端向特定客户端开放的远端目录及其访问策略。它不是客户端本地目录，也不等同于文件本身；客户端必须通过服务端提供的 NFS 名称空间引用它。判断 export 时既要核对路径，也要核对允许的客户端范围、只读或读写策略和安全方式。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>客户端源 <code>server:/path</code></strong> 是客户端对远端 export 的引用。冒号左侧确定服务器，右侧是服务器向 NFS 客户端呈现的路径；它与本机是否存在同名路径无关。源格式正确只是对象正确，仍不能证明网络、协议或授权已经成立。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>NFSv3 与 NFSv4</strong> 的区别在客户端最直接地改变发现和端口证据。NFSv3 常通过 rpcbind 查找 MOUNT 与其他 RPC 服务；NFSv4 的主路径更集中，通常以 TCP 2049 和已知 NFSv4 路径为核心。版本不是装饰性选项，而是决定下一条证据的分流条件。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>身份映射</strong> 是把客户端访问进程的身份用于服务端权限判断的机制。常见 <code>sec=sys</code> 场景主要依赖数值 UID、主 GID 和附加组，而不是用户名的外观；两端同名用户若数值不同，仍可能被当作不同身份。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong><code>root_squash</code></strong> 是服务端常见的安全默认：来自客户端 UID/GID 0 的请求会被映射成匿名身份，避免客户端 root 自动取得服务端 root 权限。客户端 root 不能写并不自动表示 NFS 故障，关键是题目要求的业务身份能否完成目标操作。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>远端文件系统状态</strong> 至少分为远端信息、当前挂载、持久声明和业务功能四层。<code>showmount</code>、<code>findmnt</code>、fstab 与目标用户读写分别回答不同问题；上一层成功不能自动证明下一层正确。</p></div>
+</div>
 
-**[概念]** NFS 的“可用”至少包含四层：可以发现或确认远端源、可以建立当前挂载、存在可重建的持久配置、指定业务身份可以完成真实读写。任一层成功都不能自动证明下一层成功。
+<div class="quickref">
+  <div class="quickref-intro"><span>操作语义</span>以下入口分别改变当前挂载、读取挂载证据、发现传统 export、读取 RPC 注册、描述持久状态和验证访问身份。先明确命令作用对象，再选择参数。</div>
 
-**[概念]** 常见 `sec=sys` 访问把客户端进程的数值 UID、主 GID 和附加组用于服务端权限判断。用户名只是显示层；两端相同用户名如果对应不同 UID，仍可能访问成错误身份。
+  <div class="command-entry">
+    <h3><code>mount -t nfs</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>mount -t nfs [-o option[,option...]] server:/path mountpoint</code></pre>
+    <p>建立或重建当前 NFS 挂载关系，把远端源接入本地目录树。</p>
+    <div class="forms-label">重要参数 / 形式</div>
+    <dl><dt><code>server:/path</code></dt><dd>远端服务器与 export 路径的组合，冒号不可省略。</dd><dt><code>-t nfs</code></dt><dd>明确使用 NFS 文件系统助手。</dd><dt><code>-o vers=3</code> / <code>vers=4.2</code></dt><dd>题目明确版本、兼容性已知或需要诊断版本分支时固定版本。</dd><dt><code>rw</code> / <code>ro</code></dt><dd>请求读写或只读挂载；显示为 <code>rw</code> 仍不证明业务身份有写权限。</dd></dl>
+  </div>
 
-**[操作语义]** `showmount` 查询传统 MOUNT 协议提供的 export 信息；`mount -t nfs` 建立当前挂载；`findmnt` 读取源、目标、类型和选项；`nfsstat -m` 读取 NFS 挂载的实际版本和协商选项；`id` 与 `getent` 建立身份证据。
+  <div class="command-entry">
+    <h3><code>findmnt</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>findmnt [-T path] [-t type] [-o columns]
+findmnt --verify --verbose</code></pre>
+    <p>从当前挂载表或 fstab 读取源、目标、类型和选项，是本章最主要的结构化验证入口。</p>
+    <div class="forms-label">重要参数 / 形式</div>
+    <dl><dt><code>-T /srv/project</code></dt><dd>按路径定位其所属挂载，适合精确确认目标对象。</dd><dt><code>-o SOURCE,TARGET,FSTYPE,OPTIONS</code></dt><dd>只输出最能区分假设的字段。</dd><dt><code>--verify --verbose</code></dt><dd>静态检查 fstab 语法与可解析性；不等同于真实远端挂载成功。</dd></dl>
+  </div>
 
-**[操作语义]** `/etc/fstab` 声明持久挂载。`_netdev` 明确该条目依赖网络，但它不保证服务器可达、不替代超时策略，也不证明业务用户能够访问。
+  <div class="command-entry">
+    <h3><code>showmount</code> / <code>rpcinfo</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>showmount -e server
+rpcinfo -p server</code></pre>
+    <p>前者查询传统 MOUNT 协议提供的 export 列表，后者读取 rpcbind 注册的 RPC 程序，主要服务于 NFSv3 调查。</p>
+    <div class="forms-label">重要参数 / 形式</div>
+    <dl><dt><code>showmount -e</code></dt><dd>列出传统 MOUNT 服务愿意报告的 export；v4-only 服务器可能不提供该证据。</dd><dt><code>rpcinfo -p</code></dt><dd>查看 RPC 程序与端口注册；端口存在不证明 export 允许当前客户端。</dd><dt>版本边界</dt><dd><code>showmount</code> 失败只能证明传统查询失败，不能单独否定 NFSv4。</dd></dl>
+  </div>
 
-<section class="topic knowledge" id="RHCSA-26-K01" data-kind="knowledge-topic">
+  <div class="command-entry">
+    <h3><code>nfsstat -m</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>nfsstat -m</code></pre>
+    <p>读取当前 NFS 挂载的实际版本、传输方式、安全方式和协商选项。</p>
+    <div class="forms-label">重要参数 / 形式</div>
+    <dl><dt><code>-m</code></dt><dd>显示已挂载 NFS 文件系统及其挂载参数。</dd><dt><code>vers=</code> / <code>proto=</code> / <code>sec=</code></dt><dd>确认实际协议版本、传输和认证方式。</dd><dt><code>hard</code> / <code>soft</code></dt><dd>读取远端失联时的重试语义；不能只为避免等待就默认改成 <code>soft</code>。</dd></dl>
+  </div>
 
+  <div class="command-entry">
+    <h3>NFS fstab 条目</h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>server:/path  mountpoint  nfs  defaults,_netdev  0  0</code></pre>
+    <p>描述可由系统重新建立的持久 NFS 挂载，不是当前挂载本身。</p>
+    <div class="forms-label">重要参数 / 形式</div>
+    <dl><dt><code>nfs</code></dt><dd>文件系统类型。</dd><dt><code>_netdev</code></dt><dd>显式标记网络依赖；不保证 DNS、服务器或业务权限正确。</dd><dt><code>defaults</code></dt><dd>采用常规默认选项；仅在题目或业务语义明确时增加改变生命周期的选项。</dd></dl>
+  </div>
+
+  <div class="command-entry">
+    <h3><code>id</code> / <code>getent</code> / <code>ls -ln</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>id user
+getent passwd user
+getent group group
+ls -ldn path</code></pre>
+    <p>建立目标访问身份、NSS 解析结果和远端对象数值属主的证据。</p>
+    <div class="forms-label">重要参数 / 形式</div>
+    <dl><dt><code>id user</code></dt><dd>读取 UID、主 GID 和附加组。</dd><dt><code>getent</code></dt><dd>通过当前 NSS 配置解析用户和组，而不是只读取本地文件。</dd><dt><code>ls -ln</code></dt><dd>以数值 UID/GID 显示属主，避免用户名映射掩盖数值不一致。</dd></dl>
+  </div>
+
+  <div class="command-entry">
+    <h3><code>umount</code> / <code>fuser</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>fuser -vm mountpoint
+umount mountpoint</code></pre>
+    <p>调查占用并正常解除当前挂载，适合持久条目重建验证和受控维护。</p>
+    <div class="forms-label">重要参数 / 形式</div>
+    <dl><dt><code>fuser -vm</code></dt><dd>列出引用挂载点的进程、用户和访问类型。</dd><dt><code>umount</code></dt><dd>正常解除挂载；先让 Shell 和应用离开目标路径。</dd><dt>强制或 lazy 卸载</dt><dd>只属于已经评估未完成 I/O 和数据风险的应急分支，不是默认答案。</dd></dl>
+  </div>
+</div>
+
+<a id="RHCSA-26-K01"></a>
+
+<!-- topic: RHCSA-26-S03 -->
 ## [知识专题] 从远端 export 到本地目录：先分清对象
 
 面对一个 NFS 任务，最顺的切入方式不是先试几种 `mount` 参数，而是把服务端、远端源、当前挂载和本地路径分开。只有对象明确，后续报错才能定位到网络、协议、export、挂载或权限中的某一层。
@@ -83,10 +220,11 @@ storage.example.com:/exports/project
 
 **[Cheatsheet]** `server:/path` 是远端源；本地目录只是接入点；`showmount` 看传统 export 信息，`findmnt` 看当前关系，`fstab` 看持久声明，目标用户读写才是功能终态。
 
-</section>
 
-<section class="topic knowledge" id="RHCSA-26-K02" data-kind="knowledge-topic">
 
+<a id="RHCSA-26-K02"></a>
+
+<!-- topic: RHCSA-26-S04 -->
 ## [知识专题] NFSv3 与 NFSv4：只掌握会改变调查路径的差异
 
 NFS 版本差异很多，但本章只保留会直接影响客户端发现、端口判断、路径和验证的部分。不要把协议版本当作背诵题；它真正决定的是下一条最有区分度的证据。
@@ -144,10 +282,11 @@ showmount 无结果
 
 **[Cheatsheet]** 默认先协商，必要时用 `vers=` 固定；v3 看 rpcbind/MOUNT 及辅助 RPC，v4 主路径更集中；`showmount` 失败只证明传统查询失败，不能否定 v4。
 
-</section>
 
-<section class="topic knowledge" id="RHCSA-26-K03" data-kind="knowledge-topic">
 
+<a id="RHCSA-26-K03"></a>
+
+<!-- topic: RHCSA-26-S05 -->
 ## [知识专题] UID/GID、远端权限与 `root_squash`
 
 NFS 最常见的“已经挂载但不能用”并不是挂载问题，而是身份和权限问题。最有效的调查方法不是反复 `chmod` 本地挂载点，而是把访问进程的数值身份、远端文件的数值属主和服务端 export 策略放在同一条链上。
@@ -203,10 +342,11 @@ export 是否只读或可写
 
 **[Cheatsheet]** 先 `id`，再 `ls -ln`；挂载成功不增加权限；客户端 root 受 `root_squash` 约束是安全默认，不用 `no_root_squash` 掩盖身份设计错误。
 
-</section>
 
-<section class="topic operation" id="RHCSA-26-O01" data-kind="operation-topic">
 
+<a id="RHCSA-26-O01"></a>
+
+<!-- topic: RHCSA-26-S06 -->
 ## [操作专题] 准备客户端并建立临时 NFS 挂载
 
 临时挂载适合先验证远端源和协议，也适合在写入持久配置前建立基线。操作顺序应从“已有状态”开始：确认目标目录是否已经挂载、确认软件能力和名称解析，然后才创建目录并挂载。
@@ -285,10 +425,11 @@ nfsstat -m
 
 **[Cheatsheet]** 包：`nfs-utils`；源：`server:/path`；当前挂载：`mount -t nfs`；操作后用 `findmnt` 和 `nfsstat -m` 读回实际状态。
 
-</section>
 
-<section class="topic operation" id="RHCSA-26-O02" data-kind="operation-topic">
 
+<a id="RHCSA-26-O02"></a>
+
+<!-- topic: RHCSA-26-S07 -->
 ## [操作专题] 从 `findmnt`、`mount` 和 `nfsstat` 读取当前证据
 
 同一个挂载可以从多个工具观察，但工具回答的问题不同。优先选择能够直接区分假设的字段，而不是在冗长输出中寻找看起来熟悉的一行。
@@ -341,17 +482,18 @@ nfsstat -m
 
 **[Cheatsheet]** 精确路径用 `findmnt -T`；快速浏览可用 `mount -t nfs,nfs4`；协议和 NFS 专属选项用 `nfsstat -m`；三者都不是业务功能测试。
 
-</section>
 
-<section class="topic operation" id="RHCSA-26-O03" data-kind="operation-topic">
 
+<a id="RHCSA-26-O03"></a>
+
+<!-- topic: RHCSA-26-S08 -->
 ## [操作专题] 用 `/etc/fstab` 建立持久 NFS 挂载
 
 持久挂载不是“把成功命令抄进文件”这么简单。它需要声明可解析的源和挂载点，明确网络依赖，并通过卸载后重建来证明条目确实能够独立建立当前状态。
 
 ### ① [操作] 编写 NFS fstab 条目并解释 `_netdev`
 
-候选条目：
+示例条目：
 
 ```fstab
 storage.example.com:/exports/project  /srv/project  nfs  defaults,_netdev  0  0
@@ -429,10 +571,11 @@ sudo -u project1 sh -c '
 
 **[Cheatsheet]** fstab：`server:/path target nfs defaults,_netdev 0 0`；先 `findmnt --verify`，再 `daemon-reload`；卸载后由 `mount -a` 重建；最后按目标身份做真实功能测试。
 
-</section>
 
-<section class="topic diagnosis" id="RHCSA-26-D01" data-kind="diagnosis-topic">
 
+<a id="RHCSA-26-D01"></a>
+
+<!-- topic: RHCSA-26-S09 -->
 ## [诊断专题] 服务器可达，但 NFS 挂载失败
 
 “服务器可达”只排除了很小一部分问题。诊断必须先记录原始报错，再选择能最大程度区分假设的下一条证据。不要因为 `ping` 成功就跳过协议和 export，也不要因为 `showmount` 失败就直接修改路径。
@@ -486,10 +629,11 @@ NFSv3 路径
 
 **[Cheatsheet]** 先留原始报错；解析→路由→版本对应端口/RPC→路径→export 客户端范围→`sec=`；`access denied by server` 不是本地目录 mode 问题。
 
-</section>
 
-<section class="topic diagnosis" id="RHCSA-26-D02" data-kind="diagnosis-topic">
 
+<a id="RHCSA-26-D02"></a>
+
+<!-- topic: RHCSA-26-S10 -->
 ## [诊断专题] 已经挂载，但属主、读写或 root 行为不符合预期
 
 此类故障要保持同一测试身份。用 root 复现、再用普通用户修复，或先后切换多个用户，会混淆 UID/GID、附加组和 `root_squash` 三个变量。
@@ -536,15 +680,16 @@ ls -ldn /srv/project
 
 **[Cheatsheet]** 固定测试身份；`id` 看 UID/GID/附加组；`ls -ln` 看数值属主；业务用户失败查权限链，只有 root 异常再查 `root_squash`。
 
-</section>
 
-<section class="topic diagnosis" id="RHCSA-26-D03" data-kind="diagnosis-topic">
 
+<a id="RHCSA-26-D03"></a>
+
+<!-- topic: RHCSA-26-S11 -->
 ## [诊断专题] 远端不可用、请求等待与安全卸载边界
 
 网络文件系统把本地文件操作变成远端请求。服务器失联时，应用可能不是立即报错，而是等待服务器恢复。排错人员若不了解这一点，容易反复终止进程、强制卸载或把 `soft` 写进所有配置，进而增加数据风险。
 
-### ① [知识点] 默认 `hard` 语义优先保证请求最终完成
+### ① [知识点] 默认 `hard` 语义更偏向等待远端恢复
 
 常见 NFS 挂载使用 hard 语义：请求超时后继续重试，直至服务器响应。对正在访问挂载点的进程，这可能表现为系统调用长时间不返回，甚至处于不可中断 I/O 等待。
 
@@ -554,7 +699,7 @@ ls -ldn /srv/project
 - 新的 `ls`、`df`、`stat` 或 Shell 自动补全也可能触发远端访问并一起等待；
 - 应优先恢复名称解析、网络路径或 NFS 服务，而不是制造更多访问请求。
 
-### ② [边界] `soft` 不是通用的“避免卡死”方案
+### ② [安全边界] `soft` 不是通用的“避免卡死”方案
 
 soft 类挂载在重试耗尽后向应用返回错误。对某些只读或可容忍失败的工作负载，经过应用和数据设计评估后可能使用；但对一般读写文件系统，它可能使应用收到部分失败、I/O 错误或产生数据完整性问题。
 
@@ -600,10 +745,11 @@ umount /srv/project
 
 **[Cheatsheet]** hard 失联可能长期等待；D 状态不能靠反复 `kill -9`；`soft` 有数据风险；先恢复远端和正常停止使用者，再考虑卸载，强制手段只作受控应急分支。
 
-</section>
 
-<section class="topic operation" id="RHCSA-26-O04" data-kind="operation-topic">
 
+<a id="RHCSA-26-O04"></a>
+
+<!-- topic: RHCSA-26-S12 -->
 ## [操作专题] 把 NFS 调查写成可重复的证据清单
 
 考试中最容易丢分的不是不知道 `mount`，而是修改过多、验证不足。下面的清单把每一步限制为一个问题，既便于手工操作，也为后续 Ansible 自动化准备稳定的状态模型。
@@ -645,12 +791,12 @@ export 拒绝→ 服务端修正授权
 
 **[Cheatsheet]** 基线→最小变更→读回状态→重建持久状态→目标身份功能；任何工具只证明自己的那一层。
 
-</section>
 
-<section class="classic-task task-page" id="RHCSA-26-C01" data-kind="classic-task">
 
 <div class="page-break"></div>
+<a id="RHCSA-26-C01"></a>
 
+<!-- topic: RHCSA-26-S13 -->
 ## [经典任务] 配置持久 NFS 客户端挂载并验证读写身份
 
 ### 任务环境
@@ -700,14 +846,13 @@ storage.example.com:/exports/project
 | 身份 | `id project1` |
 | 功能 | `sudo -u project1` 的最小读写测试 |
 
-> 请先独立完成。参考解答从下一页开始。
 
-</section>
 
-<section class="classic-task solution-page" id="RHCSA-26-C01-SOLUTION" data-kind="classic-task-solution">
 
 <div class="page-break"></div>
+<a id="RHCSA-26-C01-SOLUTION"></a>
 
+<!-- topic: RHCSA-26-S14 -->
 ## [参考解答] 按“调查—当前—持久—身份—功能”完成任务
 
 ### ① [调查] 保留已有状态并确认客户端能力
@@ -724,7 +869,7 @@ findmnt -T /srv/project
 grep -nE '(^|[[:space:]])/srv/project([[:space:]]|$)' /etc/fstab
 ```
 
-此处的 `grep` 只用于定位候选行，最终仍要解析和重建验证。
+此处的 `grep` 只用于定位相关行，最终仍要解析和重建验证。
 
 ### ② [操作] 建立受控的当前挂载
 
@@ -832,12 +977,12 @@ findmnt -T /srv/project -o SOURCE,TARGET,FSTYPE,OPTIONS
 
 本章没有连接 live VM，因此不能声称这些命令已在真实 RHEL 9 环境跑通。
 
-</section>
 
-<section class="classic-task task-page" id="RHCSA-26-C02" data-kind="classic-task">
 
 <div class="page-break"></div>
+<a id="RHCSA-26-C02"></a>
 
+<!-- topic: RHCSA-26-S15 -->
 ## [经典任务] 诊断服务器可达但挂载被拒绝或写入权限不符
 
 ### 场景
@@ -868,14 +1013,13 @@ files.example.com:/departments/ops
 
 提交一条从症状到最小修复的调查链，并在修复后分别证明当前挂载、持久状态（如题目要求）和 `opsuser` 功能。
 
-> 请先独立完成。参考解答从下一页开始。
 
-</section>
 
-<section class="classic-task solution-page" id="RHCSA-26-C02-SOLUTION" data-kind="classic-task-solution">
 
 <div class="page-break"></div>
+<a id="RHCSA-26-C02-SOLUTION"></a>
 
+<!-- topic: RHCSA-26-S16 -->
 ## [参考解答] 先确定失败层，再做最小修复
 
 ### ① [调查] 固定原始命令、症状和目标版本
@@ -944,27 +1088,52 @@ sudo -u opsuser sh -c 'touch /mnt/ops/.ops-check'
 
 调查结论必须精确到层，例如“服务端 export 未允许本客户端地址”，而不是笼统写“网络问题”或“NFS 权限问题”。
 
-</section>
+<div class="page-break-soft"></div>
+<a id="RHCSA-26-CLOSE"></a>
 
-<section class="topic closing" id="RHCSA-26-CLOSE" data-kind="chapter-closing">
+<!-- topic: RHCSA-26-S17 -->
+## [本章收束] 把“远端目录能用”还原成一条可验证链
 
-## [本章收束] 把“远端目录能用”拆成一条可验证链
+NFS 客户端任务的核心不是记住一行 `mount`，而是始终知道当前证据属于哪一层。远端 export 通过 `server:/path` 被引用；协议版本决定发现和端口证据；当前挂载由 `findmnt` 与 `nfsstat -m` 读回；持久状态由 fstab 静态核对和卸载后重建证明；最终授权则由数值 UID/GID、远端权限、export 策略和目标用户实际操作共同决定。
 
-NFS 客户端任务的核心不是记住一行 `mount`，而是保持对象和状态不混淆：远端 export 通过 `server:/path` 被引用，协议版本决定发现和端口证据，当前挂载由 `findmnt` 和 `nfsstat -m` 读取，持久状态由 fstab 和重建测试证明，最终授权则由数值 UID/GID、服务端权限、export 策略和目标用户实际操作共同决定。
-
-当故障发生时，按以下顺序推进：
+### 可执行的工作方法
 
 ```text
-症状和原始错误
-→ 名称与路由
-→ 版本对应的端口/RPC
-→ 远端路径与 export 客户端范围
-→ 当前挂载源和选项
-→ UID/GID、附加组与 root_squash
-→ 最小修复
-→ 当前、持久、功能分层复验
+先保留原始症状和当前状态
+→ 明确 server:/path 与本地挂载点
+→ 按 NFS 版本选择网络、端口和 RPC 证据
+→ 建立或修正当前挂载
+→ 读回实际源、版本和选项
+→ 由 fstab 独立重建持久状态
+→ 固定目标用户，比较 UID/GID 与远端数值权限
+→ 做最小功能测试
+→ 只修复已被证据定位的那一层
 ```
 
-需要按访问触发、空闲卸载或通配符映射远端目录时，进入下一章《autofs 自动挂载》，不要把两种生命周期混成同一个答案。
+### 章末检查清单
 
-</section>
+- [ ] 我能说清 export、客户端源和本地挂载点的区别。
+- [ ] 我不会把 `showmount` 当作所有 NFSv4 场景的唯一证据。
+- [ ] 我能用 `findmnt` 和 `nfsstat -m` 读取当前挂载的实际状态。
+- [ ] 我能解释 `_netdev` 能做什么，以及不能保证什么。
+- [ ] 我会在修改权限前先固定测试身份并查看数值 UID/GID。
+- [ ] 我知道 `root_squash` 往往是预期安全边界，而不是必须取消的故障。
+- [ ] 我不会把 `soft`、`chmod 777`、`no_root_squash` 或强制卸载作为无调查默认答案。
+- [ ] 我能分别验收当前状态、持久状态和业务功能。
+
+### 主要判断表
+
+| 现象或证据 | 它能支持的判断 | 它不能单独证明什么 | 下一条更有区分度的证据 |
+|---|---|---|---|
+| `getent hosts` 返回地址 | NSS 能解析服务器名称 | NFS 端口、export 或权限正确 | 路由与版本对应的端口/RPC |
+| `showmount -e` 返回 export | 传统 MOUNT 查询成功 | v4 实际挂载与业务权限正确 | 已知源的挂载与 `nfsstat -m` |
+| `showmount` 超时或失败 | 传统 MOUNT 查询不可用 | 服务器没有 NFSv4 | 版本信息、TCP 2049、实际挂载报错 |
+| `findmnt` 显示 NFS | 当前内核存在挂载关系 | fstab 能重建、用户能读写 | `nfsstat -m`、fstab 重建、用户测试 |
+| fstab 有正确条目 | 存在持久声明 | 当前已挂载、远端可达 | `findmnt --verify` 后卸载重建 |
+| `rw` 出现在挂载选项 | 客户端请求了读写语义 | export 与文件权限允许该用户写 | 固定业务用户的最小创建测试 |
+| root 不能写 | root 请求未获得目标权限 | 业务用户也失败 | 业务用户测试与 `root_squash` 证据 |
+| 访问挂载点长期等待 | 远端请求可能在重试 | 一定是 CPU 或本地磁盘故障 | 当前 NFS 源、网络、服务器与进程状态 |
+
+### 向下一章交接
+
+本章处理的是“声明后稳定存在”的 NFS 客户端挂载。需要在访问路径时才触发挂载、空闲后自动卸载，或用通配符映射多个远端目录时，进入第 27 章《autofs 自动挂载》。两章共享远端源和身份模型，但生命周期、配置对象和验证入口不同，不能把 `x-systemd.automount` 或 autofs map 机械混入本章答案。

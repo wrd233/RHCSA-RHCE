@@ -1,49 +1,169 @@
 ---
-title: "RHCSA 第 12 章 systemd Unit、服务与依赖关系"
+title: RHCSA 第 12 章 systemd Unit、服务与依赖关系
 chapter_id: RHCSA-12
 exam: RHCSA
-part: "第三篇 进程、服务与系统运行"
+part: 第三篇 进程、服务与系统运行
 slug: systemd-units-services
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
-base_commit: "39e873dab15347a0f1a7611a6f212c3d26bd3562"
+base_commit: 961a29b3af4c07a828078a5de90c221a036546df
 sources:
-  - RH124-RHEL9
-  - RH134-RHEL9
-  - RH294-RHEL9
-  - systemctl(1)
-  - systemd.unit(5)
-  - systemd.service(5)
-  - systemd.exec(5)
-  - systemd.target(5)
-  - systemd-analyze(1)
-  - loginctl(1)
+- RH124-RHEL9
+- RH134-RHEL9
+- RH294-RHEL9
+- systemctl(1)
+- systemd.unit(5)
+- systemd.service(5)
+- systemd.exec(5)
+- systemd.target(5)
+- systemd-analyze(1)
+- loginctl(1)
 ---
 
-# 第 12 章　systemd Unit、服务与依赖关系
 
-Linux 上看到一个进程，并不等于已经理解了它的管理对象。进程可能是管理员在 Shell 中直接启动的，也可能是 systemd 根据一个 `.service` 声明创建的；服务可能由默认目标在引导时拉起，也可能由 `.socket`、`.path` 或 `.timer` 在事件发生时激活；管理员看到的 unit 内容还可能是发行版主文件、运行时定义和多个 drop-in 合并后的结果。
+<!-- 维护元数据、Section ID 与来源只属于内容维护层；阅读版 PDF 不显示这些字段。 -->
 
-因此，本章不把 `systemctl` 子命令平铺成速查表，而是围绕一条完整链路展开：
+<div class="cover-page">
+<div class="cover-series">RHEL 9 · RHCSA 实操讲义</div>
+<div class="cover-number">12</div>
+<h1>systemd Unit、服务与依赖关系</h1>
+<p class="cover-subtitle">从声明对象到真实功能：把加载来源、当前状态、持久配置、依赖顺序与服务进程放进同一条证据链。</p>
+<div class="cover-tags">
+<span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+</div>
+<div class="cover-edition">大字号阅读版</div>
+</div>
 
-```text
-磁盘上的 unit 定义
-→ systemd 的加载与合并结果
-→ 依赖和顺序形成的启动事务
-→ unit 的当前状态
-→ service 的进程身份与退出结果
-→ 引导时的持久启动配置
-→ 对外功能是否真正成立
-```
+<div class="reading-nav page-break-after">
+<div class="nav-kicker">本章阅读导航</div>
+<h2>先抓住一条主线</h2>
+<p class="nav-lead">systemd 不只是“启动服务”的命令集合。它先加载并合并 unit 定义，再根据依赖和顺序建立 job，最后形成当前状态、进程身份与持久启动关系。任何一层成立，都不能自动替代最终功能验收。</p>
+<div class="nav-grid">
+<div>
+<h3>专题地图</h3>
+<ol class="topic-map">
+<li><strong>知识专题</strong> Unit 类型、名称、模板与实例</li>
+<li><strong>知识专题</strong> Load、Active、Sub 与 UnitFile 四层状态</li>
+<li><strong>操作专题</strong> status、show、cat 与依赖查询</li>
+<li><strong>操作专题</strong> 当前控制、持久启用与 mask</li>
+<li><strong>知识专题</strong> Requires/Wants 与 After/Before</li>
+<li><strong>知识专题</strong> socket、path、timer 与 Restart 激活</li>
+<li><strong>操作专题</strong> drop-in、自定义 service 与 daemon-reload</li>
+<li><strong>诊断专题</strong> 从症状推进到下一条有区分度的证据</li>
+<li><strong>经典任务</strong> 受限账号服务与重新激活诊断</li>
+</ol>
+</div>
+<div>
+<h3>阅读时持续回答</h3>
+<ol class="question-list">
+<li>现在判断的是加载、当前、持久还是功能状态？</li>
+<li>看到的是 unit、job 还是进程？</li>
+<li>依赖关系是否同时声明了顺序？</li>
+<li>服务被谁拉入事务、被谁再次激活？</li>
+<li>实际加载的是发行版主文件还是管理员 drop-in？</li>
+<li>修改后需要 daemon-reload、应用 reload 还是 restart？</li>
+<li>哪条证据只能证明局部，下一层验收是什么？</li>
+</ol>
+</div>
+</div>
+<div class="model-flow">
+<div><b>01</b><span>识别 Unit</span><small>类型、完整名称与实例</small></div>
+<div><b>02</b><span>确认来源</span><small>主文件、drop-in 与优先级</small></div>
+<div><b>03</b><span>读取状态</span><small>Load / Active / Sub / UnitFile</small></div>
+<div><b>04</b><span>展开关系</span><small>依赖、顺序与激活器</small></div>
+<div><b>05</b><span>实施变更</span><small>当前、持久与定义加载</small></div>
+<div><b>06</b><span>分层验收</span><small>身份、功能与重启后状态</small></div>
+</div>
+</div>
 
-**[概念]** unit 是 systemd 管理的声明对象。它可以描述服务进程、socket、路径、时间触发器、挂载、设备、交换空间、资源层级或一组依赖。unit 文件不是“正在运行的进程”，而是 systemd 用来决定如何加载、激活、停止和关联对象的配置。
+<div class="chapter-opening">
+<div class="chapter-mark">第 12 章 · 正文</div>
+<p>Linux 上看到一个进程，并不等于已经理解了它的管理对象。进程可能由管理员在 Shell 中直接启动，也可能由 systemd 根据一个 <code>.service</code> 声明创建；服务可能由默认 target 在引导时拉起，也可能由 <code>.socket</code>、<code>.path</code> 或 <code>.timer</code> 在事件发生时激活；管理员看到的 unit 内容还可能是发行版主文件、运行时定义与多个 drop-in 合并后的结果。</p>
+<p>本章最常见的误判是把 <code>active</code> 当成业务正确，把 <code>enabled</code> 当成当前运行，把 <code>After=</code> 当成依赖拉起，或者把 <code>daemon-reload</code> 当成应用配置 reload。为避免这些错误，本章始终沿着下面的证据链推进：</p>
+<div class="evidence-chain">磁盘上的 unit 定义<br>→ manager 的加载与合并结果<br>→ 依赖和顺序形成的 job 事务<br>→ unit 当前状态与 service 进程身份<br>→ 持久启动配置<br>→ 对外功能是否真正成立</div>
+<p>第 11 章已经建立进程、PID 与信号的前置模型；本章只在确认 service 进程身份时引用它。完整日志检索转交第 13 章，timer 的日历表达式与调度验收转交第 15 章。</p>
+</div>
 
-**[概念]** service 的状态至少分为加载状态、当前活动状态、类型专用子状态和 unit file 持久状态。`loaded`、`active`、`running`、`enabled` 分别回答不同问题，任何一个单独成立都不能代替完整验收。
+<div class="concept-stack">
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Unit</strong> 是 systemd 管理的声明对象，可以描述 service、socket、path、timer、target、mount 等对象。unit 文件不是“正在运行的进程”，而是 manager 用来决定如何加载、激活、停止和关联对象的配置；观察它时要同时查看完整名称、类型和实际加载来源。</p></div>
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Job</strong> 是 manager 为 start、stop、reload 等请求建立的一次事务任务，完成后即消失。unit 是可持续存在的管理对象，job 是针对 unit 的一次动作，service 激活后才可能产生一个或多个进程；三者不能混为同一个状态。</p></div>
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>LoadState</strong> 回答 manager 是否获得了可用定义，例如 <code>loaded</code>、<code>not-found</code>、<code>error</code> 或 <code>masked</code>。它只证明定义层，不证明 unit 已启动；新建或修改文件后，磁盘内容与 manager 内存中的定义还可能因为尚未 daemon-reload 而不一致。</p></div>
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>ActiveState 与 SubState</strong> 分别描述跨类型通用生命周期和类型专用细节。<code>active</code> 可能对应 service 的 <code>running</code>，也可能对应 oneshot 的 <code>exited</code>；因此不能只看到 active 就推断存在长期进程，更不能据此推断端口或业务结果正确。</p></div>
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>UnitFileState</strong> 描述持久激活配置，而不是当前运行状态。<code>enabled</code> 表示已按 <code>[Install]</code> 建立链接，<code>disabled</code> 表示尚未启用，<code>static</code> 通常表示没有普通 enable 入口但仍可被依赖或触发，<code>masked</code> 则阻断普通激活。</p></div>
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>依赖关系与顺序关系</strong> 是两张独立的图。<code>Wants=</code>、<code>Requires=</code> 决定是否把另一个 unit 拉入事务；<code>After=</code>、<code>Before=</code> 只决定已进入同一事务的对象谁先谁后。只写 After 不会自动启动对方，只写 Requires 也不保证启动顺序。</p></div>
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>激活器</strong> 是能在事件发生时拉起其他 unit 的对象，例如 socket 收到连接、path 观察到文件变化、timer 到达触发时刻。它们解释了“service 停止后为什么又回来”；另一个独立机制是 service 自身的 <code>Restart=</code> 策略。</p></div>
+<div class="concept-block"><span class="concept-label">概念</span><p><strong>Drop-in</strong> 是管理员对现有 unit 做最小覆盖的配置片段，通常位于 <code>/etc/systemd/system/UNIT.d/*.conf</code>。它在发行版主文件之后合并，便于保留软件包升级路径；但列表型指令可能追加而非替换，覆盖 <code>ExecStart=</code> 时常需要先用空赋值清除旧列表。</p></div>
+</div>
 
-**[操作语义]** `systemctl` 查询或改变 systemd manager 中的 unit；`systemd-analyze` 辅助检查搜索路径和 unit 定义；`loginctl` 查询用户会话、用户 manager 和 linger。本章使用这些入口建立证据，不把“命令返回成功”扩大为业务终态正确。
+<div class="semantic-quick">
+<div class="semantic-intro"><span>操作语义</span>以下六组入口先建立本章的接口地图。先确认作用对象，再选择参数；详细验证与边界在后续专题展开。</div>
 
-**[操作语义]** unit 定义发生变化时，systemd manager 必须重新读取定义；应用自己的配置文件发生变化时，则通常需要应用支持的 reload 或重启。`daemon-reload` 与“让应用重读配置”不是同一个动作。
+<div class="command-group">
+<h3><code>systemctl status / show / cat</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>systemctl status UNIT [--no-pager] [--full]
+systemctl show UNIT [-p PROPERTY,...]
+systemctl cat UNIT</code></pre>
+<p>分别用于人工综合调查、读取精确属性和还原主文件与 drop-in 来源。</p>
+<div class="forms-title">重要参数 / 形式</div>
+<dl><dt><code>--full</code> / <code>-l</code></dt><dd>避免长行被省略，适合检查完整命令和路径。</dd><dt><code>-p PROPERTY,...</code></dt><dd>只输出指定属性，适合稳定判断。</dd><dt><code>cat UNIT</code></dt><dd>确认最终配置来自哪些文件，但仍需结合 show 判断 manager 状态。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>start / stop / restart / reload</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>systemctl start|stop|restart|reload UNIT</code></pre>
+<p>改变 unit 的当前状态；不会自动修改下一次引导时的持久配置。</p>
+<div class="forms-title">重要参数 / 形式</div>
+<dl><dt><code>restart</code></dt><dd>停止后重新启动，通常会中断当前进程。</dd><dt><code>reload</code></dt><dd>请求应用重读自身配置，前提是 unit 支持该动作。</dd><dt><code>reload-or-restart</code></dt><dd>支持 reload 时优先 reload，否则 restart。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>enable / disable / mask</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>systemctl enable|disable|mask|unmask [--now] [--runtime] UNIT</code></pre>
+<p>管理持久或运行时激活关系；mask 比 disable 更强，会阻断普通启动。</p>
+<div class="forms-title">重要参数 / 形式</div>
+<dl><dt><code>--now</code></dt><dd>在修改持久状态的同时改变当前状态。</dd><dt><code>--runtime</code></dt><dd>只写入 <code>/run</code>，重启后失效；适合临时控制，不等于持久配置。</dd><dt><code>mask</code></dt><dd>只在目标明确要求阻断普通激活时使用，先调查现有依赖。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>list-dependencies</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>systemctl list-dependencies [--reverse] [--all] UNIT</code></pre>
+<p>沿依赖图观察“它需要谁”或“谁需要它”，用于解释引导拉起和重新激活。</p>
+<div class="forms-title">重要参数 / 形式</div>
+<dl><dt><code>--reverse</code></dt><dd>反向查看依赖者，是调查“谁把它拉起来”的关键入口。</dd><dt><code>--all</code></dt><dd>显示默认可能省略的 inactive 依赖。</dd><dt><code>show -p Wants,Requires,After,Before</code></dt><dd>需要精确区分关系类型时读取属性。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>systemctl edit / daemon-reload</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>systemctl edit [--runtime] UNIT
+systemctl daemon-reload</code></pre>
+<p>edit 创建管理员 drop-in；daemon-reload 让 manager 重新扫描并合并 unit 定义。</p>
+<div class="forms-title">重要参数 / 形式</div>
+<dl><dt><code>edit UNIT</code></dt><dd>默认写入持久管理员目录，优先于直接修改 vendor 文件。</dd><dt><code>edit --runtime UNIT</code></dt><dd>创建仅本次引导有效的 drop-in。</dd><dt><code>daemon-reload</code></dt><dd>只刷新 systemd 定义，不等于应用自身的 reload，也不会自动重启服务。</dd></dl>
+</div>
+
+<div class="command-group">
+<h3><code>自定义 service / target</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>[Service]
+Type=...  ExecStart=...  User=...  Restart=...
+[Install]
+WantedBy=multi-user.target
+
+systemctl get-default
+systemctl set-default TARGET</code></pre>
+<p>service 字段定义进程生命周期和身份；target 组织依赖并决定默认引导目标。</p>
+<div class="forms-title">重要参数 / 形式</div>
+<dl><dt><code>Type=</code></dt><dd>决定 systemd 如何判断启动完成和主进程。</dd><dt><code>ExecStart=</code></dt><dd>定义启动命令，默认不经过 Shell 解析。</dd><dt><code>User=</code></dt><dd>指定服务进程身份，必须同时检查目录访问能力。</dd><dt><code>Restart=</code></dt><dd>定义退出后的重启策略，不等同于 socket/path/timer 激活。</dd><dt><code>WantedBy=</code></dt><dd>说明 enable 时把链接放入哪个 target 的 wants 目录。</dd></dl>
+</div>
+</div>
+
+<div class="static-note"><strong>版本与环境边界</strong>　本章示例以 RHEL 9 课程与对应手册语义为基线。实际执行时应在目标主机核对 systemd 版本、unit 来源与应用行为；静态定义检查不能代替启动、跨重启和功能验收。</div>
 
 <section class="topic knowledge" id="RHCSA-12-K01" data-kind="knowledge-topic">
 
@@ -60,7 +180,7 @@ Linux 上看到一个进程，并不等于已经理解了它的管理对象。�
 一个 service 可以没有长期进程，例如已经完成的 `Type=oneshot`；一个 service 也可以拥有主进程和多个工作进程。反过来，一个普通进程如果没有归属于某个 service，也不能仅凭命令名推断应该用哪个 unit 控制。
 
 ```bash
-systemctl status sshd.service --no-pager -l
+systemctl status sshd.service --no-pager --full
 systemctl show sshd.service -p MainPID,ControlPID,ControlGroup
 ```
 
@@ -111,7 +231,7 @@ worker@blue.service
 worker@green.service
 ```
 
-模板中可使用 `%i` 获取未转义的实例名，使用 `%I` 获取反转义后的实例名。每个实例是独立 unit，有自己的状态、cgroup、主 PID 和失败结果。对模板进行 enable 时，还要确认 `[Install]` 是否定义了 `DefaultInstance=` 或题目是否明确要求具体实例。
+模板中可使用 `%i` 获取 unit 名称中已经转义的实例标识符，使用 `%I` 获取反转义后的实例名。每个实例是独立 unit，有自己的状态、cgroup、主 PID 和失败结果。对模板进行 enable 时，还要确认 `[Install]` 是否定义了 `DefaultInstance=` 或题目是否明确要求具体实例。
 
 ### ⑤ <span class="point-label">[边界]</span> 别名、生成 unit 和 transient unit 仍属于加载模型
 
@@ -1000,7 +1120,7 @@ rootless Podman 的用户 unit、Quadlet 和容器持久化归第 31、32 章；
 → 应用功能验证
 ```
 
-本会话未执行跨登出或重启验证，必须在后续真实环境测试。
+跨登出或重启后的持久性必须在目标 RHEL 9 主机上实际验证；当前状态与 `Linger` 属性不能代替该验收。
 
 **[Cheatsheet]** 系统 service 中 User= 仍归 PID 1；`systemctl --user` 操作用户 manager；`loginctl show-user` 查 State/Linger；只有用户 manager 要跨登出运行时才需要 linger；容器具体流程留给 Podman 章节。
 
@@ -1419,6 +1539,23 @@ unit 名称与类型
 遇到故障时，先问“当前缺少哪一层证据”，再选择 `status`、`show`、`cat`、依赖查询、`systemd-analyze` 或 `loginctl`。只有 unit 定义发生变化时才需要 manager 重新加载；只有目标明确要求当前与持久同时改变时才组合 `--now`；只有需要阻断所有普通激活时才 mask。
 
 为后续章节保留的接口：日志的完整检索进入《系统日志、Journal、rsyslog 与日志轮转》；timer 的调度表达进入《一次性任务、周期任务与 systemd Timer》；恢复目标与引导链进入《启动链、GRUB、Target 与系统恢复》；用户容器服务与 Quadlet 进入容器篇。
+
+### 主要判断表
+
+| 看到的证据 | 可以得出的结论 | 仍不能证明 | 下一条证据 |
+|---|---|---|---|
+| `LoadState=loaded` | manager 已获得可用定义 | 当前已运行、定义一定符合业务目标 | 查 `ActiveState`、`FragmentPath` 与 drop-in |
+| `ActiveState=active` | unit 达到自身活动语义 | 开机自动启动、端口或业务可用 | 查 `UnitFileState` 与功能结果 |
+| `UnitFileState=enabled` | 已建立持久激活关系 | 当前已经运行、依赖目标当前成立 | 查 `is-active` 与目标依赖 |
+| `SubState=exited` | 类型专用状态为已退出 | 一定异常或一定存在守护进程 | 查 `Type`、`RemainAfterExit`、`Result` |
+| `Restart=on-failure` | 异常退出可能触发重启 | socket/path/timer 不会再次激活 | 查 `TriggeredBy` 与反向依赖 |
+| `systemd-analyze verify` 无阻断错误 | 静态语法和部分引用可接受 | 运行时权限、环境与业务功能正确 | 实际启动并做身份、功能验收 |
+
+### 工作方法与向下一章交接
+
+处理 systemd 问题时，先固定 unit 的完整名称，再按“来源 - 状态 - 关系 - 进程 - 功能”收集证据。修改时优先做最小覆盖，修改后只在定义层发生变化时执行 `daemon-reload`，再根据目标选择 start、restart 或应用自身的 reload。不要用一次 restart 掩盖对象、依赖或权限问题。
+
+本章到此只使用 `systemctl status` 中的少量近期信息作为诊断入口。下一章《系统日志、Journal、rsyslog 与日志轮转》将接手完整日志检索、启动轮次、时间范围、优先级与持久化问题；timer 的日历表达式与执行验收则留给第 15 章。
 
 ### 终章 Cheatsheet
 

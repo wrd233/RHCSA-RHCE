@@ -7,6 +7,7 @@ dependencies = [
   "bleach>=6.2,<7",
   "genanki>=0.13,<0.14",
   "jinja2>=3.1,<4",
+  "jsonschema>=4,<5",
   "markdown>=3.8,<4",
   "pypdf>=6,<7",
   "pytest>=8,<9",

@@ -4,9 +4,10 @@ chapter_id: RHCSA-15
 exam: RHCSA
 part: "第三篇 进程、服务与系统运行"
 slug: scheduling-at-cron-timers
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
+base_commit: 961a29b3af4c07a828078a5de90c221a036546df
 sources:
   - RH134-RHEL9-Ch02
   - RH124-RHEL9-service-and-log-prerequisites
@@ -20,8 +21,68 @@ sources:
   - systemd-run(1)
 ---
 
+<!--
+维护信息仅用于章节集成；正式阅读版不显示 Section ID、来源或仓库状态。
+-->
 
-# 15　一次性任务、周期任务与 systemd Timer
+<div class="cover-page">
+  <div class="cover-kicker">R H E L 9 · R H C S A　实 操 讲 义</div>
+  <div class="cover-number">15</div>
+  <h1>一次性任务、周期任务与<br>systemd Timer</h1>
+  <p class="cover-subtitle">从“什么时候运行”走到“以谁、在什么环境、怎样留下可验证结果”。</p>
+  <div class="cover-tags">对象模型　操作语义　验证　诊断　经典任务</div>
+  <div class="cover-edition">大字号阅读版</div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="nav-page">
+<h1>本章阅读导航</h1>
+<div class="nav-lead"><strong>先抓住一条主线：</strong>计划任务不是一条“到点运行”的孤立命令，而是一条由调度定义、调度器、执行身份、执行环境、工作负载和结果证据共同组成的链路。</div>
+<div class="nav-columns">
+<div class="nav-col">
+<h2>专题地图</h2>
+<ul>
+<li><strong>知识专题</strong>　先识别任务生命周期，再选择调度器</li>
+<li><strong>操作专题</strong>　使用 <code>at</code> 安排未来的一次执行</li>
+<li><strong>知识专题</strong>　正确解释 cron 五字段与日期匹配</li>
+<li><strong>操作专题</strong>　用户 crontab、系统 crontab 与 <code>/etc/cron.d</code></li>
+<li><strong>诊断专题</strong>　手工执行成功，但 cron 失败</li>
+<li><strong>知识专题</strong>　timer 和 service 是两个状态对象</li>
+<li><strong>操作专题</strong>　持久 timer、transient timer 与安全迁移</li>
+<li><strong>诊断专题</strong>　timer 在等待，但任务没有正确完成</li>
+<li><strong>经典任务</strong>　周期健康检查与 cron→timer 迁移</li>
+</ul>
+</div>
+<div class="nav-col">
+<h2>阅读时持续回答</h2>
+<ol>
+<li>这是一次性、固定日历还是相对时间任务？</li>
+<li>调度定义保存在哪里，由哪个进程解释？</li>
+<li>任务最终以哪个用户和工作目录执行？</li>
+<li><code>PATH</code>、<code>SHELL</code>、<code>HOME</code> 与输出是否明确？</li>
+<li>当前证据只证明“已配置”，还是已经证明“已触发”？</li>
+<li>timer 状态与 service 结果是否分别检查？</li>
+<li>关机错过后是否需要补执行？</li>
+<li>最终产物是否正确、非空且时间合理？</li>
+</ol>
+</div>
+</div>
+<div class="model-flow">
+<div><b>01</b><strong>识别生命周期</strong><span>一次、日历重复或相对时间</span></div>
+<div><b>02</b><strong>确认定义</strong><span>job、crontab 或 timer</span></div>
+<div><b>03</b><strong>确认调度器</strong><span>atd、crond 或 systemd</span></div>
+<div><b>04</b><strong>重建执行环境</strong><span>用户、目录、PATH 与输出</span></div>
+<div><b>05</b><strong>判断触发与退出</strong><span>NEXT/LAST、Result 与退出码</span></div>
+<div><b>06</b><strong>验收真实产物</strong><span>内容、所有者、大小和时间</span></div>
+</div>
+<div class="nav-note">阅读提示：先用概念块建立对象边界，再用操作语义速查确认接口，最后通过专题、经典任务和参考解答完成分层验证。</div>
+</div>
+
+<div class="page-break"></div>
+
+<div class="chapter-opening">
+<div class="chapter-mark">第 15 章 · 正文</div>
 
 计划任务表面上是在回答“什么时候运行”，真正决定任务是否可靠的却不止时间。调度定义必须交给某个调度器；调度器到点后以特定用户、环境和工作目录启动命令；命令还要把退出状态、标准输出、标准错误和业务产物留成证据。只看到一行 crontab、一个 at job，或者一个处于 `active (waiting)` 的 timer，都不能证明任务已经正确完成。
 
@@ -36,15 +97,131 @@ sources:
 → 输出、日志与真实产物
 ```
 
-**[概念]** `at` job 是交给 `atd` 的一次性队列项。它被取走并执行后不会自动形成下一次任务。
+最常见的误判有三类：手工执行成功就认为 cron 一定成功；把用户 crontab 与系统 cron 的字段混为一谈；看到 timer 正在等待就认为 service 已经正确完成。systemd 的通用 unit 语义属于第 12 章，日志系统属于第 13 章，时区与同步属于第 14 章。本章只引用这些前置证据，不重新展开它们。
+</div>
 
-**[概念]** crontab entry 是反复接受日历匹配的规则。用户 crontab 与系统 crontab 的字段不同，运行身份也来自不同位置。
+<div class="concept-stack">
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>一次性任务</strong> 是只在未来某个时刻取出并执行一次的调度对象。本章以 `at` job 为代表：提交后它进入由 `atd` 管理的队列，被执行或删除后不会自动生成下一次任务。队列中存在只能证明定义仍在等待，不能证明届时环境、权限和外部依赖一定满足。</p></div>
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>周期任务</strong> 是反复接受日历匹配的规则，而不是从创建时刻开始不断累加固定间隔。cron 通过分钟、小时、月中日、月份和星期五个字段决定匹配；systemd timer 既能表达日历，也能表达开机后或上次激活后的相对时间。选择对象时应先判断任务生命周期，而不是先选自己最熟悉的命令。</p></div>
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>执行身份</strong> 决定任务拥有哪些 UID、GID、HOME、文件权限和安全上下文。用户 crontab 天然以该用户运行；系统 crontab 与 `/etc/cron.d` 通过额外用户字段指定身份；timer 通常把身份写在被激活的 service 中。身份错误时，时间表达式完全正确也可能只得到权限失败。</p></div>
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>执行环境</strong> 是调度器启动工作负载时提供的变量、Shell、工作目录、标准输入输出和可用凭据。它通常比交互登录会话精简，不会自动包含 alias、函数、SSH agent 或终端提示。手工成功而 cron 失败时，最有区分度的证据不是反复重跑，而是以目标用户和 `env -i` 重建精简环境。</p></div>
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>日历表达式</strong> 描述哪些墙上时刻符合触发条件。cron 使用五字段，月中日与星期在同时受限时具有特殊的 OR 匹配；`OnCalendar=` 使用 systemd 的日历语法，可先由 `systemd-analyze calendar` 展开。语法可解析只证明表达式成立，不证明调度器已加载或工作负载会成功。</p></div>
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>timer/service 对</strong> 把“何时触发”和“具体执行”拆成两个 unit。`.timer` 管理 NEXT、LAST 和等待状态；`.service` 管理 `User=`、`WorkingDirectory=`、`ExecStart=`、退出码和 journal。timer 的 `active (waiting)` 不能替代 service 的 `Result=`，service 成功也不能替代业务产物检查。</p></div>
+<div class="concept-card"><span class="concept-label">概念</span><p><strong>补执行</strong> 是系统在日历触发点处于关闭或 timer 未激活时，恢复后补一次遗漏工作的能力。`Persistent=true` 只对日历 timer 有意义，它不是逐条回放所有错过的周期，也不能修复工作负载本身的失败。是否真正补跑必须在可控的关机、停用与恢复场景中实测。</p></div>
+</div>
 
-**[概念]** systemd timer 是激活器，不是任意命令容器。`.timer` 决定何时触发，通常由同名 `.service` 决定以谁执行、执行什么以及怎样记录结果。
+<div class="operation-semantics">
+<div class="op-intro"><span>操作语义</span>以下入口分别观察或改变一次性队列、cron 规则与 systemd 调度。先明确命令的作用对象，再选择参数和验证层次。</div>
 
-**[操作语义]** `at`、`atq`、`at -c` 和 `atrm` 分别用于提交、列出、审阅和删除一次性任务；`crontab` 用于安装、列出和删除用户任务表；`systemctl`、`systemd-analyze` 与 `systemd-run` 用于管理持久或临时 timer。
+<div class="op-entry">
+<h3><code>at</code> 命令组</h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>at [options] TIMESPEC
+atq
+at -c JOB_ID
+atrm JOB_ID</code></pre>
+<p>提交、列出、审阅和删除由 `atd` 管理的一次性任务。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl>
+<dt><code>at now + 20 minutes</code></dt><dd>从标准输入读取命令，并安排在 20 分钟后执行一次。</dd>
+<dt><code>-f FILE</code></dt><dd>从文件读取任务正文，适合需要保存和审阅的作业。</dd>
+<dt><code>at -c JOB_ID</code></dt><dd>查看保存的完整脚本、环境、umask、工作目录与最终命令。</dd>
+<dt><code>atrm JOB_ID</code></dt><dd>删除尚未执行的队列项；不能停止已经启动的进程。</dd>
+</dl>
+</div>
 
-**[操作语义]** 对任何调度器，先让工作负载在目标用户和精简环境中独立成功，再把它连接到调度器。验证时分开检查“定义存在”“调度器正在等待”“发生过触发”“工作负载退出成功”和“业务产物正确”。
+<div class="op-entry">
+<h3><code>crontab</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>crontab [-u USER] {-e|-l|-r}
+crontab [-u USER] FILE</code></pre>
+<p>编辑、列出、删除或安装某个用户的 crontab。用户表每条任务只有五个时间字段，执行用户由表的所有者决定。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl>
+<dt><code>-e</code></dt><dd>通过编辑器修改目标用户的 crontab。</dd>
+<dt><code>-l</code></dt><dd>列出当前安装的任务表，是变更前后最直接的静态证据。</dd>
+<dt><code>-u USER</code></dt><dd>由 root 管理指定用户的表，避免误查当前登录用户。</dd>
+<dt><code>-r</code></dt><dd>删除整张表，不是删除一行；使用前必须明确风险。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3>系统 crontab 与 <code>/etc/cron.d</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>minute hour day month weekday user command</code></pre>
+<p>由系统管理员集中保存任务，并在五个时间字段之后显式指定执行用户。</p>
+<div class="param-title">重要字段 / 形式</div>
+<dl>
+<dt><code>user</code></dt><dd>系统表额外字段；写进用户 crontab 会把用户名当成命令。</dd>
+<dt><code>PATH=...</code></dt><dd>显式限制命令搜索范围，避免依赖登录环境。</dd>
+<dt><code>SHELL=/bin/bash</code></dt><dd>指定解释任务行的 Shell；它不自动加载用户的交互启动文件。</dd>
+<dt><code>MAILTO=""</code></dt><dd>禁用 cron 邮件尝试；重要任务仍应显式保存 stdout/stderr。</dd>
+<dt><code>\%</code></dt><dd>在命令部分表示字面百分号；未转义 `%` 会切分命令与标准输入。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3>systemd timer</h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>[Timer]
+OnCalendar=...
+OnBootSec=...
+OnUnitActiveSec=...
+Persistent=true</code></pre>
+<p>以 `.timer` 表达触发时间，以 `.service` 表达执行身份、命令和退出结果。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl>
+<dt><code>OnCalendar=</code></dt><dd>使用墙上日历时间；可与 `Persistent=true` 组合补一次遗漏。</dd>
+<dt><code>OnBootSec=</code></dt><dd>从系统启动后经过指定时长触发。</dd>
+<dt><code>OnUnitActiveSec=</code></dt><dd>从目标 unit 上次激活后计算下一次间隔。</dd>
+<dt><code>RandomizedDelaySec=</code></dt><dd>在允许范围内随机推迟，帮助多台主机摊开负载。</dd>
+<dt><code>AccuracySec=</code></dt><dd>允许 systemd 合并唤醒的精度窗口，不是随机延迟。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3><code>systemctl list-timers</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>systemctl list-timers [--all] [PATTERN...]</code></pre>
+<p>列出 timer 的下一次和上一次触发时间，以及它将激活的 unit。</p>
+<div class="param-title">重要列 / 形式</div>
+<dl>
+<dt><code>NEXT / LEFT</code></dt><dd>预计的下一次触发时刻和剩余时间。</dd>
+<dt><code>LAST / PASSED</code></dt><dd>最近一次触发时刻和距今时间；不表示 service 一定成功。</dd>
+<dt><code>--all</code></dt><dd>同时显示未运行或没有下一次触发时间的 timer，适合排错。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3><code>systemd-analyze calendar</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>systemd-analyze calendar EXPRESSION</code></pre>
+<p>解析 `OnCalendar=` 表达式，显示规范形式和后续触发时间。</p>
+<div class="param-title">重要输出 / 边界</div>
+<dl>
+<dt><code>Normalized form</code></dt><dd>展示 systemd 实际理解的规范化表达式。</dd>
+<dt><code>Next elapse</code></dt><dd>展示下一次日历匹配；仍未包含 service 运行结果。</dd>
+<dt><code>systemd-analyze verify</code></dt><dd>检查 unit 文件语法和部分引用关系，不能替代真实执行。</dd>
+</dl>
+</div>
+
+<div class="op-entry">
+<h3><code>systemd-run</code></h3>
+<div class="synopsis-title">SYNOPSIS</div>
+<pre><code>systemd-run --on-active=TIME COMMAND [ARG...]
+systemd-run --on-calendar=EXPR COMMAND [ARG...]</code></pre>
+<p>创建 transient timer 与 service，用于短期验证 systemd 调度，不在磁盘上建立持久 unit 文件。</p>
+<div class="param-title">重要参数 / 形式</div>
+<dl>
+<dt><code>--on-active=</code></dt><dd>从 transient timer 激活后计算延迟。</dd>
+<dt><code>--on-calendar=</code></dt><dd>使用 systemd 日历表达式创建临时日历 timer。</dd>
+<dt><code>--unit=NAME</code></dt><dd>指定便于查询的 unit 基名，避免依赖自动生成名称。</dd>
+<dt><code>--property=...</code></dt><dd>为 transient service 设置受支持的 unit 属性；使用前应核对本机版本。</dd>
+</dl>
+</div>
+</div>
+
+<div class="page-break"></div>
 
 <section class="topic knowledge" id="RHCSA-15-K01" data-kind="knowledge-topic" markdown="1">
 
@@ -153,7 +330,7 @@ ATJOB
 - 检查目标路径在将来仍存在；
 - 对网络、挂载和凭据等外部依赖保留失败证据。
 
-### ③ [操作] 用 `atq` 和 `at -c` 审核队列
+### ③ [查询] 用 `atq` 和 `at -c` 审核队列
 
 ```bash
 atq
@@ -680,7 +857,7 @@ systemctl is-active daily-report.timer
 
 不要 enable `daily-report.service`。service 由 timer 触发，并可在排错时手工 `start`。
 
-### ⑥ [验证点] 查询 NEXT/LAST 与 service 结果
+### ⑥ [查询] 查询 NEXT/LAST 与 service 结果
 
 ```bash
 systemctl list-timers --all | grep -F daily-report
@@ -706,7 +883,7 @@ stat /var/lib/daily-report/latest.txt
 - suspend/resume 和日历 timer 的实际行为；
 - 多台主机的负载是否真正摊开。
 
-真实环境测试应记录关机前状态、错过的日历时间、开机时间、timer LAST、service journal 和产物更新时间。本章没有声称完成这些 live test。
+真实环境测试应记录关机前状态、错过的日历时间、开机时间、timer LAST、service journal 和产物更新时间。本章当前仅给出推荐验证方法，尚未完成这些实机验证。
 
 **[Cheatsheet]** 精简环境跑脚本 → 创建 service → `verify` → 手工启动 service → 创建 timer → `calendar` → `enable --now` → NEXT/LAST → service Result → journal 和产物。
 
@@ -892,6 +1069,8 @@ pgrep -af '/usr/local/libexec/daily-report'
 
 </section>
 
+<div class="page-break"></div>
+
 <section class="topic classic" id="RHCSA-15-C01" data-kind="classic-task" markdown="1">
 
 ## [经典任务] 配置带明确用户和证据链的周期健康检查
@@ -939,6 +1118,8 @@ pgrep -af '/usr/local/libexec/daily-report'
 ```
 
 </section>
+
+<div class="page-break"></div>
 
 <section class="topic classic" id="RHCSA-15-C02" data-kind="classic-task" markdown="1">
 
@@ -1228,7 +1409,7 @@ journalctl -u daily-report.timer -u daily-report.service \
 stat -c '%U %G %a %s %y %n' /var/lib/daily-report/latest.txt
 ```
 
-若尚未到正式时间，service 的直接成功、timer 的 NEXT、active/enabled 和静态配置构成候选证据；正式日历触发、随机延迟及关机补跑必须后续 live test。
+若尚未到正式时间，service 的直接成功、timer 的 NEXT、active/enabled 和静态配置只构成阶段性证据；正式日历触发、随机延迟及关机补跑必须后续 live test。
 
 ### ⑧ [切换] 新链路通过后删除旧 cron
 
@@ -1273,6 +1454,8 @@ stat /var/lib/daily-report/latest.txt
 
 ## [本章收束] 让调度器、执行身份和结果证据对齐
 
+### 工作方法：先静态、再触发、最后业务
+
 三种调度器共享同一管理逻辑：
 
 ```text
@@ -1313,5 +1496,8 @@ systemd-analyze calendar --help
 systemctl list-timers --help
 ```
 
+### 向下一章交接
+
+本章已经把“任务何时运行”转换成了可验证的调度对象，并反复区分配置、等待、触发、退出和业务产物。下一章《RPM 包、文件归属与软件事务》将转向系统内容的来源与安装状态：当 `at`、`crontab` 或某个辅助命令不存在时，应先确认软件包、文件归属和事务状态，而不是在本章无边界地展开软件安装。
 
 </section>

@@ -4,38 +4,206 @@ chapter_id: RHCSA-05
 exam: RHCSA
 part: "第一篇 命令行与本地信息处理"
 slug: file-search-text-processing
-status: integrated
+status: content_frozen_for_integration
 validation: static
 live_test: not_performed
-base_commit: "39e873dab15347a0f1a7611a6f212c3d26bd3562"
+base_commit: "961a29b3af4c07a828078a5de90c221a036546df"
 sources:
   - RH124-RHEL9-Ch15
   - RHCSA-Course-07-Text-Tools
   - RHCSA-Course-13-File-Search
+  - RHCSA9-Mock-Tasks
   - GNU-Findutils-Man-Pages
   - GNU-Grep-Sed-Gawk-Coreutils-Man-Pages
 ---
 
-<!-- 稳定 Section ID、来源和候选状态属于维护层；正式阅读时不需要显示。 -->
-
+<!-- Section ID、来源与静态核对状态属于维护层；阅读版 PDF 不显示这些信息。 -->
+<div class="cover-page">
+  <div class="cover-series">RHEL 9 · RHCSA 实操讲义</div>
+  <div class="cover-number">05</div>
+  <div class="cover-title">文件查找、文本筛选与批量处理</div>
+  <div class="cover-subtitle">从目录树对象到安全 argv：把文件集合、文本记录、字段和批量副作用放进同一条证据链。</div>
+  <div class="cover-tags">
+    <span>对象模型</span><span>操作语义</span><span>验证</span><span>诊断</span><span>经典任务</span>
+  </div>
+  <div class="cover-edition">大字号阅读版</div>
+</div>
+<div class="reading-nav">
+  <h2>本章阅读导航</h2>
+  <p class="nav-lead"><strong>先抓住一条主线：</strong>先从目录树中选择正确的文件集合，再把文件内容视为记录与字段，最后把每个路径安全地交给批量命令，并用独立证据证明没有漏改和误伤。</p>
+  <div class="nav-grid">
+    <div>
+      <h3>专题地图</h3>
+      <ul class="topic-map">
+        <li><span>知识专题</span> 从目录树对象到记录流</li>
+        <li><span>知识专题</span> <code>find</code> 的搜索空间与可见性</li>
+        <li><span>操作专题</span> 把任务要求翻译成 <code>find</code> 谓词</li>
+        <li><span>操作专题</span> 表达式、逻辑与动作</li>
+        <li><span>知识专题</span> <code>locate</code> 与索引时间边界</li>
+        <li><span>知识专题</span> 正则与 <code>grep</code> 记录选择</li>
+        <li><span>操作专题</span> 字段、排序、去重与计数</li>
+        <li><span>操作专题</span> <code>sed</code>、<code>awk</code> 与结构化转换</li>
+        <li><span>操作专题</span> NUL、<code>xargs</code> 与批量 argv</li>
+        <li><span>诊断专题</span> 空集合、过宽集合与部分失败</li>
+      </ul>
+    </div>
+    <div>
+      <h3>阅读时持续回答</h3>
+      <ol class="question-list">
+        <li>当前选择的是文件对象、路径名称，还是文件内容中的记录？</li>
+        <li>搜索起点、深度和文件系统边界是否准确？</li>
+        <li>模式属于 glob、固定字符串、BRE 还是 ERE？</li>
+        <li>一条记录在哪里结束，字段又怎样拆分？</li>
+        <li>特殊文件名会不会被空白或换行拆坏？</li>
+        <li>预览集合与执行集合是否来自同一筛选表达式？</li>
+        <li>当前证据能证明什么，又不能证明什么？</li>
+        <li>下一条最有区分度的证据是什么？</li>
+      </ol>
+    </div>
+  </div>
+  <div class="model-steps">
+    <div><b>01</b><strong>限定搜索空间</strong></div>
+    <div><b>02</b><strong>建立对象谓词</strong></div>
+    <div><b>03</b><strong>预览候选集合</strong></div>
+    <div><b>04</b><strong>选择记录与字段</strong></div>
+    <div><b>05</b><strong>构造安全 argv</strong></div>
+    <div><b>06</b><strong>执行分层验收</strong></div>
+  </div>
+</div>
 # 第五章　文件查找、文本筛选与批量处理
 
-系统管理员面对的往往不是“处理一个已知文件”，而是从一个变化中的目录树里找出一组对象，再从这些对象的内容中筛选记录、拆分字段、排序聚合，最后对确定无误的集合执行批量动作。这里真正困难的不是记住某一条命令，而是持续回答四个问题：**当前处理的对象是谁、记录边界在哪里、条件是否准确、操作后怎样证明没有误伤。**
+系统管理员面对的通常不是一个已经知道路径的文件，而是一组随目录树变化的对象：先按路径、类型、所有者、大小或时间找到候选文件，再从文件内容中选择记录、拆分字段、排序聚合，最后才可能执行修改。最常见的误判，是把这几个对象层混成一层：用文件名模式代替内容匹配、把按行输出当作任意文件名协议、在未确认候选集合时直接使用 `sed -i`，或者看到子命令退出为零就认为所有目标都已经达到终态。
 
-如果忽略这些边界，常见错误会连续出现：`find` 从错误起点遍历；Shell 提前展开了本应交给 `find` 的通配符；`grep` 模式过宽却直接交给 `sed -i`；`uniq` 在未排序的数据上只删除部分重复；文件名中的空格或换行被 `xargs` 拆开；命令退出为零，但真正需要修改的文件并没有全部达到目标状态。
+本章采用“**文件集合 → 文本记录 → 字段和键 → 参数向量 → 批量副作用 → 分层验证**”的主线。前一章已经建立路径、文件类型和链接的基础；本章只引用这些对象，不重新展开路径解析。Shell 展开与引用留在第 01 章，复制、归档、压缩和远程传输留给第 06 章；`sed` 与 `awk` 只讲完成本章任务所需的选择、替换、字段和小型聚合，不扩展成完整编程教材。
 
-本章按照“目录树对象 → 候选集合 → 文本记录 → 字段和键 → 参数向量 → 批量副作用 → 分层验证”的顺序展开。重点不是把工具名称平铺，而是建立一条能够在 RHCSA 题目和真实运维中复用的安全处理流水线。
+<div class="opening-chain">
+  <strong>本章的核心判断链</strong>
+  <span>先证明搜索范围</span><i>→</i><span>再证明候选集合</span><i>→</i><span>再证明记录与字段合同</span><i>→</i><span>最后执行副作用并重新查询终态</span>
+</div>
 
-**[概念]** 文件对象是文件系统中的实体；路径名是目录项组成的名称。一个对象可能有多个名称，名称本身也可能包含空格、制表符、换行和引号。Linux 文件名不能包含 NUL 字节，因此 NUL 可以作为任意文件名集合的可靠记录分隔符。
+<div class="concept-stack">
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>文件集合</strong> 是在某一搜索空间和某组条件下成立的对象集合。它不是一份永久不变的路径清单：目录树可能变化、权限可能阻止遍历、链接策略可能改变观察对象。判断集合时必须同时保留搜索起点、表达式、标准错误和生成时间；仅看到若干输出路径，不能证明没有遗漏。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong><code>find</code> 表达式</strong> 是对每个遍历对象求值的条件与动作组合，由测试、逻辑运算符和动作共同构成。相邻测试默认使用 AND，AND 的优先级高于 OR，动作本身也有真值并参与短路求值。因此，复杂命令必须先用括号明确逻辑，再把统一的预览或执行动作放到完整条件之后。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>正则表达式</strong> 描述文本记录中的字符模式，不等同于 Shell glob。`*.conf` 是路径名称模式，`.*\.conf$` 才是正则形式；`grep -F` 又把模式视为固定字符串。选择错误的模式语言，会让命令看似合理却得到过宽、过窄或完全不同的集合。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>记录与字段</strong> 是文本处理的两层合同。记录边界先回答“一条输入在哪里结束”，字段边界再回答“记录内部怎样拆列”。`grep`、`sed` 默认按换行处理记录，`awk` 默认一行一条记录并根据 `FS` 拆字段。若记录边界已经破坏对象，后续字段工具无法把它恢复。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>NUL 分隔</strong> 利用 Linux 文件名不能包含 NUL 字节这一事实，把任意路径名称作为完整记录传递。`find -print0`、`grep -Z` 等生产端必须与 `xargs -0` 等消费端成对出现。NUL 解决的是名称分隔问题，不会自动解决目录树在“检查后、使用前”发生变化的竞态。</p></div>
+  <div class="concept-block"><span class="concept-label">概念</span><p><strong>批量执行边界</strong> 是从“我找到了什么”切换到“我要改变什么”的分界线。安全流程把预览、执行和验收拆开：预览证明集合正确，执行把每个路径作为独立 argv 传给子命令，验收重新查询新状态、旧状态、反例、备份和错误流。命令成功只证明命令按自身约定结束，不能替代终态验证。</p></div>
+</div>
+<div class="quickref">
+  <div class="quickref-title">操作语义速查</div>
+  <p class="quickref-intro">这里先建立关键命令的接口地图。正文专题会继续解释为什么这样选择、怎样验证以及在哪些边界下不能直接执行。</p>
 
-**[概念]** 文本工具通常把输入看成记录流。`grep` 和 `sed` 默认把换行作为记录边界；`awk` 默认一行一条记录，再根据字段分隔规则拆分字段；`sort`、`uniq`、`wc` 等工具处理的是输入记录或字符，而不是“业务对象”本身。
+  <div class="command-group">
+    <h3><code>find</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>find [OPTIONS] [START...] [EXPRESSION]</code></pre>
+    <p>实时遍历一个或多个起点，对每个对象求值表达式，并通过动作输出或传递匹配对象。</p>
+    <h4>重要参数 / 形式</h4>
+    <dl>
+      <dt><code>START...</code></dt><dd>明确搜索起点；关键变更优先使用绝对路径。</dd>
+      <dt><code>-type / -name / -user / -size / -mtime</code></dt><dd>把任务条件翻译为可解释的对象测试。</dd>
+      <dt><code>\( A -o B \) / ! TEST</code></dt><dd>显式表达 OR、分组和否定，避免优先级误判。</dd>
+      <dt><code>-print / -printf</code></dt><dd>用于可读预览和审计输出。</dd>
+      <dt><code>-print0</code></dt><dd>以 NUL 终止每个路径，供支持 NUL 的下游消费。</dd>
+      <dt><code>-exec command -- {} +</code></dt><dd>由 <code>find</code> 直接把多个路径构造成独立参数。</dd>
+    </dl>
+  </div>
 
-**[概念]** `find` 是实时目录树查询器；`locate` 是名称索引查询器。前者受搜索起点、遍历权限和实时状态影响，后者受数据库更新时间、排除规则和可见性影响。两者返回的证据强度不同。
+  <div class="command-group">
+    <h3><code>locate</code> / <code>updatedb</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>locate [OPTIONS] PATTERN...
+updatedb [OPTIONS]</code></pre>
+    <p><code>locate</code> 查询预先建立的名称索引；<code>updatedb</code> 重新扫描允许的目录并更新索引。结果速度快，但时效性低于实时遍历。</p>
+    <h4>重要参数 / 形式</h4>
+    <dl>
+      <dt><code>locate PATTERN</code></dt><dd>快速生成路径候选，不直接证明对象当前存在。</dd>
+      <dt><code>-i</code></dt><dd>名称匹配时忽略大小写。</dd>
+      <dt><code>-n N</code></dt><dd>只显示前 N 个匹配，适合快速抽样。</dd>
+      <dt><code>updatedb</code></dt><dd>更新索引；排除规则和权限仍决定哪些路径可被收录。</dd>
+      <dt><code>stat -- PATH</code></dt><dd>把索引候选带回实时证据。</dd>
+    </dl>
+  </div>
 
-**[操作语义]** `find` 用起点和表达式选择对象，并通过动作输出或传递对象；`grep` 按模式选择记录；`cut`、`sed`、`awk`、`tr` 转换记录；`sort`、`uniq`、`wc` 排序、聚合或计数；`xargs` 把输入项目构造成命令参数。
+  <div class="command-group">
+    <h3><code>grep</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>grep [OPTIONS] PATTERN [FILE...]</code></pre>
+    <p>从文本记录中选择与模式匹配的记录；模式引擎和输出形式会直接改变结果语义。</p>
+    <h4>重要参数 / 形式</h4>
+    <dl>
+      <dt><code>-F</code></dt><dd>把模式当作固定字符串，避免不需要的正则解释。</dd>
+      <dt><code>-E</code></dt><dd>使用扩展正则表达式。</dd>
+      <dt><code>-r / -R</code></dt><dd>递归读取目录；符号链接处理边界不同，使用前需确认。</dd>
+      <dt><code>-n / -i / -v</code></dt><dd>显示行号、忽略大小写、反选。</dd>
+      <dt><code>-l / -L / -c / -q</code></dt><dd>输出匹配文件名、不匹配文件名、计数或仅使用退出状态。</dd>
+    </dl>
+  </div>
 
-**[操作语义]** 批量修改必须分为“候选预览”和“实际执行”两个阶段。预览阶段证明集合正确，执行阶段改变对象，验证阶段重新查询终态。不能把命令成功、输出非空或文件存在扩大为业务终态正确。
+  <div class="command-group">
+    <h3><code>cut</code> / <code>sort</code> / <code>uniq</code> / <code>tr</code> / <code>wc</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>cut OPTION... [FILE...]
+sort [OPTION]... [FILE]...
+uniq [OPTION]... [INPUT [OUTPUT]]
+tr [OPTION]... STRING1 [STRING2]
+wc [OPTION]... [FILE]...</code></pre>
+    <p>这些工具适合对合同明确的记录流执行字段提取、排序、相邻去重、字符转换和计数。</p>
+    <h4>重要参数 / 形式</h4>
+    <dl>
+      <dt><code>cut -d DELIM -f LIST</code></dt><dd>按单字符分隔符提取固定字段。</dd>
+      <dt><code>sort -t DELIM -k KEY / -n / -r</code></dt><dd>明确字段分隔、排序键、数字比较和方向。</dd>
+      <dt><code>sort ... | uniq -c</code></dt><dd>先让相同记录相邻，再计数；排序会改变原始顺序。</dd>
+      <dt><code>tr -d / -s</code></dt><dd>删除字符集合或压缩重复字符，不做字符串子串替换。</dd>
+      <dt><code>wc -l / -c / -w</code></dt><dd>统计换行、字节或单词；数字必须解释成明确对象。</dd>
+    </dl>
+  </div>
 
+  <div class="command-group">
+    <h3><code>sed</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>sed [OPTIONS] SCRIPT [INPUTFILE...]</code></pre>
+    <p>按地址选择记录并执行替换、打印或删除等编辑动作。默认先把结果写到标准输出，再决定是否修改文件。</p>
+    <h4>重要参数 / 形式</h4>
+    <dl>
+      <dt><code>-n 'ADDRESS p'</code></dt><dd>关闭默认输出，只打印明确选择的记录。</dd>
+      <dt><code>-E</code></dt><dd>在脚本中使用扩展正则表达式。</dd>
+      <dt><code>s/OLD/NEW/g</code></dt><dd>替换一条记录中的全部匹配；未加 <code>g</code> 时只替换第一个。</dd>
+      <dt><code>-e SCRIPT / -f FILE</code></dt><dd>组合多个脚本或从脚本文件加载规则。</dd>
+      <dt><code>-i.SUFFIX</code></dt><dd>原地替换并保留备份；执行前仍应先预览。</dd>
+    </dl>
+  </div>
+
+  <div class="command-group">
+    <h3><code>awk</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>awk [OPTIONS] 'PATTERN { ACTION }' [FILE...]</code></pre>
+    <p>把输入解释为记录与字段，根据条件执行打印、计算和小型聚合。</p>
+    <h4>重要参数 / 形式</h4>
+    <dl>
+      <dt><code>-F DELIM</code></dt><dd>设置输入字段分隔符。</dd>
+      <dt><code>-v NAME=VALUE</code></dt><dd>在处理输入前安全传入外部值。</dd>
+      <dt><code>$0 / $1... / NF</code></dt><dd>整条记录、字段和当前字段数。</dd>
+      <dt><code>NR / FNR</code></dt><dd>全部输入累计记录号与当前文件记录号。</dd>
+      <dt><code>BEGIN / END / OFS</code></dt><dd>初始化、最终汇总和稳定输出字段合同。</dd>
+    </dl>
+  </div>
+
+  <div class="command-group">
+    <h3><code>xargs</code></h3>
+    <div class="synopsis-label">SYNOPSIS</div>
+    <pre><code>xargs [OPTIONS] [COMMAND [INITIAL-ARGS]]</code></pre>
+    <p>从输入项目构造命令参数并分批执行。它处理的是 argv，不应被用来把路径重新拼成 Shell 代码。</p>
+    <h4>重要参数 / 形式</h4>
+    <dl>
+      <dt><code>-0</code></dt><dd>按 NUL 读取输入，必须与 NUL 生产端配对。</dd>
+      <dt><code>-r</code></dt><dd>GNU 扩展：输入为空时不运行命令。</dd>
+      <dt><code>-n N</code></dt><dd>限制每次调用使用的输入项目数。</dd>
+      <dt><code>-I REPL</code></dt><dd>占位替换模式，适合参数位置不能简单追加的场景，但通常降低批量效率。</dd>
+      <dt><code>--</code></dt><dd>在被调用命令支持时结束其选项解析，保护以连字符开头的路径。</dd>
+    </dl>
+  </div>
+</div>
 <section class="topic knowledge" id="RHCSA-05-K01" data-kind="knowledge-topic" markdown="1">
 
 ## [知识专题] 从目录树对象到记录流：先确定自己正在处理什么
@@ -1268,25 +1436,66 @@ awk -F '\t' '
 - 只检查报告非空，没有验证总数恒等式和反例。
 
 </section>
-
 <section class="topic summary" id="RHCSA-05-S01" data-kind="chapter-summary" markdown="1">
 
-## [本章收束] 把“命令链”升级为可证明的数据处理流程
+## [本章收束] 把命令链升级为可证明的数据处理流程
 
-本章的核心不是某个工具的参数数量，而是五个稳定判断：
+本章建立的不是一组孤立命令，而是一条可以反复使用的工作方法：**先把任务改写为对象条件，再固定并审查候选集合；只有记录和字段合同明确后，才执行转换或批量动作；最后用独立查询证明目标达到、旧状态消失、反例未变且错误没有被吞掉。**
 
-1. `find` 和 `locate` 返回的是不同时间强度的路径证据；
-2. 正则、记录和字段各有边界，不能把 glob、文本行和字段位置混用；
-3. 任意文件名必须保持为独立参数，NUL 是可靠的记录协议；
-4. 批量修改前必须把选择集合固定并可审计；
-5. 验收需要同时证明目标达到、旧状态消失、反例未变和错误未被吞掉。
+### ① [操作决策] 一条可执行的工作方法
 
-从工作迁移角度，本章产出的稳定接口可以直接服务后续章节：第 06 章可接收经过验证的文件集合进行复制、归档和传输；权限、软件、日志和自动化章节也可以复用同一套“先选择、再操作、分层验证”的证据模型。
+```text
+限定搜索空间
+→ 把自然语言要求翻译为对象谓词
+→ 只输出候选并检查 stderr
+→ 检查数量、样本、边界对象和反例
+→ 明确记录与字段分隔符
+→ 选择固定字符串、正则或字段条件
+→ 使用 -exec ... {} + 或完整 NUL 协议构造 argv
+→ 执行最小副作用
+→ 重新查询新状态、旧状态、反例、备份和错误流
+```
+
+### ② [验证] 章末检查清单
+
+- [ ] 起点、深度、文件系统和链接策略已经明确；
+- [ ] 文件对象条件与内容条件没有混用；
+- [ ] glob、固定字符串、BRE 和 ERE 选择正确；
+- [ ] 记录边界先于字段边界确定；
+- [ ] 任意文件名没有通过空白分词或命令替换传递；
+- [ ] 预览集合和执行集合来自同一筛选真源；
+- [ ] 空集合不会意外执行批量命令；
+- [ ] 新状态、旧状态、范围外反例和错误流均已检查；
+- [ ] 没有把命令退出为零扩大为业务终态正确；
+- [ ] 需要实机确认的版本或元数据行为已记录，而不是伪造输出。
+
+### ③ [知识点] 主要判断表
+
+| 需求或症状 | 首选入口 | 关键边界 | 下一层证据 |
+|---|---|---|---|
+| 实时选择目录树对象 | `find` | 起点、权限、深度、链接、表达式 | `-printf`、stderr、`stat` 抽查 |
+| 快速按名称找候选 | `locate` | 索引可能过期或排除路径 | `stat` 或限定范围的 `find` |
+| 精确查找字面文本 | `grep -F` | 不需要正则时避免误解释 | 行号、文件名、计数与反例 |
+| 按正则选择记录 | `grep -E` | 引用、锚点、字符类、locale | 代表性匹配和退出状态 |
+| 固定分隔字段提取 | `cut` | 只能依赖稳定单字符分隔符 | 字段数抽查 |
+| 条件、计算或聚合 | `awk` | `FS`、`NF`、数字字段、数组无序 | 汇总恒等式与异常清单 |
+| 排序后统计重复 | `sort | uniq -c` | `uniq` 只处理相邻重复，排序改变顺序 | 首尾样本与总数 |
+| 选择后直接批量调用 | `find ... -exec ... {} +` | 候选来自 `find`，参数通常追加在末尾 | 子命令状态与终态查询 |
+| 任意上游传递路径 | `... -print0 | xargs -0 -r ...` | 两端都必须使用 NUL | 转义预览、空输入与批次检查 |
+| 修改文本文件 | `sed` / `awk` | 先 stdout 预览，再备份修改 | 新旧模式、备份和反例 |
+
+### ④ [边界] 本章能证明什么，不能证明什么
+
+本章的查询和验证可以静态说明推荐命令、参数语义、数据边界与验收路径，但当前会话没有可控 RHEL 9 虚拟机，因此没有声称真实执行过这些任务。尤其是 `locate` 的具体实现与数据库路径、`sed -i` 对 ACL/SELinux 标签/硬链接关系的实际影响，以及大批量 `xargs` 的拆批和失败传播，需要在目标 RHEL 9 环境中再次观察。
+
+### ⑤ [知识点] 向下一章交接
+
+本章交付给第 06 章的是一个**已经限定、预览并验证过的文件集合**。下一章会讨论怎样复制、归档、压缩或远程传输这些对象，并继续验证目录结构、元数据、压缩格式和远端终态。本章不提前展开 `cp`、`tar`、`scp` 或 `rsync`；但下一章应复用这里建立的安全入口：不要在未经审查的路径集合上直接执行复制或归档。
 
 ### 本章总 Cheatsheet
 
 ```bash
-# 实时查找与预览
+# 实时查找与审计预览
 find START TESTS -print
 find START TESTS -printf 'FORMAT'
 
@@ -1299,7 +1508,8 @@ find START TESTS -exec command -- {} +
 # NUL 流水线
 find START TESTS -print0 | xargs -0 -r command --
 
-# 正则选择
+# 固定字符串与正则选择
+grep -F 'literal text' file
 grep -E '^[[:space:]]*KEY[[:space:]]+VALUE[[:space:]]*$' file
 
 # 字段与聚合
