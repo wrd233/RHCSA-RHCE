@@ -25,7 +25,7 @@
     "RHCSA-24/RHCSA-30 daemon-reload": "retain: fstab persistence versus boot recovery context"
   },
   "chapter_pdf_pages": 990,
-  "full_book_pages": 648,
+  "full_book_pages": 646,
   "pdf_qa_failures": 0,
   "apkg_bytes": 2220250,
   "anki_connect": {
