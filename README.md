@@ -74,7 +74,7 @@ APKG Model 包含 `Source` 字段，但正式卡面不显示它。构建从不�
 外部资料策略见 `docs/guides/external-sources.md`；通过 `RHEL_SOURCE_ROOT=/path/to/rhel-sources` 指向本地版权资料，不提交课件、字体或 OCR 临时文件。完整 v5.1 证据见 `reports/RHCSA_V5_1_INTEGRATION_REPORT.md`。
 # 正式阅读版与 AnkiConnect
 
-RHCSA 正式 PDF 默认采用大字号阅读版：无页眉、页脚和页码；概念全宽单列、术语加粗换色，定义与已有理解说明分层；操作语义采用可查询的 man-page 风格，重要参数逐项排列。详见 `docs/specs/PDF大字号阅读版排版规范.md`。
+RHCSA 正式 PDF 默认采用大字号阅读版：无页眉、页脚和页码；显式概念组件全宽单列、术语加粗换色，作者的自然完整解释保持原样；显式操作速查提供 SYNOPSIS 和纵向参数。详见 `docs/specs/PDF大字号阅读版排版规范.md`。
 
 ```bash
 uv run python tools/doctor.py
