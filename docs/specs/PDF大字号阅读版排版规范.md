@@ -2,7 +2,7 @@
 
 ## 唯一视觉参考
 
-正式参考为根目录输入包 `RHCSA-01-shell-parsing-expansion-v5.1-final.zip` 内的 `RHCSA-01-shell-parsing-expansion/lecture-review.pdf`，SHA-256 为 `94613171491c8dc864850fc194d26c8d5a1e3803dab7b76078ffcd955b84f770`。该摘要同时写入输入清单和自动测试；不得引用个人目录或其他样章。
+正式参考为根目录输入包 `RHCSA-01-shell-parsing-expansion-v5.1-final.zip` 内的 `RHCSA-01-shell-parsing-expansion/lecture-review.pdf`，SHA-256 为 `610162e211a9a9e61fcfb404b8ed80f0511117362fed04be6f1107fe7fd1fc29`。该摘要同时写入输入清单和自动测试；不得引用个人目录或其他样章。
 
 ## 内容与组件合同
 

@@ -191,6 +191,11 @@ def lecture_markdown_to_html(text: str) -> str:
     # eligible; ordinary command examples remain untouched.
     for code in list(soup.select("pre > code")):
         value = html.unescape(code.get_text())
+        explicit_component = code.find_parent(attrs={"data-explicit-html": "1"}) or (
+            code.find_parent(class_="quickref-command") and value.lstrip().startswith("<pre><code>")
+        )
+        if not explicit_component:
+            continue
         if re.search(r"<(?:div|pre|p|dl|h[1-4])(?:\s|>)", value) and re.search(r"</(?:div|pre|p|dl|h[1-4])>", value):
             fragment = BeautifulSoup(value, "html.parser")
             pre = code.parent
@@ -199,12 +204,26 @@ def lecture_markdown_to_html(text: str) -> str:
             pre.decompose()
     for node in list(soup.find_all(string=lambda value: value and re.search(r"<(?:h[1-4]|div|pre|p|dl)(?:\s|>)", value))):
         value = html.unescape(str(node))
+        explicit_component = node.find_parent(attrs={"data-explicit-html": "1"}) or (
+            re.match(r"\s*<h[1-4]>", value) and "synopsis-label" in value
+        ) or node.find_parent(class_="quickref-command")
+        if not explicit_component:
+            continue
         if not re.search(r"</(?:h[1-4]|div|pre|p|dl)>", value):
             continue
         fragment = BeautifulSoup(value, "html.parser")
         for child in list(fragment.contents):
             node.insert_before(child.extract())
         node.extract()
+    for code in list(soup.select(".quickref-command pre > code")):
+        value = html.unescape(code.get_text())
+        if not value.lstrip().startswith("<pre><code>"):
+            continue
+        fragment = BeautifulSoup(value, "html.parser")
+        pre = code.parent
+        for child in list(fragment.contents):
+            pre.insert_before(child.extract())
+        pre.decompose()
     for tag in soup.find_all(class_=True):
         tokens = tag.get("class", [])
         for token in list(tokens):
@@ -223,10 +242,33 @@ def lecture_markdown_to_html(text: str) -> str:
         alias = kind_aliases.get(tag.get("data-kind"))
         if alias:
             tag["class"] = list(dict.fromkeys([*tag.get("class", []), alias]))
+    for component in soup.select(".reading-navigation, .quickref-command"):
+        inner = component.decode_contents()
+        if "&lt;div class=" not in inner:
+            continue
+        repaired = re.sub(
+            r"&lt;(/?)(div|p|dl|dt|dd|pre|code|h[1-4])([^&]*)&gt;",
+            lambda match: f"<{match.group(1)}{match.group(2)}{html.unescape(match.group(3))}>",
+            inner,
+        )
+        parsed = BeautifulSoup(repaired, "html.parser")
+        component.clear()
+        for child in list(parsed.contents):
+            component.append(child.extract())
+    # Some frozen quickref cards explicitly opt into Markdown but are nested in
+    # a raw HTML wrapper. Parse only those already-explicit command components.
+    for command in list(soup.find_all(class_="quickref-command")):
+        inner = command.decode_contents()
+        if "**SYNOPSIS**" not in inner and not re.search(r"(?m)^#{2,4}\s", inner):
+            continue
+        parsed = BeautifulSoup(markdown.markdown(inner, extensions=["extra", "sane_lists"]), "html.parser")
+        command.clear()
+        for child in list(parsed.contents):
+            command.append(child.extract())
     for heading in soup.find_all(["h1", "h2", "h3"]):
         label = heading.get_text(" ", strip=True)
         alias = "classic-task" if label.startswith("[经典任务]") else "reference-solution" if label.startswith(("[参考解答]", "[参考答案]")) else None
-        if alias:
+        if alias and not heading.find_parent(class_=alias):
             heading["class"] = list(dict.fromkeys([*heading.get("class", []), alias]))
     for tag in list(soup.find_all(["p", "div", "span"])):
         if re.match(r"^Source\s*:", tag.get_text(" ", strip=True), re.I):
@@ -297,6 +339,31 @@ def lecture_markdown_to_html(text: str) -> str:
                 for item in run:
                     wrapper.append(item.extract())
                 run = []
+    if not soup.find(class_="operation-quickref"):
+        command = soup.find(class_="quickref-command")
+        if command and command.find_all(string=lambda value: value and value.strip() == "SYNOPSIS"):
+            command["class"] = list(dict.fromkeys([*command.get("class", []), "operation-quickref"]))
+    for _ in range(3):
+        repaired_any = False
+        for node in list(soup.select(".reading-navigation *, .operation-quickref *")):
+            for text_node in list(node.find_all(string=lambda value: value and re.search(r"<(?:div|ol|li|p|dl|dt|dd|pre|code)(?:\s|>)", value), recursive=False)):
+                value = html.unescape(str(text_node))
+                if not re.search(r"</(?:div|ol|li|p|dl|dt|dd|pre|code)>", value):
+                    continue
+                fragment = BeautifulSoup(value, "html.parser")
+                for child in list(fragment.contents):
+                    text_node.insert_before(child.extract())
+                text_node.extract()
+                repaired_any = True
+        if not repaired_any:
+            break
+    for text_node in list(soup.select_one("body").find_all(string=True) if soup.body else soup.find_all(string=True)):
+        value = str(text_node)
+        if not text_node.find_parent(class_="operation-quickref") and 'class="forms-label"' not in value:
+            continue
+        if not re.search(r"</?(?:div|p|dl|dt|dd|pre|code)(?:\s|>)", value):
+            continue
+        text_node.replace_with(re.sub(r"</?(?:div|p|dl|dt|dd|pre|code)[^>]*>", "", value))
     return str(soup)
 
 

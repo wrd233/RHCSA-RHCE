@@ -9,6 +9,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pypdf import PdfReader, PdfWriter
+from pypdf.annotations import Link
 
 from common import ROOT, chrome_pdf, iter_chapters, lecture_markdown_to_html, load_manifest, rel
 
@@ -119,7 +120,9 @@ def build_reading_book_from_chapters(chapters: list[dict]) -> Path:
     front_pages = len(PdfReader(front_pdf).pages)
     offset = front_pages
     part_parents: dict[str, object] = {}
+    chapter_offsets = []
     for chapter, path, pages in zip(chapters, chapter_paths, page_counts):
+        chapter_offsets.append(offset)
         writer.append(str(path), import_outline=False)
         part = chapter.get("part", "RHCSA")
         if part not in part_parents:
@@ -127,17 +130,31 @@ def build_reading_book_from_chapters(chapters: list[dict]) -> Path:
         chapter_parent = writer.add_outline_item(
             f'{chapter["id"]} {chapter["title"]}', offset, parent=part_parents[part]
         )
-        source_outline = PdfReader(path).outline
-        for item in source_outline:
-            if isinstance(item, list) or not hasattr(item, "title"):
-                continue
-            try:
-                local_page = PdfReader(path).get_destination_page_number(item)
-            except Exception:
-                continue
-            if local_page > 0:
-                writer.add_outline_item(str(item.title), offset + local_page, parent=chapter_parent)
+        source_reader = PdfReader(path)
+        def copy_outline(items, parent):
+            last_parent = parent
+            for item in items:
+                if isinstance(item, list):
+                    copy_outline(item, last_parent)
+                    continue
+                if not hasattr(item, "title"):
+                    continue
+                try:
+                    local_page = source_reader.get_destination_page_number(item)
+                except Exception:
+                    continue
+                last_parent = writer.add_outline_item(str(item.title), offset + local_page, parent=parent)
+        copy_outline(source_reader.outline, chapter_parent)
         offset += pages
+    # The front-matter TOC spans two pages. Add PDF GoTo annotations over each
+    # chapter row and named destinations for assistive/document tooling.
+    per_page = (len(chapters) + max(front_pages - 1, 1) - 1) // max(front_pages - 1, 1)
+    for index, (chapter, target) in enumerate(zip(chapters, chapter_offsets)):
+        toc_page = 1 + index // per_page
+        row = index % per_page
+        y_top = 748 - row * 38
+        writer.add_annotation(toc_page, Link(rect=(52, y_top - 24, 543, y_top + 8), target_page_index=target))
+        writer.add_named_destination(chapter["id"], target)
     release = release_root / "RHCSA-RHEL9-v5.1.pdf"
     staging = out_dir / "RHCSA-RHEL9-v5.1.staging.pdf"
     staging.parent.mkdir(parents=True, exist_ok=True)

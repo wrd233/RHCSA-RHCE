@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from common import iter_chapters, lecture_markdown_to_html
 
-REFERENCE_SHA = "94613171491c8dc864850fc194d26c8d5a1e3803dab7b76078ffcd955b84f770"
+REFERENCE_SHA = "610162e211a9a9e61fcfb404b8ed80f0511117362fed04be6f1107fe7fd1fc29"
 
 
 def sources() -> str:
@@ -28,9 +28,9 @@ def test_no_wrong_reference_filename():
 
 
 def test_no_user_downloads_absolute_path():
-    forbidden = "/Users/" + "example/Downloads/"
-    assert forbidden.replace("example", "[^/]+") not in sources()
-    assert not re.search(r"/Users/[^/]+/" + "Downloads/", sources())
+    prefix = re.escape(chr(47) + "Users" + chr(47))
+    pattern = prefix + "[^/]+/" + "Down" + "loads/"
+    assert not re.search(pattern, sources())
 
 
 def test_no_mechanical_concept_splitter():

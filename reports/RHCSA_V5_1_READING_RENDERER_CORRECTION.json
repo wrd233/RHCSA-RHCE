@@ -3,15 +3,15 @@
   "reference": {
     "archive": "RHCSA-01-shell-parsing-expansion-v5.1-final.zip",
     "member": "RHCSA-01-shell-parsing-expansion/lecture-review.pdf",
-    "sha256": "94613171491c8dc864850fc194d26c8d5a1e3803dab7b76078ffcd955b84f770"
+    "sha256": "610162e211a9a9e61fcfb404b8ed80f0511117362fed04be6f1107fe7fd1fc29"
   },
   "chapter_pdfs": 33,
-  "chapter_pages": 1082,
+  "chapter_pages": 1090,
   "front_matter_pages": 3,
-  "book_pages": 1085,
+  "book_pages": 1093,
   "page_equation": true,
   "visual_mismatches": 0,
   "anki": "ANKI_CANONICAL_UNCHANGED",
   "ankiconnect": "ANKICONNECT_APPLY_NOT_REQUIRED",
-  "git_commit": "97021f0c4663a2c782018ae742fbc96375884ad8"
+  "git_commit": "d489368d70ee19fda2bf3b77a685cc4e1c42774e"
 }

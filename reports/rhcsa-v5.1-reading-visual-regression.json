@@ -1,7 +1,7 @@
 {
   "front_matter_pages": 3,
-  "chapter_pages": 1082,
-  "book_pages": 1085,
+  "chapter_pages": 1090,
+  "book_pages": 1093,
   "equation_ok": true,
   "comparisons": [
     {
@@ -37,168 +37,168 @@
     {
       "chapter": "RHCSA-06",
       "book_start_page": 172,
-      "pages": 34,
+      "pages": 35,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-07",
-      "book_start_page": 206,
+      "book_start_page": 207,
       "pages": 32,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-08",
-      "book_start_page": 238,
+      "book_start_page": 239,
       "pages": 33,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-09",
-      "book_start_page": 271,
+      "book_start_page": 272,
       "pages": 31,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-10",
-      "book_start_page": 302,
+      "book_start_page": 303,
       "pages": 30,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-11",
-      "book_start_page": 332,
+      "book_start_page": 333,
       "pages": 33,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-12",
-      "book_start_page": 365,
-      "pages": 41,
+      "book_start_page": 366,
+      "pages": 42,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-13",
-      "book_start_page": 406,
-      "pages": 36,
-      "mismatches": []
-    },
-    {
-      "chapter": "RHCSA-14",
-      "book_start_page": 442,
-      "pages": 29,
-      "mismatches": []
-    },
-    {
-      "chapter": "RHCSA-15",
-      "book_start_page": 471,
+      "book_start_page": 408,
       "pages": 37,
       "mismatches": []
     },
     {
+      "chapter": "RHCSA-14",
+      "book_start_page": 445,
+      "pages": 30,
+      "mismatches": []
+    },
+    {
+      "chapter": "RHCSA-15",
+      "book_start_page": 475,
+      "pages": 39,
+      "mismatches": []
+    },
+    {
       "chapter": "RHCSA-16",
-      "book_start_page": 508,
+      "book_start_page": 514,
       "pages": 35,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-17",
-      "book_start_page": 543,
+      "book_start_page": 549,
       "pages": 42,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-18",
-      "book_start_page": 585,
+      "book_start_page": 591,
       "pages": 33,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-19",
-      "book_start_page": 618,
+      "book_start_page": 624,
       "pages": 35,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-20",
-      "book_start_page": 653,
+      "book_start_page": 659,
       "pages": 24,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-21",
-      "book_start_page": 677,
+      "book_start_page": 683,
       "pages": 30,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-22",
-      "book_start_page": 707,
+      "book_start_page": 713,
       "pages": 26,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-23",
-      "book_start_page": 733,
+      "book_start_page": 739,
       "pages": 34,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-24",
-      "book_start_page": 767,
+      "book_start_page": 773,
       "pages": 33,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-25",
-      "book_start_page": 800,
+      "book_start_page": 806,
       "pages": 30,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-26",
-      "book_start_page": 830,
+      "book_start_page": 836,
       "pages": 28,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-27",
-      "book_start_page": 858,
+      "book_start_page": 864,
       "pages": 31,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-28",
-      "book_start_page": 889,
+      "book_start_page": 895,
       "pages": 31,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-29",
-      "book_start_page": 920,
+      "book_start_page": 926,
       "pages": 28,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-30",
-      "book_start_page": 948,
+      "book_start_page": 954,
       "pages": 39,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-31",
-      "book_start_page": 987,
-      "pages": 24,
+      "book_start_page": 993,
+      "pages": 26,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-32",
-      "book_start_page": 1011,
+      "book_start_page": 1019,
       "pages": 32,
       "mismatches": []
     },
     {
       "chapter": "RHCSA-33",
-      "book_start_page": 1043,
+      "book_start_page": 1051,
       "pages": 43,
       "mismatches": []
     }

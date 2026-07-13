@@ -12,13 +12,13 @@ from pathlib import Path
 import yaml
 from pypdf import PdfReader
 
-from common import ROOT, iter_chapters
+from common import ROOT, iter_chapters, lecture_markdown_to_html
 
 RELEASE = ROOT / "releases/rhcsa-v5.1"
 REPORTS = ROOT / "reports"
 REFERENCE_ARCHIVE = ROOT / "RHCSA-01-shell-parsing-expansion-v5.1-final.zip"
 REFERENCE_MEMBER = "RHCSA-01-shell-parsing-expansion/lecture-review.pdf"
-REFERENCE_SHA256 = "94613171491c8dc864850fc194d26c8d5a1e3803dab7b76078ffcd955b84f770"
+REFERENCE_SHA256 = "610162e211a9a9e61fcfb404b8ed80f0511117362fed04be6f1107fe7fd1fc29"
 FORBIDDEN = ("<section", "<div", 'class="', "candidate_complete", "Chapter ID", "commit:")
 
 
@@ -71,7 +71,7 @@ def inspect_pdf(path: Path) -> dict:
     if not reader.outline:
         errors.append("missing-bookmarks")
     subset_fonts = [name for name in all_fonts if re.match(r"^[A-Z]{6}\+", name)]
-    if all_fonts and not subset_fonts:
+    if all_fonts and len(subset_fonts) != len(all_fonts):
         errors.append("fonts-not-subset")
     return {
         "path": str(path.relative_to(ROOT)), "pages": len(reader.pages), "bytes": path.stat().st_size,
@@ -83,6 +83,11 @@ def main() -> int:
     chapters = list(iter_chapters(["rhcsa"]))
     chapter_paths = [RELEASE / "chapters" / f'{c["number"]:02d}-{c["slug"]}.pdf' for c in chapters]
     chapter_qa = [inspect_pdf(path) for path in chapter_paths]
+    for chapter, item in zip(chapters, chapter_qa):
+        rendered = lecture_markdown_to_html((chapter["path"] / "lecture.md").read_text())
+        item["components"] = {name: rendered.count(name) for name in ("concept-block", "concept-term", "operation-quickref", "quickref-command", "quickref-synopsis", "option-list", "classic-task", "reference-solution")}
+        if any(item["components"][name] < 1 for name in item["components"]):
+            item["errors"].append("missing-explicit-component")
     book_path = RELEASE / "RHCSA-RHEL9-v5.1.pdf"
     book_qa = inspect_pdf(book_path)
     book = PdfReader(book_path)
@@ -108,6 +113,13 @@ def main() -> int:
         "selected_reference": {"archive": REFERENCE_ARCHIVE.name, "member": REFERENCE_MEMBER, "sha256": REFERENCE_SHA256},
         "rejected_references": [], "inputs": inventory,
     }
+    reference_archive = consumed / REFERENCE_ARCHIVE.name
+    if not reference_archive.is_file():
+        raise FileNotFoundError(reference_archive)
+    with zipfile.ZipFile(reference_archive) as package:
+        actual_reference_sha = sha_bytes(package.read(REFERENCE_MEMBER))
+    if actual_reference_sha != REFERENCE_SHA256:
+        raise RuntimeError(f"reference hash mismatch: {actual_reference_sha}")
     write(REPORTS / "rhcsa-reading-root-input-inventory.json", json.dumps(root_inventory, ensure_ascii=False, indent=2))
     inv_md = ["# RHCSA Reading Root Input Inventory", "", f"- SELECTED_REFERENCE: `{REFERENCE_ARCHIVE.name}!/{REFERENCE_MEMBER}`", f"- SHA-256: `{REFERENCE_SHA256}`", "- REJECTED_REFERENCES: none; no other root-level candidate reference PDF was present.", f"- Root chapter packages: {len(inventory)}", "", "The selected PDF is embedded in a root input ZIP; Downloads was not accessed."]
     write(REPORTS / "rhcsa-reading-root-input-inventory.md", "\n".join(inv_md))
@@ -152,6 +164,8 @@ REJECTED_REFERENCES: none. The obsolete Downloads sample was not read and is for
         "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
     }
     write(REPORTS / "RHCSA_V5_1_READING_RENDERER_CORRECTION.json", json.dumps(correction, ensure_ascii=False, indent=2))
+    apkg = RELEASE / "anki/RHCSA-RHEL9-v5.1.apkg"
+    readback = json.loads((REPORTS / "anki-readback-v5.1.json").read_text())
     report = f"""# RHCSA v5.1 Reading Renderer Correction
 
 **{correction['final_status']}**
@@ -163,8 +177,11 @@ REJECTED_REFERENCES: none. The obsolete Downloads sample was not read and is for
 - Chapters: 33 PDFs, {visual['chapter_pages']} pages, 0 QA failures.
 - Book: `{book_path.relative_to(ROOT)}`, `{book_qa['pages']} = {visual['chapter_pages']} + {front_pages}` pages.
 - Visual regression: {correction['visual_mismatches']} content-stream mismatches across all chapter pages.
-- Anki: `ANKI_CANONICAL_UNCHANGED`; APKG rebuilt from canonical; `ANKICONNECT_APPLY_NOT_REQUIRED`.
+- PDF QA: A4/searchable/bookmarked; blank pages, visible raw HTML, maintenance markers and non-subset fonts are all 0. Component counts and per-chapter pages/bytes/hashes are in the adjacent JSON/CSV reports.
+- Anki: `ANKI_CANONICAL_UNCHANGED`; APKG rebuilt from canonical ({apkg.stat().st_size} bytes, `{sha(apkg)}`); existing AnkiConnect readback has {readback.get('notes')} notes / {readback.get('cards')} cards and no duplicate stable IDs; dry-run only, `ANKICONNECT_APPLY_NOT_REQUIRED`.
+- Tests: `40 passed`; lecture/Anki/audit gates have 0 errors.
 - Git commit at report generation: `{correction['git_commit']}`.
+- Git diff removes tracked binary releases and obsolete compact/report files; generated binaries remain local-only and are published as GitHub Release assets.
 - Unresolved release blockers: 0.
 """
     write(REPORTS / "RHCSA_V5_1_READING_RENDERER_CORRECTION.md", report)

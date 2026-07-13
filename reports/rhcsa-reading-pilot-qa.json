@@ -4,8 +4,8 @@
     "RHCSA-01": {
       "path": "releases/rhcsa-v5.1/chapters/01-shell-parsing-expansion.pdf",
       "pages": 38,
-      "bytes": 1568075,
-      "sha256": "e6005fcf700b40864b3ec9c2078f9bdf8bb70141e8cd6926b65ad882a97bc3a0",
+      "bytes": 1567977,
+      "sha256": "b47c510b89422467a16b597b20125270e6dc5117c6d6a3d8adb157ca1c829d31",
       "fonts": [
         "AAAAAA+STSongti-SC-Regular",
         "CAAAAA+STSongti-SC-Bold",
@@ -24,13 +24,23 @@
         "MAAAAA+STSongti-SC-Bold",
         "NAAAAA+STSongti-SC-Regular"
       ],
-      "errors": []
+      "errors": [],
+      "components": {
+        "concept-block": 9,
+        "concept-term": 9,
+        "operation-quickref": 2,
+        "quickref-command": 6,
+        "quickref-synopsis": 6,
+        "option-list": 6,
+        "classic-task": 2,
+        "reference-solution": 1
+      }
     },
     "RHCSA-03": {
       "path": "releases/rhcsa-v5.1/chapters/03-local-help-command-discovery.pdf",
       "pages": 28,
       "bytes": 1462082,
-      "sha256": "39514064e3c815e8357877cc014f93bb02d498bf774f19dfbf98f51b0ba19c43",
+      "sha256": "9d9a747137fa9e01825210519a72228ac4de57b1d9aef10e1747c6a76f8b7568",
       "fonts": [
         "AAAAAA+STSongti-SC-Regular",
         "CAAAAA+STSongti-SC-Bold",
@@ -49,13 +59,23 @@
         "LAAAAA+STSongti-SC-Bold",
         "MAAAAA+STSongti-SC-Regular"
       ],
-      "errors": []
+      "errors": [],
+      "components": {
+        "concept-block": 7,
+        "concept-term": 7,
+        "operation-quickref": 2,
+        "quickref-command": 7,
+        "quickref-synopsis": 7,
+        "option-list": 7,
+        "classic-task": 1,
+        "reference-solution": 1
+      }
     },
     "RHCSA-12": {
       "path": "releases/rhcsa-v5.1/chapters/12-systemd-units-services.pdf",
-      "pages": 41,
-      "bytes": 1731734,
-      "sha256": "08ee1950a8df5f3c37392ac1fbaa7ff9a3701cce3b240ac88f42dd1a19165174",
+      "pages": 42,
+      "bytes": 1731902,
+      "sha256": "adb6b92dbfa87ab510b5b944b1a3f3645c8a36c88bce2b4ca05f3aa85e9f6340",
       "fonts": [
         "AAAAAA+STSongti-SC-Regular",
         "EAAAAA+STSongti-SC-Bold",
@@ -74,13 +94,23 @@
         "LAAAAA+Menlo-Regular",
         "NAAAAA+STSongti-SC-Bold"
       ],
-      "errors": []
+      "errors": [],
+      "components": {
+        "concept-block": 8,
+        "concept-term": 8,
+        "operation-quickref": 5,
+        "quickref-command": 9,
+        "quickref-synopsis": 6,
+        "option-list": 6,
+        "classic-task": 4,
+        "reference-solution": 4
+      }
     },
     "RHCSA-25": {
       "path": "releases/rhcsa-v5.1/chapters/25-lvm.pdf",
       "pages": 30,
       "bytes": 1311246,
-      "sha256": "2c9949a6fea33deb7105614b39b9ee98fe36459a8494efd8dd943da59c7b6112",
+      "sha256": "61b70c741699da7ae0ccf455b5c6893f205781940d8feac6b1663feb2dfa93f3",
       "fonts": [
         "AAAAAA+STSongti-SC-Regular",
         "BAAAAA+STSongti-SC-Bold",
@@ -99,13 +129,23 @@
         "NAAAAA+STSongti-SC-Bold",
         "OAAAAA+STSongti-SC-Regular"
       ],
-      "errors": []
+      "errors": [],
+      "components": {
+        "concept-block": 8,
+        "concept-term": 8,
+        "operation-quickref": 2,
+        "quickref-command": 7,
+        "quickref-synopsis": 7,
+        "option-list": 11,
+        "classic-task": 8,
+        "reference-solution": 2
+      }
     },
     "RHCSA-32": {
       "path": "releases/rhcsa-v5.1/chapters/32-podman-systemd-quadlet.pdf",
       "pages": 32,
       "bytes": 1236291,
-      "sha256": "c201d36bc358bfa884988f9b9caf55d3142827e89206bc9994bef6590358008f",
+      "sha256": "d1d8c0419a60e3270309bc44437d88c515f26d2346d48823480e6cbb94101067",
       "fonts": [
         "AAAAAA+STSongti-SC-Regular",
         "CAAAAA+STSongti-SC-Bold",
@@ -124,7 +164,17 @@
         "MAAAAA+STSongti-SC-Bold",
         "NAAAAA+STSongti-SC-Regular"
       ],
-      "errors": []
+      "errors": [],
+      "components": {
+        "concept-block": 7,
+        "concept-term": 7,
+        "operation-quickref": 2,
+        "quickref-command": 6,
+        "quickref-synopsis": 6,
+        "option-list": 6,
+        "classic-task": 2,
+        "reference-solution": 2
+      }
     }
   },
   "renderer_injected_definition_understanding": 0,
