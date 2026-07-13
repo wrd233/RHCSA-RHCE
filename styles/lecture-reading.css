@@ -30,3 +30,17 @@ table { margin: 4mm 0; font-size: 8.5pt; line-height: 1.48; } th, td { border: .
 .relationship-diagram, .evidence-flow, .lvm-layer-flow { margin: 4mm 0; padding: 4mm; background: #f4f7fa; border: .6pt solid #c7d2df; text-align: center; break-inside: avoid-page; }
 .diagram-node, .flow-item, .lvm-layer { border: .6pt solid #7890aa; background: white; padding: 2.4mm; margin: 1.2mm auto; max-width: 85%; }
 .final { background: #e8f0f7; font-weight: 600; }
+.chapter-cover { min-height: 250mm; display: flex; flex-direction: column; justify-content: center; padding: 8mm 0; break-after: page; }
+.chapter-cover h1 { break-before: auto; font-size: 29pt; margin: 5mm 0 8mm; }
+.cover-kicker, .cover-series, .cover-eyebrow { color: #365b7d; font: 700 9pt/1.5 "Hiragino Sans GB", sans-serif; letter-spacing: .1em; }
+.cover-number { color: #5d7891; font: 700 16pt/1 "Hiragino Sans GB", sans-serif; margin-top: 5mm; }
+.cover-subtitle { max-width: 32em; font-size: 12pt; line-height: 1.7; }
+.cover-tags { display: flex; flex-wrap: wrap; gap: 2mm; margin: 3mm 0; }
+.cover-tags span { color: #1f527d; border: .6pt solid #9bb7cc; border-radius: 999px; padding: 1mm 2.5mm; font: 700 8pt/1.4 "Hiragino Sans GB", sans-serif; }
+.cover-edition { margin-top: 4mm; color: #58748e; font: 700 9pt/1.5 "Hiragino Sans GB", sans-serif; }
+.reading-navigation { break-before: page; }
+.reading-navigation h1 { break-before: auto; }
+.page-break, .main-start { display: none; }
+.chapter-opening { break-before: page; }
+.chapter-opening h1 { break-before: auto; }
+.chapter-opening .eyebrow { color: #365b7d; font: 700 9pt/1.5 "Hiragino Sans GB", sans-serif; letter-spacing: .08em; margin-bottom: 3mm; }

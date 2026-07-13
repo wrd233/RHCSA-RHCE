@@ -99,6 +99,13 @@ def test_no_visible_raw_html_or_headers_footers_page_numbers():
         assert not any(re.fullmatch(r"\s*Page\s+\d+\s*", line) for text in texts for line in text.splitlines())
 
 
+def test_reading_components_keep_cover_and_opening_together():
+    css = (ROOT / "styles/lecture-reading.css").read_text()
+    assert ".chapter-cover h1 { break-before: auto;" in css
+    assert ".chapter-opening h1 { break-before: auto;" in css
+    assert ".chapter-opening { break-before: page; }" in css
+
+
 def test_fonts_are_subset():
     reader = PdfReader(next((ROOT / "releases/rhcsa-v5.1/chapters").glob("01-*.pdf")))
     names = []

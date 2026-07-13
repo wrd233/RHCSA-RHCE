@@ -1,6 +1,0 @@
-branch: codex/rhcsa-reading-pdf-anki-sync
-head: f1bdfcf5ae7071fec8f34328fc1d1c707960eac8
-git_status_short: clean
-git_diff: empty
-git_diff_cached: empty
-captured_at: 2026-07-13 Asia/Shanghai

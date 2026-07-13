@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-- RHCSA：33/33 个 v5.1 冻结章节已无损集成，canonical 内容位于 `content/rhcsa/chapters/`；统一 Schema、PDF、HTML、APKG 与 AnkiConnect readback 均通过。
+- RHCSA：33/33 个 v5.1 冻结章节已发布，但 v5.1 的最终化验证被阻塞：GitHub Release 只有 38 项资产（缺 Anki HTML 预览与摘要），且正式 PDF 存在阅读组件分页回归。详见 `reports/RHCSA_V5_1_FINAL_REPORT.md`。
 - RHCE：25 章规划保留在 `config/chapters.yml`，目前全部 `pending`，不声明为正式 V2 内容。
 - 通用考试方法：保留一份 canonical `lecture.md` / `anki.yml`。
 - 无 RHEL 9 VM：当前结论是静态内容审计与工程构建结果，不代表命令级 live test。
@@ -65,13 +65,13 @@ uv run python tools/finalize_v51.py
 uv run python tools/build.py rhce --allow-incomplete
 ```
 
-正式命令要求对应考试全部章节为 `validated` 或 `released`；否则失败。渲染器不猜概念语义，只消费显式 concept 与 operation quickref；整书由 33 个已验收单章 PDF 原样合并，不进行二次重排。正式页面没有页眉、页脚和页码。
+正式命令要求对应考试全部章节为 `validated` 或 `released`；否则失败。渲染器不猜概念语义，只消费显式 concept 与 operation quickref；整书由 33 个已验收单章 PDF 原样合并，不进行二次重排。当前 v5.1 公开 PDF 的分页回归已在本地修复候选中消除，但必须以 `v5.1.1` 发布，不能移动 v5.1 tag；无 RHEL 9 命令级 live test。
 
 ## Anki 安全边界
 
 APKG Model 包含 `Source` 字段，但正式卡面不显示它。构建从不隐式调用 AnkiConnect；`tools/sync_anki.py --all` 默认 dry-run，只有 `--apply --yes` 才执行稳定 ID upsert。同步后使用 `uv run python tools/anki_readback.py --output reports/anki-readback-v5.1.json` 验证。
 
-外部资料策略见 `docs/guides/external-sources.md`；通过 `RHEL_SOURCE_ROOT=/path/to/rhel-sources` 指向本地版权资料，不提交课件、字体或 OCR 临时文件。完整 v5.1 证据见 `reports/RHCSA_V5_1_INTEGRATION_REPORT.md`。
+外部资料策略见 `docs/guides/external-sources.md`；通过 `RHEL_SOURCE_ROOT=/path/to/rhel-sources` 指向本地版权资料，不提交课件、字体或 OCR 临时文件。当前 v5.1 状态与证据见 `reports/RHCSA_V5_1_FINAL_REPORT.md`。
 # 正式阅读版与 AnkiConnect
 
 RHCSA 正式 PDF 默认采用大字号阅读版：无页眉、页脚和页码；显式概念组件全宽单列、术语加粗换色，作者的自然完整解释保持原样；显式操作速查提供 SYNOPSIS 和纵向参数。详见 `docs/specs/PDF大字号阅读版排版规范.md`。

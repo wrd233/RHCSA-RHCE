@@ -3,15 +3,18 @@ rhcsa:
   chapters_total: 33
   chapters_integrated: 33
   lecture_status: passed
-  pdf_status: passed
+  pdf_status: candidate_fixed_not_released
   anki_status: passed
   apkg_status: passed
   anki_connect_status: passed
-  release_status: RHCSA_V5_1_READING_RELEASED
+  release_status: verification_failed
   reading_reference_sha256: 610162e211a9a9e61fcfb404b8ed80f0511117362fed04be6f1107fe7fd1fc29
-  reading_chapter_pages: 1090
+  reading_chapter_pages: 1043
   reading_front_matter_pages: 3
-  reading_book_pages: 1093
+  reading_book_pages: 1046
   reading_book_is_chapter_merge: true
   anki_canonical_status: ANKI_CANONICAL_UNCHANGED
   ankiconnect_apply_status: ANKICONNECT_APPLY_NOT_REQUIRED
+  tag: v5.1
+  main_status: blocked_release_validation
+  live_test: not_performed

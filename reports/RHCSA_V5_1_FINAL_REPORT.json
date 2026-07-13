@@ -1,0 +1,28 @@
+{
+  "status": "RHCSA_V5_1_FINALIZATION_BLOCKED",
+  "published": {
+    "tag": "v5.1",
+    "commit": "ed86710eb395729cd6673a8afcd8297dfdb0bec6",
+    "url": "https://github.com/wrd233/RHCSA-RHCE/releases/tag/v5.1",
+    "assets": 38,
+    "draft": false,
+    "prerelease": false
+  },
+  "blockers": [
+    "Release missing Anki HTML preview and Anki summary assets",
+    "Published PDF has isolated reading-component pages",
+    "GitHub Release creation API requires authentication"
+  ],
+  "candidate": {
+    "chapters": 33,
+    "chapter_pages": 1043,
+    "front_matter_pages": 3,
+    "book_pages": 1046,
+    "tests": "41 passed",
+    "live_test": "not_performed"
+  },
+  "main": {
+    "status": "not_merged",
+    "commit": "961a29b3af4c07a828078a5de90c221a036546df"
+  }
+}
